@@ -14,19 +14,19 @@ import brainwine.gameserver.server.RegisterCommand;
 @RegisterCommand(id = 25)
 public class BlocksIgnoreCommand extends PlayerCommand {
 
-	public int[] chunkIndexes;
-	
-	@Override
-	public void unpack(Unpacker unpacker) throws IOException {
-		chunkIndexes = unpacker.read(int[].class);
-	}
-	
-	@Override
-	public void process(Player player) {
-		/**
-		for(int index : chunkIndexes) {
-			player.removeActiveChunk(index);
-		}
-		**/
-	}
+    public int[] chunkIndexes;
+    
+    @Override
+    public void unpack(Unpacker unpacker) throws IOException {
+        chunkIndexes = unpacker.read(int[].class);
+    }
+    
+    @Override
+    public void process(Player player) {
+        /**
+        for(int index : chunkIndexes) {
+            player.removeActiveChunk(index);
+        }
+        **/
+    }
 }

@@ -16,53 +16,53 @@ import brainwine.gameserver.zone.Zone;
 @RegisterCommand(id = 16)
 public class BlocksRequestCommand extends PlayerCommand {
 
-	public int[] chunkIndexes;
-	
-	@Override
-	public void process(Player player) {
-		Zone zone = player.getZone();
-		List<Chunk> chunks = new ArrayList<>();
-		List<MetaBlock> metaBlocks = new ArrayList<>();
-		int minX = -1;
-		int maxX = -1;
-		
-		for(int index : chunkIndexes) {
-			if(!zone.isChunkIndexInBounds(index)) {
-				continue;
-			}
-			
-			int x = index % zone.getNumChunksWidth() * zone.getChunkWidth() + zone.getChunkWidth() / 2;
-			int y = index / zone.getNumChunksWidth() * zone.getChunkHeight() + zone.getChunkHeight() / 2;
-			double distance = Math.hypot(player.getX() - x, player.getY() - y);
-			distance = Math.min(distance, Math.hypot(player.getTeleportX() - x, player.getTeleportY() - y));
-			
-			if(distance > zone.getChunkWidth() * 5) {
-				continue;
-			}
-			
-			Chunk chunk = zone.getChunk(index);
-			chunks.add(chunk);
-			metaBlocks.addAll(zone.getLocalMetaBlocksInChunk(index));
-			player.addActiveChunk(index);
-			
-			if(chunk.getX() < minX || minX == -1) {
-				minX = chunk.getX();
-			}
-			
-			if(chunk.getX() + chunk.getWidth() > maxX || maxX == -1) {
-				maxX = chunk.getX() + chunk.getWidth();
-			}
-		}
-		
-		player.removeOutOfRangeChunks();
-		player.sendMessage(new BlocksMessage(chunks));
-		
-		for(MetaBlock metaBlock : metaBlocks) {
-			player.sendMessage(new BlockMetaMessage(metaBlock));
-		}
-		
-		if(minX >= 0 && maxX >= 0) {
-			player.sendMessage(new LightMessage(minX, zone.getSunlight(minX, maxX - minX)));
-		}
-	}
+    public int[] chunkIndexes;
+    
+    @Override
+    public void process(Player player) {
+        Zone zone = player.getZone();
+        List<Chunk> chunks = new ArrayList<>();
+        List<MetaBlock> metaBlocks = new ArrayList<>();
+        int minX = -1;
+        int maxX = -1;
+        
+        for(int index : chunkIndexes) {
+            if(!zone.isChunkIndexInBounds(index)) {
+                continue;
+            }
+            
+            int x = index % zone.getNumChunksWidth() * zone.getChunkWidth() + zone.getChunkWidth() / 2;
+            int y = index / zone.getNumChunksWidth() * zone.getChunkHeight() + zone.getChunkHeight() / 2;
+            double distance = Math.hypot(player.getX() - x, player.getY() - y);
+            distance = Math.min(distance, Math.hypot(player.getTeleportX() - x, player.getTeleportY() - y));
+            
+            if(distance > zone.getChunkWidth() * 5) {
+                continue;
+            }
+            
+            Chunk chunk = zone.getChunk(index);
+            chunks.add(chunk);
+            metaBlocks.addAll(zone.getLocalMetaBlocksInChunk(index));
+            player.addActiveChunk(index);
+            
+            if(chunk.getX() < minX || minX == -1) {
+                minX = chunk.getX();
+            }
+            
+            if(chunk.getX() + chunk.getWidth() > maxX || maxX == -1) {
+                maxX = chunk.getX() + chunk.getWidth();
+            }
+        }
+        
+        player.removeOutOfRangeChunks();
+        player.sendMessage(new BlocksMessage(chunks));
+        
+        for(MetaBlock metaBlock : metaBlocks) {
+            player.sendMessage(new BlockMetaMessage(metaBlock));
+        }
+        
+        if(minX >= 0 && maxX >= 0) {
+            player.sendMessage(new LightMessage(minX, zone.getSunlight(minX, maxX - minX)));
+        }
+    }
 }

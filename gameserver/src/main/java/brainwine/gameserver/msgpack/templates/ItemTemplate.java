@@ -12,26 +12,26 @@ import brainwine.gameserver.item.ItemRegistry;
 
 public class ItemTemplate extends AbstractTemplate<Item> {
 
-	@Override
-	public void write(Packer packer, Item item, boolean required) throws IOException {
-		if(item == null) {
-			if(required) {
-				throw new MessageTypeException("Attempted to write null");
-			}
-			
-			packer.writeNil();
-			return;
-		}
-		
-		packer.write(item.getId());
-	}
+    @Override
+    public void write(Packer packer, Item item, boolean required) throws IOException {
+        if(item == null) {
+            if(required) {
+                throw new MessageTypeException("Attempted to write null");
+            }
+            
+            packer.writeNil();
+            return;
+        }
+        
+        packer.write(item.getId());
+    }
 
-	@Override
-	public Item read(Unpacker unpacker, Item to, boolean required) throws IOException {
-	    if(!required && unpacker.trySkipNil()) {
-	    	return null;
-	    }
-		
-		return ItemRegistry.getItem(unpacker.readInt());
-	}
+    @Override
+    public Item read(Unpacker unpacker, Item to, boolean required) throws IOException {
+        if(!required && unpacker.trySkipNil()) {
+            return null;
+        }
+        
+        return ItemRegistry.getItem(unpacker.readInt());
+    }
 }
