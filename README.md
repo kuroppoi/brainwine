@@ -21,6 +21,8 @@ Setting up your own server is as easy as downloading this repository and running
 Alternatively, you can run the provided `build.bat` file. After the build task has finished, the output jar will be located in the `build` directory.
 To start the server, simply run the jar file with a simple command line such as `java -jar brainwine.jar -Xms128m -Xmx512m`.
 Be aware that Java 8 or newer is required to run Brainwine.
+If for whatever reason you are unable to create a build, you can download the latest release package [here.](https://github.com/kuroppoi/brainwine/releases)
+Note that these aren't always up-to-date, though!
 
 ## Contributions
 
