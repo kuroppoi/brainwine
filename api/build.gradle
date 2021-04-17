@@ -1,0 +1,14 @@
+apply plugin: 'java-library'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation project(':gameserver')
+    implementation 'com.google.guava:guava:29.0-jre'
+    implementation 'io.javalin:javalin:3.13.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
+    implementation 'org.slf4j:slf4j-simple:1.8.0-beta4'
+    implementation 'org.simplejavamail:simple-java-mail:6.5.0'
+}

@@ -1,0 +1,42 @@
+apply plugin: 'application'
+project.ext.mainClass = 'brainwine.bootstrap.Bootstrap'
+project.ext.runDir = file("$rootDir/run")
+project.ext.outputDir = file("$rootDir/build")
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation project(':api')
+    implementation project(':gameserver')
+}
+
+application {
+    mainClass = project.ext.mainClass
+}
+
+run {
+    workingDir =  project.ext.runDir
+}
+
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveBaseName = 'brainwine'
+
+    manifest {
+        attributes 'Main-Class':  project.ext.mainClass
+    }
+    
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task copyJar(type: Copy) {
+    from jar
+    into  project.ext.outputDir
+}
+
+jar.finalizedBy copyJar
