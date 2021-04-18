@@ -18,7 +18,7 @@ public class Item {
     private Layer layer = Layer.NONE;
     private MetaType meta = MetaType.NONE;
     private int field;
-    private boolean wardrobe;
+    private boolean clothing;
     private boolean placeover;
     private boolean whole;
     private boolean invulnerable;
@@ -41,8 +41,7 @@ public class Item {
         return layer == Layer.BACK || layer == Layer.FRONT;
     }
     
-    public Layer getLayer()
-    {
+    public Layer getLayer() {
         return layer;
     }
     
@@ -66,8 +65,9 @@ public class Item {
         return field;
     }
     
+    @JsonProperty("wardrobe")
     public boolean isClothing() {
-        return wardrobe;
+        return clothing;
     }
     
     public boolean canPlaceOver() {
