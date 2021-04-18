@@ -1,9 +1,7 @@
 package brainwine.gameserver.server.messages;
 
 import brainwine.gameserver.server.Message;
-import brainwine.gameserver.server.RegisterMessage;
 
-@RegisterMessage(id = 15, collection = true)
 public class LightMessage extends Message {
     
     public int x;
@@ -14,5 +12,10 @@ public class LightMessage extends Message {
     public LightMessage(int x, int[] light) {
         this.x = x;
         this.light = light;
+    }
+    
+    @Override
+    public boolean isCollection() {
+        return true;
     }
 }

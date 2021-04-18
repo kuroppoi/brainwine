@@ -5,15 +5,18 @@ import java.lang.reflect.Field;
 
 import org.msgpack.unpacker.Unpacker;
 
-import brainwine.gameserver.server.commands.BlocksIgnoreCommand;
 import brainwine.gameserver.server.pipeline.Connection;
+import brainwine.gameserver.server.requests.BlocksIgnoreRequest;
 
-public abstract class Command {
+/**
+ * Requests are incoming packets from the client.
+ */
+public abstract class Request {
     
     public abstract void process(Connection connection);
     
     /**
-     * Can be overriden for custom unpacking rules, as seen in {@link BlocksIgnoreCommand}
+     * Can be overriden for custom unpacking rules, as seen in {@link BlocksIgnoreRequest}
      */
     public void unpack(Unpacker unpacker) throws IllegalArgumentException, IllegalAccessException, IOException {
         int dataCount = unpacker.readArrayBegin();

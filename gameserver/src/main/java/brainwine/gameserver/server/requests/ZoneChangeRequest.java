@@ -1,13 +1,11 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.zone.Zone;
 
-@RegisterCommand(id = 24)
-public class ZoneChangeCommand extends PlayerCommand {
+public class ZoneChangeRequest extends PlayerRequest {
     
     public String zoneName;
     

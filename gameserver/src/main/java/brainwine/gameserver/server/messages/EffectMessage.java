@@ -2,9 +2,7 @@ package brainwine.gameserver.server.messages;
 
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.server.Message;
-import brainwine.gameserver.server.RegisterMessage;
 
-@RegisterMessage(id = 30)
 public class EffectMessage extends Message {
     
     public int x;

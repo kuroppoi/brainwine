@@ -4,7 +4,10 @@ import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.server.pipeline.Connection;
 
-public abstract class PlayerCommand extends Command {
+/**
+ * Requests that require a player instance.
+ */
+public abstract class PlayerRequest extends Request {
     
     public abstract void process(Player player);
     

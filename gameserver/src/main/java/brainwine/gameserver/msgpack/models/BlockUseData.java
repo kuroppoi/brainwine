@@ -3,7 +3,7 @@ package brainwine.gameserver.msgpack.models;
 import java.util.Map;
 
 /**
- * For {@link BlockUseCommand}
+ * For {@link BlockUseRequest}
  */
 public class BlockUseData {
     

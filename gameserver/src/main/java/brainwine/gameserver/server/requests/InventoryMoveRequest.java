@@ -1,13 +1,11 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.entity.player.ContainerType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 
-@RegisterCommand(id = 14)
-public class InventoryMoveCommand extends PlayerCommand {
+public class InventoryMoveRequest extends PlayerRequest {
     
     public Item item;
     public ContainerType container;

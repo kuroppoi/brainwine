@@ -6,9 +6,7 @@ import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.EntityType;
 import brainwine.gameserver.server.Message;
-import brainwine.gameserver.server.RegisterMessage;
 
-@RegisterMessage(id = 7, collection = true)
 public class EntityStatusMessage extends Message {
     
     public int id;
@@ -27,5 +25,10 @@ public class EntityStatusMessage extends Message {
         this.name = name;
         this.status = status;
         this.details = details;
+    }
+    
+    @Override
+    public boolean isCollection() {
+        return true;
     }
 }

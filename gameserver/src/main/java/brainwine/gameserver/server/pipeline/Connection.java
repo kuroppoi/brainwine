@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.server.Command;
+import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.KickMessage;
 import io.netty.channel.Channel;
@@ -20,7 +20,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 
-public class Connection extends SimpleChannelInboundHandler<Command> {
+public class Connection extends SimpleChannelInboundHandler<Request> {
 
     // TODO creating one per connection might not be a good idea.
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -52,11 +52,11 @@ public class Connection extends SimpleChannelInboundHandler<Command> {
     }
     
     @Override
-    protected void channelRead0(ChannelHandlerContext ctx, Command command) throws Exception {
+    protected void channelRead0(ChannelHandlerContext ctx, Request request) throws Exception {
         GameServer.getInstance().queueSynchronousTask(new Runnable() {
             @Override
             public void run() {
-                command.process(Connection.this);
+                request.process(Connection.this);
             }
         });
     }

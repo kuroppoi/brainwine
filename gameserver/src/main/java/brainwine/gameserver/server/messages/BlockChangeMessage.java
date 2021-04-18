@@ -3,9 +3,7 @@ package brainwine.gameserver.server.messages;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.server.Message;
-import brainwine.gameserver.server.RegisterMessage;
 
-@RegisterMessage(id = 9, collection = true)
 public class BlockChangeMessage extends Message {
 
     public int x;
@@ -21,5 +19,10 @@ public class BlockChangeMessage extends Message {
         this.layer = layer;
         this.item = item;
         this.mod = mod;
+    }
+    
+    @Override
+    public boolean isCollection() {
+        return true;
     }
 }

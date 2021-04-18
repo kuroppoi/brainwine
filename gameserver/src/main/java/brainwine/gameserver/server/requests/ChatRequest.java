@@ -1,12 +1,10 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 
-@RegisterCommand(id = 13)
-public class ChatCommand extends PlayerCommand {
+public class ChatRequest extends PlayerRequest {
     
     public String recipientName;
     public String text;

@@ -3,9 +3,7 @@ package brainwine.gameserver.server.messages;
 import java.util.Map;
 
 import brainwine.gameserver.server.Message;
-import brainwine.gameserver.server.RegisterMessage;
 
-@RegisterMessage(id = 2, json = true, compressed = true)
 public class ConfigurationMessage extends Message {
     
     public String entityId;
@@ -18,5 +16,15 @@ public class ConfigurationMessage extends Message {
         this.playerHash = playerHash;
         this.configHash = configHash;
         this.zoneHash = zoneHash;
+    }
+    
+    @Override
+    public boolean isJson() {
+        return true;
+    }
+    
+    @Override
+    public boolean isCompressed() {
+        return true;
     }
 }

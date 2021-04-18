@@ -1,18 +1,16 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import java.io.IOException;
 
 import org.msgpack.unpacker.Unpacker;
 
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 
 /**
  * No longer used. See {@link Player#removeOutOfRangeChunks()}
  */
-@RegisterCommand(id = 25)
-public class BlocksIgnoreCommand extends PlayerCommand {
+public class BlocksIgnoreRequest extends PlayerRequest {
 
     public int[] chunkIndexes;
     

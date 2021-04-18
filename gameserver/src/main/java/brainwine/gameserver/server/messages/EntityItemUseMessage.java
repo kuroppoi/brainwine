@@ -2,9 +2,7 @@ package brainwine.gameserver.server.messages;
 
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.server.Message;
-import brainwine.gameserver.server.RegisterMessage;
 
-@RegisterMessage(id = 10, collection = true)
 public class EntityItemUseMessage extends Message {
     
     public int entityId;
@@ -17,5 +15,10 @@ public class EntityItemUseMessage extends Message {
         this.type = type;
         this.item = item;
         this.status = status;
+    }
+    
+    @Override
+    public boolean isCollection() {
+        return true;
     }
 }

@@ -1,18 +1,16 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Zone;
 
-@RegisterCommand(id = 12)
-public class BlockPlaceCommand extends PlayerCommand {
+public class BlockPlaceRequest extends PlayerRequest {
 
     public int x;
     public int y;

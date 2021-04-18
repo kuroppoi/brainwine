@@ -4,10 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import brainwine.gameserver.server.Message;
-import brainwine.gameserver.server.RegisterMessage;
 import brainwine.gameserver.zone.MetaBlock;
 
-@RegisterMessage(id = 20, collection = true)
 public class BlockMetaMessage extends Message {
     
     public int x;
@@ -36,5 +34,10 @@ public class BlockMetaMessage extends Message {
         this.x = x;
         this.y = y;
         this.metadata = metadata;
+    }
+    
+    @Override
+    public boolean isCollection() {
+        return true;
     }
 }

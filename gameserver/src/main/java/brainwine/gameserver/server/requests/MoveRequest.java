@@ -1,15 +1,13 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.zone.Zone;
 
-@RegisterCommand(id = 5)
-public class MoveCommand extends PlayerCommand {
+public class MoveRequest extends PlayerRequest {
     
     public int x;
     public int y;

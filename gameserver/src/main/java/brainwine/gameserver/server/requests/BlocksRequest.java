@@ -1,11 +1,10 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.BlocksMessage;
 import brainwine.gameserver.server.messages.LightMessage;
@@ -13,8 +12,7 @@ import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
-@RegisterCommand(id = 16)
-public class BlocksRequestCommand extends PlayerCommand {
+public class BlocksRequest extends PlayerRequest {
 
     public int[] chunkIndexes;
     

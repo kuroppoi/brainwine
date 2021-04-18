@@ -6,29 +6,29 @@ import java.util.List;
 import org.msgpack.unpacker.Unpacker;
 
 import brainwine.gameserver.msgpack.MessagePackHelper;
-import brainwine.gameserver.server.Command;
+import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.NetworkRegistry;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 
-public class CommandDecoder extends MessageToMessageDecoder<ByteBuf> {
+public class RequestDecoder extends MessageToMessageDecoder<ByteBuf> {
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
         int id = buf.readByte() & 0xFF;
         buf.readIntLE(); // body length
-        Command command = NetworkRegistry.instantiateCommand(id);
+        Request request = NetworkRegistry.instantiateRequest(id);
         
-        if(command == null) {
-            throw new IOException("Client sent invalid command: " + id);
+        if(request == null) {
+            throw new IOException("Client sent invalid request: " + id);
         }
         
         byte[] bytes = new byte[buf.readableBytes()];
         buf.readBytes(bytes);
         Unpacker unpacker = MessagePackHelper.createBufferUnpacker(bytes);
-        command.unpack(unpacker);
+        request.unpack(unpacker);
         unpacker.close();
-        out.add(command);
+        out.add(request);
     }
 }

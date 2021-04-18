@@ -1,4 +1,4 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,12 +8,10 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.msgpack.models.BlockUseData;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.zone.Zone;
 
-@RegisterCommand(id = 21)
-public class BlockUseCommand extends PlayerCommand {
+public class BlockUseRequest extends PlayerRequest {
     
     public int x;
     public int y;

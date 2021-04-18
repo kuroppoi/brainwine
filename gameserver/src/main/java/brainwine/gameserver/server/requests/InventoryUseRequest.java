@@ -1,15 +1,13 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import org.msgpack.type.Value;
 
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.EntityItemUseMessage;
 
-@RegisterCommand(id = 10)
-public class InventoryUseCommand extends PlayerCommand {
+public class InventoryUseRequest extends PlayerRequest {
     
     public int type; // 0 = main, 1 = secondary
     public Item item;

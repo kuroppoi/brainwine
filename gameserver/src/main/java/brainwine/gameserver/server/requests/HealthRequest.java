@@ -1,11 +1,9 @@
-package brainwine.gameserver.server.commands;
+package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.server.PlayerCommand;
-import brainwine.gameserver.server.RegisterCommand;
+import brainwine.gameserver.server.PlayerRequest;
 
-@RegisterCommand(id = 18)
-public class HealthCommand extends PlayerCommand {
+public class HealthRequest extends PlayerRequest {
     
     public int health;
     public int attackerId;

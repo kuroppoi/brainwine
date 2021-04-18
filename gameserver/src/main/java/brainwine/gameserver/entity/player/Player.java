@@ -23,8 +23,6 @@ import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.server.Message;
-import brainwine.gameserver.server.commands.BlocksIgnoreCommand;
-import brainwine.gameserver.server.commands.BlocksRequestCommand;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
 import brainwine.gameserver.server.messages.EffectMessage;
@@ -42,6 +40,8 @@ import brainwine.gameserver.server.messages.TeleportMessage;
 import brainwine.gameserver.server.messages.WardrobeMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.server.pipeline.Connection;
+import brainwine.gameserver.server.requests.BlocksIgnoreRequest;
+import brainwine.gameserver.server.requests.BlocksRequest;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
@@ -406,8 +406,8 @@ public class Player extends Entity implements CommandExecutor {
     /**
      * Iterates through all active chunks of this player and removes chunks that have been
      * active for 5 or more seconds, and are out of range of the player.
-     * Its behavior is (mostly) the same as the clients, but instead of relying on {@link BlocksIgnoreCommand},
-     * this function gets called each time {@link BlocksRequestCommand} is received.
+     * Its behavior is (mostly) the same as the clients, but instead of relying on {@link BlocksIgnoreRequest},
+     * this function gets called each time {@link BlocksRequest} is received.
      */
     public void removeOutOfRangeChunks() {
         Iterator<Entry<Integer, Long>> iterator = activeChunks.entrySet().iterator();
