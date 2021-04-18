@@ -125,7 +125,7 @@ public class PlayerManager {
         Player player = getPlayer(name);
         
         if(!verifyAuthToken(name, authToken)) {
-            connection.kick("The session token is either invalid or has expired.");
+            connection.kick("The session token is either invalid or has expired. Please try relogging.");
             return;
         }
         
