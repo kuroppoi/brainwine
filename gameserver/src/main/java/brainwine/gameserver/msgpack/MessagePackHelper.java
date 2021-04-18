@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.zip.DataFormatException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.msgpack.MessagePack;
 import org.msgpack.packer.BufferPacker;
 import org.msgpack.unpacker.BufferUnpacker;
@@ -26,13 +28,15 @@ import brainwine.gameserver.zone.Chunk;
  */
 public class MessagePackHelper {
     
+    private static final Logger logger = LogManager.getLogger();
     private static final MessagePack messagePack = new MessagePack();
     
-    static {
+    public static void init() {
         registerTemplates();
     }
     
     private static void registerTemplates() {
+        logger.info("Registering MessagePack templates ...");
         messagePack.register(Item.class, new ItemTemplate());
         messagePack.register(Block.class, new BlockTemplate());
         messagePack.register(Chunk.class, new ChunkTemplate());
