@@ -29,6 +29,8 @@ public class CommandManager {
         registerCommand("register", new RegisterCommand());
         registerCommand("tp", new TeleportCommand());
         registerCommand("kick", new KickCommand());
+        registerCommand("say", new SayCommand());
+        registerCommand("think", new ThinkCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {
