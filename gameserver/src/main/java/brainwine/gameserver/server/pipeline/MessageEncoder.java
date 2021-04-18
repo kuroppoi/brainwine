@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import brainwine.gameserver.msgpack.MessagePackHelper;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.MessageOptions;
+import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.util.ZipUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
@@ -23,8 +24,8 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
     
     @Override
     protected void encode(ChannelHandlerContext ctx, Message in, ByteBuf out) throws Exception {
-        int id = Message.getMessageId(in);
-        MessageOptions options = Message.getMessageOptions(in);
+        int id = NetworkRegistry.getMessageId(in);
+        MessageOptions options = NetworkRegistry.getMessageOptions(in);
         
         if(id == 0) {
             throw new IOException("Attempted to encode unregistered message " + in.getClass());

@@ -7,6 +7,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.entity.player.PlayerManager;
+import brainwine.gameserver.msgpack.MessagePackHelper;
+import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.server.Server;
 import brainwine.gameserver.zone.ZoneManager;
 
@@ -29,8 +31,10 @@ public class GameServer {
         long startTime = System.currentTimeMillis();
         logger.info("Starting GameServer ...");
         GameConfiguration.init();
+        MessagePackHelper.init();
         zoneManager = new ZoneManager();
         playerManager = new PlayerManager();
+        NetworkRegistry.init();
         server = new Server();
         server.addEndpoint(5002);
         ConsoleThread consoleThread = new ConsoleThread(this);
