@@ -7,6 +7,8 @@ import java.io.InputStreamReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import brainwine.gameserver.command.CommandManager;
+
 public class ConsoleThread extends Thread {
     
     private static final Logger logger = LogManager.getLogger();
@@ -24,9 +26,8 @@ public class ConsoleThread extends Thread {
         
         try {
             while((line = reader.readLine()) != null) {
-                if(line.equalsIgnoreCase("stop")) {
-                    server.shutdown();
-                }
+                // TODO run these on main thread lol
+                CommandManager.executeCommand(server, line);
             }
         } catch(IOException e) {
             logger.info("Could not read console input", e);

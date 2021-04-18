@@ -15,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.EntityType;
@@ -48,7 +49,7 @@ import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Player extends Entity {
+public class Player extends Entity implements CommandExecutor {
     
     public static final int MAX_SKILL_LEVEL = 15;
     public static final int MAX_NATURAL_SKILL_LEVEL = 10;
@@ -311,6 +312,7 @@ public class Player extends Entity {
         sendMessage(new NotificationMessage(text, type));
     }
     
+    @Override
     public void alert(String text) {
         notify(text, 1);
     }

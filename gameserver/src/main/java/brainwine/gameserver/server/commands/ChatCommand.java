@@ -1,5 +1,6 @@
 package brainwine.gameserver.server.commands;
 
+import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.server.PlayerCommand;
 import brainwine.gameserver.server.RegisterCommand;
@@ -12,6 +13,12 @@ public class ChatCommand extends PlayerCommand {
     
     @Override
     public void process(Player player) {
+        // TODO configurable prefix
+        if(text.startsWith("!")) {
+            CommandManager.executeCommand(player, text.substring(1));
+            return;
+        }
+        
         player.getZone().chat(player, text);
     }
 }
