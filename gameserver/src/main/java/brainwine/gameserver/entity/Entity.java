@@ -128,7 +128,6 @@ public abstract class Entity {
      */
     public Map<String, Object> getStatusConfig() {
         Map<String, Object> config = new HashMap<>();
-        //config.put("id", documentId); TODO figure out if this is actually necessary for non-player entities
         config.put("name", name);
         config.put("h", health);
         return config;

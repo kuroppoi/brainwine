@@ -128,6 +128,18 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     /**
+     * @return A {@link Map} containing all the data necessary for use in {@link EntityStatusMessage}.
+     */
+    @Override
+    public Map<String, Object> getStatusConfig() {
+        Map<String, Object> config = new HashMap<>();
+        config.put("id", documentId);
+        config.put("name", name);
+        config.put("h", health);
+        return config;
+    }
+    
+    /**
      * Called by {@link Zone#addEntity(Entity)} when the player is added to it.
      */
     public void onZoneChanged() {
