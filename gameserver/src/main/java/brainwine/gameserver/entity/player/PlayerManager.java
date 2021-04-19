@@ -105,7 +105,7 @@ public class PlayerManager {
     
     public boolean verifyPassword(String name, String password) {
         Player player = getPlayer(name);
-        return player == null ? false : BCrypt.checkpw(password, player.getPassword());
+        return player == null ? false : player.getPassword() == null ? false : BCrypt.checkpw(password, player.getPassword());
     }
     
     public boolean verifyAuthToken(String name, String token) {
