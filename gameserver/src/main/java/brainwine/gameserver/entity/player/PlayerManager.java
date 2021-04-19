@@ -1,6 +1,7 @@
 package brainwine.gameserver.entity.player;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -152,5 +153,9 @@ public class PlayerManager {
         
     public Player getPlayer(Connection connection) {
         return playersByConnection.get(connection);
+    }
+    
+    public Collection<Player> getPlayers() {
+        return playersById.values();
     }
 }

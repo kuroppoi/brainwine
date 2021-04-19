@@ -6,6 +6,13 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import brainwine.gameserver.command.commands.BroadcastCommand;
+import brainwine.gameserver.command.commands.KickCommand;
+import brainwine.gameserver.command.commands.RegisterCommand;
+import brainwine.gameserver.command.commands.SayCommand;
+import brainwine.gameserver.command.commands.StopCommand;
+import brainwine.gameserver.command.commands.TeleportCommand;
+import brainwine.gameserver.command.commands.ThinkCommand;
 import brainwine.gameserver.entity.player.Player;
 
 public class CommandManager {
@@ -25,12 +32,14 @@ public class CommandManager {
     }
     
     private static void registerCommands() {
+        logger.info("Registering commands ...");
         registerCommand("stop", new StopCommand());
         registerCommand("register", new RegisterCommand());
         registerCommand("tp", new TeleportCommand());
         registerCommand("kick", new KickCommand());
         registerCommand("say", new SayCommand());
         registerCommand("think", new ThinkCommand());
+        registerCommand("bc", new BroadcastCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {
