@@ -39,7 +39,7 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
-        if(zone.isBlockProtected(x, y, player)) {
+        if(zone.isBlockProtected(x, y, player) && !player.isAdmin()) {
             fail(player, "This block is protected.");
             return;
         }
