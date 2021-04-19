@@ -1,8 +1,10 @@
-package brainwine.gameserver.command;
+package brainwine.gameserver.command.commands;
 
 import java.util.Arrays;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.command.Command;
+import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.entity.player.Player;
 
 public class KickCommand extends Command {

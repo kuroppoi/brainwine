@@ -1,6 +1,8 @@
-package brainwine.gameserver.command;
+package brainwine.gameserver.command.commands;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.command.Command;
+import brainwine.gameserver.command.CommandExecutor;
 
 public class StopCommand extends Command {
 

@@ -1,5 +1,7 @@
-package brainwine.gameserver.command;
+package brainwine.gameserver.command.commands;
 
+import brainwine.gameserver.command.Command;
+import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.entity.player.Player;
 
 public class TeleportCommand extends Command {
