@@ -40,7 +40,9 @@ public class DialogInputDataTemplate extends AbstractTemplate<DialogInputData> {
         }
         
         if(unpacker.getNextType() == ValueType.RAW) {
-            return new DialogInputData(unpacker.readString());
+            String dialogName = unpacker.readString();
+            unpacker.readString(); // TODO find out if this is the action, or just garbage data.
+            return new DialogInputData(dialogName);
         } else if(unpacker.getNextType() == ValueType.INTEGER) {
             int id = unpacker.readInt();
             
