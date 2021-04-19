@@ -2,6 +2,7 @@ package brainwine.gameserver.command.commands;
 
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.dialog.dialogs.RegistrationDialog;
 import brainwine.gameserver.entity.player.Player;
 
 public class RegisterCommand extends Command{
@@ -14,6 +15,12 @@ public class RegisterCommand extends Command{
         }
         
         Player player = (Player)executor;
-        player.alert("Sorry, this feature has not been implemented yet.");
+        
+        if(player.isRegistered()) {
+            player.alert("You have already registered your account.");
+            return;
+        }
+        
+        player.showDialog(new RegistrationDialog());
     }
 }

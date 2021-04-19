@@ -3,7 +3,9 @@ package brainwine.gameserver.entity.player;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,6 +23,7 @@ public class PlayerManager {
     
     public static final String GAME_VERSION = "3.13.1";
     private static final Logger logger = LogManager.getLogger();
+    private final Set<String> emails = new HashSet<>();
     private final Map<String, Player> playersById = new HashMap<>();
     private final Map<String, Player> playersByName = new HashMap<>();
     private final Map<Connection, Player> playersByConnection = new HashMap<>();
@@ -56,6 +59,12 @@ public class PlayerManager {
         
         try {
             Player player = mapper.readValue(file, Player.class);
+            String email = player.getEmail();
+            
+            if(email != null) {
+                emails.add(email);
+            }
+            
             String name = player.getName();
             
             if(playersByName.containsKey(name)) {
@@ -90,8 +99,7 @@ public class PlayerManager {
     public String refreshAuthToken(String name) {
         Player player = getPlayer(name);
         String token = UUID.randomUUID().toString();
-        String hash = BCrypt.hashpw(token, BCrypt.gensalt());
-        player.setAuthToken(hash);
+        player.setAuthToken(BCrypt.hashpw(token, BCrypt.gensalt()));
         return token;
     }
     
@@ -112,7 +120,6 @@ public class PlayerManager {
         
         String id = UUID.randomUUID().toString();
         Player player = new Player(id, name, GameServer.getInstance().getZoneManager().getRandomZone()); // TODO tutorial zone
-        player.setPassword(BCrypt.hashpw("password", BCrypt.gensalt())); // For now, too lazy to do registration.
         playersById.put(id, player);
         playersByName.put(name.toLowerCase(), player);
     }
@@ -145,6 +152,10 @@ public class PlayerManager {
         }
         
         zone.addPlayer(player);
+    }
+    
+    public boolean isEmailTaken(String email) {
+        return emails.contains(email);
     }
     
     public Player getPlayer(String name) {
