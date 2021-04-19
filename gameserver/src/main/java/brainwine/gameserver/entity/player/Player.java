@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.dialog.ConfigurableDialog;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.EntityType;
@@ -25,6 +26,7 @@ import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
+import brainwine.gameserver.server.messages.DialogMessage;
 import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.EntityItemUseMessage;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
@@ -56,7 +58,9 @@ public class Player extends Entity implements CommandExecutor {
     public static final int MAX_SPEED_X = 12;
     public static final int MAX_SPEED_Y = 25;
     public static final int HEARTBEAT_TIMEOUT = 30000;
+    private static int dialogDiscriminator;
     private final String documentId;
+    private String email;
     private String password;
     private String authToken;
     private boolean admin;
@@ -65,6 +69,7 @@ public class Player extends Entity implements CommandExecutor {
     private final Map<String, Object> settings = new HashMap<>();
     private final Map<Skill, Integer> skills = new HashMap<>();
     private final Map<Integer, Long> activeChunks = new HashMap<>();
+    private final Map<Integer, ConfigurableDialog> dialogs = new HashMap<>();
     private final Inventory inventory = new Inventory();
     private Item heldItem = Item.AIR; // TODO send on entity add
     private int teleportX;
@@ -256,8 +261,26 @@ public class Player extends Entity implements CommandExecutor {
         kick("Teleporting...", true);
     }
     
+    public void showDialog(ConfigurableDialog dialog) {
+        dialog.init();
+        int id = ++dialogDiscriminator;
+        dialogs.put(id, dialog);
+        sendMessage(new DialogMessage(id, dialog));
+    }
+    
+    public void handleDialogInput(int id, Map<String, String> input) {
+        ConfigurableDialog dialog = dialogs.remove(id);
+        
+        if(dialog == null) {
+            alert("Sorry, we couldn't find out what to do with this.");
+            return;
+        }
+        
+        dialog.handleResponse(this, input);
+    }
+    
     public void checkRegistration() {
-        if(password == null) {
+        if(!isRegistered()) {
             sendMessage(new EventMessage("playerRegistered", false));
             sendMessage(new EventMessage("playerLockDidChange", "Before you can log out, you must register your current account. Log in and type /register in the console to register."));
             sendMessage(new EventMessage("playerNeedsRegistration", true));
@@ -266,6 +289,10 @@ public class Player extends Entity implements CommandExecutor {
             sendMessage(new EventMessage("playerLockDidChange", null));
             sendMessage(new EventMessage("playerNeedsRegistration", false));
         }
+    }
+    
+    public boolean isRegistered() {
+        return password != null && email != null;
     }
     
     public void heartbeat() {
@@ -349,6 +376,24 @@ public class Player extends Entity implements CommandExecutor {
         return documentId;
     }
     
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    @JsonProperty("email")
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    @JsonProperty("password_hash")
+    protected String getPassword() {
+        return password;
+    }
+    
     protected void setAuthToken(String authToken) {
         this.authToken = authToken;
     }
@@ -356,15 +401,6 @@ public class Player extends Entity implements CommandExecutor {
     @JsonProperty("token_hash")
     protected String getAuthToken() {
         return authToken;
-    }
-    
-    protected void setPassword(String password) {
-        this.password = password;
-    }
-    
-    @JsonProperty("password_hash")
-    protected String getPassword() {
-        return password;
     }
     
     public void setAdmin(boolean admin) {
@@ -467,6 +503,7 @@ public class Player extends Entity implements CommandExecutor {
     @JsonValue
     public Map<String, Object> getJsonValue() {
         Map<String, Object> map = new HashMap<>();
+        map.put("email", email);
         map.put("password_hash", password);
         map.put("token_hash", authToken);
         map.put("name", name);
