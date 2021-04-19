@@ -19,17 +19,12 @@ public abstract class Request {
      * Can be overriden for custom unpacking rules, as seen in {@link BlocksIgnoreRequest}
      */
     public void unpack(Unpacker unpacker) throws IllegalArgumentException, IllegalAccessException, IOException {
-        int dataCount = unpacker.readArrayBegin();
-        Field[] fields = this.getClass().getFields();
+        unpacker.readArrayBegin();
         
-        if(dataCount != fields.length) {
-            throw new IOException(String.format("Amount of data received (%s) does not match expected amount (%s)", dataCount, fields.length));
-        }
-        
-        for(Field field : fields) {
+        for(Field field : this.getClass().getFields()) {
             field.set(this, unpacker.read(field.getType()));
         }
         
-        unpacker.readArrayEnd();
+        unpacker.readArrayEnd(true);
     }
 }
