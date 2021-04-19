@@ -2,6 +2,7 @@ package brainwine.gameserver.command;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -84,5 +85,9 @@ public class CommandManager {
        }
        
        commands.put(name, command);
+    }
+    
+    public static Set<String> getCommandNames() {
+        return commands.keySet();
     }
 }

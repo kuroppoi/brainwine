@@ -32,11 +32,11 @@ public class GameServer implements CommandExecutor {
         handlerThread = Thread.currentThread();
         long startTime = System.currentTimeMillis();
         logger.info("Starting GameServer ...");
+        CommandManager.init();
         GameConfiguration.init();
         MessagePackHelper.init();
         zoneManager = new ZoneManager();
         playerManager = new PlayerManager();
-        CommandManager.init();
         NetworkRegistry.init();
         server = new Server();
         server.addEndpoint(5002);
