@@ -610,11 +610,11 @@ public class Zone {
     }
     
     public void setChunksExplored(boolean[] chunksExplored) {
-        if(chunksExplored.length != width * height) {
+        if(chunksExplored.length != getChunkCount()) {
             return;
         }
         
-        System.arraycopy(chunksExplored, 0, this.chunksExplored, 0, width * height);
+        System.arraycopy(chunksExplored, 0, this.chunksExplored, 0, chunksExplored.length);
     }
     
     /**
