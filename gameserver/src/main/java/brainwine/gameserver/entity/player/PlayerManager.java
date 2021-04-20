@@ -3,9 +3,7 @@ package brainwine.gameserver.entity.player;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import org.apache.logging.log4j.LogManager;
@@ -23,7 +21,6 @@ public class PlayerManager {
     
     public static final String GAME_VERSION = "3.13.1";
     private static final Logger logger = LogManager.getLogger();
-    private final Set<String> emails = new HashSet<>();
     private final Map<String, Player> playersById = new HashMap<>();
     private final Map<String, Player> playersByName = new HashMap<>();
     private final Map<Connection, Player> playersByConnection = new HashMap<>();
@@ -59,12 +56,6 @@ public class PlayerManager {
         
         try {
             Player player = mapper.readValue(file, Player.class);
-            String email = player.getEmail();
-            
-            if(email != null) {
-                emails.add(email);
-            }
-            
             String name = player.getName();
             
             if(playersByName.containsKey(name)) {
@@ -155,7 +146,13 @@ public class PlayerManager {
     }
     
     public boolean isEmailTaken(String email) {
-        return emails.contains(email);
+        for(Player player : getPlayers()) {
+            if(email.equalsIgnoreCase(player.getEmail())) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     public Player getPlayer(String name) {
