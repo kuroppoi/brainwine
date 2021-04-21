@@ -9,11 +9,13 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.command.commands.BroadcastCommand;
 import brainwine.gameserver.command.commands.KickCommand;
+import brainwine.gameserver.command.commands.PlayerIdCommand;
 import brainwine.gameserver.command.commands.RegisterCommand;
 import brainwine.gameserver.command.commands.SayCommand;
 import brainwine.gameserver.command.commands.StopCommand;
 import brainwine.gameserver.command.commands.TeleportCommand;
 import brainwine.gameserver.command.commands.ThinkCommand;
+import brainwine.gameserver.command.commands.ZoneIdCommand;
 import brainwine.gameserver.entity.player.Player;
 
 public class CommandManager {
@@ -41,6 +43,8 @@ public class CommandManager {
         registerCommand("say", new SayCommand());
         registerCommand("think", new ThinkCommand());
         registerCommand("bc", new BroadcastCommand());
+        registerCommand("pid", new PlayerIdCommand());
+        registerCommand("zid", new ZoneIdCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {
