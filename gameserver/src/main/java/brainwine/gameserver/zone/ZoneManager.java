@@ -114,7 +114,7 @@ public class ZoneManager {
             }
             
             zones.put(id, zone);
-            zonesByName.put(name, zone);
+            zonesByName.put(name.toLowerCase(), zone);
         } catch (Exception e) {
             logger.error("Zone load failure. id: {}", id, e);
         }
@@ -125,7 +125,7 @@ public class ZoneManager {
     }
     
     public Zone getZoneByName(String name) {
-        return zonesByName.get(name);
+        return zonesByName.get(name.toLowerCase());
     }
     
     public Zone getRandomZone() {
