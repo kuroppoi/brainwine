@@ -17,7 +17,7 @@ application {
 }
 
 run {
-    workingDir =  project.ext.runDir
+    workingDir = project.ext.runDir
 }
 
 
@@ -26,7 +26,8 @@ jar {
     archiveBaseName = 'brainwine'
 
     manifest {
-        attributes 'Main-Class':  project.ext.mainClass
+        attributes 'Main-Class': project.ext.mainClass,
+                   'Multi-Release': 'true'
     }
     
     from {
@@ -36,7 +37,7 @@ jar {
 
 task copyJar(type: Copy) {
     from jar
-    into  project.ext.outputDir
+    into project.ext.outputDir
 }
 
 jar.finalizedBy copyJar
