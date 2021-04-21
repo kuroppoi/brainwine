@@ -2,10 +2,11 @@ package brainwine.gameserver.entity.player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -59,13 +60,32 @@ public class Player extends Entity implements CommandExecutor {
     public static final int MAX_SPEED_Y = 25;
     public static final int HEARTBEAT_TIMEOUT = 30000;
     private static int dialogDiscriminator;
+    
+    @JacksonInject("documentId")
     private final String documentId;
+    
+    @JsonProperty("email")
     private String email;
+    
+    @JsonProperty("password_hash")
     private String password;
+    
+    @JsonProperty("token_hash")
     private String authToken;
+    
+    @JsonProperty("admin")
     private boolean admin;
+    
+    @JsonProperty("karma")
     private int karma;
-    private final Map<AvatarPart, Object> appearance = new HashMap<>();
+    
+    @JsonProperty("equipped_clothing")
+    private final Map<ClothingSlot, Item> clothing = new HashMap<>();
+    
+    @JsonProperty("equipped_colors")
+    private final Map<ColorSlot, String> colors = new HashMap<>();
+    
+    private final Set<Item> wardrobe = new HashSet<>();
     private final Map<String, Object> settings = new HashMap<>();
     private final Map<Skill, Integer> skills = new HashMap<>();
     private final Map<Integer, Long> activeChunks = new HashMap<>();
@@ -84,12 +104,14 @@ public class Player extends Entity implements CommandExecutor {
             skills.put(skill, 10);
         }
         
+        for(Item item : ItemRegistry.getItems()) {
+            if(item.isClothing()) {
+                wardrobe.add(item);
+            }
+        }
+        
         this.documentId = documentId;
         this.name = name;
-        appearance.put(AvatarPart.SKIN_COLOR, "fcebd0");
-        appearance.put(AvatarPart.TOPS_OVERLAY, 1206);
-        appearance.put(AvatarPart.LEGS_OVERLAY, 1207);
-        appearance.put(AvatarPart.FACIAL_GEAR, 1208);
         settings.put("hotbar_presets", new ArrayList<>());
         Map<String, Object> test = new HashMap<>();
         test.put("fg", true);
@@ -146,6 +168,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("id", documentId);
         config.put("name", name);
         config.put("h", health);
+        config.putAll(getAppearanceConfig());
         return config;
     }
     
@@ -175,21 +198,7 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new PlayerPositionMessage((int)x, (int)y));
         sendMessage(new HealthMessage(health));
         sendMessage(new InventoryMessage(inventory));
-        
-        List<Integer> wardrobe = new ArrayList<>();
-        
-        for(Item item : ItemRegistry.getItems()) {
-            if(item.isClothing()) {
-                wardrobe.add(item.getId());
-            }
-        }
-        
-        int[] a = new int[wardrobe.size()];
-        
-        for(int i = 0; i < a.length; i++)
-            a[i] = wardrobe.get(i);
-        
-        sendMessage(new WardrobeMessage(a));
+        sendMessage(new WardrobeMessage(wardrobe));
         
         for(Skill skill : skills.keySet()) {
             sendMessage(new SkillMessage(skill, skills.get(skill)));
@@ -384,7 +393,6 @@ public class Player extends Entity implements CommandExecutor {
         this.email = email;
     }
     
-    @JsonProperty("email")
     public String getEmail() {
         return email;
     }
@@ -393,7 +401,6 @@ public class Player extends Entity implements CommandExecutor {
         this.password = password;
     }
     
-    @JsonProperty("password_hash")
     protected String getPassword() {
         return password;
     }
@@ -402,7 +409,6 @@ public class Player extends Entity implements CommandExecutor {
         this.authToken = authToken;
     }
     
-    @JsonProperty("token_hash")
     protected String getAuthToken() {
         return authToken;
     }
@@ -411,7 +417,6 @@ public class Player extends Entity implements CommandExecutor {
         this.admin = admin;
     }
     
-    @JsonProperty("admin")
     public boolean isAdmin() {
         return admin;
     }
@@ -432,6 +437,29 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         return KarmaLevel.POOR;
+    }
+    
+    public void setClothing(ClothingSlot slot, Item item) {
+        if(!item.isClothing()) {
+            return;
+        }
+        
+        clothing.put(slot, item);
+        zone.sendMessage(new EntityStatusMessage(this, EntityStatus.ENTERING));
+    }
+    
+    public void setColor(ColorSlot slot, String hex) {
+        // TODO check if the string is actually a valid hex color
+        colors.put(slot, hex);
+        zone.sendMessage(new EntityStatusMessage(this, EntityStatus.ENTERING));
+    }
+    
+    public boolean hasClothing(Item item) {
+        if(!item.isClothing()) {
+            return false;
+        }
+        
+        return item.isBase() || wardrobe.contains(item);
     }
     
     public void increaseSkillLevel(Skill skill) {
@@ -514,7 +542,22 @@ public class Player extends Entity implements CommandExecutor {
         map.put("admin", admin);
         map.put("karma", karma);
         map.put("current_zone", zone.getDocumentId());
+        map.put("equipped_colors", colors);
+        map.put("equipped_clothing", clothing);        
         return map;
+    }
+    
+    private Map<String, Object> getAppearanceConfig() {
+        Map<String, Object> appearance = new HashMap<>();
+        for(Entry<ClothingSlot, Item> entry : clothing.entrySet()) {
+            appearance.put(entry.getKey().getId(), entry.getValue().getId());
+        }
+        
+        for(Entry<ColorSlot, String> entry : colors.entrySet()) {
+            appearance.put(entry.getKey().getId(), entry.getValue());
+        }
+        
+        return appearance;
     }
     
     /**
@@ -526,7 +569,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("name", name);
         config.put("admin", admin);
         config.put("karma", getKarmaLevel());
-        config.put("appearance", appearance);
+        config.put("appearance", getAppearanceConfig());
         config.put("settings", settings);
         return config;
     }

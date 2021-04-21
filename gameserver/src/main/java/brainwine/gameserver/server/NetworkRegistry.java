@@ -34,6 +34,7 @@ import brainwine.gameserver.server.requests.BlockPlaceRequest;
 import brainwine.gameserver.server.requests.BlockUseRequest;
 import brainwine.gameserver.server.requests.BlocksIgnoreRequest;
 import brainwine.gameserver.server.requests.BlocksRequest;
+import brainwine.gameserver.server.requests.ChangeAppearanceRequest;
 import brainwine.gameserver.server.requests.ChatRequest;
 import brainwine.gameserver.server.requests.ConsoleRequest;
 import brainwine.gameserver.server.requests.DialogRequest;
@@ -76,6 +77,7 @@ public class NetworkRegistry {
         registerRequest(16, BlocksRequest.class);
         registerRequest(18, HealthRequest.class);
         registerRequest(21, BlockUseRequest.class);
+        registerRequest(22, ChangeAppearanceRequest.class);
         registerRequest(24, ZoneChangeRequest.class);
         registerRequest(25, BlocksIgnoreRequest.class);
         registerRequest(45, DialogRequest.class);

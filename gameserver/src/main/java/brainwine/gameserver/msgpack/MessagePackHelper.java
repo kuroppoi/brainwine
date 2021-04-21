@@ -14,12 +14,14 @@ import org.msgpack.unpacker.BufferUnpacker;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.msgpack.models.BlockUseData;
 import brainwine.gameserver.msgpack.models.DialogInputData;
+import brainwine.gameserver.msgpack.models.AppearanceData;
 import brainwine.gameserver.msgpack.templates.BlockTemplate;
 import brainwine.gameserver.msgpack.templates.BlockUseDataTemplate;
 import brainwine.gameserver.msgpack.templates.ChunkTemplate;
 import brainwine.gameserver.msgpack.templates.DialogInputDataTemplate;
 import brainwine.gameserver.msgpack.templates.EnumTemplate;
 import brainwine.gameserver.msgpack.templates.ItemTemplate;
+import brainwine.gameserver.msgpack.templates.AppearanceDataTemplate;
 import brainwine.gameserver.reflections.ReflectionsHelper;
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.gameserver.zone.Block;
@@ -44,6 +46,7 @@ public class MessagePackHelper {
         messagePack.register(Chunk.class, new ChunkTemplate());
         messagePack.register(BlockUseData.class, new BlockUseDataTemplate());
         messagePack.register(DialogInputData.class, new DialogInputDataTemplate());
+        messagePack.register(AppearanceData.class, new AppearanceDataTemplate());
         registerEnumTemplates();
     }
     
