@@ -10,15 +10,15 @@ public class BroadcastCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length == 0) {
-            executor.alert("Usage: /broadcast <message>");
+            executor.sendMessage("Usage: /broadcast <message>");
             return;
         }
         
-        String text = String.join(" ", args);
+        String text = "[Server Notification] " + String.join(" ", args);
         
         // TODO hook the console up to some kind of chat feed?
         if(executor instanceof GameServer) {
-            executor.alert(text);
+            executor.sendMessage(text);
         }
         
         for(Player player : GameServer.getInstance().getPlayerManager().getPlayers()) {

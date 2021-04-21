@@ -127,6 +127,11 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     @Override
+    public void sendMessage(String message) {
+        notify(message, 11);
+    }
+    
+    @Override
     public void setHealth(float health) {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
@@ -351,7 +356,6 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new NotificationMessage(text, type));
     }
     
-    @Override
     public void alert(String text) {
         notify(text, 1);
     }

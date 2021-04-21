@@ -12,17 +12,17 @@ public class KickCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length < 1) {
-            executor.alert("Usage: /kick <player> [reason]");
+            executor.sendMessage("Usage: /kick <player> [reason]");
             return;
         }
         
         Player player = GameServer.getInstance().getPlayerManager().getPlayer(args[0]);
         
         if(player == null) {
-            executor.alert("This player does not exist.");
+            executor.sendMessage("This player does not exist.");
             return;
         } else if(!player.isOnline()) {
-            executor.alert("This player is offline.");
+            executor.sendMessage("This player is offline.");
             return;
         }
         
@@ -33,7 +33,7 @@ public class KickCommand extends Command {
         }
         
         player.kick(reason);
-        executor.alert("Kicked player " + player.getName() + " for '" + reason + "'");
+        executor.sendMessage("Kicked player " + player.getName() + " for '" + reason + "'");
     }
     
     @Override

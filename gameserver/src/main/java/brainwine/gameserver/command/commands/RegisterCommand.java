@@ -10,14 +10,14 @@ public class RegisterCommand extends Command{
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(!(executor instanceof Player)) {
-            executor.alert("Only players can use this command.");
+            executor.sendMessage("Only players can use this command.");
             return;
         }
         
         Player player = (Player)executor;
         
         if(player.isRegistered()) {
-            player.alert("You have already registered your account.");
+            player.sendMessage("You have already registered your account.");
             return;
         }
         

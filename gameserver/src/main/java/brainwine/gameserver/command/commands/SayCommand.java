@@ -10,12 +10,12 @@ public class SayCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(!(executor instanceof Player)) {
-            executor.alert("Only players can use this command.");
+            executor.sendMessage("Only players can use this command.");
             return;
         }
         
         if(args.length == 0) {
-            executor.alert("Usage: /say <message>");
+            executor.sendMessage("Usage: /say <message>");
             return;
         }
         

@@ -64,13 +64,13 @@ public class CommandManager {
         Command command = commands.get(commandName);
         
         if(command == null) {
-            executor.alert("Sorry, that command does not exist.");
+            executor.sendMessage("Sorry, that command does not exist.");
             return;
         }
         
         if(executor instanceof Player && command.requiresAdmin()) {
             if(!((Player)executor).isAdmin()) {
-                executor.alert("Sorry, you do not have the required permissions for this command.");
+                executor.sendMessage("Sorry, you do not have the required permissions for this command.");
                 return;
             }
         }

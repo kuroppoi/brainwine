@@ -51,7 +51,7 @@ public class GameServer implements CommandExecutor {
     }
     
     @Override
-    public void alert(String text) {
+    public void sendMessage(String text) {
         logger.info(text);
     }
     
