@@ -58,8 +58,8 @@ public class Zone {
     private float temperature = 0;
     private float wind = 0;
     private float cloudiness = 5000;
-    private float precipitation = 10000;
-    private float acidity = 10000;
+    private float precipitation = 0;
+    private float acidity = 0;
     private final ChunkIOManager chunkManager;
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<Integer, Entity> entities = new HashMap<>();
