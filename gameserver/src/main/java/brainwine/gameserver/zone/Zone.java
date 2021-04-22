@@ -13,7 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.entity.Entity;
@@ -37,7 +37,7 @@ import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.util.MathUtils;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIncludeProperties({"name", "biome", "width", "height"})
 public class Zone {
     
     public static final int DEFAULT_CHUNK_WIDTH = 20;

@@ -10,7 +10,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -51,7 +51,7 @@ import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIncludeProperties({"name", "email", "password_hash", "token_hash", "admin", "karma", "equipped_clothing", "equipped_colors"})
 public class Player extends Entity implements CommandExecutor {
     
     public static final int MAX_SKILL_LEVEL = 15;
