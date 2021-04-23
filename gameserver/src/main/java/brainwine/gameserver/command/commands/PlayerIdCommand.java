@@ -33,6 +33,21 @@ public class PlayerIdCommand extends Command {
     }
     
     @Override
+    public String getName() {
+        return "pid";
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Displays the document id of a player.";
+    }
+    
+    @Override
+    public String getUsage() {
+        return "/pid [player]";
+    }
+    
+    @Override
     public boolean requiresAdmin() {
         return true;
     }

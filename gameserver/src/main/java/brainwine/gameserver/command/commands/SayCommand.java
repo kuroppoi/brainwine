@@ -15,12 +15,27 @@ public class SayCommand extends Command {
         }
         
         if(args.length == 0) {
-            executor.sendMessage("Usage: /say <message>");
+            executor.sendMessage(String.format("Usage: %s", getUsage()));
             return;
         }
         
         String text = String.join(" ", args);
         Player player = ((Player)executor);
         player.getZone().chat(player, text, ChatType.SPEECH);
+    }
+    
+    @Override
+    public String getName() {
+        return "say";
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Shows a speech bubble to nearby players.";
+    }
+    
+    @Override
+    public String getUsage() {
+        return "/say <message>";
     }
 }

@@ -12,7 +12,7 @@ public class KickCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length < 1) {
-            executor.sendMessage("Usage: /kick <player> [reason]");
+            executor.sendMessage(String.format("Usage: %s", getUsage()));
             return;
         }
         
@@ -34,6 +34,21 @@ public class KickCommand extends Command {
         
         player.kick(reason);
         executor.sendMessage("Kicked player " + player.getName() + " for '" + reason + "'");
+    }
+    
+    @Override
+    public String getName() {
+        return "kick";
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Kicks a player from the server.";
+    }
+    
+    @Override
+    public String getUsage() {
+        return "/kick <player> [reason]";
     }
     
     @Override

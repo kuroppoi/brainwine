@@ -15,12 +15,27 @@ public class ThinkCommand extends Command {
         }
         
         if(args.length == 0) {
-            executor.sendMessage("Usage: /think <message>");
+            executor.sendMessage(String.format("Usage: %s", getUsage()));
             return;
         }
         
         String text = String.join(" ", args);
         Player player = ((Player)executor);
         player.getZone().chat(player, text, ChatType.THOUGHT);
+    }
+    
+    @Override
+    public String getName() {
+        return "think";
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Shows a thought bubble to nearby players.";
+    }
+    
+    @Override
+    public String getUsage() {
+        return "/think <message>";
     }
 }

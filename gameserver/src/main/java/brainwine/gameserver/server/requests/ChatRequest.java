@@ -11,8 +11,7 @@ public class ChatRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
-        // TODO configurable prefix
-        if(text.startsWith("!")) {
+        if(text.startsWith(CommandManager.CUSTOM_COMMAND_PREFIX)) {
             CommandManager.executeCommand(player, text.substring(1));
             return;
         }

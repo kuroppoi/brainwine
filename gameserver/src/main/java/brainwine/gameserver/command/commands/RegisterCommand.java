@@ -23,4 +23,14 @@ public class RegisterCommand extends Command{
         
         player.showDialog(new RegistrationDialog());
     }
+    
+    @Override
+    public String getName() {
+        return "register";
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Shows a prompt with which you can register your account.";
+    }
 }

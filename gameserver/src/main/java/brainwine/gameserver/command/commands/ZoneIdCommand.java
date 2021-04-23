@@ -34,6 +34,21 @@ public class ZoneIdCommand extends Command {
     }
     
     @Override
+    public String getName() {
+        return "zid";
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Displays the document id of a zone.";
+    }
+    
+    @Override
+    public String getUsage() {
+        return "/zid [zone]";
+    }
+    
+    @Override
     public boolean requiresAdmin() {
         return true;
     }

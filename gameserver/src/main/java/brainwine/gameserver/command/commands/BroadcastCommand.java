@@ -10,7 +10,7 @@ public class BroadcastCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length == 0) {
-            executor.sendMessage("Usage: /broadcast <message>");
+            executor.sendMessage(String.format("Usage: %s", getUsage()));
             return;
         }
         
@@ -22,8 +22,28 @@ public class BroadcastCommand extends Command {
         }
         
         for(Player player : GameServer.getInstance().getPlayerManager().getPlayers()) {
-            player.notify(text, 9);
+            player.notify(text, 11);
         }
+    }
+    
+    @Override
+    public String getName() {
+        return "broadcast";
+    }
+    
+    @Override
+    public String[] getAliases() {
+        return new String[] { "bc" };
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Broadcasts a message to the entire server.";
+    }
+    
+    @Override
+    public String getUsage() {
+        return "/broadcast <message>";
     }
     
     @Override

@@ -1,6 +1,8 @@
 package brainwine.gameserver.command;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -8,6 +10,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.command.commands.BroadcastCommand;
+import brainwine.gameserver.command.commands.HelpCommand;
 import brainwine.gameserver.command.commands.KickCommand;
 import brainwine.gameserver.command.commands.PlayerIdCommand;
 import brainwine.gameserver.command.commands.RegisterCommand;
@@ -20,8 +23,10 @@ import brainwine.gameserver.entity.player.Player;
 
 public class CommandManager {
     
+    public static final String CUSTOM_COMMAND_PREFIX = "!"; // TODO configurable
     private static final Logger logger = LogManager.getLogger();
     private static final Map<String, Command> commands = new HashMap<>();
+    private static final Map<String, Command> aliases = new HashMap<>();
     private static boolean initialized = false;
     
     public static void init() {
@@ -36,15 +41,16 @@ public class CommandManager {
     
     private static void registerCommands() {
         logger.info("Registering commands ...");
-        registerCommand("stop", new StopCommand());
-        registerCommand("register", new RegisterCommand());
-        registerCommand("tp", new TeleportCommand());
-        registerCommand("kick", new KickCommand());
-        registerCommand("say", new SayCommand());
-        registerCommand("think", new ThinkCommand());
-        registerCommand("bc", new BroadcastCommand());
-        registerCommand("pid", new PlayerIdCommand());
-        registerCommand("zid", new ZoneIdCommand());
+        registerCommand(new StopCommand());
+        registerCommand(new RegisterCommand());
+        registerCommand(new TeleportCommand());
+        registerCommand(new KickCommand());
+        registerCommand(new SayCommand());
+        registerCommand(new ThinkCommand());
+        registerCommand(new BroadcastCommand());
+        registerCommand(new PlayerIdCommand());
+        registerCommand(new ZoneIdCommand());
+        registerCommand(new HelpCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {
@@ -65,10 +71,14 @@ public class CommandManager {
     }
     
     public static void executeCommand(CommandExecutor executor, String commandName, String[] args) {
-        Command command = commands.get(commandName);
+        if(!(executor instanceof Player) && commandName.startsWith(CUSTOM_COMMAND_PREFIX) || commandName.startsWith("/")) {
+            commandName = commandName.substring(1);
+        }
+        
+        Command command = commands.getOrDefault(commandName, aliases.get(commandName));
         
         if(command == null) {
-            executor.sendMessage("Sorry, that command does not exist.");
+            executor.sendMessage("Unknown command. Type '/help' for a list of commands.");
             return;
         }
         
@@ -82,16 +92,37 @@ public class CommandManager {
         command.execute(executor, args);
     }
     
-    public static void registerCommand(String name, Command command) {
+    public static void registerCommand(Command command) {
+        String name = command.getName();
+        
        if(commands.containsKey(name)) {
            logger.warn("Attempted to register duplicate command {} with name {}", command.getClass(), name);
            return;
        }
        
        commands.put(name, command);
+       String[] aliases = command.getAliases();
+       
+       if(aliases != null) {
+           for(String alias : aliases) {
+               if(commands.containsKey(alias) || CommandManager.aliases.containsKey(alias)) {
+                   logger.warn("Duplicate alias {} for command {}", alias, command.getClass());
+                   continue;
+               }
+               
+               CommandManager.aliases.put(alias, command);
+           }
+       }
     }
     
     public static Set<String> getCommandNames() {
-        return commands.keySet();
+        Set<String> names = new HashSet<>();
+        names.addAll(commands.keySet());
+        names.addAll(aliases.keySet());
+        return names;
+    }
+    
+    public static Collection<Command> getCommands() {
+        return commands.values();
     }
 }

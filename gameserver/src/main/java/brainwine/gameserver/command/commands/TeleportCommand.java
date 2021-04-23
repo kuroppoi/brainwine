@@ -14,7 +14,7 @@ public class TeleportCommand extends Command {
         }
         
         if(args.length !=  2) {
-            executor.sendMessage("Usage: /teleport <x> <y>");
+            executor.sendMessage(String.format("Usage: %s", getUsage()));
             return;
         }
         
@@ -36,5 +36,25 @@ public class TeleportCommand extends Command {
         }
         
         player.teleport(x, y);
+    }
+    
+    @Override
+    public String getName() {
+        return "teleport";
+    }
+    
+    @Override
+    public String[] getAliases() {
+        return new String[] { "tp" };
+    }
+    
+    @Override
+    public String getDescription() {
+        return "Teleports you to the specified position.";
+    }
+    
+    @Override
+    public String getUsage() {
+        return "/teleport <x> <y>";
     }
 }
