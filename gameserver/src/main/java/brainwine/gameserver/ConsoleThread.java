@@ -26,11 +26,19 @@ public class ConsoleThread extends Thread {
         
         try {
             while((line = reader.readLine()) != null) {
-                // TODO run these on main thread lol
-                CommandManager.executeCommand(server, line);
+                queueConsoleCommand(line);
             }
         } catch(IOException e) {
             logger.info("Could not read console input", e);
         }
+    }
+    
+    private void queueConsoleCommand(String commandLine) {
+        server.queueSynchronousTask(new Runnable() {
+            @Override
+            public void run() {
+                CommandManager.executeCommand(server, commandLine);
+            }
+        });
     }
 }
