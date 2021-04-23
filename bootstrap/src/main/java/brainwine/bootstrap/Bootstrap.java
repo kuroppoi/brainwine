@@ -31,6 +31,7 @@ public class Bootstrap {
         gameServer = new GameServer();
         api = new Api();
         Runtime.getRuntime().addShutdownHook(new ShutdownThread(this));
+        logger.info("Bootstrap complete. Type 'stop' in the console to shutdown the server.");
         runTickLoop();
     }
     
