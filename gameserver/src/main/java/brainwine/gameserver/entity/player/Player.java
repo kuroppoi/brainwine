@@ -150,7 +150,7 @@ public class Player extends Entity implements CommandExecutor {
     
     @Override
     public void sendMessage(String message) {
-        notify(message, 11);
+        notify(message, 9);
     }
     
     @Override
