@@ -77,7 +77,7 @@ public class Inventory {
             int slot = -1;
             
             if((slot = hotbar.getSlot(item)) != -1) {
-                itemData.add(ContainerType.HOTBAR.id);
+                itemData.add(ContainerType.HOTBAR.getId());
                 itemData.add(slot);
             }
             

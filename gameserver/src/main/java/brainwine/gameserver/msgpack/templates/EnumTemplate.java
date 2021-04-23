@@ -13,7 +13,7 @@ import org.msgpack.template.AbstractTemplate;
 import org.msgpack.type.ValueType;
 import org.msgpack.unpacker.Unpacker;
 
-import brainwine.gameserver.msgpack.EnumIdentifier;
+import brainwine.gameserver.msgpack.EnumValue;
 
 public class EnumTemplate<T> extends AbstractTemplate<T> {
     
@@ -24,7 +24,7 @@ public class EnumTemplate<T> extends AbstractTemplate<T> {
         T[] entries = type.getEnumConstants();
         
         for(Field field : type.getFields()) {
-            if(field.isAnnotationPresent(EnumIdentifier.class)) {
+            if(field.isAnnotationPresent(EnumValue.class)) {
                 try {
                     for(T entry : entries) {
                         Object id = field.get(entry);
@@ -40,7 +40,7 @@ public class EnumTemplate<T> extends AbstractTemplate<T> {
         }
         
         for(Method method : type.getMethods()) {
-            if(method.isAnnotationPresent(EnumIdentifier.class)) {
+            if(method.isAnnotationPresent(EnumValue.class)) {
                 try {
                     for(T entry : entries) {
                         Object id = method.invoke(entry);

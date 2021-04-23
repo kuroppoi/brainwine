@@ -16,7 +16,7 @@ public enum ItemUseType {
     UNKNOWN;
         
     @JsonCreator
-    public static ItemUseType create(String id) {
+    public static ItemUseType fromId(String id) {
         String formatted = id.toUpperCase().replace(" ", "_");
         
         for(ItemUseType value : values()) {

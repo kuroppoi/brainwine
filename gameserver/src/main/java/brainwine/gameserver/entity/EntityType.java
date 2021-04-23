@@ -1,6 +1,6 @@
 package brainwine.gameserver.entity;
 
-import brainwine.gameserver.msgpack.EnumIdentifier;
+import brainwine.gameserver.msgpack.EnumValue;
 import brainwine.gameserver.msgpack.RegisterEnum;
 
 @RegisterEnum
@@ -11,10 +11,14 @@ public enum EntityType {
     TERRAPUS_JUVENLIE(3),
     TERRAPUS_ADULT(4);
     
-    @EnumIdentifier
-    public final int id;
+    private final int id;
     
     private EntityType(int id) {
         this.id = id;
+    }
+    
+    @EnumValue
+    public int getId() {
+        return id;
     }
 }
