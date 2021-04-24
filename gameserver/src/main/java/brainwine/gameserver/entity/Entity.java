@@ -13,7 +13,6 @@ public abstract class Entity {
     private static int discriminator;
     protected String name;
     protected float health;
-    protected float steam;
     protected final int id;
     protected Zone zone;
     protected float x;
@@ -59,14 +58,6 @@ public abstract class Entity {
     
     public float getHealth() {
         return health;
-    }
-    
-    public void setSteam(float steam) {
-    	this.steam = steam;
-    }
-    
-    public float getSteam() {
-    	return steam;
     }
     
     public void setPosition(float x, float y) {
