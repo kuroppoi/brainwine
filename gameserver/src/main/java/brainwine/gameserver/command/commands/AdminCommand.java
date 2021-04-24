@@ -24,8 +24,8 @@ public class AdminCommand extends Command {
             return;
         }
         
-        player.setAdmin(!player.getAdmin());
-        player.kick("Updated User Status");
+        player.setAdmin(Boolean.parseBoolean(args.length == 2 ? args[1] : "true"));
+        player.kick("Updated User Status\n\n" + "Admin: " + player.getAdmin());
         executor.sendMessage("Changed Admin status of user " + player.getName() + " to " + player.getAdmin());
     }
     
@@ -36,12 +36,12 @@ public class AdminCommand extends Command {
     
     @Override
     public String getDescription() {
-        return "Toggles a user's Administrator status.";
+        return "Sets a user's Administrator status.";
     }
     
     @Override
     public String getUsage() {
-        return "/admin <player>";
+        return "/admin <player> <true/false>";
     }
     
     @Override
