@@ -213,8 +213,10 @@ public class Player extends Entity implements CommandExecutor {
         if(zone != null) {
             zone.removePlayer(this);
             activeChunks.clear();
-            dialogs.clear();
         }
+        
+        dialogs.clear();
+        connection = null;
     }
     
     /**

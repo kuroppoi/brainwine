@@ -39,6 +39,8 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
     
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        kick("Connection terminated");
+        
         if(player == null) {
             return;
         }
@@ -67,8 +69,9 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
             return;
         }
         
-        logger.warn(cause.getMessage());
-        // log warn, kick connection.
+        String error = cause.getMessage();
+        logger.warn(error);
+        //kick(error);
     }
     
     public ChannelFuture sendMessage(Message message) {
@@ -86,7 +89,9 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
     }
     
     public void kick(String reason, boolean shouldReconnect) {
-        sendMessage(new KickMessage(reason, shouldReconnect)).addListener(ChannelFutureListener.CLOSE);
+        if(isOpen()) {
+            sendMessage(new KickMessage(reason, shouldReconnect)).addListener(ChannelFutureListener.CLOSE);
+        }
     }
     
     public void setPlayer(Player player) {
