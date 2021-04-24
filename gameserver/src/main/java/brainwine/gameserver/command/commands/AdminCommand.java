@@ -25,7 +25,8 @@ public class AdminCommand extends Command {
         }
         
         player.setAdmin(!player.getAdmin());
-        executor.sendMessage("Kicked player " + player.getName());
+        player.kick("Updated User Status");
+        executor.sendMessage("Changed Admin status of user " + player.getName() + " to " + player.getAdmin());
     }
     
     @Override
