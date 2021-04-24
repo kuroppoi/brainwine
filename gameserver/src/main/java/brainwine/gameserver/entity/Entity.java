@@ -47,7 +47,7 @@ public abstract class Entity {
     }
     
     public Boolean getAdmin() {
-    	return admin;
+    	return this.admin;
     }
     
     public void setName(String name) {
@@ -55,11 +55,11 @@ public abstract class Entity {
     }
     
     public String getName() {
-        return name;
+        return this.name;
     }
     
     public boolean isDead() {
-        return health <= 0;
+        return this.health <= 0;
     }
     
     public void setHealth(float health) {
