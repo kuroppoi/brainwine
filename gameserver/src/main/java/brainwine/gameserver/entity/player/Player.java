@@ -90,14 +90,14 @@ public class Player extends Entity implements CommandExecutor {
     private final Map<Skill, Integer> skills = new HashMap<>();
     private final Map<Integer, Long> activeChunks = new HashMap<>();
     private final Map<Integer, ConfigurableDialog> dialogs = new HashMap<>();
-    private final Inventory inventory = new Inventory();
     private Item heldItem = Item.AIR; // TODO send on entity add
     private int teleportX;
     private int teleportY;
     private long lastHeartbeat;
     private Connection connection;
     
-    public Player(String documentId, String name, Zone zone) {
+    @ConstructorProperties({"documentId", "name", "current_zone"})
+    public Player(@JacksonInject("documentId") String documentId, String name, Zone zone) {
         super(zone);
         
         for(Skill skill : Skill.values()) {
@@ -118,18 +118,6 @@ public class Player extends Entity implements CommandExecutor {
         test.put("to", true);
         test.put("lo", true);
         settings.put("appearance", test);
-    }
-    
-    @JsonCreator
-    private static Player create(@JacksonInject("documentId") String documentId, @JsonProperty("name") String name, @JsonProperty("current_zone") String currentZone) {
-        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
-        Zone zone = zoneManager.getZone(currentZone);
-        
-        if(zone == null) {
-            zone = zoneManager.getRandomZone();
-        }
-        
-        return new Player(documentId, name, zone);
     }
     
     @Override

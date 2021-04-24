@@ -56,6 +56,11 @@ public class PlayerManager {
         
         try {
             Player player = mapper.readValue(file, Player.class);
+            
+            if(player.getZone() == null) {
+                player.setZone(GameServer.getInstance().getZoneManager().getRandomZone());
+            }
+            
             String name = player.getName();
             
             if(playersByName.containsKey(name)) {

@@ -13,9 +13,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.player.ChatType;
@@ -94,6 +96,11 @@ public class Zone {
         chunksExplored = new boolean[numChunksWidth * numChunksHeight];
         Arrays.fill(surface, height);
         Arrays.fill(sunlight, height);
+    }
+    
+    @JsonCreator
+    private static Zone fromId(String id) {
+        return GameServer.getInstance().getZoneManager().getZone(id);
     }
     
     public void tick() {
