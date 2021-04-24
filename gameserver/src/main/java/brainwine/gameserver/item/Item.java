@@ -31,6 +31,9 @@ public class Item {
     @JacksonInject("name") 
     private String name;
     
+    @JsonProperty("title")
+    private String title;
+    
     @JsonProperty("layer")
     private Layer layer = Layer.NONE;
     
@@ -95,6 +98,10 @@ public class Item {
     @JsonValue
     public String getName() {
         return name;
+    }
+    
+    public String getTitle() {
+        return title;
     }
     
     public boolean isAir() {

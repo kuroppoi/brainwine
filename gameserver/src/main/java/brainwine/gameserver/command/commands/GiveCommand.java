@@ -49,12 +49,12 @@ public class GiveCommand extends Command {
         
         if(quantity > 0) {
             target.getInventory().addItem(item, quantity);
-            target.alert(String.format("You received %s %s from an administrator.", quantity, item.getName()));
-            executor.sendMessage(String.format("Gave %s %s to %s", quantity, item.getName(), target.getName()));
+            target.alert(String.format("You received %s %s from an administrator.", quantity, item.getTitle()));
+            executor.sendMessage(String.format("Gave %s %s to %s", quantity, item.getTitle(), target.getName()));
         } else {
             target.getInventory().removeItem(item, -quantity);
-            target.alert(String.format("%s %s was taken from your inventory.", -quantity, item.getName()));
-            executor.sendMessage(String.format("Took %s %s from %s", quantity, item.getName(), target.getName()));
+            target.alert(String.format("%s %s was taken from your inventory.", -quantity, item.getTitle()));
+            executor.sendMessage(String.format("Took %s %s from %s", quantity, item.getTitle(), target.getName()));
         }
     }
 
