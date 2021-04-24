@@ -38,6 +38,7 @@ import brainwine.gameserver.server.requests.BlocksRequest;
 import brainwine.gameserver.server.requests.ChangeAppearanceRequest;
 import brainwine.gameserver.server.requests.ChatRequest;
 import brainwine.gameserver.server.requests.ConsoleRequest;
+import brainwine.gameserver.server.requests.CraftRequest;
 import brainwine.gameserver.server.requests.DialogRequest;
 import brainwine.gameserver.server.requests.EntitiesRequest;
 import brainwine.gameserver.server.requests.HealthRequest;
@@ -77,6 +78,7 @@ public class NetworkRegistry {
         registerRequest(14, InventoryMoveRequest.class);
         registerRequest(16, BlocksRequest.class);
         registerRequest(18, HealthRequest.class);
+        registerRequest(19, CraftRequest.class);
         registerRequest(21, BlockUseRequest.class);
         registerRequest(22, ChangeAppearanceRequest.class);
         registerRequest(24, ZoneChangeRequest.class);

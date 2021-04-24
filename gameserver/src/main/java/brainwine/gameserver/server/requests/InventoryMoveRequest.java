@@ -1,11 +1,14 @@
 package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.entity.player.ContainerType;
-import brainwine.gameserver.entity.player.Inventory;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.server.PlayerRequest;
 
+/**
+ * TODO This request may be sent *before* a {@link CraftRequest} is sent.
+ * So basically, we can't really perform any "has item" checks...
+ */
 public class InventoryMoveRequest extends PlayerRequest {
     
     public Item item;
@@ -18,13 +21,6 @@ public class InventoryMoveRequest extends PlayerRequest {
             return;
         }
         
-        Inventory inventory = player.getInventory();
-        
-        if(!inventory.hasItem(item)) {
-            player.alert("Sorry, you do not have that item.");
-            return;
-        }
-        
-        inventory.moveItemToContainer(item, container, slot);
+        player.getInventory().moveItemToContainer(item, container, slot);
     }
 }

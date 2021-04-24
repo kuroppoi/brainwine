@@ -7,6 +7,10 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.EntityItemUseMessage;
 
+/**
+ * TODO This request may be sent *before* a {@link CraftRequest} is sent.
+ * So basically, we can't really perform any "has item" checks...
+ */
 public class InventoryUseRequest extends PlayerRequest {
     
     public int type; // 0 = main, 1 = secondary
@@ -16,11 +20,6 @@ public class InventoryUseRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
-        if(!player.getInventory().hasItem(item)) {
-            player.alert("Sorry, you do not have that item.");
-            return;
-        }
-        
         if(type == 0) {
             if(status != 2) {
                 player.setHeldItem(item);

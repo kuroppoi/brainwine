@@ -1,6 +1,8 @@
 package brainwine.gameserver.item;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
@@ -60,6 +62,12 @@ public class Item {
     
     @JsonProperty("inventory")
     private String inventoryItem;
+    
+    @JsonProperty("crafting quantity")
+    private int craftingQuantity = 1;
+    
+    @JsonProperty("ingredients")
+    private List<CraftingIngredient> ingredients = new ArrayList<>();
     
     @JsonProperty("use")
     private Map<ItemUseType, Object> useConfigs = new HashMap<>();
@@ -162,6 +170,18 @@ public class Item {
         }
         
         return ItemRegistry.getItem(inventoryItem);
+    }
+    
+    public int getCraftingQuantity() {
+        return craftingQuantity;
+    }
+    
+    public boolean isCraftable() {
+        return !ingredients.isEmpty();
+    }
+    
+    public List<CraftingIngredient> getIngredients() {
+        return ingredients;
     }
     
     public boolean hasUse(ItemUseType... types) {

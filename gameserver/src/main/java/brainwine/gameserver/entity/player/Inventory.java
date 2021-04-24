@@ -97,7 +97,11 @@ public class Inventory {
     }
     
     public boolean hasItem(Item item) {
-        return getQuantity(item) > 0;
+        return hasItem(item, 1);
+    }
+    
+    public boolean hasItem(Item item, int quantity) {
+        return getQuantity(item) >= quantity;
     }
     
     public int getQuantity(Item item) {
