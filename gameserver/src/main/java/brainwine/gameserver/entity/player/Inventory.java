@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
@@ -17,6 +18,7 @@ import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 
+@JsonIncludeProperties({"items", "hotbar", "accessories"})
 public class Inventory {
     
     @JsonProperty("items")
