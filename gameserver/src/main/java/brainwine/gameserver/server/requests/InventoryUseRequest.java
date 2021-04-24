@@ -16,6 +16,11 @@ public class InventoryUseRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
+        if(!player.getInventory().hasItem(item)) {
+            player.alert("Sorry, you do not have that item.");
+            return;
+        }
+        
         if(type == 0) {
             if(status != 2) {
                 player.setHeldItem(item);
