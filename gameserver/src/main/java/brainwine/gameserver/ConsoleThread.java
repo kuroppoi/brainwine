@@ -29,7 +29,7 @@ public class ConsoleThread extends Thread {
                 queueConsoleCommand(line);
             }
         } catch(IOException e) {
-            logger.info("Could not read console input", e);
+            logger.error("Could not read console input", e);
         }
     }
     
