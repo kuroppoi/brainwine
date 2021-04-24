@@ -41,7 +41,7 @@ public class AdminCommand extends Command {
     
     @Override
     public String getUsage() {
-        return "/admin <player> <true/false>";
+        return "/admin <player> <optional false>";
     }
     
     @Override
