@@ -6,7 +6,6 @@ import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.entity.player.Player;
 
 public class AdminCommand extends Command {
-    
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length == 0) {
@@ -19,13 +18,10 @@ public class AdminCommand extends Command {
         if(player == null) {
             executor.sendMessage("This player does not exist.");
             return;
-        } else if(!player.isOnline()) {
-            executor.sendMessage("This player is offline.");
-            return;
         }
         
         player.setAdmin(Boolean.parseBoolean(args.length == 2 ? args[1] : "true"));
-        player.kick("Updated User Status\n\n" + "Admin: " + player.isAdmin());
+        if (player.isOnline()) player.kick("Updated User Status\n\n" + "Admin: " + player.isAdmin());
         executor.sendMessage("Changed Admin status of user " + player.getName() + " to " + player.isAdmin());
     }
     
