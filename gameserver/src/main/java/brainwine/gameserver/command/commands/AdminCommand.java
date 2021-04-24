@@ -24,11 +24,9 @@ public class AdminCommand extends Command {
             return;
         }
         
-        Boolean adminSet = Boolean.parseBoolean(args.length == 2 ? args[1] : "true");
-        
-        player.setAdmin(adminSet);
-        player.kick("Updated User Status\n\n" + "Admin: " + adminSet);
-        executor.sendMessage("Changed Admin status of user " + player.getName() + " to " + adminSet);
+        player.setAdmin(Boolean.parseBoolean(args.length == 2 ? args[1] : "true"));
+        player.kick("Updated User Status\n\n" + "Admin: " + player.isAdmin());
+        executor.sendMessage("Changed Admin status of user " + player.getName() + " to " + player.isAdmin());
     }
     
     @Override

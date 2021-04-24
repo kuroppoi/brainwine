@@ -24,7 +24,6 @@ public abstract class Entity {
     protected int targetY;
     protected FacingDirection direction = FacingDirection.WEST;
     protected int animation;
-    protected Boolean admin = false;
     
     public Entity(Zone zone) {
         this.id = ++discriminator;
@@ -40,14 +39,6 @@ public abstract class Entity {
     
     public int getId() {
         return id;
-    }
-    
-    public void setAdmin(Boolean admin) {
-    	this.admin = admin;
-    }
-    
-    public Boolean getAdmin() {
-    	return admin;
     }
     
     public void setName(String name) {
