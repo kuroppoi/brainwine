@@ -13,6 +13,7 @@ public abstract class Entity {
     private static int discriminator;
     protected String name;
     protected float health;
+    protected float steam;
     protected final int id;
     protected Zone zone;
     protected float x;
@@ -23,6 +24,7 @@ public abstract class Entity {
     protected int targetY;
     protected FacingDirection direction = FacingDirection.WEST;
     protected int animation;
+    protected Boolean admin;
     
     public Entity(Zone zone) {
         this.id = ++discriminator;
@@ -40,6 +42,14 @@ public abstract class Entity {
         return id;
     }
     
+    public void setAdmin(Boolean admin) {
+    	this.admin = admin;
+    }
+    
+    public Boolean getAdmin() {
+    	return admin;
+    }
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -48,16 +58,24 @@ public abstract class Entity {
         return name;
     }
     
-    public void setHealth(float health) {
-        this.health = health;
-    }
-    
     public boolean isDead() {
         return health <= 0;
     }
     
+    public void setHealth(float health) {
+        this.health = health;
+    }
+    
     public float getHealth() {
         return health;
+    }
+    
+    public void setSteam(float steam) {
+    	this.steam = steam;
+    }
+    
+    public float getSteam() {
+    	return steam;
     }
     
     public void setPosition(float x, float y) {
