@@ -13,6 +13,7 @@ import brainwine.gameserver.server.messages.ChatMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
 import brainwine.gameserver.server.messages.DialogMessage;
 import brainwine.gameserver.server.messages.EffectMessage;
+import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.EntityItemUseMessage;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
@@ -95,6 +96,7 @@ public class NetworkRegistry {
         registerMessage(PlayerPositionMessage.class, 5);
         registerMessage(EntityPositionMessage.class, 6);
         registerMessage(EntityStatusMessage.class, 7);
+        registerMessage(EntityChangeMessage.class, 8);
         registerMessage(BlockChangeMessage.class, 9);
         registerMessage(EntityItemUseMessage.class, 10);
         registerMessage(ChatMessage.class, 13);

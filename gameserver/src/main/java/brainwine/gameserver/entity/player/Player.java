@@ -29,6 +29,7 @@ import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
 import brainwine.gameserver.server.messages.DialogMessage;
 import brainwine.gameserver.server.messages.EffectMessage;
+import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.EntityItemUseMessage;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
@@ -436,13 +437,13 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         clothing.put(slot, item);
-        zone.sendMessage(new EntityStatusMessage(this, EntityStatus.ENTERING));
+        zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
     }
     
     public void setColor(ColorSlot slot, String hex) {
         // TODO check if the string is actually a valid hex color
         colors.put(slot, hex);
-        zone.sendMessage(new EntityStatusMessage(this, EntityStatus.ENTERING));
+        zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
     }
     
     public boolean hasClothing(Item item) {
