@@ -25,7 +25,13 @@ public class AdminCommand extends Command {
         }
         
         boolean admin = args.length == 1 ? true : Boolean.parseBoolean(args[1]);
-        target.setAdmin(admin));
+        
+        if(target.isAdmin() == admin) {
+            executor.sendMessage(admin ? "This player is already an administrator." : "This player is not an administrator.");
+            return;
+        }
+        
+        target.setAdmin(admin);
         target.kick(admin ? "You have been given the administrator role! Please restart your game to see its full effects." : "Your administrator privileges have been revoked.");
         executor.sendMessage(String.format("Changed administrator status of player %s to %s", target.getName(), admin));
     }
