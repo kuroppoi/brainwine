@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import brainwine.gameserver.command.commands.AdminCommand;
 import brainwine.gameserver.command.commands.BroadcastCommand;
 import brainwine.gameserver.command.commands.HelpCommand;
 import brainwine.gameserver.command.commands.KickCommand;
@@ -50,6 +51,7 @@ public class CommandManager {
         registerCommand(new BroadcastCommand());
         registerCommand(new PlayerIdCommand());
         registerCommand(new ZoneIdCommand());
+        registerCommand(new AdminCommand());
         registerCommand(new HelpCommand());
     }
     

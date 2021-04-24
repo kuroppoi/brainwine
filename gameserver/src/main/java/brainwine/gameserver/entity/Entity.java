@@ -48,12 +48,12 @@ public abstract class Entity {
         return name;
     }
     
-    public void setHealth(float health) {
-        this.health = health;
-    }
-    
     public boolean isDead() {
         return health <= 0;
+    }
+    
+    public void setHealth(float health) {
+        this.health = health;
     }
     
     public float getHealth() {
