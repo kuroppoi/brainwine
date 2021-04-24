@@ -12,7 +12,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Item {
     
-    public static final Item AIR = new Item();
+    public static final Item AIR = new Item() {
+        
+        @Override
+        public int getId() {
+            return 0;
+        }
+        
+        @Override
+        public String getName() {
+            return "air";
+        }
+    };
     
     @JsonProperty("code")
     private int id;
@@ -57,6 +68,11 @@ public class Item {
         return ItemRegistry.getItem(id);
     }
     
+    @JsonCreator
+    private static Item fromName(String name) {
+        return ItemRegistry.getItem(name);
+    }
+    
     @Override
     public int hashCode() {
         return id;
@@ -72,11 +88,11 @@ public class Item {
         return item.getId() == id;
     }
     
-    @JsonValue
     public int getId() {
         return id;
     }
     
+    @JsonValue
     public String getName() {
         return name;
     }
