@@ -1,23 +1,51 @@
 package brainwine.gameserver.entity.player;
 
+import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.item.ItemUseType;
+import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 
 public class Inventory {
     
+    @JsonProperty("items")
     private final Map<Item, Integer> items = new HashMap<>();
-    private final ItemContainer hotbar = new ItemContainer(10);
     
-    public Inventory() {
-        for(Item item : ItemRegistry.getItems()) {
-            items.put(item, 9999);
+    // TODO clean up, perhaps just merge with inventory somehow.
+    private final ItemContainer hotbar = new ItemContainer(10);
+    private final ItemContainer accessories = new ItemContainer(20);
+    
+    @JsonBackReference
+    private Player player;  
+    
+    public Inventory(Player player) {
+        this.player = player;
+        addItem(ItemRegistry.getItem("tools/pickaxe")); // default pickaxe TODO move elsewhere, this is for convenience only.
+    }
+    
+    @ConstructorProperties({"hotbar", "accessories"})
+    private Inventory(Item[] hotbar, Item[] accessories) {
+        if(hotbar != null) {
+            for(int i = 0; i < hotbar.length; i++) {
+                this.hotbar.moveItem(hotbar[i], i);
+            }
+        }
+        
+        if(accessories != null) {
+            for(int i = 0; i < accessories.length; i++) {
+                this.accessories.moveItem(accessories[i], i);
+            }
         }
     }
     
@@ -27,12 +55,17 @@ public class Inventory {
             moveItemToContainer(item, hotbar, slot);
             break;
         case ACCESSORIES:
+            moveItemToContainer(item, accessories, slot);
             break;
         }
     }
     
     public void moveItemToContainer(Item item, ItemContainer container, int slot) {
         container.moveItem(item, slot);
+        
+        if(container == accessories) {
+            player.sendMessageToPeers(new EntityChangeMessage(player.getId(), player.getStatusConfig()));
+        }
     }
     
     public void addItem(Item item) {
@@ -52,7 +85,13 @@ public class Inventory {
     }
     
     public void setItem(Item item, int quantity) {
-        items.put(item, quantity);
+        if(quantity <= 0) {
+            items.remove(item);
+        } else {
+            items.put(item, quantity);
+        }
+        
+        player.sendMessage(new InventoryMessage(getClientConfig(item)));
     }
     
     public boolean hasItem(Item item) {
@@ -61,6 +100,29 @@ public class Inventory {
     
     public int getQuantity(Item item) {
         return items.getOrDefault(item, 0);
+    }
+    
+    public boolean isEmpty() {
+        return items.isEmpty();
+    }
+    
+    public Item findJetpack() {
+        for(Item item : accessories.getItems()) {
+            if(item.hasUse(ItemUseType.FLY)) {
+                return item;
+            }
+        }
+        
+        return Item.AIR;
+    }
+    
+    @JsonValue
+    public Map<String, Object> getJsonValue() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("items", items);
+        map.put("hotbar", hotbar.getItems());
+        map.put("accessories", accessories.getItems());
+        return map;
     }
     
     /**
@@ -78,6 +140,9 @@ public class Inventory {
             
             if((slot = hotbar.getSlot(item)) != -1) {
                 itemData.add(ContainerType.HOTBAR.getId());
+                itemData.add(slot);
+            } else if((slot = accessories.getSlot(item)) != -1) {
+                itemData.add(ContainerType.ACCESSORIES.getId());
                 itemData.add(slot);
             }
             

@@ -1,5 +1,6 @@
 package brainwine.gameserver.entity.player;
 
+import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,13 +10,12 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameConfiguration;
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.ConfigurableDialog;
 import brainwine.gameserver.entity.Entity;
@@ -50,9 +50,8 @@ import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
-import brainwine.gameserver.zone.ZoneManager;
 
-@JsonIncludeProperties({"name", "email", "password_hash", "token_hash", "admin", "karma", "equipped_clothing", "equipped_colors"})
+@JsonIncludeProperties({"name", "email", "password_hash", "token_hash", "admin", "karma", "inventory", "equipped_clothing", "equipped_colors", "current_zone"})
 public class Player extends Entity implements CommandExecutor {
     
     public static final int MAX_SKILL_LEVEL = 15;
@@ -79,6 +78,10 @@ public class Player extends Entity implements CommandExecutor {
     
     @JsonProperty("karma")
     private int karma;
+    
+    @JsonManagedReference
+    @JsonProperty("inventory")
+    private final Inventory inventory = new Inventory(this);
     
     @JsonProperty("equipped_clothing")
     private final Map<ClothingSlot, Item> clothing = new HashMap<>();
@@ -535,7 +538,8 @@ public class Player extends Entity implements CommandExecutor {
         map.put("karma", karma);
         map.put("current_zone", zone.getDocumentId());
         map.put("equipped_colors", colors);
-        map.put("equipped_clothing", clothing);        
+        map.put("equipped_clothing", clothing);
+        map.put("inventory", inventory);
         return map;
     }
     
@@ -549,6 +553,7 @@ public class Player extends Entity implements CommandExecutor {
             appearance.put(entry.getKey().getId(), entry.getValue());
         }
         
+        appearance.put(ClothingSlot.SUIT.getId(), inventory.findJetpack().getId()); // Jetpack
         return appearance;
     }
     

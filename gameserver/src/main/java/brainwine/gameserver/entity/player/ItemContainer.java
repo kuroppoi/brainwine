@@ -59,4 +59,8 @@ public class ItemContainer {
         
         return -1;
     }
+    
+    public Item[] getItems() {
+        return items;
+    }
 }

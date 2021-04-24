@@ -9,6 +9,7 @@ public enum ItemUseType {
     CREATE_DIALOG,
     DIALOG,
     CHANGE,
+    FLY,
     TELEPORT,
     ZONE_TELEPORT,
     
