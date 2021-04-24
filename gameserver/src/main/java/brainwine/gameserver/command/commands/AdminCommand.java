@@ -6,6 +6,7 @@ import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.entity.player.Player;
 
 public class AdminCommand extends Command {
+    
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length == 0) {
@@ -13,16 +14,20 @@ public class AdminCommand extends Command {
             return;
         }
 
-        Player player = GameServer.getInstance().getPlayerManager().getPlayer(args[0]);
+        Player target = GameServer.getInstance().getPlayerManager().getPlayer(args[0]);
         
-        if(player == null) {
+        if(target == null) {
             executor.sendMessage("This player does not exist.");
+            return;
+        } else if(target == executor) {
+            executor.sendMessage("You cannot change your own administrator status.");
             return;
         }
         
-        player.setAdmin(Boolean.parseBoolean(args.length == 2 ? args[1] : "true"));
-        if (player.isOnline()) player.kick("Updated User Status\n\n" + "Admin: " + player.isAdmin());
-        executor.sendMessage("Changed Admin status of user " + player.getName() + " to " + player.isAdmin());
+        boolean admin = args.length == 1 ? true : Boolean.parseBoolean(args[1]);
+        target.setAdmin(admin));
+        target.kick(admin ? "You have been given the administrator role! Please restart your game to see its full effects." : "Your administrator privileges have been revoked.");
+        executor.sendMessage(String.format("Changed administrator status of player %s to %s", target.getName(), admin));
     }
     
     @Override
@@ -32,12 +37,12 @@ public class AdminCommand extends Command {
     
     @Override
     public String getDescription() {
-        return "Sets a user's Administrator status.";
+        return "Changes a players administrator status.";
     }
     
     @Override
     public String getUsage() {
-        return "/admin <player> <optional false>";
+        return "/admin <player> [true|false]";
     }
     
     @Override
