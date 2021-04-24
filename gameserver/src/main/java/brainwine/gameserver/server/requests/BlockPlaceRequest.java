@@ -67,6 +67,7 @@ public class BlockPlaceRequest extends PlayerRequest {
         }
         
         zone.updateBlock(x, y, layer, item, mod, player);
+        player.getInventory().removeItem(item);
     }
     
     private void fail(Player player, String reason) {

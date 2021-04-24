@@ -44,6 +44,9 @@ public class Item {
     @JsonProperty("invulnerable")
     private boolean invulnerable;
     
+    @JsonProperty("inventory")
+    private String inventoryItem;
+    
     @JsonProperty("use")
     private Map<ItemUseType, Object> useConfigs = new HashMap<>();
     
@@ -128,6 +131,14 @@ public class Item {
     
     public boolean isInvulnerable() {
         return invulnerable || !isPlacable();
+    }
+    
+    public Item getInventoryItem() {
+        if(inventoryItem == null) {
+            return this;
+        }
+        
+        return ItemRegistry.getItem(inventoryItem);
     }
     
     public boolean hasUse(ItemUseType... types) {

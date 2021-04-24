@@ -50,6 +50,11 @@ public class BlockMineRequest extends PlayerRequest {
         }
         
         zone.updateBlock(x, y, layer, 0, 0, player);
+        Item inventoryItem = item.getInventoryItem();
+        
+        if(!inventoryItem.isAir()) {
+            player.getInventory().addItem(inventoryItem);
+        }
     }
     
     private void fail(Player player, String reason) {
