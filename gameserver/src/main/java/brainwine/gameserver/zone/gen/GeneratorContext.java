@@ -84,17 +84,18 @@ public class GeneratorContext {
     private final Block[] blocks;
     private final Random random;
     private final int seed;
-    
     public GeneratorContext(Biome biome, int width, int height) {
         zoneId = UUID.randomUUID();
         this.seed = (int)(zoneId.getMostSignificantBits() >> 32 & 0x00FFFFFF);
-        this.biome = biome;
         this.width = width;
         this.height = height;
         this.surface = new int[width];
         this.blocks = new Block[width * height];
         this.random = new Random(seed);
-        biome = BIOMES[(int)(random.nextDouble() * BIOMES.length)];
+        if (biome == Biome.EMPTY)
+        	this.biome = BIOMES[(int)(random.nextDouble() * BIOMES.length)];
+        else
+        	this.biome = biome;
         Arrays.fill(surface, height);
         
         for(int i = 0; i < blocks.length; i++) {

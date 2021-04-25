@@ -28,5 +28,7 @@ public enum Biome {
     SPACE,
     
     @JsonProperty("ocean")
-    OCEAN;
+    OCEAN,
+    
+    EMPTY;
 }

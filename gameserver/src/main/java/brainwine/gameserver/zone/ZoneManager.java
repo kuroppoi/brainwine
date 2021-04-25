@@ -70,7 +70,7 @@ public class ZoneManager {
             logger.info("Generating some zones ...");
             
             for(int i = 0; i < 10; i++) {
-                Zone zone = ZoneGenerator.generateZone(Biome.PLAIN, 2000, 800);
+                Zone zone = ZoneGenerator.generateZone(Biome.EMPTY, 2000, 800);
                 saveZone(zone);
             }
             
