@@ -47,13 +47,13 @@ public class OreGeneratorTask implements GeneratorTask {
                 if(ctx.isUnderground(x, y)) {
                     if(!ctx.getBlock(x, y).getFrontItem().isAir()) {
                         if(ctx.areCoordinatesInBounds(x, y - 1)) {
-                            if(ctx.getBlock(x, y - 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.15) {
+                            if(ctx.getBlock(x, y - 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.10) {
                                 ctx.updateBlock(x, y, Layer.FRONT, ore(ctx), 2);
                             }
                         }
                         
                         if(ctx.areCoordinatesInBounds(x, y + 1)) {
-                            if(ctx.getBlock(x, y + 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.15) {
+                            if(ctx.getBlock(x, y + 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.10) {
                                 ctx.updateBlock(x, y, Layer.FRONT, ore(ctx));
                             }
                         }
@@ -64,21 +64,20 @@ public class OreGeneratorTask implements GeneratorTask {
     }
     
     private int ore(GeneratorContext ctx) {
-    	if (ctx.getBiome() == Biome.PLAIN)
-    		return plainOres[(int)(ctx.nextDouble() * plainOres.length)];
-    	else if (ctx.getBiome() == Biome.ARCTIC)
-    		return arcticOres[(int)(ctx.nextDouble() * arcticOres.length)];
+    	double oreRan = ctx.nextDouble();
+    	if (ctx.getBiome() == Biome.ARCTIC)
+    		return arcticOres[(int)(oreRan * arcticOres.length)];
     	else if (ctx.getBiome() == Biome.HELL)
-    		return hellOres[(int)(ctx.nextDouble() * hellOres.length)];
+    		return hellOres[(int)(oreRan * hellOres.length)];
     	else if (ctx.getBiome() == Biome.DESERT)
-    		return desertOres[(int)(ctx.nextDouble() * desertOres.length)];
+    		return desertOres[(int)(oreRan * desertOres.length)];
     	else if (ctx.getBiome() == Biome.BRAIN)
-    		return brainOres[(int)(ctx.nextDouble() * brainOres.length)];
+    		return brainOres[(int)(oreRan * brainOres.length)];
     	else if (ctx.getBiome() == Biome.DEEP)
-    		return deepOres[(int)(ctx.nextDouble() * deepOres.length)];
+    		return deepOres[(int)(oreRan * deepOres.length)];
     	else if (ctx.getBiome() == Biome.SPACE)
-    		return spaceOres[(int)(ctx.nextDouble() * spaceOres.length)];
+    		return spaceOres[(int)(oreRan * spaceOres.length)];
     	else 
-    		return plainOres[(int)(ctx.nextDouble() * plainOres.length)];
+    		return plainOres[(int)(oreRan * plainOres.length)]; // Plains biome or any other unrecognized value for redundancy
     }
 }
