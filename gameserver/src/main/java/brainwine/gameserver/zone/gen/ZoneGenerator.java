@@ -15,12 +15,14 @@ public class ZoneGenerator {
         // Prepare tasks...
         TerrainGeneratorTask terrainGen = new TerrainGeneratorTask();
         CaveGeneratorTask caveGen = new CaveGeneratorTask();
+        OreGeneratorTask oreGen = new OreGeneratorTask();
         DecorGeneratorTask decorGen = new DecorGeneratorTask();
         BedrockGeneratorTask bedrockGen = new BedrockGeneratorTask();
         
         // ...And execute them!
         terrainGen.generate(ctx);
         caveGen.generate(ctx);
+        oreGen.generate(ctx);
         decorGen.generate(ctx);
         bedrockGen.generate(ctx);
         

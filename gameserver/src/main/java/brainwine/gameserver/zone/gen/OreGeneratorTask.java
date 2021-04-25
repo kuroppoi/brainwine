@@ -1,6 +1,7 @@
 package brainwine.gameserver.zone.gen;
 
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.zone.Biome;
 
 public class OreGeneratorTask implements GeneratorTask {
 
@@ -44,96 +45,41 @@ public class OreGeneratorTask implements GeneratorTask {
         for(int x = 0; x < ctx.getWidth(); x++) {
             for(int y = 0; y < ctx.getHeight(); y++) {
                 if(ctx.isUnderground(x, y)) {
-                    // Populate caves
                     if(!ctx.getBlock(x, y).getFrontItem().isAir()) {
                         if(ctx.areCoordinatesInBounds(x, y - 1)) {
-                            if(ctx.getBlock(x, y - 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.15) {
-                                ctx.updateBlock(x, y, Layer.FRONT, ore(ctx, ores), 2);
+                            if(ctx.getBlock(x, y - 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.35) {
+                                ctx.updateBlock(x, y, Layer.FRONT, ore(ctx), 2);
                             }
                         }
                         
                         if(ctx.areCoordinatesInBounds(x, y + 1)) {
-                            if(ctx.getBlock(x, y + 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.15) {
-                                ctx.updateBlock(x, y, Layer.FRONT, ore(ctx, ores));
+                            if(ctx.getBlock(x, y + 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.35) {
+                                ctx.updateBlock(x, y, Layer.FRONT, ore(ctx));
                             }
                         }
                     }
                 }
             }
         }
-        
-        // rocks
-        for(int i = 0; i < 3600; i++) {
-            int x = ctx.nextInt(ctx.getWidth());
-            int y = ctx.nextInt(ctx.getHeight());
-            double size = ctx.nextDouble();
-            
-            if(size < 0.3) {
-                placeDecor(ctx, x, y, 528, 1, 1);
-            } else if(size < 0.6) {
-                placeDecor(ctx, x, y, 529, 2, 1);
-            } else {
-                placeDecor(ctx, x, y, 530, 2, 2);
-            }
-        }
-        
-        // roots
-        for(int i = 0; i < 3600; i++) {
-            int x = ctx.nextInt(ctx.getWidth());
-            int y = ctx.nextInt(ctx.getHeight());
-            double size = ctx.nextDouble();
-            
-            if(size < 0.2) {
-                placeDecor(ctx, x, y, 534, 2, 1);
-            } else if(size < 0.4) {
-                placeDecor(ctx, x, y, 535, 2, 1);
-            } else if(size < 0.6) {
-                placeDecor(ctx, x, y, 536, 1, 2);
-            } else if(size < 0.8) {
-                placeDecor(ctx, x, y, 537, 2, 2);
-            } else {
-                placeDecor(ctx, x, y, 538, 3, 3);
-            }
-        }
-        
-        // logs
-        for(int i = 0; i < 3600; i++) {
-            int x = ctx.nextInt(ctx.getWidth());
-            int y = ctx.nextInt(ctx.getHeight());
-            double size = ctx.nextDouble();
-            
-            if(size < 0.2) {
-                placeDecor(ctx, x, y, 522, 2, 1);
-            } else if(size < 0.4) {
-                placeDecor(ctx, x, y, 523, 2, 1);
-            } else if(size < 0.6) {
-                placeDecor(ctx, x, y, 524, 2, 1);
-            } else if(size < 0.8) {
-                placeDecor(ctx, x, y, 525, 2, 1);
-            } else {
-                placeDecor(ctx, x, y, 526, 4, 2);
-            }
-        }
     }
     
-    private void placeDecor(GeneratorContext ctx, int x, int y, int item, int width, int height) {
-        for(int i = x; i < x + width; i++) {
-            for(int j = y; j < y + height; j++) {
-                if(!ctx.areCoordinatesInBounds(i, j) || !ctx.getBlock(i, j).getFrontItem().isWhole()) {
-                    return;
-                }
-            }
-        }
-        
-        for(int i = 0; i < width; i++) {
-            for(int j = 0; j < height; j++) {
-                int mod = j * width + i;
-                ctx.updateBlock(x + i, y + j, Layer.FRONT, item, mod);
-            }
-        }
-    }
-    
-    private int ore(GeneratorContext ctx, int[] items) {
-        return items[(int)(ctx.nextDouble() * items.length)];
+    private int ore(GeneratorContext ctx) {
+    	int ran = (int)(ctx.nextDouble());
+    	if (ctx.getBiome() == Biome.PLAIN)
+    		return plainOres[(ran * plainOres.length)];
+    	else if (ctx.getBiome() == Biome.ARCTIC)
+    		return arcticOres[(ran * arcticOres.length)];
+    	else if (ctx.getBiome() == Biome.HELL)
+    		return hellOres[(ran * hellOres.length)];
+    	else if (ctx.getBiome() == Biome.DESERT)
+    		return desertOres[(ran * desertOres.length)];
+    	else if (ctx.getBiome() == Biome.BRAIN)
+    		return brainOres[(ran * brainOres.length)];
+    	else if (ctx.getBiome() == Biome.DEEP)
+    		return deepOres[(ran * deepOres.length)];
+    	else if (ctx.getBiome() == Biome.SPACE)
+    		return spaceOres[(ran * spaceOres.length)];
+    	else 
+    		return plainOres[(ran * plainOres.length)];
     }
 }
