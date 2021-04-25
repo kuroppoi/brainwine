@@ -5,39 +5,39 @@ import brainwine.gameserver.zone.Biome;
 
 public class OreGeneratorTask implements GeneratorTask {
 
-	// Copper, Zinc, Iron, Quartz, Sulfur, Marble
+	// Copper, Zinc, Iron, Quartz, Sulfur, Lead, Marble
     private final int[] plainOres = {
-    	560, 561, 562, 563, 564, 565, 567
+    	550, 551, 552, 553, 554, 555, 557
     };
 
-	// Copper, Zinc, Iron, Quartz, Marble, Diamond
+	// Copper, Zinc, Iron, Quartz, Lead, Marble, Diamond
     private final int[] arcticOres = {
-        560, 561, 562, 563, 565, 567, 568
+    	550, 551, 552, 553, 555, 557, 558
     };
 
-	// Copper, Zinc, Iron, Quartz, Sulfur, Bloodstone
+	// Copper, Zinc, Iron, Quartz, Sulfur, Lead, Bloodstone
     private final int[] hellOres = {
-    	560, 561, 562, 563, 564, 565, 566
+    	550, 551, 552, 553, 554, 555, 556
     };
 
-	// Copper, Zinc, Iron, Quartz, Beryllium
+	// Copper, Zinc, Iron, Quartz, Lead, Beryllium
     private final int[] desertOres = {
-    	560, 561, 562, 563, 565, 569
+    	550, 551, 552, 553, 555, 559
     };
 
-	// Copper, Zinc, Iron, Quartz
+	// Copper, Zinc, Iron, Quartz, Lead
     private final int[] brainOres = {
-        560, 561, 562, 563, 565
+        550, 551, 552, 553, 555
     };
 
-	// Copper, Zinc, Iron, Sulfur
+	// Copper, Zinc, Iron, Quartz, Sulfur
     private final int[] deepOres = {
-        560, 561, 562, 563, 564
+        550, 551, 552, 553, 554
     };
 
 	// Copper, Zinc, Iron, Quartz, Marble, Platinum
     private final int[] spaceOres = {
-    	560, 561, 562, 565, 567, 59
+    	550, 551, 552, 555, 557, 60
     };
     
     @Override
@@ -47,13 +47,13 @@ public class OreGeneratorTask implements GeneratorTask {
                 if(ctx.isUnderground(x, y)) {
                     if(!ctx.getBlock(x, y).getFrontItem().isAir()) {
                         if(ctx.areCoordinatesInBounds(x, y - 1)) {
-                            if(ctx.getBlock(x, y - 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.35) {
+                            if(ctx.getBlock(x, y - 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.15) {
                                 ctx.updateBlock(x, y, Layer.FRONT, ore(ctx), 2);
                             }
                         }
                         
                         if(ctx.areCoordinatesInBounds(x, y + 1)) {
-                            if(ctx.getBlock(x, y + 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.35) {
+                            if(ctx.getBlock(x, y + 1).getFrontItem().isWhole() && ctx.nextDouble() < 0.15) {
                                 ctx.updateBlock(x, y, Layer.FRONT, ore(ctx));
                             }
                         }
@@ -64,22 +64,21 @@ public class OreGeneratorTask implements GeneratorTask {
     }
     
     private int ore(GeneratorContext ctx) {
-    	int ran = (int)(ctx.nextDouble());
     	if (ctx.getBiome() == Biome.PLAIN)
-    		return plainOres[(ran * plainOres.length)];
+    		return plainOres[(int)(ctx.nextDouble() * plainOres.length)];
     	else if (ctx.getBiome() == Biome.ARCTIC)
-    		return arcticOres[(ran * arcticOres.length)];
+    		return arcticOres[(int)(ctx.nextDouble() * arcticOres.length)];
     	else if (ctx.getBiome() == Biome.HELL)
-    		return hellOres[(ran * hellOres.length)];
+    		return hellOres[(int)(ctx.nextDouble() * hellOres.length)];
     	else if (ctx.getBiome() == Biome.DESERT)
-    		return desertOres[(ran * desertOres.length)];
+    		return desertOres[(int)(ctx.nextDouble() * desertOres.length)];
     	else if (ctx.getBiome() == Biome.BRAIN)
-    		return brainOres[(ran * brainOres.length)];
+    		return brainOres[(int)(ctx.nextDouble() * brainOres.length)];
     	else if (ctx.getBiome() == Biome.DEEP)
-    		return deepOres[(ran * deepOres.length)];
+    		return deepOres[(int)(ctx.nextDouble() * deepOres.length)];
     	else if (ctx.getBiome() == Biome.SPACE)
-    		return spaceOres[(ran * spaceOres.length)];
+    		return spaceOres[(int)(ctx.nextDouble() * spaceOres.length)];
     	else 
-    		return plainOres[(ran * plainOres.length)];
+    		return plainOres[(int)(ctx.nextDouble() * plainOres.length)];
     }
 }
