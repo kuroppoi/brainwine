@@ -66,6 +66,16 @@ public class GeneratorContext {
         "Dell"
     };
     
+    private static final Biome[] BIOMES = {
+    		Biome.PLAIN,
+    		Biome.ARCTIC,
+    		Biome.HELL,
+    		Biome.DESERT,
+    		Biome.BRAIN,
+    		Biome.DEEP,
+    		Biome.SPACE
+    };
+    
     private final UUID zoneId;
     private final Biome biome;
     private final int width;
@@ -84,6 +94,7 @@ public class GeneratorContext {
         this.surface = new int[width];
         this.blocks = new Block[width * height];
         this.random = new Random(seed);
+        biome = BIOMES[(int)(random.nextDouble() * BIOMES.length)];
         Arrays.fill(surface, height);
         
         for(int i = 0; i < blocks.length; i++) {
