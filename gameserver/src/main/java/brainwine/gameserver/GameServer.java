@@ -1,7 +1,7 @@
 package brainwine.gameserver;
 
-import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +20,7 @@ public class GameServer implements CommandExecutor {
     private static final Logger logger = LogManager.getLogger();
     private static GameServer instance;
     private final Thread handlerThread;
-    private final Queue<Runnable> tasks = new ArrayDeque<>();
+    private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
     private final ZoneManager zoneManager;
     private final PlayerManager playerManager;
     private final Server server;
@@ -56,10 +56,8 @@ public class GameServer implements CommandExecutor {
     }
     
     public void tick() {
-        synchronized(tasks) {
-            while(!tasks.isEmpty()) {
-                tasks.poll().run();
-            }
+        while(!tasks.isEmpty()) {
+            tasks.poll().run();
         }
         
         if(lastSave + GLOBAL_SAVE_INTERVAL < System.currentTimeMillis()) {
@@ -83,9 +81,7 @@ public class GameServer implements CommandExecutor {
             task.run();
         }
         else {
-            synchronized(tasks) {
-                tasks.add(task);
-            }
+            tasks.add(task);
         }
     }
     
