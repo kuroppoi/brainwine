@@ -56,7 +56,7 @@ public class ZoneManager {
             File metaFile = new File(zoneDir, "metablocks.json");
             mapper.writerWithDefaultPrettyPrinter().writeValue(metaFile, zone.getMetaBlocks());
         } catch(Exception e) {
-            logger.info("Zone save failure. id: {}", id, e);
+            logger.error("Zone save failure. id: {}", id, e);
         }
         
         zone.saveModifiedChunks(); // TODO
