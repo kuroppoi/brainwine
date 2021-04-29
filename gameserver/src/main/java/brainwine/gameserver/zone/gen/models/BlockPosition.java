@@ -1,4 +1,4 @@
-package brainwine.gameserver.zone.gen;
+package brainwine.gameserver.zone.gen.models;
 
 public class BlockPosition {
     

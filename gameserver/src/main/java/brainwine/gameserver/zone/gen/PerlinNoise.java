@@ -6,7 +6,7 @@ package brainwine.gameserver.zone.gen;
  */
 public class PerlinNoise {
     
-    private long seed;
+    private final long seed;
     
     public PerlinNoise(long seed) {
         this.seed = seed;

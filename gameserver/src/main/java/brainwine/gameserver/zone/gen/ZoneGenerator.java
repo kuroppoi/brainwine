@@ -1,31 +1,24 @@
 package brainwine.gameserver.zone.gen;
 
-import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.zone.Biome;
-import brainwine.gameserver.zone.Zone;
-
-/**
- * TODO rewrite the entire zone gen system
- */
 public class ZoneGenerator {
     
-    public static Zone generateZone(Biome biome, int width, int height) {
-        GeneratorContext ctx = new GeneratorContext(biome, width, height);
-        
-        // Prepare tasks...
-        TerrainGeneratorTask terrainGen = new TerrainGeneratorTask();
-        CaveGeneratorTask caveGen = new CaveGeneratorTask();
-        DecorGeneratorTask decorGen = new DecorGeneratorTask();
-        BedrockGeneratorTask bedrockGen = new BedrockGeneratorTask();
-        
-        // ...And execute them!
-        terrainGen.generate(ctx);
-        caveGen.generate(ctx);
-        decorGen.generate(ctx);
-        bedrockGen.generate(ctx);
-        
-        ctx.updateBlock(width / 2, ctx.getSurface()[width / 2] - 1, Layer.FRONT, 891);
-        
-        return ctx.constructZone();
+    private final GeneratorTask terrainGenerator;
+    private final GeneratorTask caveGenerator;
+    private final GeneratorTask decorGenerator;
+    
+    public ZoneGenerator() {
+        this(new GeneratorConfig());
+    }
+    
+    public ZoneGenerator(GeneratorConfig config) {
+        terrainGenerator = new TerrainGenerator(config);
+        caveGenerator = new CaveGenerator(config);
+        decorGenerator = new DecorGenerator(config);
+    }
+    
+    public void generate(GeneratorContext ctx) {
+        terrainGenerator.generate(ctx);
+        caveGenerator.generate(ctx);
+        decorGenerator.generate(ctx);
     }
 }

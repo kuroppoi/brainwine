@@ -13,6 +13,7 @@ import brainwine.gameserver.msgpack.MessagePackHelper;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.server.Server;
 import brainwine.gameserver.zone.ZoneManager;
+import brainwine.gameserver.zone.gen.StaticZoneGenerator;
 
 public class GameServer implements CommandExecutor {
     
@@ -34,6 +35,7 @@ public class GameServer implements CommandExecutor {
         logger.info("Starting GameServer ...");
         CommandManager.init();
         GameConfiguration.init();
+        StaticZoneGenerator.init();
         MessagePackHelper.init();
         zoneManager = new ZoneManager();
         playerManager = new PlayerManager();

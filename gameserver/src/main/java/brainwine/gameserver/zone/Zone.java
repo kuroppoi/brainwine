@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -647,6 +648,10 @@ public class Zone {
         return documentId;
     }
     
+    public int getSeed() {
+        return (int)(UUID.fromString(documentId).getMostSignificantBits() >> 32);
+    }
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -709,6 +714,14 @@ public class Zone {
         config.put("chunk_size", new int[]{chunkWidth, chunkHeight});
         config.put("surface", surface);
         config.put("chunks_explored", chunksExplored);
+        Map<String, Object> depth = new HashMap<>();
+        List<Object> earth = new ArrayList<>();
+        earth.add(Arrays.asList(height * 0.9, "ground/earth-deepest"));
+        earth.add(Arrays.asList(height * 0.7, "ground/earth-deeper"));
+        earth.add(Arrays.asList(height * 0.45, "ground/earth-deep"));
+        depth.put("ground/earth", earth);
+        config.put("depth", depth);
+        
         return config;
     }
     

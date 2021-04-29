@@ -67,14 +67,11 @@ public class ZoneManager {
         File[] files = dataDir.listFiles();
         
         if(files.length == 0) {
-            logger.info("Generating some zones ...");
-            
-            for(int i = 0; i < 10; i++) {
-                Zone zone = ZoneGenerator.generateZone(Biome.PLAIN, 2000, 800);
-                saveZone(zone);
-            }
-            
-            files = dataDir.listFiles();
+            logger.info("Generating default zone ...");
+            Zone zone = StaticZoneGenerator.generateZone(Biome.PLAIN, 2000, 800);
+            saveZone(zone);
+            putZone(zone);
+            return;
         }
         
         for(File file : files) {
@@ -106,18 +103,30 @@ public class ZoneManager {
                 zone.setMetaBlock(metaBlock.getX(), metaBlock.getY(), metaBlock);
             }
             
-            String name = zone.getName();
-            
-            if(zonesByName.containsKey(name)) {
-                logger.warn("Duplicate name {} for zone id {}", name, id);
-                return;
-            }
-            
-            zones.put(id, zone);
-            zonesByName.put(name.toLowerCase(), zone);
+            putZone(zone);
         } catch (Exception e) {
             logger.error("Zone load failure. id: {}", id, e);
         }
+    }
+    
+    private void putZone(Zone zone) {
+        String id = zone.getDocumentId();
+        String name = zone.getName();
+        
+        if(zonesByName.containsKey(name)) {
+            logger.warn("Duplicate name {} for zone id {}", name, id);
+            return;
+        }
+        
+        zones.put(id, zone);
+        zonesByName.put(name.toLowerCase(), zone);
+    }
+    
+    public void generateZoneAsync(Biome biome, int width, int height, int seed, AsyncZoneGeneratedHandler callback) {
+        asyncGenerator.generateZone(biome, width, height, seed, zone -> {
+            putZone(zone);
+            callback.handle(zone);
+        });
     }
     
     public Zone getZone(String id) {

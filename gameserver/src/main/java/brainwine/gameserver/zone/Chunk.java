@@ -20,6 +20,10 @@ public class Chunk {
         this.width = width;
         this.height = height;
         this.blocks = new Block[width * height];
+        
+        for(int i = 0; i < blocks.length; i++) {
+            blocks[i] = new Block();
+        }
     }
     
     public void setModified(boolean modified) {
@@ -65,14 +69,7 @@ public class Chunk {
             return null;
         }
         
-        Block block = blocks[index];
-        
-        if(block == null) {
-            block = new Block();
-            blocks[index] = block;
-        }
-        
-        return block;
+        return blocks[index];
     }
     
     private int getBlockIndex(int x, int y) {

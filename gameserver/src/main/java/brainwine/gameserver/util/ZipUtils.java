@@ -18,7 +18,7 @@ public class ZipUtils {
     }
     
     public static byte[] inflateBytes(byte[] input) throws DataFormatException {
-        return inflateBytes(input, Short.MAX_VALUE);
+        return inflateBytes(input, Short.MAX_VALUE * 4);
     }
     
     public static byte[] inflateBytes(byte[] input, int bufferSize) throws DataFormatException {
