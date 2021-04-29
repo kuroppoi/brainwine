@@ -175,7 +175,11 @@ public class CaveGenerator implements GeneratorTask {
             
             return cave;
         } else {
-            cells[x][y] = false;
+            for(BlockPosition block : blocks) {
+                int bX = block.getX();
+                int bY = block.getY();
+                cells[bX][bY] = false;
+            }
         }
         
         return null;
