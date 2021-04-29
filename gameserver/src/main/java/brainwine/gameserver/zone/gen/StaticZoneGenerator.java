@@ -17,7 +17,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.Zone;
@@ -89,22 +88,9 @@ public class StaticZoneGenerator {
         String lastName = LAST_NAMES[(int)(Math.random() * LAST_NAMES.length)];
         String name = firstName + " " + lastName;
         Zone zone = new Zone(generateDocumentId(seed), name, biome, width, height);
-        
-        for(int i = 0; i < zone.getChunkCount(); i++) {
-            int x = i % zone.getNumChunksWidth() * zone.getChunkWidth();
-            int y = i / zone.getNumChunksWidth() * zone.getChunkHeight();
-            zone.putChunk(i, new Chunk(x, y, zone.getChunkWidth(), zone.getChunkHeight()));
-        }
-        
         GeneratorContext ctx = new GeneratorContext(zone, seed);
         ZoneGenerator generator = generators.getOrDefault(biome, fallback);
         generator.generate(ctx);
-        zone.updateBlock(width / 2, zone.getSurface()[width / 2] - 1, Layer.FRONT, 891, 0); // TODO structures
-        
-        for(int x = 0; x < width; x++) {
-            zone.updateBlock(x, height - 1, Layer.FRONT, 666, 0);
-        }
-        
         return zone;
     }
     

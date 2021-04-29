@@ -6,6 +6,7 @@ import java.util.Random;
 
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.gen.models.Cave;
 
@@ -20,6 +21,14 @@ public class GeneratorContext {
         this.zone = zone;
         this.seed = seed;
         random = new Random(seed);
+    }
+    
+    public void createChunks() {
+        for(int i = 0; i < zone.getChunkCount(); i++) {
+            int x = i % zone.getNumChunksWidth() * zone.getChunkWidth();
+            int y = i / zone.getNumChunksWidth() * zone.getChunkHeight();
+            zone.putChunk(i, new Chunk(x, y, zone.getChunkWidth(), zone.getChunkHeight()));
+        }
     }
     
     public void addCave(Cave cave) {
