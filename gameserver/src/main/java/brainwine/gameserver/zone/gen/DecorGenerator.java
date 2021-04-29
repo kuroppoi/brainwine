@@ -87,7 +87,7 @@ public class DecorGenerator implements GeneratorTask {
                 int surface = ctx.getZone().getSurface()[x];
                 int minY = (int)(deposit.getMinDepth() * (height - surface)) + surface;
                 int maxY = (int)(deposit.getMaxDepth() * (height - surface)) + surface;
-                int y = ctx.nextInt(maxY - minY) + minY;
+                int y = ctx.nextInt(maxY - minY + 1) + minY;
                 placeModTileBlock(ctx, x, y, blocks[ctx.nextInt(blocks.length)]);
             }
         }
@@ -122,14 +122,14 @@ public class DecorGenerator implements GeneratorTask {
         
         for(int i = 0; i < numVeins; i++) {
             int x = ctx.nextInt(width);
-            int y = ctx.nextInt(maxY - minY) + minY;
+            int y = ctx.nextInt(maxY - minY + 1) + minY;
             BlockPosition current = new BlockPosition(x, y);
             
             if(ctx.isEarth(x, y)) {
                 ctx.updateBlock(x, y, Layer.FRONT, item, 0);
             }
             
-            int veinSize = ctx.nextInt(deposit.getMaxSize()) + deposit.getMinSize();
+            int veinSize = ctx.nextInt(deposit.getMaxSize() - deposit.getMinSize() + 1) + deposit.getMinSize();
             
             for(int j = 0; j < veinSize; j++) {
                 int nX = current.getX() + ctx.nextInt(3) - 1;
