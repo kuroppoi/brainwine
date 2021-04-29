@@ -16,11 +16,14 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.msgpack.MessagePackHelper;
-import brainwine.gameserver.zone.gen.ZoneGenerator;
+import brainwine.gameserver.zone.gen.AsyncZoneGeneratedHandler;
+import brainwine.gameserver.zone.gen.AsyncZoneGenerator;
+import brainwine.gameserver.zone.gen.StaticZoneGenerator;
 
 public class ZoneManager {
     
     private static final Logger logger = LogManager.getLogger();
+    private final AsyncZoneGenerator asyncGenerator = new AsyncZoneGenerator(this);
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
@@ -28,6 +31,8 @@ public class ZoneManager {
     public ZoneManager() {
         dataDir.mkdirs();
         loadZones();
+        asyncGenerator.setDaemon(true);
+        asyncGenerator.start();
     }
     
     public void tick() {
