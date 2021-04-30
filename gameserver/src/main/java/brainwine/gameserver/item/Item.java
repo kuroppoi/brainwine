@@ -39,6 +39,9 @@ public class Item {
     @JsonProperty("layer")
     private Layer layer = Layer.NONE;
     
+    @JsonProperty("mod")
+    private ModType mod = ModType.NONE;
+    
     @JsonProperty("meta")
     private MetaType meta = MetaType.NONE;
     
@@ -62,6 +65,9 @@ public class Item {
     
     @JsonProperty("inventory")
     private String inventoryItem;
+    
+    @JsonProperty("decay inventory")
+    private String decayInventoryItem;
     
     @JsonProperty("crafting quantity")
     private int craftingQuantity = 1;
@@ -124,6 +130,14 @@ public class Item {
         return layer;
     }
     
+    public boolean hasMod() {
+        return mod != ModType.NONE;
+    }
+    
+    public ModType getMod() {
+        return mod;
+    }
+    
     public boolean hasMeta() {
         return meta != MetaType.NONE;
     }
@@ -170,6 +184,14 @@ public class Item {
         }
         
         return ItemRegistry.getItem(inventoryItem);
+    }
+    
+    public Item getDecayInventoryItem() {
+        if(decayInventoryItem == null) {
+            return this;
+        }
+        
+        return ItemRegistry.getItem(decayInventoryItem);
     }
     
     public int getCraftingQuantity() {

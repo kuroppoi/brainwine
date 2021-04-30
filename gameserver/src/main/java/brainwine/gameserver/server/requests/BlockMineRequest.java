@@ -3,6 +3,7 @@ package brainwine.gameserver.server.requests;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
@@ -34,7 +35,7 @@ public class BlockMineRequest extends PlayerRequest {
         
         Block block = zone.getBlock(x, y);
         
-        if(block.getItem(layer) != item && block.getMod(layer) != mod) {
+        if(block.getItem(layer) != item) {
             fail(player, "Could not find the item you're trying to mine.");
             return;
         }
@@ -49,8 +50,8 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
+        Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
         zone.updateBlock(x, y, layer, 0, 0, player);
-        Item inventoryItem = item.getInventoryItem();
         
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem);
