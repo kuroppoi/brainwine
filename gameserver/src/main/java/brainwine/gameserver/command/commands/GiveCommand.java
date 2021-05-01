@@ -26,9 +26,9 @@ public class GiveCommand extends Command {
         Item item = Item.AIR;
         
     	try {
-    		item = ItemRegistry.getItem(Integer.parseInt(args[1]));
+            item = ItemRegistry.getItem(Integer.parseInt(args[1]));
     	} catch(NumberFormatException e) {
-    		item = ItemRegistry.getItem(args[1]);
+            item = ItemRegistry.getItem(args[1]);
     	}
 
         if(item.isAir() && !args[1].equalsIgnoreCase("all")) {
@@ -51,10 +51,14 @@ public class GiveCommand extends Command {
             if (args[1].equalsIgnoreCase("all")) {
                 for(Item curItem : ItemRegistry.getItems()) {
                 	target.getInventory().addItem(curItem, quantity);
-                    target.alert(String.format("You received %s of every item from an administrator.", quantity));
-                    executor.sendMessage(String.format("Gave %s of every item to %s", quantity, target.getName()));
                 }
+<<<<<<< Updated upstream
             } else {
+=======
+                target.alert(String.format("You received %s of every item from an administrator.", quantity));
+                executor.sendMessage(String.format("Gave %s of every item to %s", quantity, target.getName()));
+        	} else {
+>>>>>>> Stashed changes
                 target.getInventory().addItem(item, quantity);
                 target.alert(String.format("You received %s %s from an administrator.", quantity, item.getTitle()));
                 executor.sendMessage(String.format("Gave %s %s to %s", quantity, item.getTitle(), target.getName()));
