@@ -48,31 +48,30 @@ public class GiveCommand extends Command {
         }
         
         if(quantity > 0) {
-        	if (args[1].equalsIgnoreCase("all")) {
+            if (args[1].equalsIgnoreCase("all")) {
                 for(Item curItem : ItemRegistry.getItems()) {
                 	target.getInventory().addItem(curItem, quantity);
                     target.alert(String.format("You received %s of every item from an administrator.", quantity));
                     executor.sendMessage(String.format("Gave %s of every item to %s", quantity, target.getName()));
                 }
-        	} else {
+            } else {
                 target.getInventory().addItem(item, quantity);
                 target.alert(String.format("You received %s %s from an administrator.", quantity, item.getTitle()));
                 executor.sendMessage(String.format("Gave %s %s to %s", quantity, item.getTitle(), target.getName()));
         	}
         } else {
-        	if (args[1].equalsIgnoreCase("all")) {
+            if (args[1].equalsIgnoreCase("all")) {
                 for(Item curItem : ItemRegistry.getItems()) {
                 	target.getInventory().removeItem(curItem, -quantity);
                     target.alert(String.format("%s of all items were taken from your inventory.", -quantity));
                     executor.sendMessage(String.format("Took %s of all items from %s", quantity, target.getName()));
                 }
-        	} else {
+            } else {
                 target.getInventory().removeItem(item, -quantity);
                 target.alert(String.format("%s %s was taken from your inventory.", -quantity, item.getTitle()));
                 executor.sendMessage(String.format("Took %s %s from %s", quantity, item.getTitle(), target.getName()));
-        	}
+            }
         }
-        
     }
 
     @Override
