@@ -52,13 +52,9 @@ public class GiveCommand extends Command {
                 for(Item curItem : ItemRegistry.getItems()) {
                 	target.getInventory().addItem(curItem, quantity);
                 }
-<<<<<<< Updated upstream
-            } else {
-=======
                 target.alert(String.format("You received %s of every item from an administrator.", quantity));
                 executor.sendMessage(String.format("Gave %s of every item to %s", quantity, target.getName()));
         	} else {
->>>>>>> Stashed changes
                 target.getInventory().addItem(item, quantity);
                 target.alert(String.format("You received %s %s from an administrator.", quantity, item.getTitle()));
                 executor.sendMessage(String.format("Gave %s %s to %s", quantity, item.getTitle(), target.getName()));
