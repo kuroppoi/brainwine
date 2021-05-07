@@ -4,6 +4,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.TickLoop;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
@@ -21,9 +22,7 @@ public class AsyncZoneGenerator extends Thread {
     
     @Override
     public void run() {
-        running = true;
-        
-        while(running) {
+        TickLoop loop = new TickLoop(1, () -> {
             while(!tasks.isEmpty()) {
                 AsyncZoneGeneratorTask task = tasks.poll();
                 Zone zone = StaticZoneGenerator.generateZone(task.getBiome(), task.getWidth(), task.getHeight(), task.getSeed());
@@ -40,6 +39,12 @@ public class AsyncZoneGenerator extends Thread {
                     });
                 }
             }
+        });
+        
+        running = true;
+        
+        while(running) {
+            loop.update();
         }
     }
     

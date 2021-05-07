@@ -5,6 +5,7 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.api.Api;
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.TickLoop;
 
 public class Bootstrap {
 
@@ -36,8 +37,12 @@ public class Bootstrap {
     }
     
     private void runTickLoop() {
+        TickLoop loop = new TickLoop(20, () -> {
+           gameServer.tick(); 
+        });
+        
         while(!gameServer.shouldShutdown()) {
-            gameServer.tick();
+            loop.update();
         }
         
         onShutdown();
