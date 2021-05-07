@@ -2,8 +2,6 @@ package brainwine.gameserver.server.pipeline;
 
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -11,8 +9,8 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.messages.KickMessage;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -22,8 +20,6 @@ import io.netty.channel.SimpleChannelInboundHandler;
 
 public class Connection extends SimpleChannelInboundHandler<Request> {
 
-    // TODO creating one per connection might not be a good idea.
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
     private Logger logger = LogManager.getLogger();
     private Channel channel;
     private SocketAddress address;
@@ -79,7 +75,7 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
     }
     
     public void sendDelayedMessage(Message message, int delay) {
-        scheduler.schedule(() -> {
+        channel.eventLoop().schedule(() -> {
             sendMessage(message);
         }, delay, TimeUnit.MILLISECONDS);
     }
