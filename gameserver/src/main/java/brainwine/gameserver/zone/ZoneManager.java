@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -148,24 +149,17 @@ public class ZoneManager {
         return zones.get((int)(Math.random() * zones.size()));
     }
     
-    public Collection<Zone> getRandomZones(int amount){
-        Map<Integer, Zone> map = new HashMap<>();
-        List<Zone> zones = new ArrayList<Zone>();
-        zones.addAll(getZones());
+    public List<Zone> searchZones(Predicate<Zone> predicate) {
+        List<Zone> result = new ArrayList<>();
+        Collection<Zone> zones = this.zones.values();
         
-        for(int i = 0; i < amount; i++) {
-            int listIndex = 0;
-            
-            while(map.containsKey(listIndex = (int)(Math.random() * zones.size())));
-            
-            map.put(listIndex, zones.get(listIndex));
-            
-            if(i + 1 > amount) {
-                break;
+        for(Zone zone : zones) {
+            if(predicate.test(zone)) {
+                result.add(zone);
             }
         }
         
-        return map.values();
+        return result;
     }
     
     public Collection<Zone> getZones() {
