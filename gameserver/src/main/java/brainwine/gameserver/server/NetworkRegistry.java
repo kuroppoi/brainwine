@@ -19,6 +19,7 @@ import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.server.messages.EventMessage;
 import brainwine.gameserver.server.messages.HealthMessage;
+import brainwine.gameserver.server.messages.HeartbeatMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.server.messages.KickMessage;
 import brainwine.gameserver.server.messages.LightMessage;
@@ -28,6 +29,7 @@ import brainwine.gameserver.server.messages.SkillMessage;
 import brainwine.gameserver.server.messages.TeleportMessage;
 import brainwine.gameserver.server.messages.WardrobeMessage;
 import brainwine.gameserver.server.messages.ZoneExploredMessage;
+import brainwine.gameserver.server.messages.ZoneSearchMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.server.requests.AuthenticateRequest;
 import brainwine.gameserver.server.requests.BlockMineRequest;
@@ -41,6 +43,7 @@ import brainwine.gameserver.server.requests.ConsoleRequest;
 import brainwine.gameserver.server.requests.CraftRequest;
 import brainwine.gameserver.server.requests.DialogRequest;
 import brainwine.gameserver.server.requests.EntitiesRequest;
+import brainwine.gameserver.server.requests.EventRequest;
 import brainwine.gameserver.server.requests.HealthRequest;
 import brainwine.gameserver.server.requests.HeartbeatRequest;
 import brainwine.gameserver.server.requests.InventoryMoveRequest;
@@ -48,6 +51,7 @@ import brainwine.gameserver.server.requests.InventoryUseRequest;
 import brainwine.gameserver.server.requests.MoveRequest;
 import brainwine.gameserver.server.requests.StatusRequest;
 import brainwine.gameserver.server.requests.ZoneChangeRequest;
+import brainwine.gameserver.server.requests.ZoneSearchRequest;
 
 public class NetworkRegistry {
     
@@ -81,12 +85,14 @@ public class NetworkRegistry {
         registerRequest(19, CraftRequest.class);
         registerRequest(21, BlockUseRequest.class);
         registerRequest(22, ChangeAppearanceRequest.class);
+        registerRequest(23, ZoneSearchRequest.class);
         registerRequest(24, ZoneChangeRequest.class);
         registerRequest(25, BlocksIgnoreRequest.class);
         registerRequest(45, DialogRequest.class);
         registerRequest(47, ConsoleRequest.class);
         registerRequest(51, EntitiesRequest.class);
         registerRequest(54, StatusRequest.class);
+        registerRequest(57, EventRequest.class);
         registerRequest(143, HeartbeatRequest.class);
     }
     
@@ -106,6 +112,7 @@ public class NetworkRegistry {
         registerMessage(ZoneStatusMessage.class, 17);
         registerMessage(HealthMessage.class, 18);
         registerMessage(BlockMetaMessage.class, 20);
+        registerMessage(ZoneSearchMessage.class, 23);
         registerMessage(EffectMessage.class, 30);
         registerMessage(NotificationMessage.class, 33);
         registerMessage(SkillMessage.class, 35);
@@ -114,6 +121,7 @@ public class NetworkRegistry {
         registerMessage(TeleportMessage.class, 50);
         registerMessage(ZoneExploredMessage.class, 53);
         registerMessage(EventMessage.class, 57);
+        registerMessage(HeartbeatMessage.class, 143);
         registerMessage(KickMessage.class, 255);
     }
     

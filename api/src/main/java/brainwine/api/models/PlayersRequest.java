@@ -2,6 +2,9 @@ package brainwine.api.models;
 
 import java.beans.ConstructorProperties;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class PlayersRequest {
     
     private final String platform;

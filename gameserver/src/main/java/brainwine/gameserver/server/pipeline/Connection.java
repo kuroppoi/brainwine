@@ -94,6 +94,10 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
         this.player = player;
     }
     
+    public boolean isV3() {
+        return player != null && player.isV3();
+    }
+    
     public boolean isOpen() {
         return channel.isOpen();
     }

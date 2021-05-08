@@ -1,8 +1,6 @@
 package brainwine.gameserver.msgpack.templates;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.msgpack.MessageTypeException;
 import org.msgpack.packer.Packer;
@@ -25,11 +23,7 @@ public class BlockUseDataTemplate extends AbstractTemplate<BlockUseData> {
             return;
         }
         
-        if(data.hasMetadata()) {
-            packer.write(data.getMetadata());
-        } else if(data.hasPosition()) {
-            packer.write(data.getPosition());
-        }
+        packer.write(data.getData());
     }
     
     @Override
@@ -39,36 +33,39 @@ public class BlockUseDataTemplate extends AbstractTemplate<BlockUseData> {
         }
         
         if(unpacker.getNextType() == ValueType.ARRAY) {
-            int[] position = unpacker.read(int[].class);
+            Object[] data = new Object[unpacker.readArrayBegin()];
             
-            if(position.length != 2) {
-                throw new MessageTypeException("Invalid array length for position");
+            for(int i = 0; i < data.length; i++) {
+                data[i] = readObject(unpacker);
             }
             
-            return new BlockUseData(position);
+            unpacker.readArrayEnd();
+            return new BlockUseData(data);
         } else if(unpacker.getNextType() == ValueType.MAP) {
-            Map<String, Object> metadata = new HashMap<>();
-            int numEntries = unpacker.readMapBegin();
+            Object[] data = new Object[unpacker.readMapBegin()];
             
-            for(int i = 0; i < numEntries; i++) {
-                String key = unpacker.readString();
-                
-                switch(unpacker.getNextType()) {
-                case RAW:
-                    metadata.put(key, unpacker.readString());
-                    break;
-                case FLOAT:
-                    metadata.put(key, unpacker.readFloat());
-                    break;
-                default:
-                    throw new MessageTypeException("Invalid metadata value type");
-                }
+            for(int i = 0; i < data.length; i++) {
+                unpacker.readString(); // Key, ignore
+                data[i] = readObject(unpacker);
             }
             
             unpacker.readMapEnd();
-            return new BlockUseData(metadata);
+            return new BlockUseData(data);
         }
         
         throw new MessageTypeException("Invalid data type");
+    }
+    
+    private Object readObject(Unpacker unpacker) throws IOException {
+        switch(unpacker.getNextType()) {
+        case RAW:
+            return unpacker.readString();
+        case INTEGER:
+            return unpacker.readInt();
+        case FLOAT:
+            return unpacker.readFloat();
+        default:
+            throw new MessageTypeException("Invalid data type");
+        }
     }
 }

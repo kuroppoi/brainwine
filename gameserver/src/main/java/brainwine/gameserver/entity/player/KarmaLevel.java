@@ -1,36 +1,36 @@
 package brainwine.gameserver.entity.player;
 
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
+import brainwine.gameserver.msgpack.EnumValue;
+import brainwine.gameserver.msgpack.RegisterEnum;
+
+@RegisterEnum
 public enum KarmaLevel {
     
-    @JsonProperty("Godly")
-    GODLY(500),
-    
-    @JsonProperty("Angelic")
-    ANGELIC(250),
-    
-    @JsonProperty("Great")
-    GREAT(100),
-    
-    @JsonProperty("Good")
-    GOOD(50),
-    
-    @JsonProperty("Neutral")
-    NEUTRAL(0),
-    
-    @JsonProperty("Fair")
-    FAIR(-50),
+    GODLY("Godly", 500),
+    ANGELIC("Angelic", 250),
+    GREAT("Great", 100),
+    GOOD("Good", 50),
+    NEUTRAL("Neutral", 0),
+    FAIR("Fair", -50),
     
     @JsonEnumDefaultValue
-    @JsonProperty("Poor")
-    POOR(-200);
+    POOR("Poor", -200);
     
+    private final String id;
     private final int karma;
     
-    private KarmaLevel(int karma) {
+    private KarmaLevel(String id, int karma) {
+        this.id = id;
         this.karma = karma;
+    }
+    
+    @JsonValue
+    @EnumValue
+    public String getId() {
+        return id;
     }
     
     public int getKarma() {

@@ -1,7 +1,5 @@
 package brainwine.gameserver.msgpack.models;
 
-import java.util.Map;
-
 import brainwine.gameserver.server.requests.DialogRequest;
 
 /**
@@ -12,14 +10,14 @@ public class DialogInputData {
     
     private String dialogName;
     private int dialogId;
-    private Map<String, String> inputData;
+    private String[] inputData;
     private String action;
     
     public DialogInputData(String dialogName) {
         this.dialogName = dialogName;
     }
     
-    public DialogInputData(int dialogId, Map<String, String> inputData) {
+    public DialogInputData(int dialogId, String[] inputData) {
         this.dialogId = dialogId;
         this.inputData = inputData;
     }
@@ -49,7 +47,7 @@ public class DialogInputData {
         return dialogId;
     }
     
-    public Map<String, String> getInputData() {
+    public String[] getInputData() {
         return inputData;
     }
     

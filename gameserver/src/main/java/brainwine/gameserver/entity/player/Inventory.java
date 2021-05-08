@@ -131,6 +131,23 @@ public class Inventory {
         return map;
     }
     
+    private void addItemLocation(Item item, List<Object> itemData) {
+        int slot = -1;
+        
+        if((slot = hotbar.getSlot(item)) != -1) {
+            itemData.add(ContainerType.HOTBAR.getId());
+            itemData.add(slot);
+        } else if((slot = accessories.getSlot(item)) != -1) {
+            itemData.add(ContainerType.ACCESSORIES.getId());
+            itemData.add(slot);
+        } else {
+            if(!player.isV3()) {
+                itemData.add("i");
+                itemData.add(-1);
+            }
+        }
+    }
+    
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link InventoryMessage}.
      */
@@ -142,16 +159,7 @@ public class Inventory {
             int quantity = entry.getValue();
             List<Object> itemData = new ArrayList<>();
             itemData.add(quantity);
-            int slot = -1;
-            
-            if((slot = hotbar.getSlot(item)) != -1) {
-                itemData.add(ContainerType.HOTBAR.getId());
-                itemData.add(slot);
-            } else if((slot = accessories.getSlot(item)) != -1) {
-                itemData.add(ContainerType.ACCESSORIES.getId());
-                itemData.add(slot);
-            }
-            
+            addItemLocation(item, itemData);
             data.put(String.valueOf(item.getId()), itemData);
         }
         
@@ -166,6 +174,11 @@ public class Inventory {
         Map<String, Object> data = new HashMap<>();
         List<Object> itemData = new ArrayList<>();
         itemData.add(getQuantity(item));
+        
+        if(!player.isV3()) {
+            addItemLocation(item, itemData);
+        }
+        
         data.put(String.valueOf(item.getId()), itemData);
         return data;
     }

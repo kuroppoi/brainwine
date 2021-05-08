@@ -1,19 +1,16 @@
 # Brainwine
 
-Brainwine is a private server written in Java for a game called Deepworld, made with user-friendliness and portability in mind.
-Due to the time it will take for this project to be complete (and my inconsistent working on it,) brainwine has been prematurely open-sourced
+Brainwine is a Deepworld private server written in Java, made with user-friendliness and portability in mind.
+Due to the time it will take for this project to be complete (and my inconsistent working on it), brainwine has been prematurely open-sourced
 and is free for all to use. Keep in mind, though, that this server is nowhere near finished. Expect to encounter bad code, bugs and missing features!
-Brainwine is currently only compatible with the Steam version of Deepworld.
+Brainwine is currently compatible with the latest Steam and iOS versions of Deepworld.
 
 ## Setup
 
 ### Setting up your client
 
-Before you can connect to your (or someone elses) server, you must first let Deepworld know to where it should connect.
-To do this, open the Registry Editor and navigate to `HKEY_CURRENT_USER\SOFTWARE\Bytebin LLC\Deepworld`.
-Look for a String Value called `gateway` or create it if it doesn't exist. Change the value to `local` if you wish to connect to an instance running on your PC, otherwise
-enter the host address and port of the server you wish to join. For example: `12.345.67.89:5001`
-If you did everything correctly, your client should now be ready.
+Before you can connect to your (or someone else's) server, you must first let Deepworld know to where it should connect.
+The exact process differs per platform. You may download an installation package for your desired platform [here.](https://github.com/kuroppoi/brainwine/releases)
 
 ### Setting up the server
 
@@ -21,8 +18,6 @@ Setting up your own server is as easy as downloading this repository and running
 Alternatively, you can run the provided `build.bat` file. After the build task has finished, the output jar will be located in the `build` directory.
 To start the server, simply run the jar file with a simple command line such as `java -jar brainwine.jar -Xms128m -Xmx512m`.
 Be aware that Java 8 or newer is required to run Brainwine.
-If for whatever reason you are unable to create a build, you can download the latest release package [here.](https://github.com/kuroppoi/brainwine/releases)
-Note that these aren't always up-to-date, though!
 
 ## Contributions
 

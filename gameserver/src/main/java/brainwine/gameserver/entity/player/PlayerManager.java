@@ -1,8 +1,10 @@
 package brainwine.gameserver.entity.player;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -19,7 +21,7 @@ import brainwine.gameserver.zone.Zone;
 
 public class PlayerManager {
     
-    public static final String GAME_VERSION = "3.13.1";
+    public static final List<String> SUPPORTED_VERSIONS = Arrays.asList("2.11.0.1", "3.13.1");
     private static final Logger logger = LogManager.getLogger();
     private final Map<String, Player> playersById = new HashMap<>();
     private final Map<String, Player> playersByName = new HashMap<>();
@@ -121,8 +123,8 @@ public class PlayerManager {
     }
     
     public void onPlayerAuthenticate(Connection connection, String version, String name, String authToken) {
-        if(!version.equals(GAME_VERSION)) {
-            connection.kick("Outdated version. Please update your game.", false);
+        if(!SUPPORTED_VERSIONS.contains(version)) {
+            connection.kick("Sorry, this version of Deepworld is not supported.", false);
             return;
         }
         
@@ -133,6 +135,7 @@ public class PlayerManager {
             return;
         }
         
+        player.setClientVersion(version);
         player.setConnection(connection);
         playersByConnection.put(connection, player);
         Zone zone = player.getZone();

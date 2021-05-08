@@ -20,8 +20,20 @@ public abstract class Request {
      */
     public void unpack(Unpacker unpacker) throws IllegalArgumentException, IllegalAccessException, IOException {
         unpacker.readArrayBegin();
+        Field[] fields = this.getClass().getFields();
         
-        for(Field field : this.getClass().getFields()) {
+        for(Field field : fields) {
+            try {
+                unpacker.getNextType();
+            } catch(Exception e) {
+                if(field.getAnnotation(OptionalField.class) == null) {
+                    System.out.println(field.getName());
+                    throw e;
+                }
+                
+                break;
+            }
+            
             field.set(this, unpacker.read(field.getType()));
         }
         

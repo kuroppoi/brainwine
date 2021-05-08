@@ -35,8 +35,8 @@ import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.server.messages.EventMessage;
 import brainwine.gameserver.server.messages.HealthMessage;
+import brainwine.gameserver.server.messages.HeartbeatMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
-import brainwine.gameserver.server.messages.KickMessage;
 import brainwine.gameserver.server.messages.NotificationMessage;
 import brainwine.gameserver.server.messages.PlayerPositionMessage;
 import brainwine.gameserver.server.messages.SkillMessage;
@@ -94,6 +94,7 @@ public class Player extends Entity implements CommandExecutor {
     private final Map<Skill, Integer> skills = new HashMap<>();
     private final Map<Integer, Long> activeChunks = new HashMap<>();
     private final Map<Integer, ConfigurableDialog> dialogs = new HashMap<>();
+    private String clientVersion;
     private Item heldItem = Item.AIR; // TODO send on entity add
     private int teleportX;
     private int teleportY;
@@ -105,7 +106,7 @@ public class Player extends Entity implements CommandExecutor {
         super(zone);
         
         for(Skill skill : Skill.values()) {
-            skills.put(skill, 10);
+            skills.put(skill, 15);
         }
         
         for(Item item : ItemRegistry.getItems()) {
@@ -156,10 +157,8 @@ public class Player extends Entity implements CommandExecutor {
      */
     @Override
     public Map<String, Object> getStatusConfig() {
-        Map<String, Object> config = new HashMap<>();
+        Map<String, Object> config = super.getStatusConfig();
         config.put("id", documentId);
-        config.put("name", name);
-        config.put("h", health);
         config.putAll(getAppearanceConfig());
         return config;
     }
@@ -179,18 +178,17 @@ public class Player extends Entity implements CommandExecutor {
             y = spawn.getY();
         }
         
-        sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(), zone.getClientConfig()));
-        
-        for(MetaBlock metaBlock : zone.getGlobalMetaBlocks()) {
-            sendMessage(new BlockMetaMessage(metaBlock));
-        }
-        
+        sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
         sendMessage(new PlayerPositionMessage((int)x, (int)y));
         sendMessage(new HealthMessage(health));
         sendMessage(new InventoryMessage(inventory));
         sendMessage(new WardrobeMessage(wardrobe));
+        
+        for(MetaBlock metaBlock : zone.getGlobalMetaBlocks()) {
+            sendMessage(new BlockMetaMessage(metaBlock));
+        }
         
         for(Skill skill : skills.keySet()) {
             sendMessage(new SkillMessage(skill, skills.get(skill)));
@@ -202,9 +200,13 @@ public class Player extends Entity implements CommandExecutor {
             sendMessage(new EntityItemUseMessage(peer.getId(), 0, peer.getHeldItem(), 0));
         }
         
-        notify("Welcome to " + zone.getName(), 6);
-        sendMessage(new EventMessage("zoneEntered", null));
-        sendMessage(new EffectMessage(x, y, "spawn", 20));
+        if(isV3()) {
+            notify("Welcome to " + zone.getName(), 6);
+            sendMessage(new EventMessage("zoneEntered", null));
+        } else {
+            notify("Welcome to " + zone.getName(), 333);
+        }
+        
         checkRegistration();
     }
     
@@ -277,7 +279,7 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new DialogMessage(id, dialog));
     }
     
-    public void handleDialogInput(int id, Map<String, String> input) {
+    public void handleDialogInput(int id, String[] input) {
         ConfigurableDialog dialog = dialogs.remove(id);
         
         if(dialog == null) {
@@ -306,6 +308,19 @@ public class Player extends Entity implements CommandExecutor {
     
     public void heartbeat() {
         lastHeartbeat = System.currentTimeMillis();
+        sendMessage(new HeartbeatMessage((int)(System.currentTimeMillis() / 1000L)));
+    }
+    
+    public void setClientVersion(String version) {
+        clientVersion = version;
+    }
+    
+    public String getClientVersion() {
+        return clientVersion;
+    }
+    
+    public boolean isV3() {
+        return clientVersion != null && clientVersion.startsWith("3");
     }
     
     /**
@@ -353,7 +368,9 @@ public class Player extends Entity implements CommandExecutor {
      * @param shouldReconnect If true, the player will automatically reconnect.
      */
     public void kick(String reason, boolean shouldReconnect) {
-        sendMessage(new KickMessage(reason, shouldReconnect));
+        if(isOnline()) {
+            connection.kick(reason, shouldReconnect);
+        }
     }
     
     public void notify(String text, int type) {

@@ -2,6 +2,7 @@ package brainwine.gameserver.server.requests;
 
 import java.io.IOException;
 
+import org.msgpack.type.ValueType;
 import org.msgpack.unpacker.Unpacker;
 
 import brainwine.gameserver.entity.player.Player;
@@ -16,7 +17,19 @@ public class BlocksIgnoreRequest extends PlayerRequest {
     
     @Override
     public void unpack(Unpacker unpacker) throws IOException {
-        chunkIndexes = unpacker.read(int[].class);
+        int length = unpacker.readArrayBegin();
+        
+        if(unpacker.getNextType() == ValueType.INTEGER) {
+            chunkIndexes = new int[length];
+            
+            for(int i = 0; i < length; i++) {
+                chunkIndexes[i] = unpacker.readInt();
+            }
+        } else {
+            chunkIndexes = unpacker.read(int[].class);
+        }
+        
+        unpacker.readArrayEnd();
     }
     
     @Override

@@ -1,8 +1,6 @@
 package brainwine.gameserver.msgpack.templates;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.msgpack.MessageTypeException;
 import org.msgpack.packer.Packer;
@@ -48,13 +46,16 @@ public class DialogInputDataTemplate extends AbstractTemplate<DialogInputData> {
             
             if(unpacker.getNextType() == ValueType.RAW) {
                 return new DialogInputData(id, unpacker.readString());
+            } else if(unpacker.getNextType() == ValueType.ARRAY) {
+                return new DialogInputData(id, unpacker.read(String[].class));
             }
             
-            Map<String, String> input = new HashMap<>();
             int numEntries = unpacker.readMapBegin();
+            String[] input = new String[numEntries];
             
             for(int i = 0; i < numEntries; i++) {
-                input.put(unpacker.readString(), unpacker.readString());
+                unpacker.readString(); // Key, ignore
+                input[i] = unpacker.readString();
             }
             
             unpacker.readMapEnd();

@@ -20,6 +20,11 @@ import io.netty.handler.codec.MessageToByteEncoder;
 public class MessageEncoder extends MessageToByteEncoder<Message> {
     
     private static final ObjectMapper mapper = new ObjectMapper();
+    private final Connection connection;
+    
+    public MessageEncoder(Connection connection) {
+        this.connection = connection;
+    }
     
     @Override
     protected void encode(ChannelHandlerContext ctx, Message in, ByteBuf out) throws Exception {
@@ -33,7 +38,7 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
         out.writeIntLE(0); // Length field is set at the end.
         byte[] bytes = null;
         
-        if(in.isJson()) {
+        if(in.isJson() && connection.isV3()) {
             List<Object> data = new ArrayList<>();
             
             for(Field field : in.getClass().getFields()) {
@@ -44,8 +49,8 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
         } else {
             BufferPacker packer = MessagePackHelper.createBufferPacker();
             in.pack(packer);
-            packer.close();
             bytes = packer.toByteArray();
+            packer.close();
         }
         
         if(in.isCompressed()) {

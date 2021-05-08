@@ -6,6 +6,7 @@ import brainwine.gameserver.entity.player.Inventory;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.CraftingIngredient;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
 
 /**
@@ -14,7 +15,9 @@ import brainwine.gameserver.server.PlayerRequest;
 public class CraftRequest extends PlayerRequest {
     
     public Item item;
-    public int quantity;
+    
+    @OptionalField
+    public int quantity = 1;
     
     @Override
     public void process(Player player) {

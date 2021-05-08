@@ -8,9 +8,9 @@ import java.util.concurrent.ThreadFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import brainwine.gameserver.server.pipeline.RequestDecoder;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.server.pipeline.MessageEncoder;
+import brainwine.gameserver.server.pipeline.RequestDecoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -53,10 +53,11 @@ public class Server {
         endpoints.add(new ServerBootstrap().group(eventLoopGroup).channel(channelType).childHandler(new ChannelInitializer<Channel>() {
             @Override
             protected void initChannel(Channel channel) throws Exception {
+                Connection connection = new Connection();
                 channel.pipeline().addLast("framer", new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, Short.MAX_VALUE, 1, 4, 0, 0, true));
-                channel.pipeline().addLast("encoder", new MessageEncoder());
+                channel.pipeline().addLast("encoder", new MessageEncoder(connection));
                 channel.pipeline().addLast("decoder", new RequestDecoder());
-                channel.pipeline().addLast("handler", new Connection());
+                channel.pipeline().addLast("handler", connection);
             }
         }).bind(port).syncUninterruptibly());
     }

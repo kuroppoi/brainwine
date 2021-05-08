@@ -1,12 +1,15 @@
 package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
 
 public class HealthRequest extends PlayerRequest {
     
     public int health;
     public int attackerId;
+    
+    @OptionalField
     public int damageType;
     
     @Override

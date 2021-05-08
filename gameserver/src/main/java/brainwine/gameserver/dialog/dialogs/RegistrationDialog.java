@@ -1,6 +1,5 @@
 package brainwine.gameserver.dialog.dialogs;
 
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -38,9 +37,14 @@ public class RegistrationDialog extends ConfigurableDialog {
     }
     
     @Override
-    public void handleResponse(Player player, Map<String, String> input) {
-        String email = input.getOrDefault("email", "");
-        String password = input.getOrDefault("password", "");
+    public void handleResponse(Player player, String[] input) {
+        if(input.length != 2) {
+            player.alert("Incorrect number of parameters.");
+            return;
+        }
+        
+        String email = input[0];
+        String password = input[1];
         
         if(email.length() > maxEmailLength || !emailPattern.matcher(email).matches()) {
             player.alert("Please enter a valid e-mail address.");

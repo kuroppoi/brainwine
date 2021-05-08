@@ -1,6 +1,7 @@
 package brainwine.gameserver.server.requests;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.entity.player.Player;
@@ -9,8 +10,10 @@ import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.msgpack.models.BlockUseData;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Zone;
 
+@SuppressWarnings("unchecked")
 public class BlockUseRequest extends PlayerRequest {
     
     public int x;
@@ -26,14 +29,62 @@ public class BlockUseRequest extends PlayerRequest {
             return;
         }
         
+        Block block = zone.getBlock(x, y);
+        Item item = block.getItem(layer);
+        int mod = block.getMod(layer);
+        
         if(data == null) {
-            Item item = zone.getBlock(x, y).getItem(layer);
-            int currentMod = zone.getBlock(x, y).getMod(layer);
-            
             if(item.hasUse(ItemUseType.CHANGE)) {
-                zone.updateBlock(x, y, layer, item, currentMod == 0 ? 1 : 0, player);
+                zone.updateBlock(x, y, layer, item, mod == 0 ? 1 : 0, player);
             }
-        } else if(data.hasMetadata()) {
+        } else {
+            Object[] data = this.data.getData();
+            item.getUses().forEach((k, v) -> {
+                switch(k) {
+                case DIALOG:
+                case CREATE_DIALOG:
+                    // TODO rework dialog system and clean this mess up
+                    Map<String, Object> config = (Map<String, Object>)v;
+                    
+                    switch((String)config.get("target")) {
+                    case "meta":
+                        Map<String, Object> metadata = new HashMap<>();
+                        List<Map<String, Object>> sections = (List<Map<String, Object>>)config.get("sections");
+                        int i = 0;
+                        
+                        for(Map<String, Object> section : sections) {
+                            metadata.put((String) ((Map<String, Object>)section.get("input")).get("key"), data[i++]);
+                        }
+                        
+                        zone.setMetaBlock(x, y, item, player, metadata);
+                        break;
+                    default:
+                        break;
+                    }
+                    break;
+                case TELEPORT:
+                    if(mod == 1 && data.length == 2 && data[0] instanceof Integer && data[1] instanceof Integer) {
+                        int tX = (int)data[0];
+                        int tY = (int)data[1];
+                        Block targetBlock = zone.getBlock(tX, tY);
+                        
+                        if(targetBlock != null) {
+                            Item targetItem = targetBlock.getFrontItem();
+                            
+                            if(targetItem.hasUse(ItemUseType.TELEPORT, ItemUseType.ZONE_TELEPORT)) {
+                                player.teleport(tX + 1, tY);
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    break;
+                }
+            });
+        }
+        
+        /*
+        else if(data.hasMetadata()) {
             // TODO
             Item item = zone.getBlock(x, y).getItem(layer);
             Map<String, Object> metadata = new HashMap<>();
@@ -48,6 +99,6 @@ public class BlockUseRequest extends PlayerRequest {
             if(item.hasUse(ItemUseType.TELEPORT, ItemUseType.ZONE_TELEPORT)) {
                 player.teleport(tX + 1, tY);
             }
-        }
+        }*/
     }
 }

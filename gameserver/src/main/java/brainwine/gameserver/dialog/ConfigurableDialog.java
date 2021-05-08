@@ -13,7 +13,7 @@ public abstract class ConfigurableDialog implements DialogComponent {
     private final Map<String, Object> config = new HashMap<>();
     
     public abstract void init();
-    public abstract void handleResponse(Player player, Map<String, String> input);
+    public abstract void handleResponse(Player player, String[] input);
     
     protected void addSection(DialogSection section) {
         List<Map<String, Object>> sections = (List<Map<String, Object>>)config.getOrDefault("sections", new ArrayList<>());
