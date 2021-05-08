@@ -705,7 +705,7 @@ public class Zone {
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link ConfigurationMessage}.
      */
-    public Map<String, Object> getClientConfig() {
+    public Map<String, Object> getClientConfig(Player player) {
         Map<String, Object> config = new HashMap<>();
         config.put("id", documentId);
         config.put("name", name);
@@ -716,12 +716,21 @@ public class Zone {
         config.put("chunks_explored", chunksExplored);
         Map<String, Object> depth = new HashMap<>();
         List<Object> earth = new ArrayList<>();
-        earth.add(Arrays.asList(height * 0.9, "ground/earth-deepest"));
-        earth.add(Arrays.asList(height * 0.7, "ground/earth-deeper"));
-        earth.add(Arrays.asList(height * 0.45, "ground/earth-deep"));
-        depth.put("ground/earth", earth);
-        config.put("depth", depth);
         
+        if(player.isV3()) {
+            earth.add(Arrays.asList(height * 0.9, "ground/earth-deepest"));
+            earth.add(Arrays.asList(height * 0.7, "ground/earth-deeper"));
+            earth.add(Arrays.asList(height * 0.45, "ground/earth-deep"));
+            depth.put("ground/earth", earth);
+        } else {
+            String key = biome == Biome.PLAIN ? "temperate" : biome.getId();
+            earth.add(Arrays.asList(height * 0.45, String.format("%s/earth-front-deep", key)));
+            earth.add(Arrays.asList(height * 0.7, String.format("%s/earth-front-deeper", key)));
+            earth.add(Arrays.asList(height * 0.9, String.format("%s/earth-front-deepest", key)));
+            depth.put(String.format("%s/earth-front", key), earth);
+        }
+        
+        config.put("depth", depth);
         return config;
     }
     
