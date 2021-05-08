@@ -1,0 +1,1886 @@
+3.0.0:
+  control defaults:
+    version: 1
+    keys:
+      movement:
+        Up: ['W', 'UpArrow']
+        Left: ['A', 'LeftArrow']
+        Down: ['S', 'DownArrow']
+        Right: ['D', 'RightArrow']
+      interaction:
+        Interact: Space
+        Shield: ['X', 'Mouse1']
+        Show Protector Overlay: Comma
+        Zoom In: Equals
+        Zoom Out: Minus
+      powerups:
+        Canister: C
+        Jerky: Z
+      shortcuts:
+        Chat: Y
+        Console: T
+        Crafting Panel: K
+        Emotes: E
+        Hotbar1: Alpha1
+        Hotbar2: Alpha2
+        Hotbar3: Alpha3
+        Hotbar4: Alpha4
+        Hotbar5: Alpha5
+        Hotbar6: Alpha6
+        Hotbar7: Alpha7
+        Hotbar8: Alpha8
+        Hotbar9: Alpha9
+        Hotbar10: Alpha0
+        Inventory: I
+        Map: M
+        Profile: P
+        Social Panel: O
+        Teleport: B
+      admin:
+        Admin Spawn: Backslash
+        Block Info: RightBracket
+        Command: Slash
+        Clip: LeftBracket
+        Console Next: DownArrow
+        Console Previous: UpArrow
+        Debug Panel: F1
+        Dismiss: Escape
+        Load Preset: LeftControl
+        Respawn: Space
+        Save Preset: LeftShift
+        Scroll Up: Mouse Wheel Up
+        Scroll Down: Mouse Wheel Down
+    axes:
+      Horizontal: ['Left', 'Right']
+      Vertical: ['Down', 'Up']
+      Zoom: ['Zoom Out', 'Zoom In']
+      Mouse Scroll Wheel: ['Scroll Up', 'Scroll Down']
+
+  items:
+    wardrobe: &wardrobe
+      craftable: false
+      placeable: false
+      gui: false
+      wardrobe: true
+
+    tops: &tops
+      <<: *wardrobe
+    tops/aviation:
+      <<: *tops
+      code: 1251
+      sprite: tops/waistcoat-gray
+    tops/magician:
+      <<: *tops
+      code: 1252
+      sprite: tops/waistcoat-gray
+    tops/prepboy:
+      <<: *tops
+      code: 1254
+      sprite: tops/waistcoat-gray
+
+    front-block: &front-block
+      tileable: true
+      opaque: true
+      whole: true
+      shape: box
+      shadow: true
+
+    mechanical/spawner-brain:
+      code: 331
+      inventory: ''
+      field: 1
+      sprite: mechanical/replenisher
+      emitter: area energy
+      light: 3
+      light_color: ff00ff
+      meta: hidden
+      title: Evoker
+
+
+    # ==== Dialogs ==== #
+    dish-dialog: &dish-dialog
+      target: meta
+      sections:
+        - title: Protection Type
+          input:
+            type: select
+            options:
+              - value: 0
+                title: 'Only me'
+              - value: 1
+                title: 'Allow people I follow'
+            name: t
+
+    switch-dialog: &switch-dialog
+      target: meta
+      sections:
+        - title: Message
+          input:
+            type: text
+            name: m
+        - title: Style
+          input:
+            type: select
+            options:
+              - color: '6a6a6a'
+                value: '6a6a6a'
+              - color: 'c2182a'
+                value: 'c2182a'
+              - color: '93ca6e'
+                value: '93ca6e'
+              - color: '6367dc'
+                value: '6367dc'
+            name: mod
+            mod_multiple: 2
+
+    switch-timed-dialog: &switch-timed-dialog
+      target: meta
+      sections:
+        - title: Message
+          input:
+            type: text
+            name: m
+        - title: Select time in seconds
+          input:
+            type: select
+            options:
+              - title: '1'
+                value: '1'
+              - title: '2'
+                value: '2'
+              - title: '3'
+                value: '3'
+              - title: '4'
+                value: '4'
+              - title: '5'
+                value: '5'
+              - title: '6'
+                value: '6'
+              - title: '7'
+                value: '7'
+              - title: '8'
+                value: '8'
+              - title: '9'
+                value: '9'
+              - title: '10'
+                value: '10'
+              - title: '15'
+                value: '15'
+              - title: '20'
+                value: '20'
+              - title: '25'
+                value: '25'
+              - title: '30'
+                value: '30'
+              - title: '60'
+                value: '60'
+              - title: '90'
+                value: '90'
+              - title: '120'
+                value: '120'
+              - title: '180'
+                value: '180'
+              - title: '240'
+                value: '240'
+              - title: '300'
+                value: '300'
+            name: t
+
+    # ==== Mechanical ==== #
+    mechanical: &mechanical
+      material: metal
+      emitter: powered-steam-infrequent
+      karma: -3
+
+    dish: &dish
+      <<: *mechanical
+      use:
+        protected: true
+        public: owner
+        field_display: true
+        dialog:
+          <<: *dish-dialog
+
+    # mechanical/dish-micro:
+    #   <<: *dish
+    #   code: 849
+    #   craftable: false
+    #   mod: field
+    #   field: 5
+    #   meta: local
+    #   title: Micro Protector
+    #   hint: '@dish'
+    #   karma: -4
+    #   toughness: 10
+    #   sound_loop_volume: 0.2
+    # mechanical/dish:
+    #   <<: *dish
+    #   code: 854
+    #   craftable: false
+    #   mod: field
+    #   field: 15
+    #   meta: local
+    #   title: Protector
+    #   hint: '@dish'
+    #   karma: -10
+    #   toughness: 10
+    #   sound_loop_volume: 0.3
+    # mechanical/dish-large:
+    #   <<: *dish
+    #   code: 855
+    #   craftable: false
+    #   mod: field
+    #   field: 30
+    #   meta: local
+    #   title: Large Protector
+    #   hint: '@dish'
+    #   karma: -15
+    #   toughness: 10
+    #   sound_loop_volume: 0.4
+    # mechanical/dish-mega:
+    #   <<: *dish
+    #   code: 857
+    #   craftable: false
+    #   mod: field
+    #   field: 60
+    #   meta: local
+    #   title: Mega Protector
+    #   hint: '@dish'
+    #   karma: -20
+    #   toughness: 10
+    #   sound_loop_volume: 0.5
+    # mechanical/dish-giga:
+    #   <<: *dish
+    #   code: 909
+    #   craftable: false
+    #   mod: field
+    #   field: 120
+    #   meta: global
+    #   title: Giga Protector
+    #   hint: '@dish'
+    #   karma: -25
+    #   toughness: 10
+    #   sound_loop_volume: 0.6
+    mechanical/dish-broken:
+      <<: *mechanical
+      code: 856
+      craftable: false
+      mod: field
+      field: 15
+      fieldable: false
+      meta: local
+      title: Broken Protector
+      inventory: ''
+      mining skill: ['engineering', 3]
+      hint: '@dish-broken'
+      sound_loop: cricketpulse
+      sound_loop_volume: 0.2
+
+    mechanical/switch:
+      code: 931
+      material: metal
+      sprite: mechanical/switch-off
+      hint: '@mechanical-switch'
+      meta: hidden
+      karma: -2
+      ingredients: ['building/brass', 'building/iron', ['ground/quartz-ore', 3]]
+      crafting skill: ['engineering', 2]
+      use:
+        command: true
+        switch: true
+        sound: metal_lever_movement_37
+        create dialog:
+          <<: *switch-dialog
+      mod: change
+      change:
+        - name: mechanical/switch-on
+          sprite: mechanical/switch-on
+          inherit: true
+        - name: mechanical/switch-red-off
+          background: mechanical/switch-off
+          sprite: mechanical/switch-color-red
+          inherit: true
+        - name: mechanical/switch-red-on
+          background: mechanical/switch-on
+          sprite: mechanical/switch-color-red
+          light: 0.25
+          light_color: ff0000
+          inherit: true
+        - name: mechanical/switch-green-off
+          background: mechanical/switch-off
+          sprite: mechanical/switch-color-green
+          inherit: true
+        - name: mechanical/switch-green-on
+          background: mechanical/switch-on
+          sprite: mechanical/switch-color-green
+          light: 0.25
+          light_color: 00ff00
+          inherit: true
+        - name: mechanical/switch-blue-off
+          background: mechanical/switch-off
+          sprite: mechanical/switch-color-blue
+          inherit: true
+        - name: mechanical/switch-blue-on
+          background: mechanical/switch-on
+          sprite: mechanical/switch-color-blue
+          light: 0.25
+          light_color: 0000ff
+          inherit: true
+
+    mechanical/switch-timed:
+      code: 933
+      material: metal
+      background: mechanical/switch-off
+      sprite: mechanical/switch-timer-off
+      inventory sprite: mechanical/switch-timer-on
+      hint: '@mechanical-switch'
+      meta: hidden
+      ingredients: ['building/brass', 'building/iron', ['ground/quartz-ore', 6]]
+      crafting skill: ['engineering', 3]
+      title: Timed Switch
+      karma: -3
+      use:
+        command: true
+        switch: true
+        sound: metal_lever_movement_37
+        create dialog:
+          <<: *switch-timed-dialog
+      mod: change
+      change:
+        - name: mechanical/switch-timer-on
+          background: mechanical/switch-on
+          sprite: mechanical/switch-timer-on
+          inherit: true
+
+    mechanical/switch-large:
+      code: 939
+      material: metal
+      sprite: mechanical/switch-large-off
+      hint: '@mechanical-switch'
+      meta: hidden
+      title: Large Switch
+      karma: -4
+      ingredients: [['building/brass', 2], ['building/iron', 2], ['ground/quartz-ore', 4], 'ground/crystal-blue-1']
+      crafting skill: ['engineering', 4]
+      use:
+        command: true
+        switch: true
+        multi: true
+        sound: metal_lever_movement_08
+        create dialog:
+          <<: *switch-dialog
+      mod: change
+      change:
+        - name: mechanical/switch-large-on
+          sprite: mechanical/switch-large-on
+          inherit: true
+        - name: mechanical/switch-large-red-off
+          background: mechanical/switch-large-off
+          sprite: mechanical/switch-large-color-red
+          inherit: true
+        - name: mechanical/switch-large-red-on
+          background: mechanical/switch-large-on
+          sprite: mechanical/switch-large-color-red
+          light: 0.25
+          light_color: ff0000
+          inherit: true
+        - name: mechanical/switch-large-green-off
+          background: mechanical/switch-large-off
+          sprite: mechanical/switch-large-color-green
+          inherit: true
+        - name: mechanical/switch-large-green-on
+          background: mechanical/switch-large-on
+          sprite: mechanical/switch-large-color-green
+          light: 0.25
+          light_color: 00ff00
+          inherit: true
+        - name: mechanical/switch-large-blue-off
+          background: mechanical/switch-large-off
+          sprite: mechanical/switch-large-color-blue
+          inherit: true
+        - name: mechanical/switch-large-blue-on
+          background: mechanical/switch-large-on
+          sprite: mechanical/switch-large-color-blue
+          light: 0.25
+          light_color: 0000ff
+          inherit: true
+
+    mechanical/switch-large-timed:
+      code: 996
+      material: metal
+      background: mechanical/switch-large-off
+      sprite: mechanical/swtich-large-timer-off
+      title: Large Timed Switch
+      hint: '@mechanical-switch'
+      meta: hidden
+      karma: -4
+      ingredients: [['building/brass', 2], ['building/iron', 2], ['ground/quartz-ore', 8], 'ground/crystal-blue-1']
+      crafting skill: ['engineering', 5]
+      use:
+        command: true
+        switch: true
+        multi: true
+        sound: metal_lever_movement_08
+        create dialog:
+          <<: *switch-timed-dialog
+      mod: change
+      change:
+        - name: mechanical/switch-large-timed-on
+          background: mechanical/switch-large-on
+          sprite: mechanical/switch-large-timer-on
+          inherit: true
+
+    mechanical/switch-large-fancy:
+      code: 948
+      material: metal
+      sprite: mechanical/switch-large-fancy-off
+      hint: '@mechanical-switch'
+      meta: hidden
+      title: Fancy Large Switch
+      karma: -5
+      #ingredients: ['building/brass', 'building/iron', ['ground/quartz-ore', 3]]
+      #crafting skill: ['engineering', 4]
+      use:
+        command: true
+        switch: true
+        sound: metal_lever_movement_08
+        create dialog:
+          <<: *switch-dialog
+      mod: change
+      change:
+        - name: mechanical/switch-large-fancy-on
+          sprite: mechanical/switch-large-fancy-on
+          inherit: true
+        - name: mechanical/switch-large-fancy-red-off
+          background: mechanical/switch-large-fancy-off
+          sprite: mechanical/switch-large-color-red
+          inherit: true
+        - name: mechanical/switch-large-fancy-red-on
+          background: mechanical/switch-large-fancy-on
+          sprite: mechanical/switch-large-color-red
+          light: 0.25
+          light_color: ff0000
+          inherit: true
+        - name: mechanical/switch-large-fancy-green-off
+          background: mechanical/switch-large-fancy-off
+          sprite: mechanical/switch-large-color-green
+          inherit: true
+        - name: mechanical/switch-large-fancy-green-on
+          background: mechanical/switch-large-fancy-on
+          sprite: mechanical/switch-large-color-green
+          light: 0.25
+          light_color: 00ff00
+          inherit: true
+        - name: mechanical/switch-large-fancy-blue-off
+          background: mechanical/switch-large-fancy-off
+          sprite: mechanical/switch-large-color-blue
+          inherit: true
+        - name: mechanical/switch-large-fancy-blue-on
+          background: mechanical/switch-large-fancy-on
+          sprite: mechanical/switch-large-color-blue
+          light: 0.25
+          light_color: 0000ff
+          inherit: true
+
+    mechanical/touchplate:
+      code: 963
+      material: metal
+      hint: '@touchplate'
+      meta: hidden
+      ingredients: ['building/brass', 'building/iron', ['ground/quartz-ore', 3]]
+      crafting skill: ['engineering', 3]
+      karma: -2
+      use:
+        trigger: true
+        create dialog:
+          <<: *switch-dialog
+      mod: change
+      change:
+        - sprite: mechanical/touchplate
+          inherit: true
+        - background: mechanical/touchplate
+          sprite: mechanical/touchplate-red
+          inherit: true
+        - background: mechanical/touchplate
+          sprite: mechanical/touchplate-red
+          inherit: true
+        - background: mechanical/touchplate
+          sprite: mechanical/touchplate-green
+          inherit: true
+        - background: mechanical/touchplate
+          sprite: mechanical/touchplate-green
+          inherit: true
+        - background: mechanical/touchplate
+          sprite: mechanical/touchplate-blue
+          inherit: true
+        - background: mechanical/touchplate
+          sprite: mechanical/touchplate-blue
+          inherit: true
+
+    mechanical/touchplate-finish:
+      code: 964
+      material: metal
+      hint: '@touchplate'
+      meta: hidden
+      ingredients: ['building/brass', 'building/iron', ['ground/quartz-ore', 3], 'ground/marble-ore', 'ground/bloodstone-ore']
+      crafting skill: ['engineering', 4]
+      karma: -2
+      use:
+        trigger: true
+        create dialog:
+          <<: *switch-dialog
+      title: Finish Touchplate
+      mod: change
+      change:
+        - sprite: mechanical/touchplate-finish
+          inherit: true
+        - background: mechanical/touchplate-finish
+          sprite: mechanical/touchplate-red
+          inherit: true
+        - background: mechanical/touchplate-finish
+          sprite: mechanical/touchplate-red
+          inherit: true
+        - background: mechanical/touchplate-finish
+          sprite: mechanical/touchplate-green
+          inherit: true
+        - background: mechanical/touchplate-finish
+          sprite: mechanical/touchplate-green
+          inherit: true
+        - background: mechanical/touchplate-finish
+          sprite: mechanical/touchplate-blue
+          inherit: true
+        - background: mechanical/touchplate-finish
+          sprite: mechanical/touchplate-blue
+          inherit: true
+
+    mechanical/touchplate-timed:
+      code: 968
+      material: metal
+      hint: '@touchplate'
+      meta: hidden
+      sprite: mechanical/touchplate-timed-off
+      title: Timed Touchplate
+      karma: -3
+      use:
+        trigger: true
+        create dialog:
+          <<: *switch-timed-dialog
+      mod: change
+      change:
+        - name: mechanical/touchplate-timed-on
+          sprite: mechanical/touchplate-timed-on
+          inherit: true
+
+    mechanical/touchplate-fancy:
+      code: 969
+      material: metal
+      hint: '@touchplate'
+      meta: hidden
+      title: Fancy Touchplate
+      ingredients: ['building/brass', 'building/iron', ['ground/quartz-ore', 4], 'ground/beryllium-ore', 'ground/crystal-blue-1']
+      crafting skill: ['engineering', 4]
+      karma: -4
+      use:
+        trigger: true
+        multi: true
+        create dialog:
+          <<: *switch-dialog
+      mod: change
+      change:
+        - sprite: mechanical/touchplate-fancy
+          inherit: true
+        - background: mechanical/touchplate-fancy
+          sprite: mechanical/touchplate-red
+          inherit: true
+        - background: mechanical/touchplate-fancy
+          sprite: mechanical/touchplate-red
+          inherit: true
+        - background: mechanical/touchplate-fancy
+          sprite: mechanical/touchplate-green
+          inherit: true
+        - background: mechanical/touchplate-fancy
+          sprite: mechanical/touchplate-green
+          inherit: true
+        - background: mechanical/touchplate-fancy
+          sprite: mechanical/touchplate-blue
+          inherit: true
+        - background: mechanical/touchplate-fancy
+          sprite: mechanical/touchplate-blue
+          inherit: true
+
+    mechanical/touchplate-timed-fancy:
+      code: 979
+      material: metal
+      sprite: mechanical/touchplate-timed-fancy-off
+      title: Fancy Timed Touchplate
+      hint: '@touchplate'
+      meta: hidden
+      title: Fancy Timed Touchplate
+      ingredients: ['building/brass', 'building/iron', ['ground/quartz-ore', 8], 'ground/beryllium-ore', 'ground/crystal-blue-1']
+      crafting skill: ['engineering', 5]
+      karma: -4
+      use:
+        trigger: true
+        multi: true
+        create dialog:
+          <<: *switch-timed-dialog
+      mod: change
+      change:
+        - name: mechanical/touchplate-timed-fancy-on
+          sprite: mechanical/touchplate-timed-fancy-on
+          inherit: true
+
+    mechanical/relay:
+      code: 973
+      material: metal
+      hint: Relays let you add randomness and delays to switchable items. Place a switch and then a relay to try it out!
+      meta: hidden
+      mod: change
+      karma: -3
+      use:
+        switch: true
+        switched: Relay
+        multi: true
+        dialog:
+          target: meta
+          sections:
+            - title: Type
+              input:
+                type: select
+                options:
+                - value: 'Sequence'
+                  title: 'Sequence'
+                - value: 'Random'
+                  title: 'Random'
+                name: y
+            # - title: Activation
+            #   input:
+            #     type: select
+            #     options: ['Single', 'All']
+            #     name: a
+            # - title: Delay
+            #   input:
+            #     type: select
+            #     options: ['None', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '15', '20', '25', '30', '60']
+            #     name: d
+            - title: Sequence reset interval
+              input:
+                type: select
+                options:
+                - value: 'Never'
+                  title: 'Never'
+                - value: '1'
+                  title: '1'
+                - value: '2'
+                  title: '2'
+                - value: '3'
+                  title: '3'
+                - value: '4'
+                  title: '4'
+                - value: '5'
+                  title: '5'
+                - value: '6'
+                  title: '6'
+                - value: '7'
+                  title: '7'
+                - value: '8'
+                  title: '8'
+                - value: '9'
+                  title: '9'
+                - value: '10'
+                  title: '10'
+                - value: '15'
+                  title: '15'
+                - value: '20'
+                  title: '20'
+                - value: '25'
+                  title: '25'
+                - value: '30'
+                  title: '30'
+                - value: '60'
+                  title: '60'
+                - value: '90'
+                  title: '90'
+                - value: '120'
+                  title: '120'
+                - value: '180'
+                  title: '180'
+                - value: '240'
+                  title: '240'
+                - value: '300'
+                  title: '300'
+                name: r
+      change:
+        - sprite: mechanical/relay
+          inherit: true
+        - background: mechanical/relay
+          sprite: mechanical/touchplate-red
+          inherit: true
+        - background: mechanical/relay
+          sprite: mechanical/touchplate-red
+          inherit: true
+        - background: mechanical/relay
+          sprite: mechanical/touchplate-green
+          inherit: true
+        - background: mechanical/relay
+          sprite: mechanical/touchplate-green
+          inherit: true
+        - background: mechanical/relay
+          sprite: mechanical/touchplate-blue
+          inherit: true
+        - background: mechanical/relay
+          sprite: mechanical/touchplate-blue
+          inherit: true
+
+    # ==== Base ===== #
+
+    base: &base
+      invulnerable: true
+      tileable: true
+      gui: false
+
+    base-earth: &base-earth
+      <<: *base
+      continuity: base/earth
+      sprites+:
+        - frames: base/earth
+          masks: ['masks/border-external', 12]
+          type: external
+          z: -0.01
+
+    base/earth:
+      <<: *base-earth
+      code: 2
+      opaque: true
+      title: Earth Backdrop
+      hintt: 'A rare handheld chunk of earth backdrop, sometimes referred to as "Bruce".'
+      sprites:
+        - frames: base/earth
+
+    base/sandstone:
+      <<: *base
+      code: 3
+      opaque: true
+      color: cfad70
+      title: Sandstone Backdrop
+      sprites:
+        - frames: base/sandstone
+          z: -0.02
+        - frames: base/sandstone
+          masks: ['masks/border-external', 12]
+          type: external
+          z: -0.02
+
+    base/limestone:
+      <<: *base
+      code: 4
+      opaque: true
+      color: bbbeb5
+      title: Limestone Backdrop
+      sprites:
+        - frames: base/limestone
+          z: -0.03
+        - frames: base/limestone
+          masks: ['masks/border-external', 12]
+          type: external
+          z: -0.03
+
+    base/maw:
+      <<: *base-earth
+      tileable: false
+      code: 5
+      invulnerable: true
+      border-wholeness: earth
+      spawn: creature
+      gui: false
+      sprites:
+        - frames: base/earth
+          tileable: true
+        - frames: ['base/maw', 4]
+          align: center
+
+    base/maw-plugged:
+      <<: *base-earth
+      code: 7
+      tileable: false
+      invulnerable: true
+      border-wholeness: earth
+      gui: false
+      title: Plugged Maw
+      sprites:
+        - frames: base/earth
+          tileable: true
+        - frames: ['base/maw', 4]
+          align: center
+          z: -0.1
+        - frames: base/maw-plug
+          align: center
+          z: -0.11
+
+    base/pipe:
+      <<: *base-earth
+      tileable: false
+      code: 6
+      invulnerable: true
+      spawn: automata
+      gui: false
+      sprites:
+        - frames: base/pipe
+          align: center
+          z: -0.1
+
+    base/pipe-plugged:
+      <<: *base-earth
+      tileable: false
+      code: 8
+      invulnerable: true
+      border-wholeness: earth
+      gui: false
+      title: Plugged Pipe
+      sprites:
+        - frames: base/pipe
+          align: center
+          z: -0.1
+        - frames: base/maw-plug-large
+          align: center
+          z: -0.11
+
+    base/vent:
+      <<: *base
+      code: 10
+      opaque: true
+      background: base/earth
+      continuity: base/vent-all
+      sprite-continuity: base/steam-vent
+      sprite-continuity-animation: ['base/steam-moving', 2]
+      sprite_continuity_animation_opacity: 128
+      border-wholeness: earth
+      sprite_z: -0.1
+
+    base/vent-cap:
+      <<: *base
+      code: 11
+      opaque: true
+      background: base/earth
+      continuity: base/vent-all
+      sprite: ''
+      sprite-continuity: base/steam-vent-cap
+      border-wholeness: earth
+      color: 715a35
+      sprite_z: -0.1
+
+    base/drawing: &base-drawing
+      <<: *base-earth
+      opaque: true
+      background: base/earth
+      border-wholeness: earth
+      border-continuity-external: ['masks/border-external', 12]
+      sprite_z: -0.1
+
+    base/drawing-modern:
+      <<: *base-drawing
+      code: 12
+      sprite: ['caves/drawing-modern', 9]
+      title: Modern Graffiti
+
+    base/drawing-historical:
+      <<: *base-drawing
+      code: 13
+      sprite: ['caves/drawing-historical', 13]
+      title: Historical Graffiti
+
+    base/drawing-danger:
+      <<: *base-drawing
+      code: 14
+      sprite: ['caves/drawing-danger', 8]
+      title: Warning Graffiti
+
+
+    # ===== Furniture ===== #
+
+    furniture/wardrobe:
+      code: 775
+      material: wood
+      ingredients: [['building/wood', 6]]
+    furniture/hatrack:
+      code: 776
+      material: metal
+      ingredients: [['building/iron', 2]]
+    furniture/mirror-wall:
+      code: 773
+      material: metal
+      ingredients: ['building/wood-decorative', ['back/glass', 2], 'building/brass']
+      title: Tall Mirror
+      mounted: true
+    furniture/mirror:
+      code: 790
+      material: glass
+      ingredients: ['back/glass', 'building/brass']
+
+    signs/note: &signs-note
+      meta: local
+      mod: note
+      title: Note
+      ingredients: ['back/paper', 'ground/resin']
+      mounted: true
+      use:
+        note: true
+        protected: true
+        public: note
+        dialog:
+          title: Change Note
+          target: meta
+          sections:
+            - title: Text
+              input:
+                type: text
+                sanitize: true
+                maxlength: 40
+                key: t1
+            - input:
+                type: text
+                sanitize: true
+                maxlength: 40
+                key: t2
+            - input:
+                type: text
+                sanitize: true
+                maxlength: 40
+                key: t3
+            - input:
+                type: text
+                sanitize: true
+                maxlength: 40
+                key: t4
+            - input:
+                type: text
+                sanitize: true
+                maxlength: 40
+                key: t5
+            - input:
+                type: text
+                sanitize: true
+                maxlength: 40
+                key: t6
+
+    signs/note-wall:
+      <<: *signs-note
+      code: 920
+      sprite: ['signs/note-wall', 3]
+
+    signs/note-scrawl:
+      <<: *signs-note
+      code: 921
+      craftable: false
+      carryable: false
+
+    signs/plaque-base: &plaque
+      meta: global
+      spacing: 50
+      spacing_items:
+        - signs/plaque
+        - signs/plaque-landmark
+      toughness: 10
+
+    signs/plaque-dialog: &plaque-dialog
+      target: meta
+      sections:
+        - title: Landmark Name
+          input:
+            type: text
+            sanitize: true
+            maxlength: 20
+            name: n
+        - title: Text
+          input:
+            type: text
+            sanitize: true
+            maxlength: 20
+            name: t1
+        - input:
+            type: text
+            sanitize: true
+            maxlength: 20
+            name: t2
+        - input:
+            type: text
+            sanitize: true
+            maxlength: 20
+            name: t3
+
+    signs/plaque:
+      <<: *plaque
+      code: 914
+      hint: 'Plaques are signs that designate a landmark, which allows them to appear on the world map.'
+      ingredients: [['building/brass', 4], ['building/marble', 8]]
+      crafting skill: ['building', 3]
+      color: ffffff
+      karma: -6
+      use:
+        sign: true
+        protected: true
+        plaque: true
+        dialog:
+          <<: *plaque-dialog
+
+    signs/plaque-landmark:
+      <<: *plaque
+      code: 916
+      hint: 'Landmark Plaques are signs that designate a world landmark and can be voted on.'
+      place_hint: landmark-plaque-place
+      place_constraints:
+        percent_explored: 0.75
+      ingredients: [['building/brass', 8], ['building/marble', 4], 'ground/crystal-purple-1']
+      crafting skill: ['building', 5]
+      title: Landmark Plaque
+      inventory: ''
+      mod_inventory: [1, 'rubble/brass']
+      spawn_spacing: 25
+      color: ffff55
+      light_color: ffff55
+      karma: -10
+      field: 1
+      use:
+        sign: true
+        protected: true
+        public: landmark
+        landmark: true
+        plaque: true
+        dialog:
+          <<: *plaque-dialog
+
+    signs/mechanical: &sign-large
+      code: 919
+      meta: local
+      title: Mechanical Sign
+      karma: -5
+      material: metal
+      color: a28219
+      ingredients: [['building/iron', 6], ['building/brass', 6], ['ground/quartz-ore', 6], 'ground/crystal-blue-1']
+      crafting skill: ['engineering', 7]
+      use:
+        sign: true
+        switched: MessageSign
+        protected: true
+        dialog:
+          target: meta
+          sections:
+            - title: Text
+              input:
+                type: text
+                sanitize: true
+                maxlength: 20
+                name: t1
+            - input:
+                type: text
+                sanitize: true
+                maxlength: 20
+                name: t2
+            - input:
+                type: text
+                sanitize: true
+                maxlength: 20
+                name: t3
+            - input:
+                type: text
+                sanitize: true
+                maxlength: 20
+                name: t4
+            - title: Lock Message
+              input:
+                type: select
+                options: ['No', 'Yes']
+                name: lock
+
+    rubble/skeleton:
+      code: 970
+      material: crunch
+      group: remains
+      craftable: false
+      sprite: ['rubble/skeleton', 4]
+      karma: -2
+      hint: "Human remains can be buried on the surface to obtain Undertaker achievements. Dig a 2x1 hole on the surface, place a skeleton in it, and place a gravestone directly above it on the left side. If the grave fills itself, you know you've done it right!"
+      report: true
+
+
+  dialogs:
+    multicraft:
+      sections:
+        - title: 'Craft how many'
+          input:
+            type: select
+            name: qty
+            options:
+              - value: 1
+                title: '1'
+              - value: 2
+                title: '2'
+              - value: 3
+                title: '3'
+              - value: 4
+                title: '4'
+              - value: 5
+                title: '5'
+              - value: 10
+                title: '10'
+              - value: 15
+                title: '15'
+              - value: 20
+                title: '20'
+              - value: 25
+                title: '25'
+              - value: 50
+                title: '50'
+              - value: 75
+                title: '75'
+              - value: 100
+                title: '100'
+              - value: 200
+                title: '200'
+              - value: 500
+                title: '500'
+              - value: 1000
+                title: '1000'
+    photograph:
+      sections:
+        - title: "How much zoom would you like in your photograph?"
+          input:
+            type: select
+            title: Zoom
+            options:
+              - value: normal
+                label: Normal
+              - value: large
+                label: Large
+              - value: huge
+                label: Huge
+            name: zoom
+
+    request_registration:
+      actions:
+        - title: Register with Facebook
+        - title: Register with email
+      padding: 20
+      sections:
+        - title: Register to continue and save your progress!
+          text: Connect with Facebook to save your progress and log in from different devices. If you prefer, you can enter an email and password instead.
+          text-color: 30201a
+          text-scale: 0.9
+
+    request_email_registration:
+      padding: 10
+      sections:
+        - title: Register to save your progress!
+          text: Enter your email address and desired password to save your progress and log in from different devices.
+          text-color: 30201a
+          text-scale: 0.8
+        - input:
+            type: text
+            title: Email
+            name: email
+            maxlength: 128
+        - input:
+            type: text
+            title: Password
+            name: password
+            password: true
+            maxlength: 64
+
+    request_name_change:
+      padding: 10
+      sections:
+        - title: "Change your name"
+          text: Enter your new name. No spaces or special characters please.
+          text-color: 30201a
+          input:
+            type: text
+            title: New name
+            name: playername
+            maxlength: 20
+
+    tutorial_registration_complete:
+      padding: 10
+      sections:
+        - title: Registration complete!
+          text: You're now ready to venture into the wilds of Deepworld. Press 'okay' and you will be teleported into your first world. Get ready to make friends, battle foes, and plunder!
+
+    facebook_permissions:
+      actions:
+        - title: Yes
+        - title: No
+      sections:
+        - title: Post to Facebook and earn 25 crowns!
+          text: "Help spread the word about Deepworld on Facebook! Let friends know about your achievements, mobs defeated, worlds visited, and more. It's unobtrusive and a great way to help Deepworld grow!"
+
+    invite_to_upgrade:
+      actions:
+        - title: Cancel
+        - type: facebook-invite
+      sections:
+        - title: Invite friends to unlock new biomes!
+          text: For every three friends you invite who play Deepworld, a new biome will be unlocked for you to explore. You can also upgrade to premium in the shop to instantly have access to all biomes, unlimited skill levels, and more!
+
+    private_message:
+      sections:
+        - title: Send Private Message
+        - input:
+            type: text
+            title: Recipient
+            name: recipient
+        - input:
+            type: text
+            title: Message
+            rows: 5
+            name: message
+            maxlength: 500
+
+    skill_reset:
+      sections:
+        - title: Skill Reset
+        - text: One level has been removed from each of your skills and added to your point pool. You can now reapply them as you like!
+
+    competition:
+      sections:
+        - title: Official Deepworld Competition
+          text: 'The current competition is "Brain Bazaar", through May 17th: build outlandish or creative structures in the new brain biome! Entries must be done in official competition worlds, and you must claim a green protector there to enter. The worlds are:'
+        - text: '- Brackhu Peak [Competition]'
+
+    settings_controls:
+      sections:
+        - input:
+            title: Action Style
+            name: actionStyle
+            type: select
+            default: 1
+            store: prefs
+            options:
+              - value: direct
+                title: Direct
+              - value: joystick
+                title: Joystick
+          platforms:
+            - ios
+        - input:
+            title: Joystick Style
+            name: joystickStyle
+            type: select
+            default: 1
+            store: prefs
+            options:
+              - value: floating
+                title: Floating
+              - value: fixed
+                title: Fixed
+          platforms:
+            - ios
+        - input:
+            title: Joystick Side
+            name: joystickSide
+            type: select
+            default: 0
+            store: prefs
+            options:
+              - value: left
+                title: Left
+              - value: right
+                title: Right
+          platforms:
+              - ios
+        - input:
+            title: Joystick Opacity
+            name: joystickOpacity
+            type: slider
+            store: prefs
+            min: 1
+            max: 10
+            step: 1
+            default: 4
+          platforms:
+            - ios
+        - input:
+            title: Joystick Size
+            name: joystickSize
+            type: slider
+            store: prefs
+            min: 1
+            max: 10
+            step: 1
+            default: 6
+          platforms:
+            - ios
+        - input:
+            title: HUD Opacity
+            name: hudOpacity
+            type: slider
+            store: prefs
+            min: 1
+            max: 10
+            step: 1
+            default: 8
+
+    settings_game:
+      sections:
+        - input:
+            title: Graphics Quality
+            name: graphicsQuality
+            type: slider
+            store: prefs
+            default: 2
+            options:
+              - 'Low'
+              - 'Medium'
+              - 'High'
+        - input:
+            title: Audio Volume
+            name: volume
+            type: slider
+            store: prefs
+            min: 1
+            max: 10
+            step: 1
+            default: 9
+        - input:
+            title: Chat Sounds
+            name: chatSounds
+            type: checkbox
+            default: true
+            store: prefs
+        - input:
+            title: Player Sounds
+            name: playerSounds
+            type: select
+            store: account
+            options:
+              - value: male
+                title: Male
+              - value: female
+                title: Female
+
+    settings_account:
+      sections:
+        - input:
+            title: Notify me of PMs
+            name: pushMessages
+            type: checkbox
+            default: true
+            store: account
+
+    follow:
+      sections:
+        - input:
+            title: 'Follow a player by name:'
+            type: text
+            maxlength: 20
+            name: playerName
+    visibility:
+      sections:
+        - input:
+            title: 'Specify who can see your location:'
+            type: select
+            options:
+              - value: 0
+                title: Everyone
+              - value: 1
+                title: People I follow
+              - value: 2
+                title: Nobody
+            name: visibility
+
+    exo:
+      sections:
+        - title: Exo Visibility
+        - text: Headset
+          input:
+            type: select
+            options:
+              - value: visible
+                title: Visible
+              - value: hidden
+                title: Hidden
+            name: headset
+        - text: Torso
+          input:
+            type: select
+            options:
+              - value: visible
+                title: Visible
+              - value: hidden
+                title: Hidden
+            name: torso
+        - text: Legs
+          input:
+            type: select
+            options:
+              - value: visible
+                title: Visible
+              - value: hidden
+                title: Hidden
+            name: legs
+
+    order:
+      sections:
+        - title: Change the Order displayed by your name
+          input:
+            type: select
+            title: Order
+            options:
+              - value: none
+                title: None
+            name: order
+
+    redeem:
+      sections:
+        - title: 'Enter redemption code:'
+          input:
+            type: text
+            title: Code
+            maxlength: 10
+            name: 'code'
+
+    welcome:
+      sections:
+        - title: You're ready to explore Deepworld!
+          subtitle: "It's a little dangerous out there, so you'll want to boost your skills by earning achievements. Try this one out:"
+
+    report:
+      sections:
+        - title: Report a player
+        - text: "Press one of the following options to report this player:"
+          text-color: 3a3a3a
+        - text: "I want to mute them"
+          choice: mute
+        - text: "They are griefing"
+          choice: griefing
+        - text: "They are abusive / offensive"
+          choice: abuse
+        - text: "Never mind, they're OK."
+          choice: cancel
+        - text: " "
+
+
+
+  emitters:
+    powered-steam: &powered-steam
+      scale base: 0.6
+      scale range: 0.4
+      angle base: 0
+      angle range: 360
+      color base: [255, 255, 255, 80]
+      color range: [10, 10, 10, 100]
+      collides: false
+      frequency: 0.333
+      life: 1.5
+      sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+      velocity base: 60
+      velocity range: 50
+
+    powered-steam-infrequent:
+      <<: *powered-steam
+      frequency: 0.1
+
+    rain:
+      scale base: 1.0
+      scale range: 0.2
+      angle base: 180
+      angle range: 15
+      color base: [20, 120, 30, 220]
+      color range: [10, 40, 10, 30]
+      collides: true
+      collision:
+        die: true
+      collision emitter: acid poof
+      life: 0.3
+      frequency: 10
+      sprites: particles/drop-1
+      velocity base: 2000
+      velocity range: 500
+    ash rain:
+      scale base: 0.4
+      scale range: 0.35
+      angle base: 180
+      angle range: 15
+      color base: [250, 250, 250, 150]
+      color range: [10, 2, 2, 75]
+      collides: true
+      collision:
+        die: true
+      life: 2.2
+      frequency: 10
+      sprites: ['particles/ash-1', 'particles/ash-2', 'particles/ash-3', 'particles/ash-4', 'particles/ember-1', 'particles/ember-2', 'particles/ember-3']
+      velocity base: 300
+      velocity range: 50
+    snow:
+      scale base: 0.4
+      scale range: 0.35
+      angle base: 160
+      angle range: 15
+      color base: [250, 250, 250, 150]
+      color range: [10, 2, 2, 75]
+      collides: true
+      collision:
+        die: true
+      life: 2.2
+      frequency: 10
+      sprites: ['particles/snow-1', 'particles/snow-2', 'particles/snow-3', 'particles/snow-4']
+      velocity base: 340
+      velocity range: 50
+
+    emitter-spread: &emitter-spread
+      scale base: 0.6
+      scale range: 0.2
+      position range: [0.5, 0.5]
+      angle range: 360
+      color base: [255, 255, 215, 150]
+      color range: [20, 20, 3, 50]
+      life: 1.0
+      frequency: 10
+
+    explosion cloud: &explosion-cloud
+      <<: *emitter-spread
+      scale base: 1.3
+      scale range: 0.6
+      angular speed base: 0
+      angular speed range: 30
+
+    explosion cloud small:
+      <<: *explosion-cloud
+      life: 5.0
+      velocity base: 40
+      velocity range: 100
+      sprites: ['explosions/cloud-small-1', 'explosions/cloud-small-2', 'explosions/cloud-small-3', 'explosions/cloud-small-4']
+      position range: [4.0, 4.0]
+
+    explosion cloud large:
+      <<: *explosion-cloud
+      life: 6.0
+      velocity base: 20
+      velocity range: 20
+      sprites: ['explosions/cloud-large-1']
+      position range: [2.0, 2.0]
+
+    bomb:
+      life: 1.0
+      sprites: ['explosions/boom-1', 'explosions/boom-2', 'explosions/boom-3']
+      animated sprite: true
+      sound: ExplosionPip
+      scale_base: 2
+      scale_range: 0.3
+      subeffect:
+        emitter: explosion cloud small
+        qty: 6
+    bomb-large:
+      life: 1.0
+      sprites: ['explosions/boom-1', 'explosions/boom-2', 'explosions/boom-3']
+      animated sprite: true
+      sound: ExplosionPop
+      scale_base: 3
+      scale_range: 0.4
+      subeffect:
+        emitter: explosion cloud large
+        qty: 6
+    bomb-electric:
+      life: 1.0
+      sprites: ['explosions/boom-electric-1', 'explosions/boom-electric-2', 'explosions/boom-electric-3']
+      animated sprite: true
+      sound: electrical_burst_01
+      scale_base: 2
+      scale_range: 0.4
+      subeffect:
+        emitter: explosion cloud large
+        qty: 6
+    bomb-fire:
+      life: 1.0
+      sprites: ['explosions/boom-incendiary-1', 'explosions/boom-incendiary-2', 'explosions/boom-incendiary-3']
+      animated sprite: true
+      sound: ExplosionIncendiary
+      scale_base: 2
+      scale_range: 0.4
+      subeffect:
+        emitter: explosion cloud large
+        qty: 6
+    bomb-teleport:
+      life: 1.0
+      sprites: ['explosions/boom-teleport-1', 'explosions/boom-teleport-2', 'explosions/boom-teleport-3']
+      animated sprite: true
+      fps: 15
+      sound: electrical_fuse_burst_08
+      scale_base: 1.4
+      scale_range: 0.4
+    hit-metal:
+      prefab: Particles/CFX_Hit_A_Red
+    hit-stone:
+      prefab: Particles/CFX_GroundHit
+    hit-dirt:
+      prefab: Particles/CFX3_Hit_SmokePuff
+    hit-protected:
+      prefab: Particles/CFX_ElectricGround
+    hit-disallowed:
+      prefab: Particles/CFX_Poof
+
+    ground-rock-hit-brown:
+      prefab: Particles/CFX2_GroundRockHit Brown
+      scale_base: 1
+      scale_range: 0
+    ground-rock-hit-grey:
+      prefab: Particles/CFX2_GroundRockHit Gray
+      scale_base: 1
+      scale_range: 0
+    ground-hit:
+      prefab: Particles/CFX_GroundHit
+      scale_base: 1
+      scale_range: 0
+    ground-rock-hit:
+      prefab: Particles/CFX2_GroundRockHit
+      scale_base: 1
+      scale_range: 0
+    ground-rockhit-bigger-dark:
+      prefab: Particles/CFX2_GroundWoodHit Bigger Dark
+      scale_base: 1
+      scale_range: 0
+    ground-wood-hit:
+      prefab: Particles/CFX2_GroundWoodHit
+      scale_base: 1
+      scale_range: 0
+    rain-normal:
+      prefab: Particles/CFX2_Rain
+      scale_base: 1
+      scale_range: 0
+    rain-heavy:
+      prefab: Particles/CFX2_RainHeavy
+      scale_base: 1
+      scale_range: 0
+    rain-light:
+      prefab: Particles/CFX2_RainLight
+      scale_base: 1
+      scale_range: 0
+    snow-normal:
+      prefab: Particles/CFX3_Snow
+      scale_base: 1
+      scale_range: 0
+    snow-dense:
+      prefab: Particles/CFX3_Snow_Dense
+      scale_base: 1
+      scale_range: 0
+    snow-storm:
+      prefab: Particles/CFX3_Snow_Storm
+      scale_base: 1
+      scale_range: 0
+
+    giblets: &particles-giblets
+      collides: true
+      gravity: true
+      scale base: 1.0
+      scale range: 0.5
+      position range: [0.5, 0.5]
+      angle range: 300
+      color range: [0, 0, 0, 0]
+      life: 1.5
+      frequency: 10
+      velocity base: 210
+      velocity range: 110
+      angular velocity base: 10
+      angular velocity range: 10
+
+    terrapus giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['giblets/terrapus-1', 'giblets/terrapus-2', 'giblets/antennae-1', 'giblets/antennae-2']
+
+    bug giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['giblets/antennae-1', 'giblets/antennae-2']
+
+    crow giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['giblets/crow-feather-1', 'giblets/crow-feather-2', 'giblets/crow-feather-3']
+      scale base: 0.25
+
+    crow death giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['giblets/crow-feather-1', 'giblets/crow-feather-2', 'giblets/crow-feather-3', 'giblets/guts-1', 'giblets/guts-2', 'giblets/guts-3', 'giblets/guts-4']
+      scale base: 0.25
+
+    guts:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['giblets/guts-1', 'giblets/guts-2', 'giblets/guts-3', 'giblets/guts-4']
+      scale base: 0.25
+
+    bat giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['giblets/bat-1', 'giblets/bat-2', 'giblets/bat-3']
+
+    skeleton giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['particles/bone-1', 'particles/bone-2', 'particles/bone-3', 'particles/bone-4']
+
+    machine giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['giblets/machine-1', 'giblets/machine-2', 'giblets/machine-3', 'giblets/machine-4', 'giblets/machine-5', 'giblets/machine-6', 'giblets/machine-7']
+
+    automata giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['giblets/machine-1', 'giblets/machine-2', 'giblets/machine-3', 'giblets/machine-4', 'giblets/machine-5', 'giblets/machine-6', 'giblets/machine-7']
+
+    brain giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 255]
+      sprites: ['giblets/brain-1', 'giblets/brain-2', 'giblets/brain-glass-1', 'giblets/brain-glass-2', 'giblets/brain-glass-3', 'giblets/brain-tank-1', 'giblets/brain-tube-1', 'giblets/brain-tube-2']
+
+    ghost giblets:
+      <<: *particles-giblets
+      color base: [255, 255, 255, 150]
+      sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+
+    shadow giblets:
+      <<: *particles-giblets
+      color base: [20, 20, 20, 150]
+      sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+
+
+
+    # ===== Turrets ===== #
+
+    mechanical/turret: &entity-turret
+      block: true
+      damage emitter: machine giblets
+      death sound: ['powerdown_02', 'powerdown-bib-ss04325', 'powerdown-bib-ss04815', 'powerdown-blfx-10997']
+      material: metal
+      power on: ['scifielectronic10-bit', 'scifielectronic10-bit', 'scifielectronic10-bit', 'scifielectronic10']
+      defense:
+        fire: 0.9
+        steam: 0.7
+        bludgeoning: 0.2
+        slashing: 0.7
+        piercing: 0.25
+        cold: 0.6
+      weakness:
+        acid: 0.35
+        energy: 0.2
+        sonic: 0.1
+      class: Turret
+      move: false
+      spine: turret
+      spine_scale_base: 4.0
+
+    mechanical/turret-pistol:
+      <<: *entity-turret
+      code: 90
+      health: 1.5
+      behavior:
+        - type: randomly_target
+          range: 22
+          friendly_fire: false
+        - type: spawn_attack
+          entity: bullets/lead
+          speed: 12
+          delay: 3
+          burst: [2, 0.25]
+          frequency: 0.7
+          shoot emitter: steam puff
+          muzzle flash: explosions/muzzle-flash
+      placed_inventory: mechanical/turret-pistol
+      inventory:
+        rubble/iron: 10
+        rubble/brass: 10
+        mechanical/turret-pistol: 1
+      spine_skin: pistol
+
+    mechanical/turret-fire:
+      <<: *entity-turret
+      code: 91
+      health: 1.5
+      behavior:
+        - type: randomly_target
+          range: 20
+          friendly_fire: false
+        - type: spawn_attack
+          entity: bullets/fire
+          speed: 9.5
+          frequency: 0.45
+          delay: 3
+      placed_inventory: mechanical/turret-fire
+      inventory:
+        rubble/iron: 10
+        rubble/brass: 10
+        mechanical/turret-fire: 1
+      spine_skin: fire
+
+    mechanical/turret-acid:
+      <<: *entity-turret
+      code: 92
+      health: 1.5
+      behavior:
+        - type: randomly_target
+          range: 19
+          friendly_fire: false
+        - type: spawn_attack
+          entity: bullets/acid
+          speed: 10
+          frequency: 0.45
+          burst: [3, 0.25]
+          shoot emitter: acid puff
+          delay: 3
+      placed_inventory: mechanical/turret-acid
+      inventory:
+        rubble/iron: 10
+        rubble/brass: 10
+        mechanical/turret-acid: 1
+      spine_skin: acid
+
+    mechanical/turret-flame:
+      <<: *entity-turret
+      code: 93
+      health: 1.5
+      behavior:
+        - type: randomly_target
+          range: 15
+          friendly_fire: false
+        - type: spawn_attack
+          entity: bullets/flame
+          speed: 7.5
+          frequency: 0.45
+          burst: 10
+          delay: 3
+      placed_inventory: mechanical/turret-flame
+      inventory:
+        rubble/iron: 10
+        rubble/brass: 10
+        mechanical/turret-flame: 1
+      spine_skin: flame
+
+    mechanical/turret-dessicator:
+      <<: *entity-turret
+      code: 94
+      health: 1.5
+      behavior:
+        - type: randomly_target
+          range: 17
+          friendly_fire: false
+        - type: spawn_attack
+          entity: bullets/dessication
+          speed: 9.5
+          frequency: 0.5
+          burst: 7
+          delay: 3
+      placed_inventory: mechanical/turret-dessicator
+      inventory:
+        rubble/iron: 12
+        rubble/brass: 12
+        mechanical/dessicator: 1
+      spine_skin: dessicator
+
+  decay:
+    materials:
+      paper: [['decay/cracks', 3], ['decay/dirt', 2], ['decay/gouges', 2], ['decay/mold', 3]]
+      glass: [['decay/cracks', 1], ['decay/dirt', 1], ['decay/scratches', 3]]
+      wood: [['decay/cracks', 3], ['decay/dirt', 1], ['decay/gouges', 2], ['decay/mold', 1]]
+      stone: [['decay/cracks', 3], ['decay/dirt', 1], ['decay/gouges', 2]]
+      metal: [['decay/cracks', 3], ['decay/scratches', 1], ['decay/gouges', 2]]

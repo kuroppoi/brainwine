@@ -1,0 +1,898 @@
+dialogs:
+  tutorial_gift_home_world:
+    title: Welcome!
+    sections:
+      - text: Deepworld is a big place! There's lots to explore, but it's good to have a home base, too. Take these crowns and buy a home world so you can get started!
+      - title: Received 200 crowns!
+        image: shop/crowns
+
+  home_world:
+    sections:
+      - title: Home World
+      - text: This is your home world to explore and build. Roam around, mine resources, and see what you find! Once you have leveled up, you can tap the orange spawn portals to head out and meet other players!
+
+  spawn_teleport:
+    sections:
+      - text: This teleporter will take you into the wilds of Deepworld! You can explore, build, and chat with other players as much as you'd like. If you want to check out other worlds, look for other teleporters like this to continue your journey!
+
+  spawn_level_up:
+    sections:
+      - text: You need to level up before you can use this teleporter! Try to mine 20 different things with your pickaxe and earn the Scavenger achievement. That will help you level up!
+
+
+  world_help:
+    sections:
+      - title: Private World Help
+      - text: "/whelp               - Display this help menu       "
+      - text: "/winfo               - Display members & access code"
+      - text: "/wadd [player]       - Add a new member             "
+      - text: "/wremove [player]    - Remove an existing member    "
+      - text: "/wrecode             - Generate a new access code   "
+      - text: "/wrename [name]      - Rename world (once per day)  "
+      - text: "/wpvp [on/off]       - Turn pvp on or off           "
+      - text: "/wpublic [on/off]    - Change to public             "
+      - text: "/wprotected off      - Turn off protected status    "
+
+  guild_owner_help:
+    sections:
+      - title: Guild Help
+      - text: "/ghelp            - Display this help menu         "
+      - text: "/ginfo            - Display guild members and info "
+      - text: "/ginvite [player] - Invite a player to the guild   "
+      - text: "/gremove [player] - Remove a player from the guild "
+      - text: "/gleader [player] - Pass on your leadership        "
+      - text: "/gquit            - Leave the guild                "
+  guild_member_help:
+    sections:
+      - title: Guild Help
+      - text: "/ghelp            - Display this help menu         "
+      - text: "/ginfo            - Display guild members and info "
+      - text: "/gquit            - Leave your guild               "
+
+  photograph:
+    sections:
+      - title: "How much zoom would you like in your photograph?"
+        input:
+          type: text select
+          options: ['Normal', 'Large', 'Huge']
+          key: zoom
+
+  request_registration:
+    title: Register your account
+    actions: ['Not now', 'Register with Facebook', 'Register with email']
+    sections:
+      - text: Registering allows you to log on from multiple devices and always keep your progress.
+        text-scale: 0.6
+
+  request_email_registration:
+    padding: 10
+    horizontal_title_tiny: 100
+    sections:
+      - title: Register to continue and save your progress!
+      - title: Email
+        input:
+          type: text
+          key: email
+          max: 128
+      - title: Password
+        input:
+          type: text
+          key: password
+          password: true
+          max: 64
+
+  request_name_change:
+    padding: 10
+    sections:
+      - title: "Change your name"
+        text: Enter your new name. No spaces or special characters please.
+        text-color: 30201a
+        input:
+          type: text
+          key: playername
+          max: 20
+
+  mod_mute:
+    sections:
+      - title: "Mute player"
+        text: Duration (in days, may be a decimal)
+        input:
+          type: text
+          key: duration
+      - text: Reason
+        input:
+          type: text
+          key: reason
+          maxlength: 200
+
+  mod_restrict:
+    sections:
+      - title: "Restrict player"
+        text: Duration (in days, may be a decimal)
+        input:
+          type: text
+          key: duration
+      - text: Reason
+        input:
+          type: text
+          key: reason
+          maxlength: 200
+
+  tutorial_registration_complete:
+    padding: 10
+    sections:
+      - title: Registration complete!
+        text: You're now ready to venture into the wilds of Deepworld. Press 'okay' and you will be teleported into your first world. Get ready to make friends, battle foes, and plunder!
+
+  facebook_permissions:
+    actions: yesno
+    sections:
+      - title: Post to Facebook and earn 25 crowns!
+        text: "Help spread the word about Deepworld on Facebook! Let friends know about your achievements, mobs defeated, worlds visited, and more. It's unobtrusive and a great way to help Deepworld grow!"
+
+  invite_to_upgrade:
+    actions: facebook-invite
+    sections:
+      - title: Invite friends to unlock new biomes!
+        text: For every three friends you invite who play Deepworld, a new biome will be unlocked for you to explore. You can also upgrade to premium in the shop to instantly have access to all biomes, unlimited skill levels, and more!
+
+  private_message:
+    sections:
+      - title: Send Private Message
+      - title: Recipient
+        input:
+          type: text
+          key: recipient
+      - title: Message
+        input:
+          type: text
+          rows: 5
+          key: message
+          max: 500
+
+  skill_reset:
+    sections:
+      - title: Skill Reset
+        text: "One level has been removed from each of your skills and added to your point pool. You can now reapply them as you like!"
+
+  skill_upgrade:
+    sections:
+      - title: "Choose a skill to upgrade:"
+        text: "Note: Additional skills like Combat and Engineering are unlocked as you progress."
+        input:
+          type: select
+          key: skill
+
+  skill_upgrade_v3:
+    sections:
+      - title: "Choose a skill to upgrade:"
+        text: "Note: Additional skills like Combat and Engineering are unlocked as you progress."
+        input:
+          type: select
+          key: skill
+          prefab: SelectDetailed
+
+  skill_upgrade_no_points: "Sorry, you are out of skill points. Level up to earn some more!"
+  skill_upgrade_no_skills: "You've maxed out all available skills!"
+  skill_upgrade_maxed: "That skill is already maxed out!"
+  skill_upgrade_success: "$1 upgraded to level $2!"
+
+  competition:
+    sections:
+      - title: Official Deepworld Competition
+        text: 'The current competition is "Brain Bazaar", through May 17th: build outlandish or creative structures in the new brain biome! Entries must be done in official competition worlds, and you must claim a green protector there to enter. The worlds are:'
+      - text: '- Brackhu Peak [Competition]'
+
+  settings_v3:
+    - name: Controls
+      settings:
+        - title: Action Style
+          key: actionStyle
+          default: 1
+          platforms:
+            - ios
+          options:
+            - Direct
+            - Joystick
+        - title: Joystick Style
+          key: joystickStyle
+          default: 1
+          platforms:
+            - ios
+          options:
+            - Floating
+            - Fixed
+        - title: Joystick Side
+          key: joystickSide
+          default: 0
+          platforms:
+            - ios
+          options:
+            - Left
+            - Right
+        - title: Joystick Opacity
+          key: joystickOpacity
+          style: tiny
+          default: 4
+          platforms:
+            - ios
+          options:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            - '5'
+            - '6'
+            - '7'
+            - '8'
+            - '9'
+            - '10'
+        - title: Joystick Size
+          key: joystickSize
+          style: tiny
+          default: 6
+          platforms:
+            - ios
+          options:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            - '5'
+            - '6'
+            - '7'
+            - '8'
+            - '9'
+            - '10'
+        - title: HUD Opacity
+          key: hudOpacity
+          style: tiny
+          default: 8
+          options:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            - '5'
+            - '6'
+            - '7'
+            - '8'
+            - '9'
+            - '10'
+
+    - name: Game
+      settings:
+        - title: Graphics Quality
+          key: graphicsQuality
+          default: 0
+          options:
+            - High
+            - Medium
+            - Low
+          alerts:
+            desktop: Please restart Deepworld in order to process graphics quality changes.
+
+        - title: Audio Volume
+          key: volume
+          style: tiny
+          default: 9
+          options:
+            - '1'
+            - '2'
+            - '3'
+            - '4'
+            - '5'
+            - '6'
+            - '7'
+            - '8'
+            - '9'
+            - '10'
+        - title: Chat Sounds
+          key: chatSounds
+          default: 0
+          options:
+            - 'On'
+            - 'Off'
+        - title: Player Sounds
+          key: playerSounds
+          default: 0
+          account: true
+          options:
+            - Male
+            - Female
+        - title: Daily Loot Preference
+          key: lootPreference
+          default: 0
+          account: true
+          options:
+            - Male
+            - Female
+
+    - name: Account
+      settings:
+        - title: Notify me of PMs
+          key: pushMessages
+          default: 0
+          account: true
+          options:
+            - 'On'
+            - 'Off'
+
+  settings_controls:
+    sections:
+      - title: Action Style
+        key: actionStyle
+        default: 1
+        platforms:
+          - ios
+        options:
+          - Direct
+          - Joystick
+      - title: Joystick Style
+        key: joystickStyle
+        default: 1
+        platforms:
+          - ios
+        options:
+          - Floating
+          - Fixed
+      - title: Joystick Side
+        key: joystickSide
+        default: 0
+        platforms:
+          - ios
+        options:
+          - Left
+          - Right
+      - title: Joystick Opacity
+        key: joystickOpacity
+        style: tiny
+        default: 4
+        platforms:
+          - ios
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+          - '7'
+          - '8'
+          - '9'
+          - '10'
+      - title: Joystick Size
+        key: joystickSize
+        style: tiny
+        default: 6
+        platforms:
+          - ios
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+          - '7'
+          - '8'
+          - '9'
+          - '10'
+      - title: HUD Opacity
+        key: hudOpacity
+        style: tiny
+        default: 8
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+          - '7'
+          - '8'
+          - '9'
+          - '10'
+
+  settings_game:
+    sections:
+      - title: Graphics Quality
+        key: graphicsQuality
+        default: 0
+        options:
+          - 'High'
+          - 'Medium'
+          - 'Low'
+      - title: Audio Volume
+        key: volume
+        style: tiny
+        default: 9
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+          - '7'
+          - '8'
+          - '9'
+          - '10'
+      - title: Chat Sounds
+        key: chatSounds
+        default: 0
+        options:
+          - 'On'
+          - 'Off'
+      - title: Player Sounds
+        key: playerSounds
+        default: 0
+        account: true
+        options:
+          - 'Male'
+          - 'Female'
+      - title: Daily Loot Preference
+        key: lootPreference
+        default: 0
+        account: true
+        options:
+          - Male
+          - Female
+
+  settings_account:
+    sections:
+      - title: Notify me of PMs
+        key: pushMessages
+        default: 0
+        account: true
+        options:
+          - 'On'
+          - 'Off'
+
+  follow:
+    title: 'Follow a player by name:'
+    input:
+      type: text
+      max: 20
+      key: playerName
+  visibility:
+    title: 'Specify who can see your location:'
+    input:
+      type: text index
+      options: ['Everyone', 'People I follow', 'Nobody']
+      key: visibility
+
+  exo:
+    sections:
+      - title: Exo Visibility
+      - text: Headset
+        input:
+          type: text select
+          options: ['Visible', 'Hidden']
+          key: headset
+      - text: Torso
+        input:
+          type: text select
+          options: ['Visible', 'Hidden']
+          key: torso
+      - text: Legs
+        input:
+          type: text select
+          options: ['Visible', 'Hidden']
+          key: legs
+
+  order:
+    sections:
+      - title: Change the Order displayed by your name
+        input:
+          type: text select
+          options: ['None']
+          key: order
+
+  no_order: You don't belong to any order!
+
+  guild:
+    colors: ['620f06', '6d4f40', 'c5b485', 'b09d42', '465c40', '4b393f', '222638', '1a1816']
+    symbols:
+      - signs/crests/android
+      - signs/crests/apple
+      - signs/crests/bird
+      - signs/crests/bomb
+      - signs/crests/book
+      - signs/crests/brain
+      - signs/crests/club
+      - signs/crests/daisy
+      - signs/crests/diamond
+      - signs/crests/eye
+      - signs/crests/face
+      - signs/crests/fish
+      - signs/crests/foot
+      - signs/crests/gear
+      - signs/crests/globe
+      - signs/crests/gun
+      - signs/crests/hammer
+      - signs/crests/hand
+      - signs/crests/hat
+      - signs/crests/heart
+      - signs/crests/lantern
+      - signs/crests/lightning
+      - signs/crests/lion
+      - signs/crests/moon
+      - signs/crests/pickaxe
+      - signs/crests/rose
+      - signs/crests/scale
+      - signs/crests/silverware
+      - signs/crests/snake
+      - signs/crests/spade
+      - signs/crests/sun
+      - signs/crests/terrapus
+      - signs/crests/tesla
+      - signs/crests/tree
+  trade:
+    sections:
+      - title: 'Give to player'
+        input:
+          type: text select
+          options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '15', '20', '25', '50', '100', '200', '500', '1000', '5000', '10000', '25000', '100000']
+          key: quantity
+  craft:
+    multi: [1, 2, 3, 4, 5, 10, 15, 20, 25, 50, 75, 100, 200, 500, 1000, 5000, 10000, 25000, 100000]
+
+  redeem:
+    sections:
+      - title: 'Enter redemption code:'
+        input:
+          type: text
+          max: 10
+          key: 'code'
+  welcome:
+    title: Welcome!
+    subtitle: "It's a little dangerous out there, so you'll want to boost your skills by earning achievements. Try this one out:"
+
+  report:
+    - title: Report a player
+    - text: "Press one of the following options to report this player:"
+      text-color: 3a3a3a
+    - text: "I want to mute them"
+      choice: mute
+    - text: "They are griefing"
+      choice: griefing
+    - text: "They are abusive / offensive"
+      choice: abuse
+    - text: "Never mind, they're OK."
+      choice: cancel
+    - text: " "
+
+  rate_on_steam:
+    title: Please rate us on Steam!
+    actions:
+      - Cancel
+      - Write Review
+    sections:
+      - text: "We're thrilled you've joined us on Steam! If you can, please take a minute to leave us a review. The more visiblity we get on Steam, the more new goodies we can bring you in future versions. Thanks for your consideration!"
+
+  android_dialog:
+    sections:
+      - title: Send Private Message
+      - title: Recipient
+
+  android:
+    craft: Can you craft anything for me?
+    craft_response: Sure, just drag a figurine to me and I'll see what I can do.
+    cannot_craft: Sorry, I can't do anything with that item.
+    cannot_load_memory:
+      - I'm sorry, my memory unit is already functioning properly.
+      - My memory unit is in perfect working condition. You aren't trying to BLANK me, are you??
+      - Thanks but no thanks, I enjoy my consciousness as it is.
+      - Apologies, human, I am already configured.
+      - I have a fully operational memory unit already, but I appreciate your kind gesture to destroy my consciousness.
+    joke: Heard any good jokes lately?
+    quest: Have any quests for me?
+    no_quest: "Sorry, I don't have any quests for you yet. But some other androids might. Maybe talk to an Arthur model!"
+    protected: "Sorry, this area is protected."
+    configure:
+      sections:
+        - title: Name
+          input:
+            type: text
+            max: 20
+            key: name
+        - title: Job
+          input:
+            type: text
+            max: 20
+            key: job
+    load_memory:
+      - sections:
+        - title: Load basic memory unit in android?
+          input:
+            type: text select
+            options: ['Newton', 'Arthur', 'Isabella', 'Victoria']
+            key: name
+      - sections:
+        - title: Load diamond memory unit in android?
+          input:
+            type: text select
+            options: ['Newton II', 'Arthur II', 'Isabella II', 'Victoria II']
+            key: name
+      - sections:
+        - title: Load onyx memory unit in android?
+          input:
+            type: text select
+            options: ['Newton III', 'Arthur III', 'Isabella III', 'Victoria III']
+            key: name
+
+
+  daily_bonus:
+    initial: Have any extra supplies?
+    subsequent: I'm back! Find any more supplies?
+    ready: "Sure, you can have this:"
+    not_ready: "Come back tomorrow and I'll have some more supplies. And if you see me five days in a row, I might just have something extra special!"
+    not_enough_play: It doesn't look like you need any more supplies quite yet.
+    not_enough_play_timer: Return after $$ more minute(s) of play.
+
+  obscenity:
+    warning: Excessive vulgar behavior will not be tolerated. Please cut back on your obscenity.
+    penalty: You have exceeded the maximum obscenity level and will be muted for $$. Please refrain from excessive vulgar behavior in the future.
+    released: You have been unmuted. Please refrain from prohibited chat in the future.
+
+  restricted:
+    released: You have been unrestricted. Please refrain from prohibited activity in the future.
+
+  karma:
+    warning: Your karma is getting low. Be careful not to mine other players' belongings or kill players in non-PvP worlds.
+    penalty: You have exceeded the maximum karma level and will unable to mine or build for $$. Please refrain from griefing and killing players in non-PvP worlds.
+    released: Your karma ban has been lifted. Please refrain from griefing and killing players in non-PvP worlds.
+
+  world_machines:
+
+    teleport:
+      menu:
+        sections:
+          - title: Mass Teleporter
+          - text: Configure machine
+            choice: configure
+            text-color: 40c0ff
+          - text: Destroy natural teleporters
+            choice: deactivate_natural_teleporters
+            text-color: 40c0ff
+            power: 2
+          - text: Dismantle machine
+            choice: dismantle
+            text-color: 40c0ff
+
+      configure:
+        sections:
+          - title: Teleport to another player (/tp player)
+            input:
+              type: text index
+              options: ['Owners', 'Members', 'Everyone']
+              key: tp_player
+          - title: Teleport to a plaque location (/tp location)
+            input:
+              type: text index
+              options: ['Owners', 'Members', 'Everyone']
+              key: tp_plaque
+            power: 2
+          - title: Teleportation within protected areas
+            input:
+              type: text index
+              options: ['Owners', 'Members', 'Everyone']
+              key: tp_protected
+            power: 2
+          - title: Summon another player (/su player)
+            input:
+              type: text index
+              options: ['Owners', 'Members']
+              key: summon
+            power: 3
+
+    spawner:
+      menu:
+        sections:
+          - title: Mass Spawner
+          - text: Configure machine
+            choice: configure
+            text-color: 40c0ff
+          - text: Dismantle machine
+            choice: dismantle
+            text-color: 40c0ff
+
+      configure:
+        sections:
+          - title: Mob Hostility
+            input:
+              type: text index
+              options: ['Peaceful', 'Normal', 'Dangerous']
+              key: hostility
+          - title: Maw Spawning
+            input:
+              type: text index
+              options: ['Active', 'Suppressed']
+              key: maw_spawning
+            power: 2
+          - title: Area Spawning
+            input:
+              type: text index
+              options: ['Active', 'Suppressed']
+              key: area_spawning
+            power: 2
+          - title: Evoke Brain Invasion (/evoke player)
+            input:
+              type: text index
+              options: ['Owners', 'Members']
+              key: evoke
+            power: 3
+
+    weather:
+      menu:
+        sections:
+          - title: Weather
+          - text: Configure machine
+            choice: configure
+            text-color: 40c0ff
+          - text: Dismantle machine
+            choice: dismantle
+            text-color: 40c0ff
+
+      configure:
+        show_errors: true
+        sections:
+          - title: Day & Night Cycle
+            input:
+              type: text select
+              options: ['Normal', 'Fast', 'Slow', 'Realtime', 'Day', 'Night']
+              key: day_night_cycle
+          - title: Time Zone
+            input:
+              type: text
+              key: day_night_cycle_time_zone
+              conversion:
+                type: number
+                min: -12
+                max: 12
+                allow_blank: true
+            text: Offset like -5 or +3 (only used if cycle is Realtime)
+          - title: Precipitation
+            input:
+              type: text select
+              options: ['Normal', 'Always', 'None']
+              key: precipitation_frequency
+          - title: Environment
+            input:
+              type: text select
+              options: ['Pleasant', 'Dangerous', 'Severe', 'Extreme']
+              key: environment
+            text: Degree of danger regarding acidity, heat, cold, supernovae, etc.
+            power: 2
+          - title: Growth Index
+            input:
+              type: text select
+              options: ['Normal', 'High']
+              key: growth_index
+            power: 3
+          - title: Liquid Gravity
+            input:
+              type: text select
+              options: ['Normal', 'None']
+              key: liquid_gravity
+            power: 3
+
+
+
+  minigames:
+    custom:
+      create:
+        sections:
+          - title: Start Minigame
+          - text: Customize
+            choice: customize
+            text-color: 40c0ff
+          - text: Use last settings from this obelisk
+            choice: last
+            text-color: 40c0ff
+          - text: Copy settings from another minigame
+            choice: copy
+            text-color: 40c0ff
+
+      customize:
+        show_errors: true
+        sections:
+          - title: Minigame
+          - text: Scoring
+          - text: Scoring can be restricted to certain mobs / tools / blocks on the next page. Visit the Codex website to see a list of all item and entity codes.
+            text-color: 3a3a3a
+            input:
+              type: text select
+              options: ['Players killed', 'Mobs killed', 'Blocks mined', 'Items crafted']
+              key: scoring_event
+          - text: Range (in protector sizes)
+            input:
+              type: text select
+              options: ['World', 'Giga', 'Mega', 'Large', 'Regular', 'Micro']
+              key: range
+          - text: Countdown Duration (in seconds)
+            input:
+              type: text
+              conversion:
+                type: number
+                min: 0
+                max: 300
+              key: countdown_duration
+          - text: Game Duration (in seconds)
+            input:
+              type: text
+              conversion:
+                type: number
+                min: 10
+                max: 86400
+              key: duration
+
+      customize_options:
+        show_errors: true
+        sections:
+          - title: Minigame Options
+          - text: You can customize your minigame further with the following options, or you can leave any or all of them blank.
+            text-color: 3a3a3a
+          - text: Tool restriction (optional)
+          - text: "Enter an item code for the required tool (e.g., restrict to pistol kills with code 1033)"
+            text-color: 3a3a3a
+            input:
+              type: text
+              conversion:
+                type: number
+                min: 0
+                max: 2000
+                allow_blank: true
+              key: tool_restriction
+          - text: Block restriction (optional)
+          - text: "Enter an item code for the required block (e.g., restrict to dirt mining with code 512)"
+            text-color: 3a3a3a
+            input:
+              type: text
+              conversion:
+                type: number
+                min: 0
+                max: 2000
+                allow_blank: true
+              key: block_restriction
+          - text: Mob restriction (optional)
+          - text: "Enter a mob code for the required mob (e.g., restrict to terrapus kills with code 4)"
+            text-color: 3a3a3a
+            input:
+              type: text
+              conversion:
+                type: number
+                min: 0
+                max: 2000
+                allow_blank: true
+              key: entity_restriction
+          - text: Death restriction (optional)
+          - text: "Number of deaths before a contestant is disqualified"
+            text-color: 3a3a3a
+            input:
+              type: text select
+              options: ['None', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20']
+              key: max_deaths
+          - text: Natural restriction
+          - text: "Only count blocks/mobs that are natural or unnatural (spawned, etc.)"
+            text-color: 3a3a3a
+            input:
+              type: text select
+              options: ["Natural", "Unnatural", "All"]
+              key: natural
+
+      copy_existing:
+        show_errors: true
+        sections:
+          - title: Copy Minigame
+          - text: "Enter previous minigame code:"
+            input:
+              type: text
+              key: code
+              max: 6
+
+      confirm:
+        sections:
+          - title: "Confirm minigame:"
+

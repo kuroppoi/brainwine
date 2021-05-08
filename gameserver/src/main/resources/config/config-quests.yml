@@ -1,0 +1,17 @@
+quests:
+  sources:
+    Newton: Survive and Thrive
+    Arthur: The Art of War
+    Isabella: Let Them Eat Cake
+    Turner: Arts and Crafts
+
+  messages:
+    not_yet: "Maybe later."
+    no_more: "I'm afraid I'm out of quests at the moment. But hey, we're still in beta mode, so check back in a week or two for more!"
+    incomplete: "How's that quest going?"
+    too_high_level_begin: "I'm afraid further quests are above my pay grade. Find a $ model to continue on your way!"
+    too_high_level_complete: "I'm afraid your quest is above my pay grade. Find a $ model to finish up your journey!"
+    cannot_collect: "Oops, it looks like you don't have all the items I need yet. Keep searching!"
+    ready_to_collect: "Ready to hand over these items?"
+    collect_no: Not yet.
+    collect_yes: Yep!

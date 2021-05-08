@@ -1,0 +1,14 @@
+3.11.1:
+  audio:
+    footsteps:
+      earth: ['carpet_running 1_1','carpet_running 1_2','carpet_running 1_3','carpet_running 1_4','carpet_running 1_5','carpet_running 1_6','carpet_running 1_7','carpet_running 1_8','carpet_running 1_9','carpet_running 1_10']
+      wood: ['wood_running 2_1','wood_running 2_2','wood_running 2_3','wood_running 2_4','wood_running 2_5','wood_running 2_6','wood_running 2_7','wood_running 2_8','wood_running 2_9','wood_running 2_10']
+      stone: ['concrete normal_running 2_1', 'concrete normal_running 2_2', 'concrete normal_running 2_3', 'concrete normal_running 2_4', 'concrete normal_running 2_5', 'concrete normal_running 2_6', 'concrete normal_running 2_7', 'concrete normal_running 2_8', 'concrete normal_running 2_9', 'concrete normal_running 2_10']
+      metal: ['metal running 1_1','metal running 1_2','metal running 1_3','metal running 1_4','metal running 1_5','metal running 1_6','metal running 1_7','metal running 1_8','metal running 1_9','metal running 1_10']
+      earth: ['carpet_running 1_1','carpet_running 1_2','carpet_running 1_3','carpet_running 1_4','carpet_running 1_5','carpet_running 1_6','carpet_running 1_7','carpet_running 1_8','carpet_running 1_9','carpet_running 1_10']
+  emitters:
+    levelup:
+      prefab: Particles/levelup
+
+    achievement:
+      prefab: Particles/achievement

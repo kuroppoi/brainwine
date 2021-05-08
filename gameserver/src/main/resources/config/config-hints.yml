@@ -1,0 +1,366 @@
+hints:
+  levelup:
+    text: 'You leveled up! You can now increase one of your skills. Just open your profile and select "Skills", then click the "Upgrade Skill" button.'
+    element: Profile
+
+  welcome:
+    character: true
+    tip: null
+    pages:
+      - title: You're ready to explore Deepworld!
+        text: "Access your inventory by pressing the buttons at the top right of the screen. You'll also want to get achievements so you can level up. Start by mining 20 different items for the Scavenger achievement!"
+        image: banners/badge-hat
+
+  scavenger:
+    character: true
+    tip: null
+
+  acid rain:
+    character: true
+    pages:
+      - title: Acid rain
+        text: Oops - you're being hurt by acid rain! The apocalypse didn't exactly do wonders for the environment. Fortunately, you can help restore balance by finding purifier parts throughout the world. Until that happens, stay under cover!
+        image: icons/acid
+
+  protection field:
+    pages:
+      - title: Protection fields
+        text: This block is protected by a force field! Teleporters and special radar dishes placed by other players (or part of the world) will keep you from mining or placing within their radius.
+        image: mechanical/dish-large
+
+  mineral:
+    pages:
+      - title: Minerals
+        text: Iron, copper, zinc, and other minerals can be found throughout the underworld. Mine them to collect ore, which can be crafted into important raw materials like brass and iron blocks.
+        image: ground/zinc
+
+  door:
+    pages:
+      - title: Doors
+        text: Doors open and close when clicked.
+        image: building/door-wood-open
+
+  trapdoor:
+    pages:
+      - title: Trapdoors
+        text: Just like normal doors, trapdoors open and close when clicked. The only difference is that they look better for vertical passageways.
+        image: building/trapdoor-brass
+
+  rock:
+    pages:
+      - title: Rock
+        text: Underground rocks, stalagmites, and clay can be mined for resources to craft stone and brick.
+        image: ground/earth-rock-big-1
+
+  landmark-plaque-place:
+    pages:
+      - title: Landmark Plaques
+        text: 'Note: Landmark plaques can only be mined for scrap metal once voted on.'
+        image: signs/plaque-landmark
+
+  root:
+    pages:
+      - title: Roots
+        text: Underground roots are plentiful and can be mined to obtain resin, a waxy substance that is used to make candles, tools, and pitch.
+        image: ground/resin-3
+
+  ore:
+    pages:
+      - title: Ore
+        text: Mined minerals are dumped into piles of ore and may contain different quantities. The height of the pile signifies approximately how much there is.
+        image: ground/zinc-ore-3
+
+  rubble:
+    pages:
+      - title: Rubble
+        text: Raw materials can be mined from various kinds of rubble, including stone, wood, and scrap metal.
+        image: rubble/stone-pile-8
+
+  sign:
+    pages:
+      - title: Signs
+        text: "Add a little language to the world by crafting and placing signs. You can customize the text on your own signs as much as you'd like, but other players' signs are off limits."
+
+  container:
+    pages:
+      - title: Containers
+        text: Chests, crates, sacks, and barrels may sometimes contain goodies for you to plunder. If you see sparkles rising from a container, it means there is something inside. Simply click on the container to gain the contents.
+        image: containers/chest
+
+  container-plenty:
+    pages:
+      - title: Chests of Plenty
+        text: Certain chests are permanent fixtures of the world, with a reward for every player who visits. Find them in special dungeons, castles, and other challenging structures!
+        image: containers/chest-large
+
+  dish:
+    pages:
+      - title: Protector Dishes
+        text: Players can place protector dishes to protect an area of blocks from being mined (excluding ground blocks) or placed on by others.
+        image: mechanical/dish
+
+  fiery:
+    pages:
+      - title: Fireplaces and Braziers
+        text: Fireplaces and braziers take a little while to get going, but once active they provide heat when clicked on. This is only important in arctic worlds, where keeping warm is essential.
+        image: furniture/fireplace-large
+
+  dish-broken:
+    pages:
+      - title: Malfunctioning Dishes
+        text: Some old buildings have malfunctioning dishes which protect the region but have weaknesses. If you have a high enough engineering skill (greater than 3), you can dismantle the dish by mining it.
+        image: mechanical/dish-broken
+
+  mining requirement:
+    pages:
+      - title: Mining Requirements
+        text: "The earth gets progressively tougher as you dig deeper, requiring a higher mining skill to successfully break through. You will know it's above your ability if you hear a muted mining sound and only stir up dust."
+
+  mechanical-switch:
+    pages:
+      - title: Mechanical Switches
+        text: "Switches open and close linked mechanical doors. To link a switch, merely place it and then follow by placing the mechanical door."
+        image: mechanical/switch-off
+
+  mechanical-door:
+    pages:
+      - title: Mechanical Doors
+        text: Some doors are mechanical in nature and can only be opened or closed by specific switches bearing the same colored insignia.
+        image: mechanical/door-closed
+
+  karma:
+    character: true
+    tip: null
+    pages:
+      - title: Karma
+        text: "Your karma level determines how much you can interact in Deepworld. Killing players in non-PvP worlds or damaging other players' structures brings it down. If it gets too low, you may lose abilities or be quarantined!"
+        image: status/karma
+        sound: karma-negative
+
+  freeze:
+    character: true
+    tip: null
+    pages:
+      - title: Freezing
+        text: "The arctic is dreadfully cold. You should find a fireplace or brazier to warm yourself soon, or you'll start taking damage!"
+        image: icons/ice
+
+  desert-heat:
+    character: true
+    tip: null
+    pages:
+      - title: Desert Heat
+        text: "Unpurified deserts are dry and hot. Be sure to carry jars of water with you at all times, or you may start to die of thirst! You can acquire jars of water by crafting jars and placing them on water blocks. Refreshing!"
+        image: inventory/containers/jar-water
+
+  supernova:
+    character: true
+    tip: null
+    pages:
+      - title: Supernovas
+        text: "The all-new Space Biome is dangerous but fun! Watch out for Supernovas - you'll need to hide inside an asteroid to survive their power. COMING SOON: Machines to protect you against supernovas so you don't have to hide!"
+        image: inventory/furniture/solar-system-diorama
+
+  butler:
+    character: true
+    tip: null
+    pages:
+      - title: Butler Bots
+        text: "Your new mechanical companion is ready to serve! Double-tap your butler to change command modes (such as mining, placing, and blasting). Single-tap your butler and then drag your finger/mouse elsewhere to target areas and blocks."
+        image: inventory/mechanical/butler-brass
+      - title: Directive Units
+        text: "Your Butlers aren't much use at first; you'll need to find some Butler Directive Units and program them with the commands you wish to add. You can loot these units from treasure chests, and you can program them at ButlerBot HQ in Pocklington."
+        image: inventory/accessories/program
+
+  hotbar-presets:
+    character: true
+    tip: null
+    pages:
+      - title: Hotbar Presets
+        text: "Pro Tip: You can store presets of your current hotbar configuration by pressing cmd+ctrl plus a number, and recall them with cmd+number. Easily switch between mining mode and building mode!"
+
+  play-on-mac:
+    dialog: true
+    pages:
+      - title: 'Play Deepworld on Windows and Mac!'
+        text: "Did you know Deepworld is cross-platform?\nPlay on Windows and Mac now by going to:\n\nhttp://deepworldgame.com\n\nAndroid is coming soon, too!"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: banners/badge-hat
+
+  buy-protectors:
+    dialog: true
+    pages:
+      - title: Protect your creations!
+        text: "You can protect your house or creations from other players by using protectors, which can be bought in the Shop tab using crowns. You can buy crowns directly or earn them with referrals (and the occasional contest!)"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: inventory/mechanical/dish
+
+  buy-private-zone:
+    dialog: true
+    pages:
+      - title: Get your own private world!
+        text: "Find all the loot and resources you need in your own private world. You can share it with your friends or have it all to yourself! Buy one now in the Shop tab using crowns. (Press the inventory button in the upper right, then the Shop tab.)"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: shop/private-world
+
+  buy-premium-teleport:
+    dialog: true
+    pages:
+      - title: Upgrade and visit new worlds!
+        text: "As a premium player you can check out the arctic, the underworld, and explore hundreds of fresh new worlds. Find entirely new kinds of resources, monsters, loot, and achievements. Just go to the Shop tab and upgrade today!"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: achievements/teleporter-repairman
+
+  earn-crowns:
+    dialog: true
+    pages:
+      - title: Earn crowns for free!
+        text: You can now earn crowns by watching videos and completing offers! Just open up the shop and hit the 'Earn Crowns' button. You'll find a variety of ways to boost your crown holdings and get all the latest gear!
+
+  buy-premium-skill-mining:
+    dialog: true
+    pages:
+      - title: Mine with power!
+        text: "As a free player, your skills max out at level three. Upgrade now so you can keep advancing your mining prowess!"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: achievements/miner
+      - text: "- Mine through all levels of earth to the depths"
+      - text: "- Mine faster with each additional skill level"
+      - text: "- Deal more damage with your pickaxe"
+
+  buy-premium-skill-building:
+    dialog: true
+    pages:
+      - title: Build like a champ!
+        text: "As a free player, your skills max out at level three. Upgrade now so you can keep advancing your building prowess!"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: achievements/craftsman
+      - text: "- Craft more special and rare items"
+      - text: "- Craft items using fewer resources"
+      - text: "- Place blocks farther away"
+
+  buy-premium-skill-engineering:
+    dialog: true
+    pages:
+      - title: Engineer like a boss!
+        text: "As a free player, your skills max out at level three. Upgrade now so you can keep advancing your engineering prowess!"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: achievements/hunter
+      - text: "- Craft mighty weapons like the energy cannon"
+      - text: "- Craft turrets, traps, bombs, and more"
+      - text: "- Destroy enemy protectors in dungeons"
+      - text: "- Use steam power more efficiently"
+
+  check-out-forums:
+    dialog: true
+    pages:
+      - title: Join our community forums!
+        text: "Have questions or want to discuss Deepworld?\nJoin our forums at http://forums.deepworldgame.com\n(also accessible via the main menu's help area)\nand talk with new players, veterans,\nand the developers!"
+        text-scale: 0.8
+        text-color: 3a3a3a
+
+  help-im-stuck:
+    dialog: true
+    pages:
+      - title: Stuck or trapped?
+        text: "If you find yourself stuck or trapped, just type this in the chat box:"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: achievements/explorer
+      - text: "/sp"
+        text-scale: 1.0
+      - text: "It will respawn your character at the world teleporter and let you go on your merry way!"
+        text-scale: 0.8
+        text-color: 3a3a3a
+
+  protect-your-password:
+    dialog: true
+    pages:
+      - title: Never give out your password!
+        text: "Your password protects your items and reputation. NEVER give out your password to anyone claiming to offer crowns, items, or anything else."
+        text-color: 3a3a3a
+      - text: Asking other users for their passwords will result in PERMANENT BANISHMENT from Deepworld.
+        text-color: ff0000
+
+  buying-selling:
+    dialog: true
+    pages:
+      - title: Don't buy or sell items/accounts for real money!
+        text: "Sending real money to people outside of the game is risky and makes it harder for us to keep the game running."
+        text-color: 3a3a3a
+      - text: If you are caught trying to buy/sell items/accounts for money, your account may be RESTRICTED for one month or more.
+        text-color: ff0000
+
+  rate-in-app-store:
+    dialog: true
+    pages:
+      - title: 'Rate us in the App Store!'
+        text: "Please remember to rate us in the App Store! The more positive reviews we get, the more visibility Deepworld gets, which means more features and awesome fun for you, our players!"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: banners/badge-hat
+
+  report-players:
+    dialog: true
+    pages:
+      - title: 'Muting abusive players'
+        text: "We want Deepworld to be a fun place for all. If another player is bothersome, you can mute them. Just type /mute and then their username:"
+        text-scale: 0.8
+        text-color: 3a3a3a
+        image: icons/forums
+      - text: "/mute playername"
+        text-scale: 1.0
+
+  world-manage:
+    dialog: true
+    pages:
+      - title: 'Private world'
+        text: "Welcome to your new world! You can manage your world's members when in-world. To see how bring up chat ('t' or click the chat button) and type:"
+        text-scale: 0.8
+        text-color: 3a3a3a
+      - text: "/whelp"
+        text-scale: 1.0
+
+  guild-manage:
+    dialog: true
+    pages:
+      - title: New Guild
+        text: "You've placed a guild obelisk! You are now the leader of your very own guild. You can change the name and logo by clicking on the obelisk. Once you're ready, invite other players using the /ginvite command. You can also type /ghelp to see a list of all guild commands, and /ginfo to see the current roster. And if you want to move the obelisk, just mine it and place it somewhere else!"
+
+  team-pvp:
+    dialog: true
+    pages:
+      - title: Team PvP
+        text: "Collaborate with teammates for total PvP domination! In Team PvP worlds, each player is assigned a team on entry, and can change their affiliation with the /team command. Now get ready to rumble!"
+
+  ad-support:
+    dialog: true
+    pages:
+      - title: Ad-Supported Gameplay
+        text: "As a free player, you will now start to see advertisements in-game on iOS. We know that advertisements are a drag, but please know that you are helping support the continued operation and development of Deepworld. You can end the advertisements at any time by upgrading to a premium account in the shop. We appreciate your help, and we thank you for playing Deepworld!"
+
+  ios-swipe:
+    dialog: true
+    pages:
+      - title: Swipe Buttons to View Extras
+        text: 'Swipe the buttons on the bottom of the screen to access favorites, emotes, chat options (iPhone/iPad) and the map (iPhone). The usable swipe directions are indicated by little arrows on the buttons.'
+
+  mac-hotkeys:
+    dialog: true
+    pages:
+      - title: Use Hotkeys to View Extras
+        text: 'Hotkeys give you access to favorites ("F"), emotes ("E"), and chat options ("Y"). Others let you toggle often-used panels like inventory ("I"). You can always check hotkey mappings in the Mac Controls section of the Guide!'
+
+  vent: A natural fissue of moving steam. Place a @collector directly on top and any connected pipes will have steam power (up to a certain distance).
+  backdrop-glass: A translucent backdrop for building, layering behind most other items. Glass provides the usefulness of backdrops and also allows viewing of the current time and weather conditions.
+  paper: Wallpaper offers pleasing background patterns for that ultimate homey feel.
+  brick: Brick offers decent toughness and a pleasing pattern to look at.
+  scaffold: "Scaffolding is ideal for supporting building projects without breaking the iron bank. It also allows you to see the world behind it, which is generally good (unless the world is filled with brains.)"
+  clay: "Found underground neart the surface, clay is a great malleable substance used most often to create bricks."

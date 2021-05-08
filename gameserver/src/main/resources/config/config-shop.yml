@@ -1,0 +1,2182 @@
+shop:
+  world-small: &world-small
+    cost: 250
+  world-medium: &world-medium
+    cost: 500
+  world-large: &world-large
+    cost: 1000
+
+  world-biome-plain: &world-biome-plain
+    category: worlds
+    description: "Claim your own untouched world! Get all the resources, loot, and exploration you'll ever need. You can even invite friends to come visit and settle with you... or just keep it all to yourself!"
+    image: shop/biome-normal
+  world-biome-hell: &world-biome-hell
+    category: worlds
+    description: "Claim your own untouched Hell world! Get your own expiator, plus a fresh bevy of fire salt, bloodstone, and a never-ending supply of ghostly ectoplasm."
+    image: shop/biome-hell
+  world-biome-arctic: &world-biome-arctic
+    category: worlds
+    description: "Claim your own untouched Arctic world! Discover sparkly diamonds, ice sculptures, and maybe even the rare jackalope head. Also includes all the snow and ice you'll ever need!"
+    image: shop/biome-arctic
+  world-biome-desert: &world-biome-desert
+    category: worlds
+    description: "Claim your own untouched Desert world! Get a fresh supply of beryllium ore, tumbleweeds, and cactii. You'll also find a stead supply of armadillos, scorpions, and sandworms to farm!"
+    image: shop/biome-desert
+  world-biome-deep: &world-biome-deep
+    category: worlds
+    description: "Claim your own untouched Deep world! Find the elusive orange crystal along with an above-average amount of dungeons to raid! Just watch out for those explosive acid pipes!"
+    image: shop/biome-deep
+  world-biome-brain: &world-biome-brain
+    category: worlds
+    description: "Claim your own untouched Brain world! Perfect for the thrill seeker, you'll find an insane amount of brains, green crystals, and earn that coveted Insurrectionist achievement!"
+    image: shop/biome-brain
+  world-biome-space: &world-biome-space
+    category: worlds
+    description: "Claim your own untouched SPACE world! This brand new biome has it all - rare platinum, white crystals, custom loots, supernovas, low gravity, and more!"
+    image: inventory/furniture/solar-system-diorama
+
+  sections:
+    - name: Popular and New
+      key: home
+      icon: icon-gem
+      items:
+        # - give-thanks-pack
+
+        - pet-cage
+        - vault
+        - polar-vortex-pack
+        - decoration-mayflower
+        - decoration-gong
+        #- wardrobe-vampire-pack
+        #- wardrobe-halloween-pack
+        #- holly-jolly-pack
+        #- wardrobe-santa-pack
+        #- wardrobe-elf-pack
+        - world-machine-weather-onyx
+        - world-machine-weather-diamond
+        - world-machine-weather
+        #- headgear-nessie
+        - accessories-rabbit-foot
+        - accessories-pocketwatch-onyx
+        - accessories-science-onyx
+        - private-world-arctic
+        - private-world-arctic-small
+        - facialgear-alien
+        - headgear-shark
+        - headgear-snake
+        - wardrobe-diablo
+        #- private-world-hell
+        - headgear-knight
+        #- wardrobe-pajama-pack
+        - wardrobe-chicken-pack
+        - wardrobe-dark-queen
+        - wardrobe-dark-king
+        - wardrobe-samaurai
+        - wardrobe-plant
+        - private-world
+        - private-world-small
+        - power-pack
+        - battle-pack
+        - mining-pack
+        - exploring-pack
+        - onyx-weapon-kit
+        - teleporter
+        - large-protector
+        - small-protector
+        - micro-protector-pack
+        - skill-book
+        - brain-wine
+        - exo-skin
+        - pandora-pack
+        - bomb-pack
+        - name-change
+        - world-machine-weather
+        - world-machine-weather-diamond
+        - world-machine-weather-onyx
+        - world-machine-spawner
+        - world-machine-spawner-diamond
+        - world-machine-spawner-onyx
+        - world-machine-teleport
+        - world-machine-teleport-diamond
+        - world-machine-teleport-onyx
+        - world-market
+
+    - name: Private Worlds
+      key: worlds
+      icon: icon-world
+      items:
+        - private-world-small
+        - private-world-space-small
+        - private-world-brain-small
+        - private-world-arctic-small
+        - private-world-desert-small
+        - private-world-deep-small
+        - private-world-hell-small
+        - private-world
+        - private-world-space
+        - private-world-brain
+        - private-world-arctic
+        - private-world-desert
+        - private-world-deep
+        - private-world-hell
+        - private-world-large
+        - private-world-space-large
+        - private-world-brain-large
+        - private-world-arctic-large
+        - private-world-desert-large
+        - private-world-deep-large
+        - private-world-hell-large
+
+    - name: Protectors and Technology
+      key: protectors
+      icon: icon-skill-automata
+      items:
+        - teleporter
+        - zone-teleporter
+        - giga-protector
+        - mega-protector
+        - large-protector
+        - small-protector
+        - micro-protector-pack
+        - guild
+        - world-machine-weather
+        - world-machine-weather-diamond
+        - world-machine-weather-onyx
+        - world-machine-spawner
+        - world-machine-spawner-diamond
+        - world-machine-spawner-onyx
+        - world-machine-teleport
+        - world-machine-teleport-diamond
+        - world-machine-teleport-onyx
+        - world-market
+
+    - name: Tools and Accessories
+      key: tools
+      icon: icon-profile-equipment
+      items:
+        - power-pack
+        - mining-pack
+        - exploring-pack
+        - survival-pack
+        - automata-pack
+        - engineering-pack
+
+        - accessories-glove-onyx
+        - accessories-agility-onyx
+        - accessories-conch
+        - accessories-compressor-onyx
+        - accessories-combat-onyx
+        - accessories-horticulture-onyx
+
+        - exo-skin
+        - construction-claw
+        - toolbelt
+        - dowsing-rod
+        - rebreather
+        - butler-extender
+        - makeup-kit
+
+    - name: Weapons and Exoskeletons
+      key: weapons
+      icon: icon-gun
+      items:
+        - battle-pack
+        - trap-pack
+        - bomb-pack
+        - pandora-pack
+        - diamond-weapon-kit
+        - onyx-weapon-kit
+        - diamond-turret-kit
+        - onyx-turret-kit
+        - small-spawner
+        - large-spawner
+
+        - brass-exo-torso
+        - brass-exo-legs
+        - brass-exo-headset
+        - diamond-exo-torso
+        - diamond-exo-legs
+        - diamond-exo-headset
+        - onyx-exo-torso
+        - onyx-exo-legs
+        - onyx-exo-headset
+
+    - name: Clothing and Emotes
+      key: avatar
+      icon: icon-wardrobe
+      items:
+        #- polar-vortex-pack
+        - holly-jolly-pack
+        - wardrobe-santa-pack
+        - wardrobe-elf-pack
+        - facialgear-alien
+        - headgear-snake
+        - headgear-shark
+        - headgear-knight
+        - wardrobe-samaurai
+        - wardrobe-plant
+        - wardrobe-vampire-pack
+        - wardrobe-halloween-pack
+        - wardrobe-pirate-pack
+        - wardrobe-scientist-pack
+        - wardrobe-admiral-pack
+        - wardrobe-arctic-pack
+        - wardrobe-diving-pack
+        - wardrobe-mystic-pack
+        - wardrobe-reaper-pack
+        - wardrobe-rainwear-pack
+        - wardrobe-brain-pack
+        - wardrobe-brain-disguise-pack
+        - wardrobe-watermelon-pack
+        - wardrobe-magician-pack
+        - wardrobe-android-pack
+        - wardrobe-tech-warrior-pack
+        - wardrobe-royalty-pack
+        - wardrobe-fez
+        - wardrobe-tinfoil
+        - wardrobe-3d-glasses
+        - wardrobe-comedian
+        - wardrobe-headphones
+        - wardrobe-fencing-helmet
+        - wardrobe-ice-cream-hat
+        - wardrobe-halo
+        - wardrobe-mining-accident
+        - wardrobe-big-eyes
+        - wardrobe-umbrella
+        - wardrobe-bright-idea
+        - wardrobe-bird-skull
+        - wardrobe-lampshade
+        - wardrobe-paper-bag
+        - wardrobe-diablo
+        - emotions-pack
+        - emotions-pack-2
+        - dance-pack
+        - dance-pack-2
+        - dance-pack-3
+        - dance-pack-4
+
+    - name: Resources
+      key: resources
+      icon: icon-skill-mining
+      items:
+        - pet-cage
+        - vault
+        - holly-jolly-pack
+        - skill-book
+        - brain-wine
+        - skill-reset
+        - building-pack
+        - science-pack
+        - portable-teleporter-pack
+        - stealth-pack
+        - power-up-pack
+
+        - cat-pack
+        - dog-pack
+        - brass-butler-pack
+        - diamond-butler-pack
+        - onyx-butler-pack
+
+        - bomb-water-pack
+        - bomb-acid-pack
+        - bomb-lava-pack
+
+        - name-change
+
+
+  items:
+    - key: home-world
+      name: Home World
+      description: "Start off your adventures with a home world! Explore and build as much as you like, then head into the wilds of Deepworld when you're ready."
+      cost: 190
+      image: shop/biome-mini
+      category: worlds
+      tutorial: true
+      dynamic: true
+
+    - key: premium-pack
+      name: Premium Pack
+      cost: 150
+      description: "Kickstart your Deepworld adventure with access to premium worlds, loot bonuses, and a pack full of useful items! Note: this item is not tradeable."
+      image: inventory/consumables/gift
+      inventory:
+        - ['mechanical/dish', 1]
+        - ['mechanical/dish-micro', 5]
+        - ['consumables/jerky-power', 10]
+        - ['consumables/canister', 10]
+      premium: true
+      dynamic: true
+      category: equipment-packs
+
+    - key: private-world-space-small
+      name: Private Space Mini World
+      zone: space_small
+      <<: *world-biome-space
+      <<: *world-small
+      images:
+        - frame: inventory/furniture/solar-system-diorama
+        - frame: shop/banner
+          color: 1a1a1a
+        - frame: shop/banner-text-mini
+    - key: private-world-small
+      name: Private Mini World
+      zone: plain_small
+      <<: *world-biome-plain
+      <<: *world-small
+      images:
+        - frame: shop/biome-normal
+        - frame: shop/banner
+          color: aaff66
+        - frame: shop/banner-text-mini
+    - key: private-world-arctic-small
+      name: Private Arctic Mini World
+      zone: arctic_small
+      <<: *world-biome-arctic
+      <<: *world-small
+      images:
+        - frame: shop/biome-arctic
+        - frame: shop/banner
+          color: 66aaff
+        - frame: shop/banner-text-mini
+    - key: private-world-desert-small
+      name: Private Desert Mini World
+      zone: desert_small
+      <<: *world-biome-desert
+      <<: *world-small
+      images:
+        - frame: shop/biome-desert
+        - frame: shop/banner
+          color: ffdd77
+        - frame: shop/banner-text-mini
+    - key: private-world-deep-small
+      name: Private Deep Mini World
+      zone: deep_small
+      <<: *world-biome-deep
+      <<: *world-small
+      images:
+        - frame: shop/biome-deep
+        - frame: shop/banner
+          color: 44334a
+        - frame: shop/banner-text-mini
+    - key: private-world-hell-small
+      name: Private Hell Mini World
+      zone: hell_small
+      <<: *world-biome-hell
+      <<: *world-small
+      images:
+        - frame: shop/biome-hell
+        - frame: shop/banner
+          color: ff3311
+        - frame: shop/banner-text-mini
+    - key: private-world-brain-small
+      name: Private Brain Mini World
+      zone: brain_small
+      <<: *world-biome-brain
+      <<: *world-small
+      images:
+        - frame: shop/biome-brain
+        - frame: shop/banner
+          color: ff3311
+        - frame: shop/banner-text-mini
+
+    - key: private-world-space
+      name: Private Space World
+      zone: space_medium
+      <<: *world-biome-space
+      <<: *world-medium
+    - key: private-world
+      name: Private World
+      zone: plain_medium
+      <<: *world-biome-plain
+      <<: *world-medium
+    - key: private-world-arctic
+      name: Private Arctic World
+      zone: arctic_medium
+      <<: *world-biome-arctic
+      <<: *world-medium
+    - key: private-world-desert
+      name: Private Desert World
+      zone: desert_medium
+      <<: *world-biome-desert
+      <<: *world-medium
+    - key: private-world-deep
+      name: Private Deep World
+      zone: deep_medium
+      <<: *world-biome-deep
+      <<: *world-medium
+    - key: private-world-hell
+      name: Private Hell World
+      zone: hell_medium
+      <<: *world-biome-hell
+      <<: *world-medium
+    - key: private-world-brain
+      name: Private Brain World
+      zone: brain_medium
+      <<: *world-biome-brain
+      <<: *world-medium
+
+    - key: private-world-space-large
+      name: Private Space Large World
+      zone: space_large
+      <<: *world-biome-space
+      <<: *world-large
+      images:
+        - frame: inventory/furniture/solar-system-diorama
+        - frame: shop/banner
+          color: 1a1a1a
+        - frame: shop/banner-text-xl
+    - key: private-world-large
+      name: Private Large World
+      zone: plain_large
+      <<: *world-biome-plain
+      <<: *world-large
+      images:
+        - frame: shop/biome-normal
+        - frame: shop/banner
+          color: aaff66
+        - frame: shop/banner-text-xl
+    - key: private-world-arctic-large
+      name: Private Arctic Large World
+      zone: arctic_large
+      <<: *world-biome-arctic
+      <<: *world-large
+      images:
+        - frame: shop/biome-arctic
+        - frame: shop/banner
+          color: 66aaff
+        - frame: shop/banner-text-xl
+    - key: private-world-desert-large
+      name: Private Desert Large World
+      zone: desert_large
+      <<: *world-biome-desert
+      <<: *world-large
+      images:
+        - frame: shop/biome-desert
+        - frame: shop/banner
+          color: ffdd77
+        - frame: shop/banner-text-xl
+    - key: private-world-deep-large
+      name: Private Deep Large World
+      zone: deep_large
+      <<: *world-biome-deep
+      <<: *world-large
+      images:
+        - frame: shop/biome-deep
+        - frame: shop/banner
+          color: 44334a
+        - frame: shop/banner-text-xl
+    - key: private-world-hell-large
+      name: Private Hell Large World
+      zone: hell_large
+      <<: *world-biome-hell
+      <<: *world-large
+      images:
+        - frame: shop/biome-hell
+        - frame: shop/banner
+          color: ff3311
+        - frame: shop/banner-text-xl
+    - key: private-world-brain-large
+      name: Private Brain Large World
+      zone: brain_large
+      <<: *world-biome-brain
+      <<: *world-large
+      images:
+        - frame: shop/biome-brain
+        - frame: shop/banner
+          color: ff3311
+        - frame: shop/banner-text-xl
+
+
+    # Packs
+
+    - key: starter-pack
+      name: Starter Pack
+      cost: 500
+      description: Get started with a pile of serious gear at 50% off! Go premium and explore, battle, and build like a pro with these upgraded tools and powerful accessories.
+      image: inventory/accessories/glove-diamond
+      inventory:
+        - ['tools/gun-energy', 1]
+        - ['tools/pickaxe-diamond', 1]
+        - ['accessories/compressor', 1]
+        - ['accessories/glove-diamond', 1]
+        - ['accessories/jetpack-brass', 1]
+        - ['mechanical/dish', 2]
+        - ['consumables/jerky-power', 10]
+        - ['consumables/canister', 10]
+        - ['emotes/dance-monkey', 1]
+        - ['emotes/dance-swim', 1]
+      premium: true
+      category: equipment-packs
+      dynamic: true
+    - key: power-pack
+      name: Power Pack
+      cost: 400
+      description: It's time to get serious! Kick major ass with this pack of powerful skill boosters - and the mighty energy cannon.
+      image: inventory/tools/gun-energy
+      inventory:
+        - ['tools/gun-energy', 1]
+        - ['accessories/glove-onyx', 1]
+        - ['accessories/compressor', 1]
+        - ['accessories/horseshoe', 1]
+        - ['accessories/jetpack-brass', 1]
+      category: equipment-packs
+    - key: power-pack-deal
+      name: Power Pack
+      cost: 300
+      description: LIMITED TIME DISCOUNT! It's time to get serious! Kick major ass with this pack of powerful skill boosters - and the mighty energy cannon.
+      image: inventory/tools/gun-energy
+      inventory:
+        - ['tools/gun-energy', 1]
+        - ['accessories/glove-onyx', 1]
+        - ['accessories/compressor', 1]
+        - ['accessories/horseshoe', 1]
+        - ['accessories/jetpack-brass', 1]
+      category: equipment-packs
+      dynamic: true
+    - key: battle-pack
+      name: Battle Pack
+      cost: 330
+      description: It's dangerous out there! Prepare yourself for battle with this selection of guns and protective devices.
+      image: inventory/ammo/bullets
+      inventory:
+        - ['tools/gun-flame', 1]
+        - ['tools/gun-frost', 1]
+        - ['consumables/canister', 15]
+        - ['ammo/bullets', 25]
+        - ['shields/force', 1]
+      category: weapons
+    - key: mining-pack
+      name: Mining Pack
+      cost: 330
+      description: Get a jumpstart on your spelunking adventures with this mining pack! Braving the depths is always easier with some hardy gear.
+      image: inventory/tools/pickaxe-onyx
+      inventory:
+        - ['tools/pickaxe-onyx', 1]
+        - ['accessories/flashlight-diamond', 1]
+        - ['accessories/glove', 1]
+        - ['building/plug', 25]
+      category: equipment-packs
+    - key: mining-pack-deal
+      name: Mining Pack
+      cost: 220
+      description: LIMITED TIME DISCOUNT! Get a jumpstart on your spelunking adventures with this mining pack! Braving the depths is always easier with some hardy gear.
+      image: inventory/tools/pickaxe-onyx
+      inventory:
+        - ['tools/pickaxe-onyx', 1]
+        - ['accessories/flashlight-diamond', 1]
+        - ['accessories/glove', 1]
+        - ['building/plug', 25]
+      category: equipment-packs
+      dynamic: true
+    - key: exploring-pack
+      name: Exploring Pack
+      cost: 330
+      description: Getting around Deepworld is easier with the right tools. Get this awesome set of tools and be the next Magellan!
+      image: inventory/accessories/jetpack-onyx
+      inventory:
+        - ['accessories/jetpack-onyx', 1]
+        - ['accessories/pocketwatch', 1]
+        - ['shields/acid', 1]
+      category: equipment-packs
+    - key: survival-pack
+      name: Survival Pack
+      cost: 330
+      description: It's a tough world out there! Boost your survival and stamina and rock out a bit longer.
+      image: inventory/accessories/army-knife-onyx
+      inventory:
+        - ['accessories/army-knife-onyx', 1]
+        - ['accessories/sand-dollar', 1]
+        - ['accessories/compressor', 1]
+        - ['consumables/jerky-power', 25]
+      category: equipment-packs
+    - key: automata-pack
+      name: Automata Pack
+      cost: 330
+      description: Tinker and experiment with the quirky mechanical creatures of Deepworld. Boost your automata skill and gain an android companion!
+      image: inventory/accessories/memory
+      inventory:
+        - ['accessories/interface', 1]
+        - ['containers/android', 1]
+        - ['accessories/schematic', 1]
+        - ['ground/ectoplasm', 25]
+      category: equipment-packs
+    - key: engineering-pack
+      name: Engineering Pack
+      cost: 400
+      description: "Bring your grand designs to life with this pack of building and engineering boosters. It's all for science!"
+      image: inventory/accessories/abacus
+      inventory:
+        - ['accessories/abacus', 1]
+        - ['accessories/t-square', 1]
+        - ['accessories/schematic', 2]
+        - ['ground/quartz-ore', 25]
+      category: equipment-packs
+    - key: trap-pack
+      name: Trap Pack
+      cost: 250
+      description: Other players bothering you? Pick up this trap pack and deck your creations out with a collection of nasty turrets and traps!
+      image: inventory/mechanical/turret-flame
+      inventory:
+        - ['mechanical/turret-flame', 1]
+        - ['mechanical/turret-acid', 2]
+        - ['mechanical/turret-fire', 2]
+        - ['mechanical/turret-pistol', 3]
+        - ['mechanical/spikes', 25]
+      category: resource-packs
+    - key: building-pack
+      name: Building Pack
+      cost: 150
+      description: Get started faster on your own personal town or city with this huge bundle of resources!
+      image: inventory/building/wood
+      inventory:
+        - ['building/wood', 150]
+        - ['building/iron', 100]
+        - ['building/brass', 100]
+        - ['building/copper', 100]
+        - ['ground/clay', 100]
+        - ['back/paper', 100]
+        - ['back/glass-divided', 100]
+      category: resource-packs
+    - key: science-pack
+      name: Science Pack
+      cost: 250
+      description: Fast track your research lab with this collection of scientific accessories. You never know when you'll need to open a wormhole to another dimension!
+      image: inventory/mechanical/science-bulb
+      inventory:
+        - ['mechanical/control-panel', 1]
+        - ['mechanical/science-gadget', 1]
+        - ['mechanical/science-bulb', 1]
+        - ['mechanical/chemistry-set', 1]
+        - ['mechanical/mini-tesla', 2]
+        - ['mechanical/science-scrap', 2]
+      category: resource-packs
+
+
+    # Skills
+
+    - key: skill-book
+      name: Skill Book
+      description: 'Upgrade any skill by one point with this lovely tome of knowledge! Note: each skill can only be upgraded once via books, and only to Level 10.'
+      image: inventory/consumables/book-skill
+      cost: 100
+      inventory:
+        - ['consumables/book-skill', 1]
+      category: skills
+    - key: brain-wine
+      name: Brain Wine
+      description: 'Upgrade any skill by one point with this carefully brewed essence of brain! Note: each skill can only be upgraded once via brain wine, and only to Level 10.'
+      image: inventory/consumables/brain-wine
+      cost: 100
+      inventory:
+        - ['consumables/brain-wine', 1]
+      category: skills
+    - key: skill-reset
+      name: Skill Reset
+      description: 'Go back in time a little with this handy skill reset! Reclaim one skill point from each skill and re-apply them however you like.'
+      image: inventory/consumables/skill-reset
+      cost: 100
+      inventory:
+        - ['consumables/skill-reset', 1]
+      category: skills
+
+
+    # Guild
+
+    - key: guild
+      name: Guild Obelisk
+      description: Start your own guild with this imposing obelisk! Manage guild membership and get an official guild designation next to your name.
+      image: inventory/signs/guild
+      cost: 300
+      inventory:
+        - ['signs/guild', 1]
+      category: guilds
+
+    # World
+
+    - key: world-machine-teleport
+      name: Mass Teleporter
+      description: "Power up your world with mass teleportation! Allow yourself, members, or everyone to teleport to each other with the flick of a switch. Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/machines/mass-teleporter
+      images:
+        - frame: inventory/machines/mass-teleporter
+      cost: 200
+      inventory:
+        - ['machines/mass-teleporter', 1]
+      category: world-machines
+
+    - key: world-machine-teleport-diamond
+      name: Diamond Mass Teleporter
+      description: "Power up your world with diamond mass teleportation! Activate player and plaque teleportation, disable teleportation protection, and destroy natural teleporters. Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/machines/mass-teleporter
+      images:
+        - frame: inventory/ground/diamond-ore
+        - frame: inventory/machines/mass-teleporter
+      cost: 375
+      inventory:
+        - ['machines/mass-teleporter-diamond', 1]
+      category: world-machines
+
+    - key: world-machine-teleport-onyx
+      name: Onyx Mass Teleporter
+      description: "Power up your world with onyx mass teleportation! Activate all the benefits of the diamond mass teleporter and also gain the ability to summon other players to your location. Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/machines/mass-teleporter
+      images:
+        - frame: inventory/ground/onyx
+        - frame: inventory/machines/mass-teleporter
+      cost: 550
+      inventory:
+        - ['machines/mass-teleporter-onyx', 1]
+      category: world-machines
+
+    - key: world-machine-spawner
+      name: Mass Spawner
+      description: "Control world spawning with this epic machine! Keep your mob selection nice and peaceful or opt for extra danger. Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/machines/mass-spawner
+      images:
+        - frame: inventory/machines/mass-spawner
+      cost: 200
+      inventory:
+        - ['machines/mass-spawner', 1]
+      category: world-machines
+
+    - key: world-machine-spawner-diamond
+      name: Diamond Mass Spawner
+      description: "Control mob hostility and toggle area and maw spawning all together with this upgraded diamond mass spawner. Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/machines/mass-spawner
+      images:
+        - frame: inventory/ground/diamond-ore
+        - frame: inventory/machines/mass-spawner
+      cost: 375
+      inventory:
+        - ['machines/mass-spawner-diamond', 1]
+      category: world-machines
+
+    - key: world-machine-spawner-onyx
+      name: Onyx Mass Spawner
+      description: "Control spawning and even summon miniature brain invasions with this most powerful mass spawner! Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/machines/mass-spawner
+      images:
+        - frame: inventory/ground/onyx
+        - frame: inventory/machines/mass-spawner
+      cost: 550
+      inventory:
+        - ['machines/mass-spawner-onyx', 1]
+      category: world-machines
+
+    - key: world-machine-weather
+      name: Weather Machine
+      description: "Control the weather and day/night cycle with this amazing machine! Doesn't even require a rain dance! Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/machines/weather-machine
+      images:
+        - frame: inventory/machines/weather-machine
+      cost: 175
+      inventory:
+        - ['machines/weather-machine', 1]
+      category: world-machines
+
+    - key: world-machine-weather-diamond
+      name: Diamond Weather Machine
+      description: "Make your environment pleasant or extremely deadly with this upgraded machine! Deadly desert heat? More supernovas? Your choice! Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/machines/weather-machine
+      images:
+        - frame: inventory/ground/diamond-ore
+        - frame: inventory/machines/weather-machine
+      cost: 325
+      inventory:
+        - ['machines/weather-machine-diamond', 1]
+      category: world-machines
+
+    - key: world-machine-weather-onyx
+      name: Onyx Weather Machine
+      description: "Turn liquid gravity off and amplify growing times with this super upgraded weather machine! It's time to make that lush waterfall paradise you've always wanted!"
+      image: inventory/machines/weather-machine
+      images:
+        - frame: inventory/ground/onyx
+        - frame: inventory/machines/weather-machine
+      cost: 550
+      inventory:
+        - ['machines/weather-machine-onyx', 1]
+      category: world-machines
+
+    - key: world-market
+      name: Market Converter
+      description: "Turn your own world into a Market world! It can be public and support full trading privileges just like Times Square. Except with 100% fewer inhibitors! Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/furniture/scale
+      cost: 2000
+      inventory:
+        - ['furniture/market', 1]
+      category: world-machines
+
+
+    # Accessories
+
+    - key: accessories-rabbit-foot
+      name: Rabbit Foot
+      description: Upgrade your luck skill +3 with this astonishingly lucky charm! Loot will never be better than when maxed out with the luckiest item of them all!
+      image: inventory/accessories/rabbitfoot
+      cost: 250
+      inventory:
+        - ['accessories/rabbitfoot', 1]
+      category: equipment
+    - key: accessories-pocketwatch-onyx
+      name: Pocketwatch
+      description: Upgrade your perception skill +3 with this brilliantly precise pocketwatch! Zoom out further and understand the world like you've never done before!
+      image: inventory/accessories/pocketwatch-onyx
+      cost: 250
+      inventory:
+        - ['accessories/pocketwatch-onyx', 1]
+      category: equipment
+    - key: accessories-science-onyx
+      name: Microscope
+      description: Upgrade your science skill +3 with this powerful microscope! Avoid those pesky workshop incidents and COMING SOON, craft world machines!
+      image: inventory/accessories/science-microscope
+      cost: 250
+      inventory:
+        - ['accessories/science-microscope', 1]
+      category: equipment
+    - key: accessories-glove-onyx
+      name: Onyx Mining Gloves
+      description: Upgrade your mining skill +3 with these hearty mining gloves. Speed up your mining and find more rich veins than ever before!
+      image: inventory/accessories/glove-onyx
+      cost: 250
+      inventory:
+        - ['accessories/glove-onyx', 1]
+      category: equipment
+    - key: accessories-agility-onyx
+      name: Onyx Boot
+      description: Upgrade your agility skill +3 with these svelte onyx boots. Travel fast, jump higher, and maximize your manual dexterity!
+      image: inventory/accessories/agility-onyx
+      cost: 250
+      inventory:
+        - ['accessories/agility-onyx', 1]
+      category: equipment
+    - key: accessories-combat-onyx
+      name: Onyx Scope
+      description: Upgrade your combat skill +3 with this advanced onyx gun scope. Shoot more efficiently and maximize your bomb damage!
+      image: inventory/accessories/scope-onyx
+      images:
+        - frame: inventory/accessories/scope-onyx
+      cost: 250
+      inventory:
+        - ['accessories/scope-onyx', 1]
+      category: equipment
+    - key: accessories-horticulture-onyx
+      name: Onyx Rake
+      description: Upgrade your horticulture skill +3 with this finely crafted onyx rake. Plant fancier flowers and save more bulbs - it's a gardener's dream!
+      image: inventory/accessories/rake-onyx
+      images:
+        - frame: inventory/accessories/rake-onyx
+      cost: 250
+      inventory:
+        - ['accessories/rake-onyx', 1]
+      category: equipment
+    - key: accessories-conch
+      name: Conch
+      description: Upgrade your stamina skill +3 with the heart of the ocean. Increase your health and your chances for critical hits!
+      image: inventory/accessories/conch
+      cost: 250
+      inventory:
+        - ['accessories/conch', 1]
+      category: equipment
+    - key: accessories-compressor-onyx
+      name: Onyx Compressor
+      description: Maximize your steam capacity with this super efficient onyx compressor! Increase flight time, weapon charge, and more.
+      image: inventory/accessories/compressor-onyx
+      cost: 250
+      inventory:
+        - ['accessories/compressor-onyx', 1]
+      category: equipment
+
+
+    # Teleporters
+
+    - key: teleporter
+      name: Teleporter
+      description: Drop a teleporter to allow quick access to your home or anywhere else.
+      image: inventory/mechanical/teleporter
+      cost: 40
+      inventory:
+        - ['mechanical/teleporter', 1]
+      category: teleporters
+    - key: zone-teleporter
+      name: Spawn Teleporter
+      description: 'Grab an extra spawn teleporter to increase access points in your private world! Note: can only be placed in worlds you own.'
+      image: inventory/mechanical/zone-teleporter
+      cost: 80
+      inventory:
+        - ['mechanical/zone-teleporter', 1]
+      category: teleporters
+
+
+    # Protectors
+
+    - key: giga-protector
+      name: Giga Protector
+      description: Protect your creations and valuables from being mined by other players.
+      image: inventory/mechanical/dish-giga
+      cost: 225
+      inventory:
+        - ['mechanical/dish-giga', 1]
+      category: protectors
+    - key: mega-protector
+      name: Mega Protector
+      description: Protect your creations and valuables from being mined by other players.
+      image: inventory/mechanical/dish-mega
+      cost: 125
+      inventory:
+        - ['mechanical/dish-mega', 1]
+      category: protectors
+    - key: large-protector
+      name: Large Protector
+      description: Protect your creations and valuables from being mined by other players.
+      image: inventory/mechanical/dish-large
+      cost: 50
+      inventory:
+        - ['mechanical/dish-large', 1]
+      category: protectors
+    - key: small-protector
+      name: Small Protector
+      description: Protect your creations and valuables from being mined by other players.
+      image: inventory/mechanical/dish
+      cost: 20
+      inventory:
+        - ['mechanical/dish', 1]
+      category: protectors
+    - key: micro-protector-pack
+      name: Micro Protector Pack
+      description: Protect your creations and valuables from being mined by other players.
+      image: inventory/mechanical/dish-micro
+      cost: 20
+      inventory:
+        - ['mechanical/dish-micro', 4]
+      category: protectors
+    - key: bomb-pack
+      name: Bomb Pack
+      cost: 40
+      description: Demolition has never been easier than with this grab bag of awesome explosives!
+      image: inventory/mechanical/bomb-large
+      inventory:
+        - ['mechanical/bomb', 5]
+        - ['mechanical/bomb-incendiary', 3]
+        - ['mechanical/bomb-electric', 3]
+        - ['mechanical/bomb-large', 2]
+      category: weapons
+
+    - key: bomb-water-pack
+      name: Water Bomb Pack
+      cost: 90
+      description: "Generate a nice big pool of water with these handy water bombs! Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/mechanical/bomb-water
+      inventory:
+        - ['mechanical/bomb-water', 4]
+      category: resource-packs
+    - key: bomb-acid-pack
+      name: Acid Bomb Pack
+      cost: 90
+      description: "Generate a nice big pool of acid with these handy acid bombs! Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/mechanical/bomb-acid
+      inventory:
+        - ['mechanical/bomb-acid', 4]
+      category: resource-packs
+    - key: bomb-lava-pack
+      name: Lava Bomb Pack
+      cost: 90
+      description: "Generate a nice big pool of lava with these handy lava bombs! Note: CAN ONLY BE PLACED IN YOUR OWN WORLDS."
+      image: inventory/mechanical/bomb-lava
+      inventory:
+        - ['mechanical/bomb-lava', 4]
+      category: resource-packs
+
+    - key: vault
+      name: Vault
+      description: This impressive safekeeping device protects your most treasured belongings, and it looks reeaallll good while doing it! SHOP EXCLUSIVE for a limited time!
+      image: inventory/mechanical/vault
+      cost: 150
+      inventory:
+        - ['mechanical/vault', 1]
+      category: decoration
+
+    - key: pandora-pack
+      name: Pandora's Box
+      cost: 40
+      description: Unleash the chaos of Pandora to claim victory - and loot! Comes with bonus jerky to help survive the onslaught.
+      image: inventory/containers/pandora
+      inventory:
+        - ['containers/pandora', 1]
+        - ['consumables/jerky-power', 5]
+      category: minigames
+    - key: portable-teleporter-pack
+      name: Portable Teleporter Pack
+      cost: 30
+      description: Transmit yourself across great distances without worrying about lugging around a big ol' teleporter!
+      image: inventory/consumables/teleporter
+      inventory:
+        - ['consumables/teleporter', 6]
+      category: consumables
+    - key: stealth-pack
+      name: Stealth Pack
+      cost: 30
+      description: Sneak around like a pro with this collection of stealth cloaks. Those brains won't know you were ever there!
+      image: inventory/consumables/cloak
+      inventory:
+        - ['consumables/cloak', 5]
+      category: consumables
+    - key: power-up-pack
+      name: Jerky Pack
+      cost: 10
+      description: Grab a quick bite to eat and keep your place in battle with this stash of extra jerky!
+      image: inventory/consumables/jerky
+      inventory:
+        - ['consumables/jerky', 10]
+        - ['consumables/jerky-power', 5]
+      category: consumables
+    - key: cat-pack
+      name: Mechanical Cat
+      cost: 125
+      description: Get your very own feline friend with this handy cat crate. Guaranteed to be 100% as lazy as a living cat!
+      image: inventory/containers/cat
+      inventory:
+        - ['containers/cat', 1]
+      category: pets
+    - key: dog-pack
+      name: Mechanical Dog
+      cost: 125
+      description: Get your very own canine friend with this handy dog crate. Just as fun as a real dog, but without having to pick up poop!
+      image: inventory/containers/dog
+      inventory:
+        - ['containers/dog', 1]
+      category: pets
+    - key: pet-cage
+      name: Pet Cage
+      cost: 90
+      description: Capture your very own bunny, skunk, crow, vulture, or terrapus with this extra durable pet cage! SHOP EXCLUSIVE for a limited time!
+      image: inventory/containers/cage-pet
+      inventory:
+        - ['containers/cage-pet', 1]
+
+    - key: diamond-weapon-kit
+      name: Diamond Weapon Upgrade Kit
+      cost: 150
+      description: Boost the power on your guns for an extra edge in combat! Upgrade from Mark I to Mark II.
+      image: inventory/consumables/weapon-upgrade-diamond
+      inventory:
+        - ['consumables/weapon-upgrade-diamond', 1]
+      category: weapon-upgrades
+    - key: onyx-weapon-kit
+      name: Onyx Weapon Upgrade Kit
+      cost: 250
+      description: Accelerate the power of any gun to Mark III! Nothing will stand in your way as you blast with impunity.
+      image: inventory/consumables/weapon-upgrade-onyx
+      inventory:
+        - ['consumables/weapon-upgrade-onyx', 1]
+      category: weapon-upgrades
+    - key: onyx-weapon-kit-two-for-one
+      name: Onyx Weapon Upgrade Kit Two for One
+      cost: 250
+      description: LIMITED TIME TWO-FOR-ONE DEAL! Accelerate the power of any gun to Mark III! Nothing will stand in your way as you blast with impunity.
+      image: inventory/consumables/weapon-upgrade-onyx
+      inventory:
+        - ['consumables/weapon-upgrade-onyx', 2]
+      category: weapon-upgrades
+      dynamic: true
+    - key: diamond-turret-kit
+      name: Diamond Turret Upgrade Kit
+      cost: 50
+      description: Boost the power on your turrets to maximize your defenses! Upgrade from Mark I to Mark II.
+      image: inventory/consumables/turret-upgrade-diamond
+      inventory:
+        - ['consumables/turret-upgrade-diamond', 1]
+      category: weapon-upgrades
+    - key: onyx-turret-kit
+      name: Onyx Turret Upgrade Kit
+      cost: 85
+      description: Intensify the power of any turret to Mark III! Your defensive capabilities will be unmatched!
+      image: inventory/consumables/turret-upgrade-onyx
+      inventory:
+        - ['consumables/turret-upgrade-onyx', 1]
+      category: weapon-upgrades
+
+    - key: brass-butler-pack
+      name: Brass Butler Pack
+      cost: 200
+      description: "Need a hand? Butler Bot is here to help! Your new best friend can help you mine, build, blast, and more! (Requires automata skill 3)"
+      image: inventory/mechanical/butler-brass
+      inventory:
+        - ['mechanical/butler-brass', 1]
+        - ['accessories/program', 2]
+        - ['ground/ectoplasm', 10]
+      category: butler-bots
+    - key: diamond-butler-pack
+      name: Diamond Butler Pack
+      cost: 400
+      description: "Diamond Butler Bots are a faster and more advanced version of their brass cousin. Transport acid, blast, and more! (Requires automata skill 4)"
+      image: inventory/mechanical/butler-diamond
+      inventory:
+        - ['mechanical/butler-diamond', 1]
+        - ['accessories/program', 2]
+        - ['ground/ectoplasm', 15]
+      category: butler-bots
+    - key: onyx-butler-pack
+      name: Onyx Butler Pack
+      cost: 600
+      description: "Onyx Butler Bots are the finest of personal automata technology. Their advanced abilities and longevity are the envy of all other bots! (Requires automata skill 5)"
+      image: inventory/mechanical/butler-onyx
+      inventory:
+        - ['mechanical/butler-onyx', 1]
+        - ['accessories/program', 2]
+        - ['ground/ectoplasm', 20]
+      category: butler-bots
+
+    - key: brass-exo-torso
+      name: Brass Exotorso
+      cost: 150
+      description: "Boost your staying power and look great with a shiny brass exotorso! Offers +1 to stamina and mining, plus faster health regeneration."
+      image: inventory/prosthetics/brass-torso
+      inventory:
+        - ['prosthetics/brass-torso', 1]
+      prohibit_inventory:
+        - prosthetics/brass-torso
+        - prosthetics/diamond-torso
+        - prosthetics/onyx-torso
+      category: exoskeletons
+    - key: brass-exo-legs
+      name: Brass Exoleg
+      cost: 150
+      description: "Kick your agility and survival skills up +1 with these shiny brass exolegs. You'll also love the powerful new stomp attack and foot damage reduction."
+      image: inventory/prosthetics/brass-legs
+      inventory:
+        - ['prosthetics/brass-legs', 1]
+      prohibit_inventory:
+        - prosthetics/brass-legs
+        - prosthetics/diamond-legs
+        - prosthetics/onyx-legs
+      category: exoskeletons
+    - key: brass-exo-headset
+      name: Brass Headset
+      cost: 125
+      description: "Give your perception and engineering skills a +1 bump and improve low-light visibility with this fancy brass headset!"
+      image: inventory/prosthetics/brass-headset
+      inventory:
+        - ['prosthetics/brass-headset', 1]
+      prohibit_inventory:
+        - prosthetics/brass-headset
+        - prosthetics/diamond-headset
+        - prosthetics/onyx-headset
+      category: exoskeletons
+
+    - key: diamond-exo-torso
+      name: Diamond Exotorso
+      cost: 250
+      description: "Double down on your stamina power with this glowing mantle of protection! Offers +2 stamina, +1 mining, and fast health regeneration."
+      image: inventory/prosthetics/diamond-torso
+      inventory:
+        - ['prosthetics/diamond-torso', 1]
+      prohibit_inventory:
+        - prosthetics/diamond-torso
+        - prosthetics/onyx-torso
+      category: exoskeletons
+    - key: diamond-exo-legs
+      name: Diamond Exoleg
+      cost: 250
+      description: "Max your speed and damage reductions with these brilliant leg attachments. Get +2 agility, +1 survival, and enhanced stomp attacks and foot protection."
+      image: inventory/prosthetics/diamond-legs
+      inventory:
+        - ['prosthetics/diamond-legs', 1]
+      prohibit_inventory:
+        - prosthetics/diamond-legs
+        - prosthetics/onyx-legs
+      category: exoskeletons
+    - key: diamond-exo-headset
+      name: Diamond Headset
+      cost: 225
+      description: "Blast your perception skill +2 into overdrive and engineering by +1. Your zoom view and low-light vision will give you the ultimate edge!"
+      image: inventory/prosthetics/diamond-headset
+      inventory:
+        - ['prosthetics/diamond-headset', 1]
+      prohibit_inventory:
+        - prosthetics/diamond-headset
+        - prosthetics/onyx-headset
+      category: exoskeletons
+
+    - key: onyx-exo-torso
+      name: Onyx Exotorso
+      cost: 350
+      description: "Own the ultimate body suit and launch your stamina and mining skills with a +2 bonus. And with a triple-speed health regen rate, you'll be unstoppable on the battlefield!"
+      image: inventory/prosthetics/onyx-torso
+      inventory:
+        - ['prosthetics/onyx-torso', 1]
+      prohibit_inventory:
+        - prosthetics/onyx-torso
+      category: exoskeletons
+    - key: onyx-exo-legs
+      name: Onyx Exoleg
+      cost: 350
+      description: "Kick danger in the face with the finest exoleg available! Boost your agility and survival skills by +2 and deal powerful blows with your deadly feet."
+      image: inventory/prosthetics/onyx-legs
+      inventory:
+        - ['prosthetics/onyx-legs', 1]
+      prohibit_inventory:
+        - prosthetics/onyx-legs
+      category: exoskeletons
+    - key: onyx-exo-headset
+      name: Onyx Headset
+      cost: 325
+      description: "Integrate your mind with the most powerful headgear around! Your +2 bonus to perception and engineering will leave even Google Glass feeling inadequate."
+      image: inventory/prosthetics/onyx-headset
+      inventory:
+        - ['prosthetics/onyx-headset', 1]
+      prohibit_inventory:
+        - prosthetics/onyx-headset
+      category: exoskeletons
+
+    - key: small-spawner
+      name: Spawner
+      description: 'Summon guardians, pets, or just subjects for your mad experiments with this handy spawner! Pick from a variety of mobs and connect to a switch. Note: spawned mobs do not drop loot.'
+      image: inventory/mechanical/spawner-small
+      cost: 40
+      inventory:
+        - ['mechanical/spawner-small', 1]
+      category: resource-packs
+    - key: large-spawner
+      name: Large Spawner
+      description: 'Summon guardians, pets, or just subjects for your mad experiments with this handy spawner! Pick from a variety of mobs and connect to a switch. Note: spawned mobs do not drop loot.'
+      image: inventory/mechanical/spawner
+      cost: 80
+      inventory:
+        - ['mechanical/spawner', 1]
+      category: resource-packs
+
+    - key: wardrobe-pirate-pack
+      name: Pirate Pack
+      cost: 100
+      description: "Ahoy, matey! Every day is Talk Like a Pirate Day when you grab this pirate wardrobe pack. Pirate ship sold separately."
+      image: inventory/headgear/pirate
+      inventory:
+        - ['headgear/pirate', 1]
+        - ['facialgear/eyepatch', 1]
+        - ['tops/pirate', 1]
+        - ['tops/pirate-lady', 1]
+        - ['footwear/pirate-boots', 1]
+      category: wardrobe
+    - key: wardrobe-scientist-pack
+      name: Mad Scientist Pack
+      cost: 100
+      description: "Show off your commitment to invention (and possibly world domination) with this pack of mad scientist apparel! You'll make Tesla proud."
+      image: inventory/headgear/mad-scientist
+      inventory:
+        - ['headgear/mad-scientist', 1]
+        - ['tops/mad-scientist', 1]
+        - ['facialgear/mad-scientist', 1]
+      category: wardrobe
+    - key: wardrobe-admiral-pack
+      name: Admiral Pack
+      cost: 100
+      description: "Project your innate leadership with this collection of fine military clothing. Guaranteed to make pirates shiver their timbers!"
+      image: inventory/headgear/admiral
+      inventory:
+        - ['headgear/admiral', 1]
+        - ['tops/admiral', 1]
+        - ['bottoms/pants-dandy', 1]
+      category: wardrobe
+    - key: wardrobe-arctic-pack
+      name: Arctic Pack
+      cost: 200
+      description: "Keep warm with this enviable pack of toasty threads! You can be both cozy and stylish without a breaking a sweat."
+      image: inventory/headgear/parka
+      inventory:
+        - ['headgear/parka', 1]
+        - ['tops/parka', 1]
+        - ['footwear/snow-boots', 1]
+      category: wardrobe
+    - key: wardrobe-diving-pack
+      name: Diving Pack
+      cost: 200
+      description: "Brave the ocean deeps more easily with this functional diving gear! You'll be twenty thousand and one leagues under the sea in no time."
+      image: inventory/headgear/diving-helmet
+      inventory:
+        - ['headgear/diving-helmet', 1]
+        - ['tops/diving-suit', 1]
+        - ['bottoms/diving-suit', 1]
+        - ['footwear/diving-suit', 1]
+      category: wardrobe
+    - key: wardrobe-mystic-pack
+      name: Mystic Pack
+      cost: 200
+      description: "Channel your inner spiritual powers with this fancy outfit! You might not scare revenants away, but at least you'll look like you can."
+      image: inventory/headgear/mystic
+      inventory:
+        - ['headgear/mystic', 1]
+        - ['facialgear/masks/venetian', 1]
+        - ['tops/mystic', 1]
+      category: wardrobe
+    - key: wardrobe-brain-pack
+      name: Brain Fan Pack
+      cost: 200
+      description: "Brains may have destroyed the world, but sometimes you just gotta love 'em. Show off your bizarre affection with these cerebral accents."
+      image: inventory/headgear/brain-hat
+      inventory:
+        - ['headgear/brain-hat', 1]
+        - ['tops/brain-shirt', 1]
+      category: wardrobe
+    - key: wardrobe-android-pack
+      name: Android Pack
+      cost: 300
+      description: "With this delightfully brassy clothing pack, you can disguise yourself as one of Deepworld's finest androids. Pithy one-liners not included."
+      image: inventory/headgear/android
+      inventory:
+        - ['headgear/android', 1]
+        - ['tops/android', 1]
+        - ['bottoms/android', 1]
+      category: wardrobe
+    - key: wardrobe-royalty-pack
+      name: Royalty Pack
+      cost: 500
+      description: "Not everyone can be King, but you can at least be a Duke with these exceedingly rare royal robes. Sometimes you just have to flaunt it!"
+      image: inventory/headgear/crown
+      inventory:
+        - ['bottoms/royal', 1]
+        - ['tops/royal', 1]
+        - ['headgear/crown', 1]
+      category: wardrobe
+    - key: wardrobe-magician-pack
+      name: Magician Pack
+      cost: 150
+      description: "Bedazzle, astonish, and hypnotize the masses with this magician's outfit! Smoke and mirrors not included."
+      image: inventory/facialgear/hypnotic
+      images:
+        - frame: inventory/facialgear/hypnotic
+      inventory:
+        - ['facialgear/hypnotic', 1]
+        - ['headgear/magician-hat', 1]
+        - ['tops/magician', 1]
+      category: wardrobe
+    - key: wardrobe-rainwear-pack
+      name: Rainwear Pack
+      cost: 200
+      description: "Stay dry and keep your spirits high with this fashionable rain outfit. Comes in bright yellow for maximum non-dreariness!"
+      image: inventory/headgear/rain-hat
+      inventory:
+        - ['headgear/rain-hat', 1]
+        - ['tops/rain', 1]
+        - ['footwear/rain-boot', 1]
+      category: wardrobe
+    - key: wardrobe-watermelon-pack
+      name: Watermelon Pack
+      cost: 250
+      description: "Join the fruity fashion craze and adorn yourself with this delicious watermelon hat, shirt, pants, and shoes!"
+      image: inventory/headgear/watermelon-hat
+      inventory:
+        - ['headgear/watermelon-hat', 1]
+        - ['tops/watermelon', 1]
+        - ['bottoms/watermelon', 1]
+        - ['footwear/watermelon-shoe', 1]
+      category: wardrobe
+    - key: wardrobe-reaper-pack
+      name: Reaper Pack
+      cost: 275
+      description: "Lurk in the shadows with this forboding attire and you're guaranteed to give a good scare!"
+      image: inventory/headgear/reaper-hat
+      images:
+        - frame: inventory/headgear/reaper-hat
+      inventory:
+        - ['headgear/reaper-hat', 1]
+        - ['tops/reaper', 1]
+        - ['bottoms/reaper-skirt', 1]
+        - ['footwear/reaper-boot', 1]
+      category: wardrobe
+    - key: wardrobe-brain-disguise-pack
+      name: Brain Disguise Pack
+      cost: 350
+      description: "Need to blend in around our hyper-intelligent oppressors? Then snag this pack of authentic brain machine wear! Note: disguise not likely to actually disguise."
+      image: inventory/facialgear/brain-helmet
+      images:
+        - frame: inventory/facialgear/brain-helmet
+      inventory:
+        - ['facialgear/brain-helmet', 1]
+        - ['tops/brain', 1]
+        - ['bottoms/brain', 1]
+      category: wardrobe
+    - key: wardrobe-pajama-pack
+      name: Pajama Pack
+      cost: 200
+      description: "Make sure you have proper attire for your next pajama party with this super comfy clothing pack!"
+      image: https://deepworld-static.s3.amazonaws.com/shop/pajamas.png
+      images:
+        - frame: https://deepworld-static.s3.amazonaws.com/shop/pajamas.png
+      inventory:
+        - ['headgear/pajamas', 1]
+        - ['tops/pajamas', 1]
+        - ['bottoms/pajamas', 1]
+      category: wardrobe
+    - key: wardrobe-chicken-pack
+      name: Chicken Pack
+      cost: 200
+      description: "Get fluffy with this delightful chicken costume. Guaranteed to make people cry \"fowl\"!"
+      image: https://deepworld-static.s3.amazonaws.com/shop/chicken.png
+      images:
+        - frame: https://deepworld-static.s3.amazonaws.com/shop/chicken.png
+      inventory:
+        - ['headgear/chicken', 1]
+        - ['facialgear/chicken', 1]
+        - ['tops/chicken', 1]
+      category: wardrobe
+    - key: wardrobe-karate-pack
+      name: Karate Pack
+      cost: 250
+      description: "Focus your discipline and break some boards in this fightin' karate outfit. Hi-ya!"
+      image: https://deepworld-static.s3.amazonaws.com/shop/karate.png
+      images:
+        - frame: https://deepworld-static.s3.amazonaws.com/shop/karate.png
+      inventory:
+        - ['headgear/karate', 1]
+        - ['tops/karate', 1]
+        - ['bottoms/karate', 1]
+      category: wardrobe
+    - key: wardrobe-valkyrie-pack
+      name: Valkyrie Pack
+      cost: 400
+      description: "Demonstrate your powers of holy venegance with this glorious suit of armor!"
+      image: https://deepworld-static.s3.amazonaws.com/shop/valkyrie.png
+      images:
+        - frame: https://deepworld-static.s3.amazonaws.com/shop/valkyrie.png
+      inventory:
+        - ['headgear/valkyrie', 1]
+        - ['tops/valkyrie', 1]
+        - ['bottoms/valkyrie', 1]
+      category: wardrobe
+    - key: wardrobe-geisha-pack
+      name: Geisha Robe
+      cost: 200
+      description: "This elegant and traditional robe will make you quite the envy."
+      image: https://deepworld-static.s3.amazonaws.com/shop/geisha.png
+      images:
+        - frame: https://deepworld-static.s3.amazonaws.com/shop/geisha.png
+      inventory:
+        - ['tops/geisha', 1]
+      category: wardrobe
+    - key: wardrobe-cheerleader-pack
+      name: Cheerleader Pack
+      cost: 300
+      description: "Amp up the crowds with your Deepworld cheer routines in this lovely outfit!"
+      image: https://deepworld-static.s3.amazonaws.com/shop/cheerleader.png
+      images:
+        - frame: https://deepworld-static.s3.amazonaws.com/shop/cheerleader.png
+      inventory:
+        - ['tops/cheerleader', 1]
+        - ['bottoms/cheerleader-skirt', 1]
+        - ['footwear/cheerleader-shoe', 1]
+      category: wardrobe
+    - key: wardrobe-flamenco-pack
+      name: Flamenco Pack
+      cost: 250
+      description: "Dance the night away in this festive Flamenco skirt and flower."
+      image: https://deepworld-static.s3.amazonaws.com/shop/flamenco.png
+      images:
+        - frame: https://deepworld-static.s3.amazonaws.com/shop/flamenco.png
+      inventory:
+        - ['headgear/flamenco', 1]
+        - ['tops/flamenco', 1]
+      category: wardrobe
+
+    - key: wardrobe-fez
+      name: Fez
+      cost: 50
+      description: "Lodge members and fans of tiny hats rejoice. This smashing red fez looks great on all people!"
+      image: inventory/headgear/fez
+      inventory:
+        - ['headgear/fez', 1]
+      category: wardrobe
+    - key: wardrobe-tinfoil
+      name: Tinfoil Hat
+      cost: 50
+      description: "Whether you're protecting yourself from conspiracies or just find tinfoil a nice material for headwear, this is a great post-apocalyptic hat!"
+      image: inventory/headgear/tinfoil
+      inventory:
+        - ['headgear/tinfoil', 1]
+      category: wardrobe
+    - key: wardrobe-3d-glasses
+      name: 3D Glasses
+      cost: 50
+      description: "Don't see the world in black and white, see it in red and blue! Great for 3D movies or Back to the Future marathons."
+      image: inventory/facialgear/3d-glasses
+      inventory:
+        - ['facialgear/3d-glasses', 1]
+      category: wardrobe
+    - key: wardrobe-comedian
+      name: Comedian
+      cost: 50
+      description: "The joke's on you when you pick up these glasses! Guaranteed to get a chuckle or at least a tomato thrown in the face."
+      image: inventory/facialgear/groucho
+      inventory:
+        - ['facialgear/groucho', 1]
+      category: wardrobe
+    - key: wardrobe-headphones
+      name: Headphones
+      cost: 50
+      description: "Bounce to tunes anywhere you like with these fashionable cans! Great for Deepworld DJs too."
+      image: inventory/headgear/headphones
+      inventory:
+        - ['headgear/headphones', 1]
+      category: wardrobe
+    - key: wardrobe-fencing-helmet
+      name: Fencing Helmet
+      cost: 100
+      description: "Practicing some duels with your rapier? Grab this stylish fencing helmet so you don't poke your eyes out!"
+      image: inventory/facialgear/fencing
+      inventory:
+        - ['facialgear/fencing', 1]
+      category: wardrobe
+    - key: wardrobe-ice-cream-hat
+      name: Ice Cream Hat
+      cost: 100
+      description: "This incredible ice cream hat has been frozen in its delicious semi-melted state. Gauranteed not to drip on your head!"
+      image: inventory/headgear/ice-cream
+      inventory:
+        - ['headgear/ice-cream', 1]
+      category: wardrobe
+    - key: wardrobe-halo
+      name: Halo
+      cost: 100
+      description: "Demonstrate your wonderful angelic nature with this shiny, levitating halo! You might be naughty, but at least everyone will assume you're nice."
+      image: inventory/headgear/halo
+      inventory:
+        - ['headgear/halo', 1]
+      category: wardrobe
+    - key: wardrobe-mining-accident
+      name: Mining Accident
+      cost: 100
+      description: "Sometimes you just need to scratch an itch, and before you know it, your pickaxe is lodged in your head. Fortunately, with this hat you can fake it without all the carnage!"
+      image: inventory/headgear/accident
+      inventory:
+        - ['headgear/accident', 1]
+      category: wardrobe
+    - key: wardrobe-big-eyes
+      name: Big Eyes
+      cost: 150
+      description: "Everybody loves a compliment about their eyes. You'll be sure to get a lot more with these giant green beauties!"
+      image: inventory/facialgear/big-eyes
+      inventory:
+        - ['facialgear/big-eyes', 1]
+      category: wardrobe
+    - key: wardrobe-umbrella
+      name: Umbrella Hat
+      cost: 100
+      description: "Keep the rain out of your hair AND look bright and chipper with this umbrella hat!"
+      image: inventory/headgear/umbrella
+      inventory:
+        - ['headgear/umbrella', 1]
+      category: wardrobe
+    - key: wardrobe-bird-skull
+      name: Bird Skull
+      cost: 150
+      description: "Look like the fearsome scavenger and/or crow killer you are! This bird skull even comes pre-built with handy eye holes so you can see where you're going."
+      image: inventory/facialgear/bird-skull
+      inventory:
+        - ['facialgear/bird-skull', 1]
+      category: wardrobe
+    - key: wardrobe-lampshade
+      name: Lampshade
+      cost: 150
+      description: "Properly inverting a lampshade to wear on one's head is trickier than you might think. This hat is ready to go and guaranteed to be 100% electrocution free!"
+      image: inventory/headgear/lampshade
+      inventory:
+        - ['headgear/lampshade', 1]
+      category: wardrobe
+    - key: wardrobe-paper-bag
+      name: Paper Bag
+      cost: 100
+      description: "We don't know why you'd want to wear a paper bag over your head, but we also don't know why you WOULDN'T want to!"
+      image: inventory/facialgear/paper-bag
+      inventory:
+        - ['facialgear/paper-bag', 1]
+      category: wardrobe
+    - key: wardrobe-diablo
+      name: Diablo
+      cost: 250
+      description: "Blend in with the denizens of Hell with this stylishly demonic headpiece. You don't even have to wait for the horns to grow in naturally!"
+      image: inventory/headgear/diablo
+      images:
+        - frame: inventory/headgear/diablo
+        - frame: shop/banner
+          color: aaff66
+        - frame: shop/banner-text-sale
+      inventory:
+        - ['headgear/diablo', 1]
+      category: wardrobe
+    - key: wardrobe-bright-idea
+      name: Bright Idea
+      cost: 100
+      description: "Prove once and for all that your brain thinks mighty thoughts with this luminous headwear! Actual ideas not included."
+      image: inventory/headgear/bright-idea
+      images:
+        - frame: inventory/headgear/bright-idea
+      inventory:
+        - ['headgear/bright-idea', 1]
+      category: wardrobe
+    - key: wardrobe-dark-queen
+      name: Dark Queen
+      cost: 250
+      description: "Showcase your malevolent intent with this dark and regal headwear! Also handy for hiding pigtails."
+      image: https://deepworld-static.s3.amazonaws.com/shop/dark-queen.png
+      inventory:
+        - ['headgear/dark-queen', 1]
+      category: wardrobe
+    - key: wardrobe-dark-king
+      name: Dark King
+      cost: 250
+      description: "You may not be a god among men, but you can look like one with this shiny, regal warrior's helmet! Note: scepter not included."
+      image: https://deepworld-static.s3.amazonaws.com/shop/dark-king.png
+      inventory:
+        - ['headgear/dark-king', 1]
+      category: wardrobe
+
+    - key: headgear-snake
+      name: Snake Hat
+      cost: 125
+      description: "Maybe you like to charm snakes, or maybe you just find em comfy. Either way, now you can put one right on your head for all to see!"
+      image: inventory/headgear/snake
+      images:
+        - frame: inventory/headgear/snake
+        - frame: shop/banner
+          color: aaff66
+        - frame: shop/banner-text-sale
+      inventory:
+        - ['headgear/snake', 1]
+      category: wardrobe
+    - key: headgear-shark
+      name: Shark Hat
+      cost: 150
+      description: "Scare your ocean-faring friends with this amazingly lifelike shark hat! Feel free to hum the theme to 'Jaws' while you roam about!"
+      image: inventory/headgear/shark
+      images:
+        - frame: inventory/headgear/shark
+        - frame: shop/banner
+          color: aaff66
+        - frame: shop/banner-text-sale
+      inventory:
+        - ['headgear/shark', 1]
+      category: wardrobe
+    - key: headgear-nessie
+      name: Nessie Hat
+      cost: 150
+      description: "Nessie may be a myth but this adorable headgear sure isn't! We promise that nobody will call you a monster when you come out of the pond."
+      image: inventory/headgear/nessie
+      images:
+        - frame: inventory/headgear/nessie
+        - frame: shop/banner
+          color: aaff66
+        - frame: shop/banner-text-sale
+      inventory:
+        - ['headgear/nessie', 1]
+      category: wardrobe
+    - key: headgear-knight
+      name: Knight Helmet
+      cost: 100
+      description: "Get medieval with this stylish knight's helmet. Guaranteed to make you the envy of all the local lords and ladies!"
+      image: inventory/headgear/knight-helmet
+      inventory:
+        - ['headgear/knight-helmet', 1]
+      category: wardrobe
+    - key: facialgear-alien
+      name: Alien Mask
+      cost: 150
+      description: "Put on this awesome new alien mask and grab a flying saucer! Area 51 will open its doors when they see you zooming in!"
+      image: inventory/facialgear/alien
+      images:
+        - frame: inventory/facialgear/alien
+        - frame: shop/banner
+          color: aaff66
+        - frame: shop/banner-text-sale
+      inventory:
+        - ['facialgear/alien', 1]
+      category: wardrobe
+
+
+    - key: wardrobe-samaurai
+      name: Samaurai Mask
+      cost: 250
+      description: "This fearsome mask is sure to make your enemies quiver! NOTE: You will also receive the rest of the samaurai gear when it is released!"
+      image: inventory/facialgear/samaurai-mask
+      images:
+        - frame: inventory/facialgear/samaurai-mask
+      inventory:
+        - ['facialgear/samaurai-mask', 1]
+      category: wardrobe
+    - key: wardrobe-plant
+      name: Carniverous Plant Mask
+      cost: 150
+      description: "Get that organic fierceness with this killer plant hood! NOTE: You will also receive the rest of the carnivorous plant gear when it is released!"
+      image: inventory/headgear/plant-head
+      images:
+        - frame: inventory/headgear/plant-head
+      inventory:
+        - ['headgear/plant-head', 1]
+      category: wardrobe
+
+    - key: polar-vortex-pack
+      name: Polar Vortex Pack
+      cost: 300
+      description: "Celebrate the winter spirit with this chilltastic wear! Available for a limited time only!"
+      image: inventory/facialgear/snowman-head
+      images:
+        - frame: inventory/facialgear/snowman-head
+      inventory:
+        - ['headgear/papercraft', 1]
+        - ['facialgear/snowman-head', 1]
+        - ['facialgear/scarf-festive', 1]
+        - ['tops/fur-coat-brown', 1]
+      category: wardrobe
+      # available_after: [11, 15]
+      # available_until: [12, 31]
+    - key: wardrobe-tech-warrior-pack
+      name: Tech Warrior Pack
+      cost: 300
+      description: "Impress friend and foe alike with this advanced technical gear. Made with 100% tarnish-proof brass!"
+      image: inventory/headgear/brass-helmet
+      images:
+        - frame: inventory/headgear/brass-helmet
+      inventory:
+        - ['headgear/brass-helmet', 1]
+        - ['facialgear/brass-visor', 1]
+        - ['tops/brass', 1]
+        - ['bottoms/brass', 1]
+        - ['footwear/brass-boot', 1]
+      category: wardrobe
+
+    - key: emotions-pack
+      name: Emotion Pack I
+      cost: 100
+      description: "Wear your heart on your sleeve with this collection of emotional emotes. Displaying your annoyance after a botched trade has never been easiser!"
+      image: inventory/emotes/tantrum
+      inventory:
+        - ['emotes/beg', 1]
+        - ['emotes/tantrum', 1]
+        - ['emotes/put-em-up', 1]
+      category: emotes
+    - key: emotions-pack-2
+      name: Emotion Pack II
+      cost: 100
+      description: "Wear your heart on your sleeve with this collection of emotional emotes. Show both your incredible excitement and utter despair with just a few clicks!"
+      image: inventory/emotes/cheer
+      inventory:
+        - ['emotes/cheer', 1]
+        - ['emotes/hands-on-hips', 1]
+        - ['emotes/hang-head', 1]
+      category: emotes
+    - key: dance-pack
+      name: Dance Pack I
+      cost: 100
+      description: "Dance the night away with this collection of groovin' emotes! Your fleet feet will be the envy of every other player on the dance floor."
+      image: inventory/emotes/dance-singleladies
+      inventory:
+        - ['emotes/dance-monkey', 1]
+        - ['emotes/dance-swim', 1]
+        - ['emotes/dance-singleladies', 1]
+      category: emotes
+    - key: dance-pack-2
+      name: Dance Pack II
+      cost: 150
+      description: "Dance the night away with this collection of groovin' emotes! Your fleet feet will be the envy of every other player on the dance floor."
+      image: inventory/emotes/dance-snoopy
+      inventory:
+        - ['emotes/dance-snoopy', 1]
+        - ['emotes/dance-peanuts-1', 1]
+        - ['emotes/dance-cancan', 1]
+      category: emotes
+    - key: dance-pack-3
+      name: Dance Pack III
+      cost: 200
+      description: "Dance the night away with these super agile emotes! Your fantastic flexibility will convince any naysayer that you're a world-class dancer."
+      image: inventory/emotes/dance-splits
+      inventory:
+        - ['emotes/dance-splits', 1]
+        - ['emotes/dance-ballet', 1]
+      category: emotes
+    - key: dance-pack-4
+      name: YMCA
+      cost: 250
+      description: "Show your enthusiasm with this most rockin' of all dance emotes! Your moves will be the envy of every other player on the dance floor."
+      image: inventory/emotes/dance-ymca
+      inventory:
+        - ['emotes/dance-ymca', 1]
+      category: emotes
+
+    - key: name-change
+      name: Name Change
+      cost: 125
+      description: "Want to change your player name? Grab this handy name tag and get creative!"
+      image: inventory/consumables/name-change
+      inventory:
+        - ['consumables/name-change', 1]
+      category: account
+
+    - key: makeup-kit
+      name: Makeup Kit
+      cost: 400
+      description: "Revolutionize your look with all new skin tones and hair colors. Your friends will be green with envy once you're actually green! Notes: this item is not tradeable. Does not need to be equipped to function."
+      image: inventory/accessories/makeup
+      inventory:
+        - ['accessories/makeup', 1]
+      category: wardrobe
+    - key: dowsing-rod
+      name: Dowsing Rod
+      cost: 500
+      description: "Accelerate your mining gains with this dowsing rod! You'll come across rich veins of ore twice as frequently when equipped. Note: this item is not tradeable."
+      image: inventory/accessories/dowsing-rod
+      inventory:
+        - ['accessories/dowsing-rod', 1]
+      category: epics
+    - key: toolbelt
+      name: Toolbelt
+      cost: 500
+      description: "Unlock five additional accessory slots with this handy toolbelt. You'll never have to swap tools again to stay on top of your game! Note: this item is not tradeable. Does not need to be equipped to function."
+      image: inventory/accessories/toolbelt
+      inventory:
+        - ['accessories/toolbelt', 1]
+      category: epics
+    - key: rebreather
+      name: Rebreather
+      cost: 500
+      description: "Never lose breath with this highly efficient rebreather! Your ocean swims can be a nice relaxing time (just watch out for piranhas!) Note: this item is not tradeable."
+      image: inventory/accessories/breathing-apparatus
+      inventory:
+        - ['accessories/breathing-apparatus', 1]
+      category: epics
+    - key: butler-extender
+      name: Butler Charger
+      cost: 600
+      description: "Keep your Butler around for 50% longer per charge with this convenient device. It's always good to have a mechanical friend around! Notes: This item is not tradeable."
+      image: inventory/accessories/butler-extender
+      inventory:
+        - ['accessories/butler-extender', 1]
+      category: butler-bots
+    - key: exo-skin
+      name: Exo Skin
+      cost: 750
+      description: "Avoid acid and lava damage with this powerful exo barrier. Toxic swims and hellish rains will never feel more delightful! Note: this item is not tradeable."
+      image: inventory/accessories/exo-skin
+      inventory:
+        - ['accessories/exo-skin', 1]
+      category: epics
+    - key: exo-skin-deal
+      name: Exo Skin
+      cost: 500
+      description: "LIMITED TIME DISCOUNT! Avoid environmental and liquid damage with this powerful exo barrier. Acid swims and hellish rains will never feel more delightful! Note: this item is not tradeable."
+      image: inventory/accessories/exo-skin
+      inventory:
+        - ['accessories/exo-skin', 1]
+      category: epics
+      dynamic: true
+    - key: construction-claw
+      name: Construction Claw
+      cost: 750
+      description: "Double your placing and construction reach with this powerful tool! Be the best builder you can be. Note: this item is not tradeable."
+      image: inventory/accessories/building-extender
+      inventory:
+        - ['accessories/building-extender', 1]
+      category: epics
+
+    # - key: permaban
+    #   name: Constable Whistle
+    #   cost: 5000
+    #   description: "Maximize your banning powers in your public owned worlds. Permaban any player who hasn't placed protected gear, and ban others up to 24 hours. Note: this item is not tradeable."
+    #   image: inventory/accessories/whistle
+    #   inventory:
+    #     - ['accessories/whistle', 1]
+    #   category: epics
+
+    #- key: afterburner
+    #  name: Afterburner
+    #  cost: 750
+    #  description: "Fly 25% faster and 100% steam-free with this handy piece of rocket science. Even the Rocketeer will be jealous of you now! Note: this item is not tradeable."
+    #  image: inventory/accessories/afterburner
+    #  inventory:
+    #    - ['accessories/afterburner', 1]
+
+
+    # ===== Holiday ===== #
+
+    - key: wardrobe-vampire-pack
+      name: Vampire Pack
+      cost: 250
+      description: "You may not be able to turn into a bat, but this outfit pack will definitely give you that Transylvanian style."
+      image: inventory/tops/vampire
+      inventory:
+        - ['tops/vampire', 1]
+        - ['footwear/vampire-boot', 1]
+        - ['facialgear/vampire-teeth', 1]
+      category: wardrobe
+      available_after: [10, 1]
+      available_until: [11, 15]
+    - key: wardrobe-halloween-pack
+      name: Halloween Pack
+      cost: 350
+      description: "Spook the kids with this variety pack of halloween headgear! A pumpkin on the head may not be that comfortable, but at least you look creepy!"
+      image: inventory/facialgear/pumpkin-head
+      inventory:
+        - ['facialgear/pumpkin-head', 1]
+        - ['facialgear/masks/jack', 1]
+        - ['facialgear/witch-nose', 1]
+        - ['facialgear/frankenstein-bolt', 1]
+      category: wardrobe
+      available_after: [9, 1]
+      available_until: [11, 15]
+
+    - key: wardrobe-santa-pack
+      name: Santa Pack
+      cost: 180
+      description: "Ho ho ho! Feel like spreading a little holiday joy? Then grab this santa suit and start finding your way down chimneys!"
+      image: inventory/tops/santa
+      inventory:
+        - ['headgear/santa', 1]
+        - ['tops/santa', 1]
+        - ['bottoms/santa', 1]
+      category: wardrobe
+      available_after: [12, 1]
+      available_until: [12, 31]
+    - key: wardrobe-elf-pack
+      name: Elf Pack
+      cost: 180
+      description: "Elves do the hard work of the holidays while Santa soaks up all the glory! Honor their gift-building efforts with this cheerful clothing pack."
+      image: inventory/tops/elf
+      inventory:
+        - ['headgear/elf', 1]
+        - ['facialgear/elf', 1]
+        - ['tops/elf', 1]
+      category: wardrobe
+      available_after: [12, 1]
+      available_until: [12, 31]
+
+    - key: holly-jolly-pack
+      name: Holly Jolly Pack
+      cost: 250
+      description: It's cold out there, but you can be jolly with these lovely new decorations!
+      image: inventory/holiday/sleigh
+      inventory:
+        - ['holiday/sleigh', 1]
+        - ['vegetation/pine-tree-festive-giant', 2]
+        - ['holiday/holly-garland', 3]
+      category: decoration
+      available_after: [12, 1]
+      available_until: [12, 31]
+    - key: give-thanks-pack
+      name: Give Thanks Pack
+      cost: 350
+      description: Thanksgiving is a time to give thanks and EAT, so enjoy these tasty decorations! Grab them now before they're out of the shop and only findable as rare loot!
+      image: inventory/holiday/gingerbread-house
+      inventory:
+        - ['holiday/gingerbread-house', 1]
+        - ['holiday/cornucopia', 1]
+        - ['furniture/painting-autumn', 1]
+      category: decoration
+      available_after: [11, 1]
+      available_until: [11, 31]
+
+    - key: decoration-mayflower
+      name: Mayflower Painting
+      cost: 150
+      description: Gaze upon a piece of naval history with this lovely nautical painting! It'll look great next to your set of ships in bottles!
+      image: inventory/furniture/painting-mayflower
+      inventory:
+        - ['furniture/painting-mayflower', 1]
+      category: decoration
+      available_after: [11, 1]
+      available_until: [11, 31]
+    - key: decoration-gong
+      name: Gong
+      cost: 150
+      description: Experience a little zen with this beautiful, decorative metal instrument. Just don't wake the neighbors!
+      image: inventory/music/gong
+      inventory:
+        - ['music/gong', 1]
+      category: decoration
+
+
+  sales:
+    segments:
+      free_account:
+        - premium
+        - starter
+
+    base_item: &base-item
+      delay: 333333
+      recur: 1
+
+    periodic_items:
+      - key: premium
+        <<: *base-item
+        segment: ['free_account', 'premium']
+        requirements: ['free']
+        delay: 3600
+        recur: 12
+        image: http://dl.deepworldgame.com/banners/client-premium-v1-half.png
+        image_size: [637, 215]
+        tiny_image: http://dl.deepworldgame.com/banners/client-premium-v1-tiny.png
+        tiny_image_size: [450, 152]
+        action: ['currency', 'premium']
+        text: "Go premium and unlock your potential! As a premium player, you get all kinds of loot bonuses and access to bonus worlds. You'll also get 100 bonus crowns to hit the shop for some new gear!"
+      - key: starter
+        <<: *base-item
+        segments: ['free_account', 'starter']
+        requirements: ['free']
+        delay: 3600
+        recur: 12
+        image: http://dl.deepworldgame.com/banners/client-starter-pack-v1-half.png
+        image_size: [636, 266]
+        tiny_image: http://dl.deepworldgame.com/banners/client-starter-pack-v1-tiny.png
+        tiny_image_size: [450, 188]
+        action: ['shop', 'starter-pack']
+        text: "Unlock your incredible potential with this starter pack - all for 50% off the normal price! You'll get a powerful new pickaxe, jetpack, energy gun, and tons more - including premium access, which gives you loot bonuses and access to bonus worlds!"
+      - key: power-pack-deal
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/sale-power-pack-636.png
+        image_size: [636, 207]
+        tiny_image: http://dl.deepworldgame.com/banners/sale-power-pack-450.png
+        tiny_image_size: [450, 146]
+        action: ["shop", "power-pack-deal"]
+        text: "LIMITED TIME DISCOUNT! It's time to get serious! Kick major ass with this pack of powerful skill boosters - and the mighty energy cannon."
+      - key: space-biome
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/space-biome-636.png
+        image_size: [636, 243]
+        tiny_image: http://dl.deepworldgame.com/banners/space-biome-450.png
+        tiny_image_size: [450, 172]
+        action: ['shop', 'private-world-space']
+        text: "The Space Biome has arrived! Jump into low gravity and spelunk your way across hundreds of asteroids! Find platinum, white crystals, new loot, and more with this awesome new biome!"
+      - key: mining-pack-deal
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/sale-mining-pack-636.png
+        image_size: [636, 207]
+        tiny_image: http://dl.deepworldgame.com/banners/sale-mining-pack-450.png
+        tiny_image_size: [450, 146]
+        action: ["shop", "mining-pack-deal"]
+        text: "LIMITED TIME DISCOUNT! Get a jumpstart on your spelunking adventures with this mining pack! Braving the depths is always easier with some hardy gear."
+      - key: weapon-kits-deal
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/sale-weapon-kits-636.png
+        image_size: [636, 208]
+        tiny_image: http://dl.deepworldgame.com/banners/sale-weapon-kits-450.png
+        tiny_image_size: [450, 146]
+        action: ["shop", "onyx-weapon-kit-two-for-one"]
+        text: "LIMITED TIME TWO-FOR-ONE DEAL! Accelerate the power of any gun to Mark III! Nothing will stand in your way as you blast with impunity."
+      - key: wardrobe-tech-warrior-pack
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/client-tech-warrior-v1-half.png
+        image_size: [636, 243]
+        tiny_image: http://dl.deepworldgame.com/banners/client-tech-warrior-v1-tiny.png
+        tiny_image_size: [450, 172]
+        action: ['shop', 'wardrobe-tech-warrior-pack']
+        text: "Impress friend and foe alike with this advanced technical gear. Made with 100% tarnish-proof brass!"
+      - key: exo-skin-deal
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/sale-exo-skin-636.png
+        image_size: [636, 212]
+        tiny_image: http://dl.deepworldgame.com/banners/sale-exo-skin-450.png
+        tiny_image_size: [450, 150]
+        action: ["shop", "exo-skin-deal"]
+        text: "LIMITED TIME DISCOUNT! Avoid environmental and liquid damage with this powerful exo barrier. Acid swims and hellish rains will never feel more delightful! Note: this item is not tradeable."
+
+      # - key: crown-discount-dec-2014
+      #   <<: *base-item
+      #   image: http://dl.deepworldgame.com/banners/client-1500-for-1200-v1-half.png
+      #   image_size: [637, 247]
+      #   tiny_image: http://dl.deepworldgame.com/banners/client-1500-for-1200-v1-tiny.png
+      #   tiny_image_size: [450, 174]
+      #   action: ['currency', 'crowns_tier_3b']
+      #   text: "Grab 1500 crowns for the price of 1200! Click this banner or head into the crown store anytime until Sunday at midnight PST to get an excellent 25% bonus on your crown purchase. This offer is only valid on the 1500 crown pack."
+      #   available_after: [11, 28, 22]
+      # - key: brain-biome-sale
+      #   <<: *base-item
+      #   image: http://dl.deepworldgame.com/banners/client-brain-biome-v1-half.png
+      #   image_size: [636, 243]
+      #   tiny_image: http://dl.deepworldgame.com/banners/client-brain-biome-v1-tiny.png
+      #   tiny_image_size: [450, 172]
+      #   action: ['shop', 'private-world-brain']
+      #   text: "Brain worlds have ARRIVED! Grab your very own and battle countless waves in brains. Destroy all the evokers and prevent the brains from invading you in your sleep!"
+      #   available_after: [12, 12, 23]
+      - key: reaper-pack
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/client-reaper-v1-half.png
+        image_size: [636, 243]
+        tiny_image: http://dl.deepworldgame.com/banners/client-reaper-v1-tiny.png
+        tiny_image_size: [450, 172]
+        action: ['shop', 'wardrobe-reaper-pack']
+        text: "Lurk in the shadows with this forboding attire and you're guaranteed to give a good scare!"
+      # - key: polar-vortex-pack
+      #   <<: *base-item
+      #   image: http://dl.deepworldgame.com/banners/client-polar-vortex-v1-half.png
+      #   image_size: [636, 243]
+      #   tiny_image: http://dl.deepworldgame.com/banners/client-polar-vortex-v1-tiny.png
+      #   tiny_image_size: [450, 172]
+      #   action: ['shop', 'polar-vortex-pack']
+      #   text: "Celebrate the winter spirit with this chilltastic wear! Available for a limited time only!"
+      #   # available_after: [12, 21, 23]
+      #   # available_until: [1, 15, 0]
+      - key: watermelon-pack
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/client-watermelon-v1-half.png
+        image_size: [636, 244]
+        tiny_image: http://dl.deepworldgame.com/banners/client-watermelon-v1-tiny.png
+        tiny_image_size: [450, 172]
+        action: ['shop', 'wardrobe-watermelon-pack']
+        text: "Grab this juicy outfit and impress your friends with your sweetness!"
+        available_after: [11, 21, 23]
+      - key: magician-pack
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/client-magician-v1-half.png
+        image_size: [636, 245]
+        tiny_image: http://dl.deepworldgame.com/banners/client-magician-v1-tiny.png
+        tiny_image_size: [450, 174]
+        action: ['shop', 'wardrobe-magician-pack']
+        text: "Bedazzle, astonish, and hypnotize the masses with this magician's outfit! Smoke and mirrors not included."
+      - key: rainwear-pack
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/client-rainwear-v1-half.png
+        image_size: [636, 245]
+        tiny_image: http://dl.deepworldgame.com/banners/client-rainwear-v1-tiny.png
+        tiny_image_size: [450, 174]
+        action: ['shop', 'wardrobe-rainwear-pack']
+        text: "Stay dry and keep your spirits high with this fashionable rain outfit. Comes in bright yellow for maximum non-dreariness!"
+        available_after: [11, 14, 22]
+      - key: wardrobe-chicken-pack
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/chicken-636.png
+        image_size: [636, 243]
+        tiny_image: http://dl.deepworldgame.com/banners/chicken-450.png
+        tiny_image_size: [450, 172]
+        action: ['shop', 'wardrobe-chicken-pack']
+        text: "Why did the chicken cross the road? We don't know, but you might understand once you put on this stylish outfit!"
+      - key: wardrobe-pajama-pack
+        <<: *base-item
+        image: http://dl.deepworldgame.com/banners/pajama-party-636.png
+        image_size: [636, 243]
+        tiny_image: http://dl.deepworldgame.com/banners/pajama-party-450.png
+        tiny_image_size: [450, 172]
+        action: ['shop', 'wardrobe-pajama-pack']
+        text: "Feeling tired? Make sure you have proper attire for your next pajama party with this super comfy clothing pack!"
+      # - key: halloween
+      #   <<: *base-item
+      #   image: http://dl.deepworldgame.com/banners/client-halloween-v1-half.png
+      #   image_size: [636, 243]
+      #   tiny_image: http://dl.deepworldgame.com/banners/client-halloween-v1-tiny.png
+      #   tiny_image_size: [450, 172]
+      #   action: ['shop', 'wardrobe-halloween-pack']
+      #   text: "'Tis the season to be spooky! Grab these four head accessories and you'll be all set for your next big costume party. Available for a limited time only!"
+
+
+
+    levelup_items:
+      - key: crowns_tier_1_bonus
+        <<: *base-item
+        requirements: ['premium']
+        image:
+        action: ['currency', 'crowns_tier_1']
+        text: Buy a pack of 250 crowns in the next 15 minutes and get 50 crowns FREE!
+      - key: crowns_tier_2_bonus
+        <<: *base-item
+        requirements: ['premium']
+        image:
+        action: ['currency', 'crowns_tier_2']
+        text: Buy a pack of 500 crowns in the next 15 minutes and get 100 crowns FREE!
+
+

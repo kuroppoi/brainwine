@@ -1,0 +1,669 @@
+emitters:
+  sprites-steam: &sprites-steam
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+
+  terrapus purr:
+    sound: terrapus-chatter-1
+    frequency: 999
+
+  karma sound:
+    sound: karma-negative
+    frequency: 999
+
+  match start:
+    sound: match-start
+    frequency: 999
+
+  match end:
+    sound: match-end
+    frequency: 999
+
+  chime:
+    sound: chime-1
+    frequency: 999
+
+  steam_whoosh:
+    sound: steam_whoosh
+    frequency: 999
+
+  steamy: &emitter-steamy
+    scale range: 0.4
+    color range: [10, 10, 10, 100]
+    collides: true
+    frequency: 1.0
+    life: 0.5
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+    velocity base: 60
+    velocity range: 50
+  steam:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 0.6
+    color base: [240, 240, 240, 80]
+  broken_machine:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 1.3
+    color base: [240, 240, 240, 80]
+    position range: [1.5, 1.5]
+    velocity base: 80
+  area steam:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 0.6
+    color base: [240, 240, 240, 80]
+    position range: [3.0, 3.0]
+  small steam:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 0.35
+    color base: [240, 240, 240, 80]
+  shadow steam:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 0.6
+    color base: [40, 40, 40, 80]
+  fiery steam:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 0.6
+    color animation:
+      life: 0.1
+      colors:
+        - 'ff9900aa'
+        - '28282850'
+  shadow steam large:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 1.5
+    color base: [40, 40, 40, 80]
+    velocity base: 200
+  smoke:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 40
+    scale base: 0.8
+    color base: [15, 15, 15, 80]
+  poison:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 1.5
+    color base: [40, 140, 20, 80]
+    velocity base: 250
+  area energy:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 0.6
+    color base: [240, 240, 240, 80]
+    position range: [2.0, 2.0]
+    sprites: ['particles/energy-1', 'particles/energy-2', 'particles/energy-3', 'particles/energy-4']
+
+  expiate:
+    <<: *emitter-steamy
+    angle base: 270
+    angle range: 40
+    scale base: 0.35
+    color base: [240, 240, 240, 80]
+
+  spawn:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 0.5
+    velocity base: 150
+    color base: [255, 180, 0, 150]
+    sound: teleport
+    localize sound: true
+
+  teleport:
+    <<: *emitter-steamy
+    angle base: 0
+    angle range: 360
+    scale base: 0.5
+    velocity base: 150
+    color base: [60, 200, 255, 150]
+    sound: teleport
+    localize sound: true
+
+  powered-steam: &powered-steam
+    scale base: 0.6
+    scale range: 0.4
+    angle base: 0
+    angle range: 360
+    color base: [255, 255, 255, 80]
+    color range: [10, 10, 10, 100]
+    collides: false
+    frequency: 0.123
+    life: 1.5
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+    velocity base: 60
+    velocity range: 50
+
+  powered-steam-infrequent:
+    <<: *powered-steam
+    frequency: 0.025
+
+  powered-steam-character:
+    <<: *powered-steam
+    frequency: 0.005
+    scale base: 0.3
+    color base: [255, 255, 255, 50]
+
+  rain:
+    scale base: 1.0
+    scale range: 0.2
+    angle base: 180
+    angle range: 15
+    color base: [20, 120, 30, 220]
+    color range: [10, 40, 10, 30]
+    collides: true
+    life: 0.3
+    frequency: 10
+    sprites: particles/drop-1
+    velocity base: 1000
+    velocity range: 100
+    collision emitter: acid poof
+    freezeRotation: true
+  ash rain:
+    scale base: 0.4
+    scale range: 0.35
+    angle base: 180
+    angle range: 15
+    color base: [250, 250, 250, 150]
+    color range: [10, 2, 2, 75]
+    collides: true
+    life: 2.2
+    frequency: 10
+    sprites: ['particles/ash-1', 'particles/ash-2', 'particles/ash-3', 'particles/ash-4', 'particles/ember-1', 'particles/ember-2', 'particles/ember-3']
+    velocity base: 300
+    velocity range: 50
+  snow:
+    scale base: 0.4
+    scale range: 0.35
+    angle base: 180
+    angle range: 15
+    color base: [250, 250, 250, 150]
+    color range: [10, 2, 2, 75]
+    collides: true
+    life: 2.2
+    frequency: 10
+    sprites: ['particles/snow-1', 'particles/snow-2', 'particles/snow-3', 'particles/snow-4']
+    velocity base: 340
+    velocity range: 50
+  sandstorm:
+    scale base: 0.7
+    scale range: 0.35
+    angle base: 0
+    angle range: 360
+    color base: [250, 250, 250, 70]
+    color range: [10, 2, 2, 70]
+    collides: true
+    life: 3.0
+    frequency: 10
+    #sprites: ['particles/sand-cloud-1', 'particles/sand-cloud-2', 'particles/sand-cloud-3', 'particles/sand-cloud-4', 'particles/sand-cloud-large-1', 'particles/sand-cloud-large-2', 'particles/sand-cloud-large-3', 'particles/sand-cloud-large-4', 'particles/sand-cloud-small-1', 'particles/sand-cloud-small-2', 'particles/sand-cloud-small-3', 'particles/sand-cloud-small-4', 'particles/sand-cloud-small-5', 'particles/sand-cloud-small-6', 'particles/sand-cloud-small-7', 'particles/sand-cloud-small-8', 'particles/sand-cloud-small-9', 'particles/sand-cloud-small-10', 'particles/sand-cloud-small-11', 'particles/sand-cloud-small-12', 'particles/sand-cloud-small-13', 'particles/sand-cloud-small-14', 'particles/sand-cloud-small-15', 'particles/sand-cloud-small-16']
+    sprites: ['particles/sand-cloud-1', 'particles/sand-cloud-2', 'particles/sand-cloud-3', 'particles/sand-cloud-4', 'particles/sand-cloud-large-1', 'particles/sand-cloud-large-2', 'particles/sand-cloud-large-3', 'particles/sand-cloud-large-4']
+    velocity base: 200
+    velocity range: 100
+  acid poof:
+    scale base: 0.25
+    scale range: 0.05
+    angle range: 45
+    color base: [20, 120, 30, 70]
+    color range: [10, 40, 10, 30]
+    life: 0.2
+    frequency: 10
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+    velocity base: 100
+    velocity range: 30
+  force field:
+    scale base: 0.5
+    scale range: 0.05
+    angle range: 360
+    color base: [255, 255, 255, 220]
+    color range: [10, 10, 10, 40]
+    life: 0.1
+    frequency: 1
+    light: 0.5
+    sprites: ['particles/spark-1', 'particles/spark-2', 'particles/spark-3']
+    velocity base: 600
+    velocity range: 50
+
+  sparkles: &emitter-sparkles
+    scale base: 0.13
+    scale range: 0.05
+    angle range: 5
+    color range: [20, 20, 3, 50]
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+    velocity base: 150
+    velocity range: 100
+    collides: false
+
+  sparkle up:
+    <<: *emitter-sparkles
+    frequency: 10
+    life: 1.0
+    color base: [245, 245, 245, 100]
+    position range: [2.0, 0]
+  diamond sparkles:
+    frequency: 2
+    life: 0.5
+    <<: *emitter-sparkles
+    color base: [100, 100, 255, 30]
+    position range: [0.2, 0.2]
+    scale base: 0.3
+    sprites: ['particles/diamond-1', 'particles/diamond-2', 'particles/diamond-3', 'particles/diamond-4']
+  onyx sparkles:
+    frequency: 2
+    life: 0.5
+    <<: *emitter-sparkles
+    color base: [30, 30, 30, 30]
+    position range: [0.2, 0.2]
+  platinum sparkles:
+    frequency: 2
+    life: 0.5
+    <<: *emitter-sparkles
+    color base: [200, 200, 255, 60]
+    position range: [0.2, 0.2]
+
+  market sparkles:
+    scale base: 0.333
+    frequency: 10
+    life: 0.5
+    <<: *emitter-sparkles
+    color base: [190, 255, 190, 100]
+    position range: [0.2, 0.2]
+    sprites: ['particles/star']
+
+  stink:
+    <<: *emitter-sparkles
+    code: 1
+    frequency: 2
+    life: 1.0
+    color base: [93, 120, 71, 160]
+    position range: [1.0, 1.0]
+    scale base: 0.2
+  ash rise:
+    <<: *emitter-sparkles
+    scale base: 0.7
+    sprites: ['particles/ash-1', 'particles/ash-2', 'particles/ash-3', 'particles/ash-4']
+
+  bubble up: &bubble-up
+    scale base: 0.6
+    scale range: 0.2
+    angle range: 10
+    position range: [0.5, 0.5]
+    color base: [255, 255, 255, 120]
+    color range: [0, 0, 0, 100]
+    velocity base: 50
+    angular velocity base: 0
+    angular velocity range: 10
+    life: 1.0
+    frequency: 0.4
+
+  magma embers:
+    <<: *bubble-up
+    sprites: ['particles/ember-1', 'particles/ember-2', 'particles/ember-3']
+
+  acid bubbles:
+    <<: *bubble-up
+    sprites: ['particles/acid-bubble-1', 'particles/acid-bubble-2', 'particles/acid-bubble-3']
+
+  swim bubbles:
+    collides: true
+    scale range: 0.15
+    position range: [0.5, 0.5]
+    angle range: 60
+    color base: [255, 255, 255, 255]
+    color range: [0, 0, 0, 0]
+    life: 0.2
+    velocity range: 70
+    angular velocity base: 10
+    angular velocity range: 10
+    sprites: ['particles/bubble-1', 'particles/bubble-2', 'particles/bubble-3']
+
+  container full:
+    scale base: 0.13
+    scale range: 0.05
+    position range: [1.0, 0]
+    angle range: 5
+    color base: [245, 245, 245, 150]
+    color range: [20, 20, 3, 50]
+    life: 0.5
+    frequency: 3
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+    velocity base: 150
+    velocity range: 100
+  container active:
+    scale base: 0.13
+    scale range: 0.05
+    position range: [1.0, 0]
+    angle range: 5
+    color base: [255, 200, 0, 255]
+    color range: [20, 20, 3, 50]
+    life: 0.5
+    frequency: 9
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+    velocity base: 150
+    velocity range: 100
+  spark:
+    scale base: 1.0
+    scale range: 0.3
+    position range: [0.5, 0.5]
+    angle range: 360
+    color base: [220, 220, 255, 140]
+    color range: [30, 30, 30, 30]
+    life: 0.5
+    frequency: 3
+    sprites: ['particles/spark-1']
+    velocity base: 150
+    velocity range: 100
+
+  emitter-spread: &emitter-spread
+    scale base: 0.6
+    scale range: 0.2
+    position range: [0.5, 0.5]
+    angle range: 360
+    color base: [255, 255, 215, 150]
+    color range: [20, 20, 3, 50]
+    life: 1.0
+    frequency: 10
+
+  star spread:
+    <<: *emitter-spread
+    sprites: ['particles/star']
+    velocity base: 250
+    velocity range: 200
+
+  pandora spread:
+    <<: *emitter-spread
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+    angle base: 0
+    angle range: 180
+    scale base: 1.0
+    color base: [40, 50, 40, 70]
+    velocity base: 250
+    velocity range: 100
+
+  explosion cloud: &explosion-cloud
+    <<: *emitter-spread
+    scale base: 1.3
+    scale range: 0.6
+    angular velocity base: 0
+    angular velocity range: 3
+
+  explosion cloud small:
+    <<: *explosion-cloud
+    life: 5.0
+    velocity base: 40
+    velocity range: 100
+    sprites: ['explosions/cloud-small-1', 'explosions/cloud-small-2', 'explosions/cloud-small-3', 'explosions/cloud-small-4']
+    position range: [4.0, 4.0]
+
+  explosion cloud large:
+    <<: *explosion-cloud
+    life: 6.0
+    velocity base: 20
+    velocity range: 20
+    sprites: ['explosions/cloud-large-1']
+    position range: [2.0, 2.0]
+
+  explosion cloud steam:
+    <<: *explosion-cloud
+    angle base: 0
+    angle range: 360
+    color base: [240, 240, 240, 80]
+    position range: [4.0, 4.0]
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+
+  ink spatter:
+    collides: true
+    gravity: true
+    scale base: 0.2
+    scale range: 0.2
+    position range: [0.5, 0.5]
+    angle range: 300
+    color base: [255, 255, 255, 255]
+    color range: [0, 0, 0, 0]
+    life: 1.5
+    frequency: 10
+    sprites: ['particles/ink-1', 'particles/ink-2', 'particles/ink-3', 'particles/ink-4']
+    velocity base: 210
+    velocity range: 110
+    angular velocity base: 10
+    angular velocity range: 10
+
+  ice spatter:
+    collides: true
+    gravity: true
+    scale base: 0.2
+    scale range: 0.2
+    position range: [0.5, 0.5]
+    angle range: 300
+    color base: [255, 255, 255, 255]
+    color range: [0, 0, 0, 0]
+    life: 1.5
+    frequency: 10
+    sprites: ['particles/ice-1', 'particles/ice-2', 'particles/ice-3', 'particles/ice-4']
+    velocity base: 210
+    velocity range: 110
+    angular velocity base: 10
+    angular velocity range: 10
+
+  giblets: &particles-giblets
+    collides: true
+    gravity: true
+    scale base: 0.7
+    scale range: 0.5
+    position range: [0.5, 0.5]
+    angle range: 300
+    color range: [0, 0, 0, 0]
+    life: 1.5
+    frequency: 10
+    velocity base: 210
+    velocity range: 110
+    angular velocity base: 10
+    angular velocity range: 10
+
+  terrapus giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['giblets/terrapus-1', 'giblets/terrapus-2', 'giblets/antennae-1', 'giblets/antennae-2']
+
+  bug giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['giblets/antennae-1', 'giblets/antennae-2']
+
+  crow giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['giblets/crow-feather-1', 'giblets/crow-feather-2', 'giblets/crow-feather-3']
+    scale base: 0.25
+
+  crow death giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['giblets/crow-feather-1', 'giblets/crow-feather-2', 'giblets/crow-feather-3', 'giblets/guts-1', 'giblets/guts-2', 'giblets/guts-3', 'giblets/guts-4']
+    scale base: 0.25
+
+  guts:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['giblets/guts-1', 'giblets/guts-2', 'giblets/guts-3', 'giblets/guts-4']
+    scale base: 0.25
+
+  bat giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['giblets/bat-1', 'giblets/bat-2', 'giblets/bat-3']
+
+  skeleton giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['particles/bone-1', 'particles/bone-2', 'particles/bone-3', 'particles/bone-4']
+
+  machine giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['giblets/machine-1', 'giblets/machine-2', 'giblets/machine-3', 'giblets/machine-4', 'giblets/machine-5', 'giblets/machine-6', 'giblets/machine-7']
+
+  automata giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['giblets/machine-1', 'giblets/machine-2', 'giblets/machine-3', 'giblets/machine-4', 'giblets/machine-5', 'giblets/machine-6', 'giblets/machine-7']
+
+  brain giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 255]
+    sprites: ['giblets/brain-1', 'giblets/brain-2', 'giblets/brain-glass-1', 'giblets/brain-glass-2', 'giblets/brain-glass-3', 'giblets/brain-tank-1', 'giblets/brain-tube-1', 'giblets/brain-tube-2']
+
+  ghost giblets:
+    <<: *particles-giblets
+    color base: [255, 255, 255, 150]
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+
+  shadow giblets:
+    <<: *particles-giblets
+    color base: [20, 20, 20, 150]
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+
+
+  puff-base: &puff-base
+    collides: true
+    scale range: 0.15
+    position range: [0.1, 0.1]
+    angle range: 60
+    color base: [255, 255, 255, 255]
+    color range: [0, 0, 0, 0]
+    life: 0.3
+    velocity range: 140
+    angular velocity base: 10
+    angular velocity range: 10
+
+  puff: &puff
+    <<: *puff-base
+    frequency: 0.1
+    scale base: 0.12
+    velocity base: 100
+
+  puff-strong: &puff-strong
+    <<: *puff-base
+    frequency: 0.2
+    scale base: 0.14
+    velocity base: 175
+
+  puff-stronger: &puff-stronger
+    <<: *puff-base
+    frequency: 0.3
+    scale base: 0.16
+    velocity base: 250
+
+  puff-burst: &puff-burst
+    <<: *puff-base
+    frequency: 0.45
+    scale base: 0.12
+    velocity base: 150
+    life: 0.2
+
+  puff-burst-strong: &puff-burst-strong
+    <<: *puff-base
+    frequency: 0.6
+    scale base: 0.14
+    velocity base: 225
+    life: 0.2
+
+  puff-burst-stronger: &puff-burst-stronger
+    <<: *puff-base
+    frequency: 0.75
+    scale base: 0.16
+    velocity base: 300
+    life: 0.2
+
+  steam puff:
+    <<: *puff
+    <<: *sprites-steam
+
+  steam puff strong:
+    <<: *puff-strong
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4', 'particles/spark-1']
+
+  steam puff stronger:
+    <<: *puff-stronger
+    <<: *sprites-steam
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4', 'particles/spark-1', 'particles/spark-2', 'particles/spark-3']
+
+  steam puff burst:
+    <<: *puff-burst
+    <<: *sprites-steam
+
+  steam puff burst strong:
+    <<: *puff-burst-strong
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4', 'particles/spark-1']
+
+  steam puff burst stronger:
+    <<: *puff-burst-stronger
+    sprites: ['particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4', 'particles/spark-1', 'particles/spark-2', 'particles/spark-3']
+
+  acid puff burst:
+    <<: *puff-burst
+    sprites: ['particles/acid-1', 'particles/acid-2', 'particles/acid-3', 'particles/acid-4']
+
+  acid puff burst strong:
+    <<: *puff-burst-strong
+    sprites: ['particles/acid-1', 'particles/acid-2', 'particles/acid-3', 'particles/acid-4', 'particles/spark-1']
+
+  acid puff burst stronger:
+    <<: *puff-burst-stronger
+    sprites: ['particles/acid-1', 'particles/acid-2', 'particles/acid-3', 'particles/acid-4', 'particles/spark-1', 'particles/spark-2', 'particles/spark-3']
+
+  fire puff:
+    <<: *puff
+    sprites: ['particles/fire-1', 'particles/fire-2', 'particles/fire-3', 'particles/fire-4']
+
+  fire puff strong:
+    <<: *puff-strong
+    sprites: ['particles/fire-1', 'particles/fire-2', 'particles/fire-3', 'particles/fire-4', 'particles/spark-1']
+
+  fire puff stronger:
+    <<: *puff-stronger
+    sprites: ['particles/fire-1', 'particles/fire-2', 'particles/fire-3', 'particles/fire-4', 'particles/spark-1', 'particles/spark-2', 'particles/spark-3']
+
+  cold puff:
+    <<: *puff
+    sprites: ['particles/snow-1', 'particles/snow-2', 'particles/snow-3', 'particles/snow-4']
+
+  cold puff strong:
+    <<: *puff-strong
+    sprites: ['particles/snow-1', 'particles/snow-2', 'particles/snow-3', 'particles/snow-4', 'particles/spark-1']
+
+  cold puff stronger:
+    <<: *puff-stronger
+    sprites: ['particles/snow-1', 'particles/snow-2', 'particles/snow-3', 'particles/snow-4', 'particles/spark-1', 'particles/spark-2', 'particles/spark-3']
+
+  electric puff:
+    <<: *puff
+    sprites: ['particles/spark-1', 'particles/spark-2', 'particles/spark-3', 'particles/spark-4']
+
+  electric puff strong:
+    <<: *puff-strong
+    scale base: 0.2
+    sprites: ['particles/spark-1', 'particles/spark-2', 'particles/spark-3', 'particles/spark-4', 'particles/diamond-1']
+
+  electric puff stronger:
+    <<: *puff-stronger
+    scale base: 0.3
+    sprites: ['particles/spark-1', 'particles/spark-2', 'particles/spark-3', 'particles/spark-4', 'particles/diamond-1', 'particles/diamond-2', 'particles/diamond-3']
+
+  entity flame:
+    <<: *puff
+    entities: ['bullets/flame']
+    burst: [6, 0.1]

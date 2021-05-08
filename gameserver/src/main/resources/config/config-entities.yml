@@ -1,0 +1,3513 @@
+# Available entity codes:
+# [2, 10, 11, 28, 29, , 58, 59, 63, 64, 65, 66, 67, 68, 69, 80, 81, 95, 96, 97, 98, 99, 103, 104, 106, 107, 108, 109, 111, 112, 113, 114, 118, 119, 123, 124, 129, 133, 134, 139, 141, 142, 143, 144, 156, 157, 158, 159, 161, 162, 163, 164, 165, 166, 167, 168, 169, 171, 172, 173, 174, 175, 176, 177, 178, 179, 180, 181, 182, 183, 184, 185, 186, 187, 188, 189, 190, 191, 192, 193, 194, 195, 196, 197, 204, 205, 206, 207, 208, 209, 212, 213, 214, 215, 216, 217, 218, 221, 222, 223, 224, 225, 226, 227, 228, 229, 233, 234, 235, 236, 237, 238, 239, 240, 241, 242, 243, 244, 245, 246, 247, 248, 249, 250, 251, 252, 253, 254, 255, 256, 257, 258, 259, 260, 261, 262, 263, 264, 265, 266, 267, 268, 269, 270, 271, 272, 273, 274, 275, 276, 277, 278, 279, 280, 281, 282, 283, 284, 285, 286, 287, 288, 289, 290, 291, 292, 293, 294, 295, 296, 297, 298, 299, 308, 309, 310, 311, 312, 313, 314, 318, 319, 320, 321, 322, 323, 324, 325, 326, 327, 328, 329, 330, 331, 332, 333, 334, 335, 336, 337, 338, 339, 340, 341, 342, 343, 344, 345, 346, 347, 348, 349]
+
+# Pets:
+# creatures/bunny-ice-pet
+# creatures/crow-pet
+# creatures/skunk-pet
+# creatures/vulture-pet
+# terrapus/pet
+
+entities:
+  human: &human
+    human: true
+    spine: player
+    named: true
+    sprites:
+      - ['suit', 'avatar/jetpack']
+      - ['legs', 'bottoms/pants-idle']
+      - ['legs-overlay', 'prosthetics/diamond-legs-idle']
+      - ['footwear', 'footwear/shoes-idle']
+      - ['footwear-overlay', 'prosthetics/diamond-feet-idle']
+      - ['bottoms', 'bottoms/dress-idle']
+      - ['tops', 'tops/tuxedo']
+      - ['tops-overlay', 'prosthetics/diamond-torso']
+      - ['tops-overlay-glow', 'prosthetics/diamond-torso-glow']
+      - ['head', 'avatar/head']
+      - ['eyes', 'avatar/eye']
+      - ['facialhair', 'facialhair/moustache']
+      - ['facialgear', 'facialgear/monocle']
+      - ['facialgear-glow', 'prosthetics/diamond-headset-glow']
+      - ['hair', 'hair/medium']
+      - ['headgear', 'headgear/tophat']
+      - ['arms', 'avatar/arm']
+      - ['arms-overlay', 'prosthetics/diamond-torso-arm']
+      - ['hands', 'avatar/hand']
+    animations:
+      - name: idle-1
+        legacy: idle
+        grounded: true
+      - name: run
+        legacy: walk
+        grounded: true
+      - name: falling-1
+        legacy: midair
+        grounded: false
+      - name: fly
+        legacy: flying
+        grounded: false
+      - name: stomp-1
+        legacy: fly
+
+      - name: idle-2
+        legacy: idle
+        grounded: true
+      - name: idle-3
+        legacy: idle
+        grounded: true
+      - name: idle-4
+        legacy: idle
+        grounded: true
+      - name: idle-5
+        legacy: idle
+        grounded: true
+
+      - name: applause
+        legacy: idle
+        grounded: true
+      - name: tantrum
+        legacy: idle
+        grounded: true
+
+      - name: walk
+        legacy: walk
+        grounded: true
+      - name: jump
+        legacy: midair
+        grounded: false
+      - name: land
+        legacy: idle
+        grounded: true
+      - name: climb
+        legacy: flying
+        grounded: false
+      - name: stomp-2
+        legacy: idle
+        grounded: true
+      - name: pick
+      - name: fire-one-handed
+      - name: death-fall-back
+      - name: death-fall-forward
+      - name: tantrum
+        legacy: idle
+        grounded: true
+      - name: flail
+        legacy: midair
+        grounded: false
+
+      - name: swim-1
+        grounded: false
+      - name: swim-idle
+        grounded: false
+      - name: swim-idle-flourish-1
+        grounded: false
+      - name: swim-idle-flourish-2
+        grounded: false
+      - name: swim-idle-flourish-3
+        grounded: false
+      - name: swim-idle-flourish-4
+        grounded: false
+
+      - name: applaud-1
+        grounded: true
+      - name: beg
+        grounded: true
+        after: beg-idle
+      - name: beg-idle
+        grounded: true
+      - name: dance-backflip
+        grounded: true
+        after: idle
+      - name: dance-monkey
+        grounded: true
+      - name: dance-peanuts-1
+        grounded: true
+      - name: dance-runningman
+        grounded: true
+      - name: dance-singleladies
+        grounded: true
+      - name: dance-snoopy
+        grounded: true
+      - name: dance-swim
+        grounded: true
+      - name: dance-ballet-1
+        grounded: true
+        after: dance-ballet-1-idle
+      - name: dance-cancan
+        grounded: true
+      - name: dance-splits
+        grounded: true
+        after: dance-splits-idle
+      - name: dance-worm
+        grounded: true
+      - name: high-five
+        grounded: true
+        after: high-five-idle
+      - name: high-five-idle
+        grounded: true
+      - name: lie-ground
+        grounded: true
+        after: lie-ground-idle
+      - name: lie-ground-idle
+        grounded: true
+      - name: sit-ground
+        grounded: true
+        after: sit-ground-idle
+      - name: sit-ground-idle
+        grounded: true
+      - name: tantrum
+        grounded: true
+        after: idle
+      - name: tip-hat
+        grounded: true
+        after: idle
+      - name: put-em-up
+        grounded: true
+        after: put-em-up-idle
+      - name: put-em-up-idle
+        grounded: true
+      - name: faint
+        grounded: true
+        after: faint-idle
+
+      - name: cheer
+        grounded: true
+      - name: dance-ymca
+        grounded: true
+      - name: death-fall-forward
+        after: death-fall-forward-idle
+        grounded: true
+      - name: gasp
+        after: idle
+        grounded: true
+      - name: hands-on-hips
+        after: hands-on-hips-idle
+        grounded: true
+      - name: hands-up
+        after: hands-up-idle
+        grounded: true
+      - name: hang-head
+        after: hang-head-idle
+        grounded: true
+      - name: hug
+        after: hug-idle
+        grounded: true
+      - name: wave
+        after: idle
+        grounded: true
+
+  avatar:
+    <<: *human
+    code: 0
+    title: Player
+    class: Avatar
+    shield: true
+    options:
+      map:
+        c*: skin-color
+        h*: hair-color
+        h: hair
+        fh: facialhair
+        t: tops
+        b: bottoms
+        fw: footwear
+        hg: headgear
+        fg: facialgear
+        fg*: facialgear-glow
+        u: suit
+        to: tops-overlay
+        to*: tops-overlay-glow
+        ao: arms-overlay
+        lo: legs-overlay
+        fo: footwear-overlay
+      skin-color: ['fcebd0', 'f2d9b3', 'cea977', 'b38e59', '866a40', '4d2e18']
+      skin-color-bonus: ['aeba77', 'c4ae60', 'ee9e9e', 'b18786', 'edbbfd', '87b2ba']
+      hair-color: ["faeca2","c4a347","856a43","53371b","96422b","d8815c","d27725","f2f2f2","c5bdb8","5a5a5d","1a1a1d"]
+      hair-color-bonus: ["fa9a40","f39bad","bb0017","a869ec","374287","0f93f2","2affef","3ba09c","3e881f","d6da30","a5ad98"]
+
+  pet: &pet
+    pet: true
+    health: 999999
+    character: true
+    named: true
+    usable: true
+    defense:
+      all: 1.0
+    spine_skin: pet
+    damage: ['none', 0]
+    trappable: false
+
+  supernatural: &supernatural
+    group: supernatural
+    loot:
+      - item: ground/ectoplasm
+    defense:
+      energy: 0.1
+      fire: 1.0
+      cold: 1.0
+      slashing: 1.0
+      bludgeoning: 1.0
+      piercing: 1.0
+      crushing: 1.0
+      acid: 1.0
+      sonic: 1.0
+      ink: 1.0
+    collides: false
+
+  ghost:
+    <<: *human
+    <<: *supernatural
+    code: 1
+    title: Ghost
+    class: Ghost
+    health: 3.0
+    speed: 3.0
+    behavior:
+      - type: walker
+      - type: randomly_target
+      - type: follow
+    damage emitter: ghost giblets
+    death sound: ghost-whisper-short
+
+  revenant-base: &revenant-base
+      <<: *supernatural
+      spine: revenant
+      group: revenant
+      ghostly: true
+      animations:
+        - name: extend-arms-idle
+        - name: extend-arms
+        - name: float
+        - name: hurt
+        - name: spasm-1
+        - name: spasm-2
+
+  revenant:
+    <<: *revenant-base
+    code: 24
+    title: Revenant
+    health: 6.0
+    xp: 10
+    graph: true
+    speed: 3.0
+    behavior:
+      - type: flyer
+        blockable: false
+        animation: float
+      - type: randomly_target
+        range: 20
+        blockable: false
+        animation: extend-arms
+      - type: follow
+      - type: spawn_attack
+        entity: bullets/shadow
+        range: 8
+        speed: 6
+        burst: 6
+        frequency: 0.369
+    damage emitter: ghost giblets
+    ambient sound: ['revenant-ambient-1', 'revenant-ambient-2']
+    death sound: ghost-whisper-short
+    emitters:
+      body: ['shadow steam', 0]
+    spine_skin: normal
+
+  dire-revenant:
+    <<: *revenant-base
+    code: 25
+    title: Dire Revenant
+    health: 12.0
+    xp: 20
+    graph: true
+    speed: 5.0
+    behavior:
+      - type: flyer
+        blockable: false
+        animation: float
+      - type: randomly_target
+        range: 20
+        blockable: false
+      - type: follow
+      - type: spawn_attack
+        entity: bullets/shadow
+        range: 8
+        speed: 10
+        burst: 8
+        frequency: 0.5
+    damage emitter: ghost giblets
+    ambient sound: ['revenant-ambient-1', 'revenant-ambient-2']
+    death sound: ghost-whisper-short
+    emitters:
+      body: ['shadow steam', 0]
+      head: ['ash rise', 0]
+    spine_skin: dire
+
+  revenant-lord:
+    <<: *revenant-base
+    spine: revenant-lord
+    code: 28
+    title: Revenant Lord
+    health: 31.0
+    xp: 80
+    graph: true
+    speed: 4.0
+    behavior:
+      - type: flyer
+        blockable: false
+        animation: float
+      - type: randomly_target
+        range: 20
+        blockable: false
+      - type: follow
+      - type: spawn_attack
+        entity: bullets/shadow
+        range: 10
+        speed: 13
+        burst: 8
+        frequency: 0.6
+      - type: spawn_attack
+        entity: revenant
+        npc: true
+        max: 2
+        frequency: 0.25
+    damage emitter: ghost giblets
+    ambient sound: ['revenant-ambient-1', 'revenant-ambient-2']
+    death sound: ghost-whisper-short
+    emitters:
+      body: ['shadow steam', 0]
+      head: ['ash rise', 0]
+
+  terrapus: &terrapus
+    group: creature
+    species: terrapus
+    material: squish
+    obstacle: 0.3
+    ambient sound: ['terrapus-chatter-1', 'terrapus-chatter-2']
+    death sound: terrapus-die
+    spine: terrapus
+    spine_scale_base: 1.0
+    animations:
+      - name: idle-1
+      - name: idle-2
+      - name: idle-3
+      - name: walk
+      - name: climb-left
+        sequence_name: walk
+        rotation: 90
+      - name: climb-right
+        sequence_name: walk
+        rotation: -90
+      - name: fall
+  terrapus/crawl: &terrapus-crawl
+    type: crawler
+    fall_animation: fall
+    idle:
+      grounded: [0, 1]
+      animation: ['idle-1', 'idle-2', 'idle-3']
+      delay: 20
+      duration: 5
+      flee: true
+
+  terrapus/child:
+    <<: *terrapus
+    code: 3
+    title: Juvenile Terrapus
+    health: 0.5
+    xp: 1
+    damage: ['piercing', 0.3]
+    obstacle: 0.1
+    loot:
+      - item: ground/giblets
+    damage emitter: terrapus giblets
+    speed: 3
+    behavior:
+      - <<: *terrapus-crawl
+    spine_skin: child
+    spine_scale_base: 0.7
+
+  terrapus/adult-base: &terrapus-adult
+    <<: *terrapus
+    loot:
+      - item: ground/giblets
+        frequency: 5
+      - item: ground/resin
+        frequency: 1
+    damage emitter: terrapus giblets
+    spine_skin: normal
+    sprites:
+      - ['body', 'creatures/terrapus-large-1']
+      - ['headgear', ['creatures/terrapus-spikes', 3]]
+
+  terrapus/adult:
+    <<: *terrapus-adult
+    code: 4
+    title: Adult Terrapus
+    health: 0.8
+    xp: 2
+    defense:
+      acid: 0.2
+    weakness:
+      fire: 0.3
+      piercing: 0.2
+      crushing: 0.3
+    damage: ['piercing', 0.5]
+    speed: 4
+    behavior:
+      - <<: *terrapus-crawl
+      - type: randomly_target
+        range: 8
+      - type: spawn_attack
+        entity: bullets/ink
+        speed: 8
+        frequency: 0.25
+    trappable: true
+    trappable_pet_item: containers/pet-terrapus
+
+  terrapus/racing:
+    <<: *terrapus-adult
+    code: 23
+    title: Racing Terrapus
+    health: 2.0
+    defense:
+      acid: 0.2
+    weakness:
+      fire: 0.2
+      crushing: 0.2
+    damage: ['piercing', 0.5]
+    speed: 5.5
+    speed_variance: [0.75, 2.0]
+    behavior:
+      - type: crawler
+        fall_animation: fall
+
+  terrapus/pet:
+    <<: *terrapus-adult
+    <<: *pet
+    code: 9
+    title: Pet Terrapus
+    behavior:
+      - <<: *terrapus-crawl
+      - type: pet
+    spine_skin: normal
+
+  terrapus/fire:
+    <<: *terrapus
+    code: 5
+    title: Fire Terrapus
+    health: 1.5
+    xp: 3
+    loot:
+      - item: ground/giblets
+        frequency: 5
+      - item: ground/resin
+        frequency: 1
+    damage emitter: terrapus giblets
+    damage: ['fire', 0.75]
+    speed: 4
+    defense:
+      fire: 1.3
+      steam: 1.1
+    weakness:
+      cold: 0.4
+      crushing: 0.2
+    behavior:
+      - <<: *terrapus-crawl
+      - type: randomly_target
+        range: 8
+      - type: spawn_attack
+        entity: bullets/fire
+        speed: 9
+        frequency: 0.4
+    spine_skin: fire
+
+  terrapus/acid:
+    <<: *terrapus
+    code: 6
+    title: Acid Terrapus
+    health: 1.5
+    xp: 3
+    loot:
+      - item: ground/giblets
+        frequency: 5
+      - item: ground/resin
+        frequency: 1
+    damage emitter: terrapus giblets
+    damage: ['acid', 0.55]
+    speed: 5
+    defense:
+      acid: 1.3
+    weakness:
+      crushing: 0.2
+    behavior:
+      - <<: *terrapus-crawl
+      - type: randomly_target
+        range: 8
+      - type: spawn_attack
+        entity: bullets/acid
+        speed: 9
+        frequency: 0.33
+    spine_skin: acid
+
+  terrapus/skeleton:
+    <<: *terrapus
+    code: 7
+    title: Skeleton Terrapus
+    health: 2
+    xp: 3
+    damage: ['energy', 0.3]
+    damage emitter: skeleton giblets
+    speed: 5
+    defense:
+      energy: 1.3
+      cold: 0.5
+      fire: 0.5
+    weakness:
+      crushing: 0.2
+    behavior:
+      - <<: *terrapus-crawl
+      - type: randomly_target
+        range: 10
+      - type: spawn_attack
+        entity: bullets/bone
+        speed: 9
+        burst: [2, 0.5]
+        frequency: 0.33
+    spine_skin: skeleton
+
+  terrapus/frost:
+    <<: *terrapus
+    code: 8
+    title: Frost Terrapus
+    health: 1.5
+    xp: 3
+    loot:
+      - item: ground/giblets
+        frequency: 5
+      - item: ground/resin
+        frequency: 1
+    damage: ['cold', 0.55]
+    speed: 4
+    defense:
+      cold: 1.3
+    weakness:
+      fire: 0.4
+      crushing: 0.2
+    behavior:
+      - <<: *terrapus-crawl
+      - type: randomly_target
+        range: 8
+      - type: spawn_attack
+        entity: bullets/ice
+        speed: 9
+        frequency: 0.33
+    spine_skin: frost
+
+  terrapus/queen:
+    <<: *terrapus-adult
+    code: 219
+    title: Queen Terrapus
+    health: 25.0
+    xp: 25
+    defense:
+      acid: 1.0
+      cold: 0.5
+      energy: 0.2
+      crushing: 0.6
+    damage: ['piercing', 2.0]
+    obstacle: 0.9
+    speed: 3.5
+    spine: terrapus-queen
+    spine_scale_base: 1.0
+    loot:
+      - item: consumables/canister
+        frequency: 20
+        quantity: 3
+      - item: consumables/jerky-power
+        frequency: 15
+        quantity: 2
+      - item: ground/terrapus-egg
+        frequency: 15
+        quantity: 2
+      - item: ground/terrapus-pet-egg
+        frequency: 1
+    behavior:
+      - type: walker
+        fall_animation: fall
+        idle:
+          grounded: [0, 1]
+          animation: ['idle']
+          delay: 6
+      - type: randomly_target
+        range: 8
+      - type: spawn_attack
+        entity: bullets/ink-mk2
+        speed: 8
+        burst: 5
+        frequency: 0.75
+      - type: spawn_attack
+        entity: terrapus/adult
+        npc: true
+        max: 3
+        frequency: 0.25
+    animations:
+      - name: idle
+      - name: fall
+      - name: walk
+
+  creatures/rat:
+    group: creature
+    material: squish
+    spine_scale_base: 0.6
+    ambient sound: ['rat_idle_01']
+    death sound: rat_hit_02
+    code: 12
+    title: Rat
+    friendly: true
+    health: 0.9
+    loot:
+      - item: ground/fur
+    death emitter: guts
+    speed: 6
+    behavior:
+      - type: walker
+        fall_animation: fall
+        idle:
+          grounded: [0, 1]
+          animation: ['idle', 'idle-2']
+          delay: 6
+          flee: true
+    spine: rat
+    animations:
+      - name: idle
+      - name: walk
+        sequence_name: run
+      - name: upright-1
+      - name: upright-2
+      - name: fall
+
+  filetable: &filetable
+    loot_by_weapon:
+      tools/gun-steam:
+        - item: ground/giblets
+          frequency: 9
+        - item: consumables/filet
+          frequency: 1
+      tools/gun-steam-mk2:
+        - item: ground/giblets
+          frequency: 7
+        - item: consumables/filet
+          frequency: 1
+      tools/gun-steam-mk3:
+        - item: ground/giblets
+          frequency: 5
+        - item: consumables/filet
+          frequency: 1
+
+  creatures/skunk: &skunk
+    <<: *filetable
+    group: creature
+    material: squish
+    ambient sound: ['small_creature_screech06']
+    death sound: small_creature_screech03
+    code: 14
+    title: Skunk
+    friendly: true
+    health: 1.3
+    loot:
+      - item: ground/fur
+    death emitter: guts
+    speed: 3.5
+    trappable: true
+    trappable_pet_item: containers/pet-skunk
+    behavior:
+      # - type: randomly_target
+      #   range: 2
+      # - type: spawn_attack
+      #   entity: bullets/stink
+      #   speed: 5
+      #   frequency: 0.5
+      #   burst: [4, 0.1]
+      #   animation: 3
+      - type: walker
+        fall_animation: fall
+        idle:
+          grounded: [0, 1]
+          animation: ['idle', 'sit']
+          delay: 6
+          flee: true
+    spine: skunk
+    spine_skin: normal
+    animations:
+      - name: idle
+      - name: walk
+      - name: sit
+      - name: attack
+      - name: fall
+
+  creatures/skunk-pet:
+    <<: *skunk
+    <<: *pet
+    code: 59
+    title: Pet Skunk
+
+  creatures/armadillo:
+    <<: *filetable
+    group: creature
+    material: squish
+    ambient sound: ['small_creature_screech06']
+    death sound: small_creature_screech03
+    code: 85
+    title: Armadillo
+    friendly: true
+    health: 2.0
+    loot:
+      - item: ground/giblets
+    death emitter: guts
+    speed: 3
+    behavior:
+      - type: walker
+        fall_animation: fall
+        idle:
+          grounded: [0, 1]
+          animation: ['idle']
+          delay: 6
+          flee: true
+    spine: armadillo
+    spine_skin: normal
+    animations:
+      - name: idle
+      - name: walk
+      - name: fall
+
+  creatures/roach:
+    code: 21
+    title: Roach
+    group: creature
+    material: squish
+    death sound: squish-2
+    friendly: true
+    health: 0.5
+    death emitter: bug giblets
+    speed: 6
+    behavior:
+      - type: crawler
+    spine: roach
+    animations:
+      - name: walk
+      - name: fall
+
+  creatures/roach-large:
+    code: 22
+    title: Large Roach
+    group: creature
+    material: squish
+    death sound: squish-2
+    friendly: false
+    health: 0.9
+    xp: 1
+    damage: ['piercing', 0.35]
+    death emitter: bug giblets
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 10
+        - item: furniture/pinned-cockroach
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 6
+        - item: furniture/pinned-cockroach
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 3
+        - item: furniture/pinned-cockroach
+          frequency: 1
+    speed: 6
+    behavior:
+      - type: crawler
+    spine: roach-large
+    animations:
+      - name: walk
+      - name: fall
+
+  creatures/bunny-ice: &bunny-ice
+    group: creature
+    material: squish
+    spine_scale_base: 0.6
+    ambient sound: ['small_creature_screech06']
+    death sound: small_creature_screech03
+    code: 13
+    title: Bunny
+    friendly: true
+    health: 1.1
+    loot:
+      - item: ground/fur
+    death emitter: guts
+    speed: 5.5
+    trappable: true
+    trappable_pet_item: containers/pet-bunny
+    behavior:
+      - type: walker
+        walk_animation: hop
+        fall_animation: fall
+        idle:
+          grounded: [0, 1]
+          animation: ['idle', 'sniff']
+          delay: 6
+          flee: true
+    spine: bunny
+    spine_skin: normal
+    animations:
+      - name: idle
+      - name: hop
+      - name: sniff
+      - name: fall
+
+  creatures/bunny-ice-pet:
+    <<: *bunny-ice
+    <<: *pet
+    code: 58
+    title: Pet Bunny
+
+  flyer: &flyer
+    group: creature
+    material: squish
+    spine_scale_base: 0.7
+    scale base: 0.85
+    scale range: 0.3
+    friendly: true
+    defense:
+      cold: 0.2
+    weakness:
+      fire: 0.2
+
+  bird: &bird
+    <<: *flyer
+    health: 1.0
+    speed: 5
+    behavior:
+      - type: flyer
+        animation: flap
+        idle:
+          grounded: [0, 1]
+          animation: ['idle-1', 'idle-2', 'peck']
+          delay: 6
+          flee: true
+    loot:
+      - item: ground/feathers
+        frequency: 5
+      - item: ground/giblets
+        frequency: 1
+    damage emitter: guts
+    death emitter: guts
+    subgroup: bird
+    animations:
+      - name: idle-1
+      - name: idle-2
+      - name: flap
+      - name: peck
+
+  bird-flocker: &bird-flocker
+    behavior:
+      - type: flocker
+        animation: flap
+        idle:
+          grounded: [0, 1]
+          animation: ['idle-1', 'idle-2', 'peck']
+          delay: 6
+          flee: true
+
+  crow: &crow
+    <<: *bird
+    ambient sound: ['crow-chatter-1', 'crow-chatter-2']
+    death sound: crow-die
+    damage emitter: crow giblets
+    death emitter: crow death giblets
+    spine: crow
+    species: crow
+    trappable: true
+    trappable_pet_item: containers/pet-crow
+
+  creatures/crow:
+    <<: *crow
+    <<: *bird-flocker
+    code: 15
+    title: Crow
+
+  creatures/crow-auto:
+    <<: *crow
+    code: 16
+    title: Cyborg Crow
+    health: 2.1
+    loot:
+      - item: ground/feathers
+        frequency: 5
+      - item: rubble/brass
+        frequency: 4
+    speed: 6
+    defense:
+      cold: 0.5
+      fire: 0.5
+    spine_skin: auto
+
+  creatures/crow-pet:
+    <<: *crow
+    <<: *pet
+    code: 220
+    title: Pet Crow
+
+  creatures/vulture: &vulture
+    <<: *bird
+    code: 19
+    title: Vulture
+    health: 3.0
+    speed: 4
+    defense:
+      cold: 0.2
+    weakness:
+      fire: 0.2
+    behavior:
+      - type: flyer
+        animation: flap
+        idle:
+          grounded: [0, 1]
+          animation: ['idle', 'flap']
+          delay: 6
+          flee: true
+    spine: vulture
+    spine_skin: normal
+    animations:
+      - name: idle
+      - name: fly
+      - name: flap
+    damage emitter: crow giblets
+    death emitter: crow death giblets
+    trappable: true
+    trappable_pet_item: containers/pet-vulture
+
+  creatures/vulture-pet:
+    <<: *vulture
+    <<: *pet
+    code: 63
+    title: Pet Vulture
+
+  creatures/bluejay:
+    <<: *bird
+    code: 230
+    title: Bluejay
+    spine: bird
+    spine_skin: bluejay
+    scale base: 0.7
+    ambient sound: ['blue_jay_squawk_02']
+    death sound: seagull_10
+
+  creatures/cardinal:
+    <<: *bird
+    code: 231
+    title: Cardinal
+    spine: bird
+    spine_skin: cardinal
+    scale base: 0.7
+    death sound: seagull_10
+
+  creatures/seagull:
+    <<: *bird
+    code: 232
+    title: Seagull
+    spine: seagull
+    spine_skin: normal
+    ambient sound: ['seagull_01', 'seagull_03']
+    death sound: seagull_10
+
+  creatures/butterfly: &butterfly
+    <<: *flyer
+    health: 0.1
+    speed: 6
+    behavior:
+      - type: flyer
+        idle:
+          grounded: [0, 1]
+          animation: ['idle']
+          delay: 6
+          flee: true
+    spine: butterfly
+    animations:
+      - name: idle
+      - name: fly
+  creatures/butterfly-monarch:
+    <<: *butterfly
+    code: 82
+    title: Monarch Butterfly
+    spine_skin: monarch
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 3
+        - item: furniture/butterfly-mounted-monarch
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 2
+        - item: furniture/butterfly-mounted-monarch
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 1
+        - item: furniture/butterfly-mounted-monarch
+          frequency: 1
+  creatures/butterfly-papilio-ulysses:
+    <<: *butterfly
+    code: 83
+    title: Papilio Ulysees Butterfly
+    spine_skin: papilio-ulysses
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 3
+        - item: furniture/butterfly-mounted-papilio-ulysses
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 2
+        - item: furniture/butterfly-mounted-papilio-ulysses
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 1
+        - item: furniture/butterfly-mounted-papilio-ulysses
+          frequency: 1
+  creatures/butterfly-swallowtail:
+    <<: *butterfly
+    code: 84
+    title: Swallowtail Butterfly
+    spine_skin: swallowtail
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 3
+        - item: furniture/butterfly-mounted-swallowtail
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 2
+        - item: furniture/butterfly-mounted-swallowtail
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 1
+        - item: furniture/butterfly-mounted-swallowtail
+          frequency: 1
+  creatures/butterfly-green:
+    <<: *butterfly
+    code: 86
+    title: Green Butterfly
+    spine_skin: green
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 3
+        - item: furniture/butterfly-mounted-green
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 2
+        - item: furniture/butterfly-mounted-green
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 1
+        - item: furniture/butterfly-mounted-green
+          frequency: 1
+  creatures/butterfly-moth:
+    <<: *butterfly
+    code: 87
+    title: Moth
+    spine_skin: moth
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 3
+        - item: furniture/butterfly-mounted-moth
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 2
+        - item: furniture/butterfly-mounted-moth
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 1
+        - item: furniture/butterfly-mounted-moth
+          frequency: 1
+  creatures/butterfly-owl:
+    <<: *butterfly
+    code: 88
+    title: Owl Butterfly
+    spine_skin: owl
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 3
+        - item: furniture/butterfly-mounted-owl
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 2
+        - item: furniture/butterfly-mounted-owl
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 1
+        - item: furniture/butterfly-mounted-owl
+          frequency: 1
+  creatures/butterfly-paper-kite:
+    <<: *butterfly
+    code: 89
+    title: Paper Kite Butterfly
+    spine_skin: paper-kite
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 3
+        - item: furniture/butterfly-mounted-paper-kite
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 2
+        - item: furniture/butterfly-mounted-paper-kite
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 1
+        - item: furniture/butterfly-mounted-paper-kite
+          frequency: 1
+  creatures/butterfly-rumanzovia:
+    <<: *butterfly
+    code: 79
+    title: Rumanzovia Butterfly
+    spine_skin: rumanzovia
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 3
+        - item: furniture/butterfly-mounted-rumanzovia
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 2
+        - item: furniture/butterfly-mounted-rumanzovia
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 1
+        - item: furniture/butterfly-mounted-rumanzovia
+          frequency: 1
+
+
+  # Critters
+
+  creatures/scorpion:
+    code: 26
+    title: Scorpion
+    health: 1.75
+    xp: 3
+    loot_by_weapon:
+      tools/net:
+        - item: none
+          frequency: 15
+        - item: furniture/pinned-scorpion
+          frequency: 1
+      tools/net-diamond:
+        - item: none
+          frequency: 10
+        - item: furniture/pinned-scorpion
+          frequency: 1
+      tools/net-onyx:
+        - item: none
+          frequency: 5
+        - item: furniture/pinned-scorpion
+          frequency: 1
+    defense:
+      acid: 1.0
+      fire: 0.6
+    weakness:
+      cold: 0.2
+      crushing: 0.2
+    damage: ['piercing', 0.9]
+    obstacle: 0.3
+    speed: 3
+    behavior:
+      - type: crawler
+        fall_animation: fall
+    spine: scorpion
+    animations:
+      - name: idle
+      - name: walk
+      - name: fall
+      - name: sting
+      - name: climb-left
+        sequence_name: walk
+        rotation: 90
+      - name: climb-right
+        sequence_name: walk
+        rotation: -90
+    damage emitter: guts
+    death emitter: guts
+
+  creatures/scorpion-large:
+    code: 27
+    title: Large Scorpion
+    health: 5.5
+    xp: 5
+    speed: 2.5
+    graph: true
+    loot:
+      - item: ground/scorpion-tail
+    defense:
+      acid: 1.0
+      fire: 0.6
+    weakness:
+      cold: 0.2
+      crushing: 0.2
+    damage: ['piercing', 0.9]
+    obstacle: 0.5
+    behavior:
+      - type: walker
+        fall_animation: fall
+      - type: randomly_target
+        range: 8
+      - type: spawn_attack
+        entity: bullets/acid-mk3
+        burst: 3
+        speed: 9
+        frequency: 0.6
+    spine: scorpion-large
+    animations:
+      - name: idle
+      - name: walk
+      - name: fall
+      - name: sting
+    damage emitter: guts
+    death emitter: guts
+
+  bat: &bat
+    <<: *bird
+    ambient sound: ['bat-chatter-1', 'bat-chatter-2', 'bat-chatter-3']
+    death sound: bat-die
+    damage emitter: bat giblets
+    spine: bat
+    behavior:
+      - type: flyer
+        idle:
+          grounded: [0, -1]
+          animation: ['idle', 'idle-shift']
+          delay: 10
+          flee: true
+
+  creatures/bat:
+    <<: *bat
+    code: 17
+    title: Bat
+    health: 1.1
+    loot:
+      - item: ground/guano
+        frequency: 2
+      - item: ground/giblets
+        frequency: 1
+    speed: 5
+    defense:
+      cold: 0.2
+    weakness:
+      energy: 0.2
+    animations:
+      - name: idle
+        rotation: -180
+      - name: fly
+      - name: idle-shift
+        rotation: -180
+    spine_skin: normal
+    spine_skinV3: normal
+
+  creatures/bat-auto:
+    <<: *bat
+    code: 18
+    title: Cyborg Bat
+    health: 2.2
+    loot:
+      - item: rubble/brass
+        frequency: 3
+      - item: ground/guano
+        frequency: 2
+      - item: ground/giblets
+        frequency: 1
+    speed: 6
+    defense:
+      cold: 0.5
+      fire: 0.5
+      energy: 0.1
+    spine_skin: auto
+    animations:
+      - name: idle
+        rotation: -180
+      - name: fly
+      - name: idle-shift
+        rotation: -180
+
+  creatures/worm: &worm
+    group: creature
+    subgroup: worm
+    material: squish
+    spine_scale_base: 0.925
+    health: 2.4
+    xp: 5
+    loot:
+      - item: ground/giblets
+    death emitter: guts
+    speed: 5
+    behavior:
+      - type: digger
+        walk_animation: travel
+        fall_animation: compact
+    spine: sandworm
+    spine_skin: desert
+    animations:
+      - name: compact
+      - name: travel
+    ambient sound: ['large_creature_09_hiss_01']
+    death sound: large_creature_09_snarl_01
+
+  creatures/sandworm:
+    <<: *worm
+    code: 210
+    title: Sand Worm
+    spine_skin: desert
+    damage: ['fire', 1]
+
+  creatures/snowworm:
+    <<: *worm
+    code: 211
+    title: Arctic Worm
+    spine_skin: arctic
+    damage: ['cold', 1]
+
+  creatures/tentacle:
+    code: 350
+    title: Tentacle Monster
+    spine: tentacle-monster
+    behavior:
+      - type: dormant
+    animations:
+      - name: dormant
+    health: 6
+
+
+  # ===== Environmental ===== #
+
+  entities/geyser: &entity-geyser
+    block: true
+    material: stone
+    health: 0.6
+    defense:
+      fire: 1.0
+      steam: 1.0
+      bludgeoning: 0.2
+      slashing: 0.7
+      piercing: 0.2
+      cold: 1.0
+      energy: 1.0
+      sonic: 1.0
+    move: false
+    loot:
+      - item: ground/stone
+    behavior:
+      - type: eruption_attack
+        entity: bullets/flame-mk2
+        range: 8
+        speed: 7.5
+        frequency: 0.22
+        burst: 6
+
+  ground/geyser-small:
+    <<: *entity-geyser
+    code: 20
+    title: Geyser
+
+  desert/sandstorm:
+    code: 170
+    title: Sand Storm
+    class: Turbulence
+    health: 5
+    speed: 4
+    collides: false
+    defense:
+      all: 1.0
+    behavior:
+      - type: flocker
+    sprites:
+      - ['body', 'particles/sand-cloud-1']
+
+
+
+  # ===== Androids ===== #
+
+  automata-defense: &automata-defense
+    defense:
+      fire: 0.9
+      steam: 1.0
+      slashing: 0.8
+      piercing: 0.4
+      cold: 0.7
+    weakness:
+      acid: 0.1
+      crushing: 0.3
+
+  automata/android:
+    class: Android
+    group: android
+    material: metal
+    character: true
+    named: true
+    usable: true
+    defense:
+      all: 1.0
+    damage emitter: automata giblets
+    death sound: ['powerdown_02', 'powerdown-bib-ss04325', 'powerdown-bib-ss04815', 'powerdown-blfx-10997-quiet']
+
+    code: 150
+    title: Android
+    loot:
+      - item: building/brass
+    speed: 3
+    behavior:
+      - type: quester
+        idle_animation: idle-1
+        fall_animation: fall
+    collides: false
+    health: 5.0
+    emitters:
+      head: ['small steam', 0]
+    spine: android
+    spine_skin: brass
+    sprites:
+      - ['legs', 'androids/legs-a-idle']
+      - ['footwear', 'androids/feet-a-idle']
+      - ['tops', 'androids/torso-a']
+      - ['head', 'androids/head-a']
+      - ['eyes', 'androids/eye-a']
+      - ['eyeblink', 'androids/eye-a-blink']
+      - ['headgear', 'headgear/tophat']
+      - ['arms', 'androids/arm-a']
+      - ['hands', 'androids/hand-a']
+    animations:
+      - name: idle-1
+      - name: fall
+      - name: walk
+
+  automata/pet: &automata-pet
+    group: robot
+    material: metal
+    character: true
+    named: true
+    usable: true
+    defense:
+      all: 1.0
+    damage emitter: automata giblets
+    death sound: ['powerdown_02', 'powerdown-bib-ss04325', 'powerdown-bib-ss04815', 'powerdown-blfx-10997-quiet']
+    loot:
+      - item: building/brass
+    speed: 3
+    collides: false
+    health: 5.0
+    emitters:
+      head: ['small steam', 0]
+
+  automata/cat:
+    <<: *automata-pet
+    code: 151
+    title: Android Cat
+    behavior:
+      - type: walker
+        fall_animation: fall
+        idle:
+          grounded: [0, 1]
+          animation: ['idle', 'sleep', 'stretch']
+          delay: 10
+          flee: true
+    spine: cat
+    animations:
+      - name: idle
+      - name: walk
+      - name: sitting
+      - name: sleeping
+      - name: stretch
+      - name: up
+      - name: fall
+
+  automata/dog:
+    <<: *automata-pet
+    code: 155
+    title: Android Dog
+    behavior:
+      - type: walker
+        fall_animation: fall
+        idle:
+          grounded: [0, 1]
+          animation: ['idle-1', 'idle-2', 'stretch', 'sleep']
+          delay: 10
+          flee: true
+    spine: plasma-dog
+    animations:
+      - name: idle-1
+      - name: idle-2
+      - name: walk
+      - name: swim
+      - name: sleep
+      - name: fall
+
+  automata/butler: &butler
+    defense:
+      all: 1.0
+    class: Butler
+    group: robot
+    material: metal
+    usable: true
+    servant: true
+    ambient sound: ['butler-talk-1', 'butler-talk-2']
+    damage emitter: automata giblets
+    death sound: ['powerdown_02', 'powerdown-bib-ss04325', 'powerdown-bib-ss04815', 'powerdown-blfx-10997-quiet']
+    movement: flight
+
+    loot:
+      - item: building/brass
+
+    behavior:
+      - type: butler
+    collides: false
+    emitters:
+      head: ['steam', 180]
+
+  automata/butler-brass:
+    <<: *butler
+    code: 152
+    title: Brass Butler Bot
+    speed: 4
+    health: 5.0
+    level: 1
+
+    sprites:
+      - ['body', 'automata/butlerbot-body']
+      - ['eye plate', 'automata/butlerbot-eye-plate']
+      - ['eye', 'automata/butlerbot-eye']
+      - ['head', 'automata/butlerbot-head']
+
+  automata/butler-diamond:
+    <<: *butler
+    code: 153
+    title: Diamond Butler Bot
+    speed: 5
+    health: 10.0
+    level: 2
+
+    sprites:
+      - ['body', 'automata/butlerbot-body-diamond']
+      - ['eye plate', 'automata/butlerbot-eye-plate']
+      - ['eye', 'automata/butlerbot-eye']
+      - ['head', 'automata/butlerbot-head-diamond']
+
+  automata/butler-onyx:
+    <<: *butler
+    code: 154
+    title: Onyx Butler Bot
+    speed: 6
+    health: 20.0
+    level: 3
+
+    sprites:
+      - ['body', 'automata/butlerbot-body-onyx']
+      - ['eye plate', 'automata/butlerbot-eye-plate']
+      - ['eye', 'automata/butlerbot-eye']
+      - ['head', 'automata/butlerbot-head-onyx']
+
+
+
+  # ===== Automata ===== #
+
+  # Skins
+  # - tiny-walker, tiny-flyer
+  # - small-round-walker, small-triangle-walker, small-oblong-walker, small-round-flyer, small-round-walker, small-oblong-walker
+  # - medium-round-walker, medium-triangle-walker, medium-oblong-walker, medium-round-flyer, medium-round-walker, medium-oblong-walker
+  # - large-walker, large-flyer
+  # - bomb-walker, bomb-flyer
+
+  # Weapons
+  # - automata-buzzsaw, automata-gun-acid, automata-gun-energy, automata-gun-flame, automata-gun-frost, automata-gun-steam
+
+
+  automata/animated-base: &automata-animated-base
+    group: automata
+    damage emitter: automata giblets
+    ambient sound: ['automata-chatter-1', 'automata-chatter-2', 'automata-chatter-3', 'automata-chatter-4']
+    death sound: ['powerdown_02', 'powerdown-bib-ss04325', 'powerdown-bib-ss04815', 'powerdown-blfx-10997-quiet']
+    spine_scale_base: 1.25
+    obstacle: 0.5
+    defense:
+      fire: 0.5
+      steam: 1.0
+      slashing: 0.6
+      piercing: 0.4
+      cold: 0.6
+    weakness:
+      acid: 0.1
+      energy: 0.05
+      sonic: 0.1
+      crushing: 0.5
+    animations:
+      - name: idle
+      - name: fly
+      - name: walk
+      - name: drill
+    slots:
+      - weapon
+      - weapon-extension
+      - weapon-copy
+      - weapon-extension-copy
+    attachments:
+      - automata-pistol
+      - automata-gun-steam
+      - automata-gun-acid
+      - automata-gun-frost
+      - automata-gun-flame
+      - automata-gun-energy
+    set_attachments:
+      weapon: null
+      weapon-extension: null
+
+  automata/tiny:
+    <<: *automata-animated-base
+    spine: automata-small
+    material: little_machine
+    code: 30
+    title: Tiny Automata
+    health: 0.5
+    xp: 3
+    loot:
+      - item: rubble/iron
+        frequency: 20
+      - item: rubble/brass
+        frequency: 10
+      - item: consumables/canister
+        frequency: 1
+    components:
+      base:
+        - automata/tiny-walker
+        - automata/tiny-flyer
+      weapon:
+        - null
+        - automata/gun-bullet
+        - automata/gun-steam
+
+  automata/tiny-walker:
+    code: 31
+    spine_skin: tiny-walker
+    behavior:
+      - type: walker
+
+  automata/tiny-flyer:
+    code: 32
+    spine_skin: tiny-flyer
+    behavior:
+      - type: flyer
+
+  automata/small:
+    <<: *automata-animated-base
+    spine: automata-small
+    material: little_machine
+    code: 40
+    title: Small Automata
+    health: 1.5
+    xp: 5
+    size: [1, 2]
+    loot:
+      - item: rubble/iron
+        frequency: 100
+      - item: rubble/brass
+        frequency: 50
+      - item: consumables/canister
+        frequency: 10
+      - item: ground/ectoplasm
+        frequency: 1
+    components:
+      base:
+        - automata/small-oblong-walker
+        - automata/small-oblong-flyer
+        - automata/small-round-walker
+        - automata/small-round-flyer
+        - automata/small-triangle-walker
+        - automata/small-triangle-flyer
+      weapon:
+        - null
+        - automata/gun-bullet
+        - automata/gun-steam
+        - automata/gun-acid
+        - automata/gun-frost
+        - automata/gun-flame
+
+  automata/small-oblong-walker:
+    code: 41
+    spine_skin: small-oblong-walker
+    behavior:
+      - type: walker
+
+  automata/small-oblong-flyer:
+    code: 42
+    spine_skin: small-oblong-flyer
+    behavior:
+      - type: flyer
+
+  automata/small-round-walker:
+    code: 43
+    spine_skin: small-round-walker
+    behavior:
+      - type: walker
+
+  automata/small-round-flyer:
+    code: 44
+    spine_skin: small-round-flyer
+    behavior:
+      - type: flyer
+
+  automata/small-triangle-walker:
+    code: 45
+    spine_skin: small-oblong-walker
+    behavior:
+      - type: walker
+
+  automata/small-triangle-flyer:
+    code: 46
+    spine_skin: small-oblong-flyer
+    behavior:
+      - type: flyer
+
+  automata/medium:
+    <<: *automata-animated-base
+    spine: automata-medium
+    material: little_machine
+    code: 50
+    title: Medium Automata
+    health: 6
+    xp: 10
+    spine_scale_base: 1.5
+    size: [1, 2]
+    loot:
+      - item: rubble/iron
+        frequency: 50
+      - item: rubble/brass
+        frequency: 25
+      - item: consumables/canister
+        frequency: 10
+      - item: ground/ectoplasm
+        frequency: 1
+    components:
+      base:
+        - automata/medium-oblong-walker
+        - automata/medium-oblong-flyer
+        - automata/medium-round-walker
+        - automata/medium-round-flyer
+        - automata/medium-triangle-walker
+        - automata/medium-triangle-flyer
+      weapon:
+        - automata/gun-bullet-better
+        - automata/gun-steam
+        - automata/gun-acid
+        - automata/gun-frost
+        - automata/gun-flame
+
+  automata/medium-oblong-walker:
+    code: 51
+    spine_skin: medium-oblong-walker
+    behavior:
+      - type: walker
+
+  automata/medium-oblong-flyer:
+    code: 52
+    spine_skin: medium-oblong-flyer
+    behavior:
+      - type: flyer
+
+  automata/medium-round-walker:
+    code: 53
+    spine_skin: medium-round-walker
+    behavior:
+      - type: walker
+
+  automata/medium-round-flyer:
+    code: 54
+    spine_skin: medium-round-flyer
+    behavior:
+      - type: flyer
+
+  automata/medium-triangle-walker:
+    code: 55
+    spine_skin: medium-oblong-walker
+    behavior:
+      - type: walker
+
+  automata/medium-triangle-flyer:
+    code: 56
+    spine_skin: medium-oblong-flyer
+    behavior:
+      - type: flyer
+
+  automata/large:
+    <<: *automata-animated-base
+    spine: automata-large
+    material: little_machine
+    code: 60
+    title: Large Automata
+    health: 15
+    xp: 20
+    spine_scale_base: 1.5
+    size: [2, 3]
+    loot:
+      - item: consumables/canister
+        frequency: 10
+      - item: ground/ectoplasm
+        frequency: 1
+    components:
+      base:
+        - automata/large-flyer
+        - automata/large-walker
+      weapon:
+        - automata/gun-fire-and-ice
+        - automata/gun-double-pistol
+    set_attachments:
+      weapon: null
+      weapon-copy: null
+      weapon-extension: null
+      weapon-extension-copy: null
+
+  automata/large-walker:
+    code: 61
+    spine_skin: large-walker
+    behavior:
+      - type: walker
+
+  automata/large-flyer:
+    code: 62
+    spine_skin: large-flyer
+    behavior:
+      - type: flyer
+
+
+
+  # Weapons
+
+  automata/gun-bullet:
+    code: 70
+    set_attachments:
+      weapon: automata-pistol
+    behavior:
+      - type: randomly_target
+        range: 8
+      - type: spawn_attack
+        entity: bullets/lead
+        speed: 10
+        burst: [2, 0.5]
+        frequency: 0.5
+        slot: weapon
+
+  automata/gun-bullet-better:
+    code: 71
+    set_attachments:
+      weapon: automata-pistol
+    behavior:
+      - type: randomly_target
+        range: 11
+      - type: spawn_attack
+        entity: bullets/lead-mk2
+        speed: 11
+        burst: 3
+        frequency: 0.5
+        slot: weapon
+
+  automata/gun-steam:
+    code: 72
+    set_attachments:
+      weapon: automata-gun-steam
+    behavior:
+      - type: randomly_target
+        range: 5
+      - type: spawn_attack
+        entity: bullets/steam
+        speed: 7
+        burst: 4
+        frequency: 0.5
+        slot: weapon
+
+  automata/gun-acid:
+    code: 73
+    set_attachments:
+      weapon: automata-gun-acid
+    behavior:
+      - type: randomly_target
+        range: 8
+      - type: spawn_attack
+        entity: bullets/acid
+        speed: 9
+        burst: [2, 0.3]
+        frequency: 0.5
+        slot: weapon
+
+  automata/gun-frost:
+    code: 74
+    set_attachments:
+      weapon: automata-gun-frost
+    behavior:
+      - type: randomly_target
+        range: 7
+      - type: spawn_attack
+        entity: bullets/acid
+        speed: 8
+        burst: 4
+        frequency: 0.5
+        slot: weapon
+
+  automata/gun-flame:
+    code: 75
+    set_attachments:
+      weapon: automata-gun-flame
+    behavior:
+      - type: randomly_target
+        range: 7
+      - type: spawn_attack
+        entity: bullets/flame
+        speed: 8
+        burst: 5
+        frequency: 0.5
+        slot: weapon
+
+  automata/gun-energy:
+    code: 76
+    set_attachments:
+      weapon: automata-gun-energy
+    behavior:
+      - type: randomly_target
+        range: 9
+      - type: spawn_attack
+        entity: bullets/energy
+        speed: 9
+        burst: 6
+        frequency: 0.5
+        slot: weapon
+
+  automata/gun-fire-and-ice:
+    code: 77
+    set_attachments:
+      weapon: automata-gun-flame
+      weapon-copy: automata-gun-frost
+    behavior:
+      - type: randomly_target
+        range: 9
+      - type: spawn_attack
+        entity: bullets/flame-mk3
+        speed: 9
+        burst: 6
+        frequency: 0.5
+        slot: weapon
+      - type: spawn_attack
+        entity: bullets/frost-mk3
+        speed: 9
+        burst: 6
+        frequency: 0.5
+        slot: weapon-copy
+
+  automata/gun-double-pistol:
+    code: 78
+    set_attachments:
+      weapon: automata-pistol
+      weapon-copy: automata-pistol
+    behavior:
+      - type: randomly_target
+        range: 9
+      - type: spawn_attack
+        entity: bullets/lead-mk3
+        speed: 12
+        burst: 4
+        frequency: 0.75
+        slot: weapon
+      - type: spawn_attack
+        entity: bullets/lead-mk3
+        speed: 12
+        burst: 4
+        frequency: 0.75
+        slot: weapon-copy
+
+
+
+
+  # ===== Brains ===== #
+
+  entities/brain: &entity-brain
+    group: brains
+    material: big_machine
+    obstacle: 0.5
+    ambient sound: ['hiss_beast_growl_01', 'hiss_beast_growl_02']
+    damage emitter: brain giblets
+    death_explosion: true
+    clear delay: 3
+    shield: true
+    defense:
+      bludgeoning: 0.2
+      slashing: 0.7
+      piercing: 0.4
+      crushing: 0.4
+      acid: 0.1
+      fire: 0.6
+      cold: 0.2
+      energy: 0.5
+      sonic: 0.3
+      ink: 1.0
+
+  brains/tiny: &entity-brain-tiny
+    <<: *entity-brain
+    health: 3
+    xp: 5
+    speed: 5
+    damage: ['energy', 0.3]
+    death sound: ['hiss_beast_screech_03', 'hiss_beast_screech_04']
+    spine: brain-baby
+    spine_skin: normal
+    scale base: 0.9
+    subgroup: tiny_brain
+    loot:
+      - item: rubble/brass
+
+  brains/tiny-crawler: &entity-brain-tiny-crawler
+    <<: *entity-brain-tiny
+    code: 199
+    title: Baby Crawler Brain
+    animations:
+      - name: crawl
+      - name: idle
+      - name: climb-left
+        sequence_name: crawl
+        rotation: 90
+      - name: climb-right
+        sequence_name: crawl
+        rotation: -90
+    behavior:
+      - type: shielder
+        duration: 2.0
+        recharge: 2.0
+        defenses:
+          - piercing
+          - bludgeoning
+      - type: reporter
+      - type: crawler
+        walk_animation: crawl
+        fall_animation: idle
+      - type: randomly_target
+      - type: follow
+      - type: spawn_attack
+        entity: bullets/energy
+        speed: 10
+        frequency: 0.333
+        burst: 5
+
+  brains/tiny-flyer:
+    <<: *entity-brain-tiny
+    code: 198
+    title: Baby Flyer Brain
+    animations:
+      - name: fly
+      - name: idle
+    behavior:
+      - type: shielder
+        duration: 2.0
+        recharge: 2.0
+        defenses:
+          - piercing
+          - bludgeoning
+      - type: reporter
+      - type: flyer
+        range: 10
+      - type: randomly_target
+      - type: follow
+      - type: spawn_attack
+        entity: bullets/energy
+        speed: 10
+        frequency: 0.333
+        burst: 5
+
+  brains/small:
+    <<: *entity-brain
+    code: 200
+    title: Juvenile Brain
+    health: 7
+    xp: 10
+    graph: true
+    speed: 4
+    size: [1, 2]
+    damage: ['energy', 0.3]
+    death sound: ['hiss_beast_screech_03', 'hiss_beast_screech_04']
+    scale base: 0.9
+    shield: true
+    loot:
+      - item: consumables/jerky
+        frequency: 7
+      - item: accessories/shillings
+        quantity: 5
+        frequency: 1
+      - item: consumables/canister
+        frequency: 1
+      - item: consumables/jerky-power
+        frequency: 1
+    sprites:
+      - ['tank', 'brains/tank-small']
+      - ['body', 'brains/body-small-1']
+    spine: brain
+    animations:
+      - name: fly
+      - name: hurt
+      - name: idle
+    behavior:
+      - type: shielder
+        duration: 4.0
+        recharge: 4.0
+        defenses:
+          - piercing
+          - bludgeoning
+          - elemental
+      - type: unblock
+      - type: reporter
+      - type: flyer
+        range: 10
+      - type: randomly_target
+      - type: follow
+      - type: spawn_attack
+        entity: bullets/energy-mk2
+        speed: 14
+        frequency: 0.35
+        burst: 10
+    emitters:
+      tank: ['steam', 180]
+    vengeance:
+      - [20, 'brains/medium', 0.05]
+      - [15, 'brains/small', 0.15]
+      - [10, 'brains/small', 0.1]
+      - [5, 'brains/small', 0.025]
+
+  brains/medium-base: &entity-brain-medium-base
+    <<: *entity-brain
+    size: [3, 2]
+    spine: brain-medium
+    obstacle: 0.7
+    shield: true
+    animations:
+      - name: idle
+    emitters:
+      brain-medium-jet: ['steam', [0.5, 0.85], 0]
+      brain-medium-jet-copy: ['steam', [0.5, 0.85], 0]
+
+  brains/medium:
+    <<: *entity-brain-medium-base
+    code: 201
+    title: Adult Brain
+    health: 11
+    xp: 20
+    graph: true
+    speed: 3.0
+    damage: ['energy', 0.4]
+    death sound: ['hiss_beast_growl_03']
+    loot:
+      - item: consumables/canister
+        frequency: 7
+        quantity: 3
+      - item: consumables/jerky-power
+        frequency: 5
+        quantity: 2
+      - item: accessories/shillings
+        quantity: 20
+        frequency: 2
+      - item: mechanical/bomb-electric
+        frequency: 1
+    spine_skin: normal
+    spine_offset: [0, -0.2]
+    flips: false
+    breakdown:
+      - health: 6
+        effects:
+          brain-medium-jet: ['bomb', 2]
+        hide:
+          - brain-medium-jet
+      - health: 3
+        effects:
+          brain-medium-jet-copy: ['bomb', 2]
+        hide:
+          - brain-medium-jet-copy
+    behavior:
+      - type: shielder
+        defenses: all
+        duration: 6.0
+        recharge: 4.0
+      - type: unblock
+      - type: reporter
+      - type: flyer
+        range: 10
+        animation: idle
+      - type: randomly_target
+      - type: follow
+      - type: spawn_attack
+        entity: bullets/energy-mk3
+        speed: 16
+        frequency: 0.4
+        burst: 12
+      - type: spawn_attack
+        entity: bullets/dessication
+        speed: 14
+        frequency: 0.15
+        burst: 10
+
+  brains/medium-dire:
+    <<: *entity-brain-medium-base
+    code: 202
+    title: Dire Adult Brain
+    health: 18
+    xp: 30
+    graph: true
+    speed: 3.5
+    damage: ['energy', 0.5]
+    death sound: ['hiss_beast_growl_03']
+    loot:
+      - item: consumables/canister
+        quantity: 3
+        frequency: 2
+      - item: consumables/jerky-power
+        quantity: 2
+        frequency: 2
+      - item: accessories/shillings
+        quantity: 30
+        frequency: 2
+      - item: mechanical/bomb-electric
+        quantity: 2
+        frequency: 1
+    spine_skin: dire
+    behavior:
+      - type: shielder
+        defenses: all
+        duration: 9.0
+        recharge: 3.0
+      - type: unblock
+      - type: reporter
+      - type: flyer
+        range: 12
+      - type: randomly_target
+      - type: follow
+      - type: spawn_attack
+        entity: bullets/energy-mk3
+        speed: 18
+        frequency: 0.45
+        burst: 12
+      - type: spawn_attack
+        entity: bullets/dessication
+        speed: 15
+        frequency: 0.25
+        burst: 10
+
+  brains/large:
+    <<: *entity-brain
+    code: 203
+    title: Brain Lord
+    health: 34
+    xp: 100
+    speed: 2
+    size: [7, 8]
+    spine: brain-large
+    spine_offset: [0, -0.5]
+    damage: ['energy', 0.5]
+    obstacle: 0.9
+    flips: false
+    shield: true
+    death sound: ['hiss_beast_growl_03']
+    loot:
+      - item: consumables/canister
+        quantity: 6
+        frequency: 20
+      - item: consumables/jerky-power
+        quantity: 5
+        frequency: 20
+      - item: accessories/shillings
+        quantity: 100
+        frequency: 20
+      - item: consumables/cloak
+        quantity: 2
+        frequency: 8
+      - item: mechanical/bomb-electric
+        quantity: 3
+        frequency: 8
+      - item: mechanical/bomb-incendiary
+        quantity: 3
+        frequency: 8
+      - item: consumables/brain-wine
+        frequency: 1
+    animations:
+      - name: idle
+      - name: spawn
+    slots:
+      - brain-missles
+      - brain-missles-copy
+    behavior:
+      - type: shielder
+        defenses: all
+        duration: 8.0
+        recharge: 4.0
+      - type: unblock
+        rate: 3
+      - type: reporter
+      - type: flyer
+        range: 10
+        animation: idle
+      - type: randomly_target
+      - type: follow
+      - type: spawn_attack
+        entity: bullets/energy-mk3
+        speed: 16
+        frequency: 0.1
+        burst: 14
+      - type: spawn_attack
+        entity: bullets/dessication
+        speed: 14
+        frequency: 0.2
+        burst: 12
+      - type: spawn_attack
+        entity: bullets/magnet
+        speed: 5
+        frequency: 0.4
+        burst: 2
+        slot:
+          - brain-missles
+          - brain-missles-copy
+      - type: spawn_attack
+        entity: brains/small
+        npc: true
+        max: 2
+        frequency: 0.075
+
+
+
+  # ===== Turrets ===== #
+
+  mechanical/turret: &entity-turret
+    block: true
+    xp: 3
+    damage emitter: machine giblets
+    death sound: ['powerdown_02', 'powerdown-bib-ss04325', 'powerdown-bib-ss04815', 'powerdown-blfx-10997']
+    material: metal
+    power on: ['scifielectronic10-bit', 'scifielectronic10-bit', 'scifielectronic10-bit', 'scifielectronic10']
+    defense:
+      fire: 0.9
+      steam: 0.7
+      bludgeoning: 0.2
+      slashing: 0.7
+      piercing: 0.25
+      cold: 0.6
+    weakness:
+      acid: 0.35
+      energy: 0.2
+      sonic: 0.1
+    move: false
+    spineV3: turret
+    spine_scale_baseV3: 3.0
+    classV3: Turret
+    group: turret
+
+  mechanical/turret-pistol:
+    <<: *entity-turret
+    code: 90
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 22
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/lead
+        speed: 12
+        delay: 3
+        burst: [2, 0.25]
+        frequency: 0.7
+        shoot emitter: steam puff
+        muzzle flash: explosions/muzzle-flash
+    placed_loot:
+      item: mechanical/turret-pistol
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-pistol
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/small-1']
+    spine_skinV3: pistol
+
+  mechanical/turret-pistol-mk2:
+    <<: *entity-turret
+    code: 33
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 22
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/lead-mk2
+        speed: 12
+        delay: 3
+        burst: [2, 0.25]
+        frequency: 0.7
+        shoot emitter: steam puff
+        muzzle flash: explosions/muzzle-flash
+    placed_loot:
+      item: mechanical/turret-pistol-mk2
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-pistol-mk2
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/gun-mark-2']
+    spine_skinV3: pistol-mk2
+
+  mechanical/turret-pistol-mk3:
+    <<: *entity-turret
+    code: 34
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 22
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/lead-mk3
+        speed: 12
+        delay: 3
+        burst: [2, 0.25]
+        frequency: 0.7
+        shoot emitter: steam puff
+        muzzle flash: explosions/muzzle-flash
+    placed_loot:
+      item: mechanical/turret-pistol-mk3
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-pistol-mk3
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/gun-mark-3']
+    spine_skinV3: pistol-mk3
+
+  mechanical/turret-fire:
+    <<: *entity-turret
+    code: 91
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 20
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/fire
+        speed: 9.5
+        frequency: 0.45
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-fire
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-fire
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/small-2']
+    spine_skinV3: fire
+
+  mechanical/turret-fire-mk2:
+    <<: *entity-turret
+    code: 35
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 20
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/fire-mk2
+        speed: 9.5
+        frequency: 0.45
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-fire-mk2
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-fire-mk2
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/fire-mark-2']
+    spine_skinV3: fire-mk2
+
+  mechanical/turret-fire-mk3:
+    <<: *entity-turret
+    code: 36
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 20
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/fire-mk3
+        speed: 9.5
+        frequency: 0.45
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-fire-mk3
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-fire-mk3
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/fire-mark-3']
+    spine_skinV3: fire-mk3
+
+  mechanical/turret-acid:
+    <<: *entity-turret
+    code: 92
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 19
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/acid
+        speed: 10
+        frequency: 0.45
+        burst: [3, 0.25]
+        shoot emitter: acid puff
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-acid
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-acid
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/large-1']
+    spine_skinV3: acid
+
+  mechanical/turret-acid-mk2:
+    <<: *entity-turret
+    code: 37
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 19
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/acid-mk2
+        speed: 10
+        frequency: 0.45
+        burst: [3, 0.25]
+        shoot emitter: acid puff
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-acid-mk2
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-acid-mk2
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/acid-mark-2']
+    spine_skinV3: acid-mk2
+
+  mechanical/turret-acid-mk3:
+    <<: *entity-turret
+    code: 38
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 19
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/acid-mk3
+        speed: 10
+        frequency: 0.45
+        burst: [3, 0.25]
+        shoot emitter: acid puff
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-acid-mk3
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-acid-mk3
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/acid-mark-3']
+    spine_skinV3: acid-mk3
+
+  mechanical/turret-flame:
+    <<: *entity-turret
+    code: 93
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 15
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/flame
+        speed: 7.5
+        frequency: 0.45
+        burst: 10
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-flame
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-flame
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/large-2']
+    spine_skinV3: flame
+
+  mechanical/turret-flame-mk2:
+    <<: *entity-turret
+    code: 39
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 15
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/flame-mk2
+        speed: 7.5
+        frequency: 0.45
+        burst: 10
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-flame-mk2
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-flame-mk2
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/flame-mark-2']
+    spine_skinV3: flame-mk2
+
+  mechanical/turret-flame-mk3:
+    <<: *entity-turret
+    code: 47
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 15
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/flame-mk3
+        speed: 7.5
+        frequency: 0.45
+        burst: 10
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-flame-mk3
+    loot:
+      - item: rubble/iron
+        frequency: 10
+      - item: rubble/brass
+        frequency: 10
+      - item: mechanical/turret-flame-mk3
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/flame-mark-3']
+    spine_skinV3: flame-mk3
+
+  mechanical/turret-dessicator:
+    <<: *entity-turret
+    code: 94
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 17
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/dessication
+        speed: 9.5
+        frequency: 0.5
+        burst: 7
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-dessicator
+    loot:
+      - item: rubble/iron
+        frequency: 12
+      - item: rubble/brass
+        frequency: 12
+      - item: mechanical/turret-dessicator
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/dessicator']
+    spine_skinV3: dessicator
+
+  mechanical/turret-dessicator-mk2:
+    <<: *entity-turret
+    code: 48
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 17
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/dessication-mk2
+        speed: 9.5
+        frequency: 0.5
+        burst: 7
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-dessicator-mk2
+    loot:
+      - item: rubble/iron
+        frequency: 12
+      - item: rubble/brass
+        frequency: 12
+      - item: mechanical/turret-dessicator-mk2
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/dessicator-mark-2']
+    spine_skinV3: dessicator-mk2
+
+  mechanical/turret-dessicator-mk3:
+    <<: *entity-turret
+    code: 49
+    health: 1.5
+    behavior:
+      - type: randomly_target
+        range: 17
+        friendly_fire: false
+      - type: spawn_attack
+        entity: bullets/dessication-mk3
+        speed: 9.5
+        frequency: 0.5
+        burst: 7
+        delay: 3
+    placed_loot:
+      item: mechanical/turret-dessicator-mk3
+    loot:
+      - item: rubble/iron
+        frequency: 12
+      - item: rubble/brass
+        frequency: 12
+      - item: mechanical/turret-dessicator-mk3
+        frequency: 1
+    sprites:
+      - ['body', 'turrets/dessicator-mark-3']
+    spine_skinV3: dessicator-mk3
+
+  # Bullets
+
+  bullet: &bullet
+    collides: true
+    rotates: true
+    shape: circle
+    life: 1.5
+    scale base: 0.6
+    scale range: 0.2
+    collision weakness: 1.0
+    class: Bullet
+    obstructed: true
+    liquid:
+      speed: 0.2
+      kill: true
+      change: steam
+
+  bullets/lead-base: &bullet-lead
+    <<: *bullet
+    health: 0.1
+    material: metal
+    gravity: 0.3
+    density: 1.0
+    scale base: 0.6
+    sprite: particles/bullet-1
+    sprites:
+      - ['body', ['particles/bullet', 1]]
+    spritesV3: ['particles/bullet', 1]
+    angular velocity range: 40
+    sound: ['gun_22pistol_05', 'gun_22pistol_06']
+    liquid:
+      speed: 0.9
+  bullets/lead:
+    <<: *bullet-lead
+    code: 100
+    damage: ['piercing', 0.333]
+  bullets/lead-mk2:
+    <<: *bullet-lead
+    code: 101
+    damage: ['piercing', 0.667]
+    color animation:
+      life: 0.25
+      colors:
+        - ff8888
+        - ffffff
+  bullets/lead-mk3:
+    <<: *bullet-lead
+    code: 102
+    damage: ['piercing', 1.0]
+    color animation:
+      life: 0.5
+      colors:
+        - ff0000
+        - ffffff
+
+  bullets/bone:
+    <<: *bullet
+    code: 105
+    health: 0.1
+    material: stone
+    gravity: 0.4
+    density: 1.0
+    scale base: 0.678
+    sprite: particles/bone-1
+    sprites:
+      - ['body', ['particles/bone', 4]]
+    spritesV3: ['particles/bone', 4]
+    damage: ['bludgeoning', 0.333]
+    angular velocity range: 40
+    sound: radio_static_11
+
+  bullets/ink: &bullet-ink
+    <<: *bullet
+    code: 110
+    health: 0.1
+    material: ink
+    gravity: 0.6
+    density: 0.85
+    sprite: particles/ink-1
+    sprites:
+      - ['body', ['particles/ink', 4]]
+    spritesV3: ['particles/ink', 4]
+    damage: ['ink', 0.2]
+    collision emitter: ink spatter
+    angular velocity range: 30
+    sound: torch_whoosh06
+  bullets/ink-mk2:
+    <<: *bullet-ink
+    code: 138
+    scale base: 0.9
+    damage: ['ink', 0.75]
+
+  bullets/steam-base: &bullet-steam
+    <<: *bullet
+    health: 0.1
+    material: steam
+    gravity: 0.3
+    density: 0.2
+    sprite: particles/steam-1
+    sprites:
+      - ['body', ['particles/steam', 4]]
+    spritesV3: ['particles/steam', 4]
+    angular velocity range: 10
+    scale animation:
+      life: 1.0
+      scale: 1.2
+  bullets/steam:
+    <<: *bullet-steam
+    code: 115
+    damage: ['fire', 0.3]
+    scale base: 0.5
+    color animation:
+      life: 0.5
+      colors:
+        - eeeeee
+        - aaaaaa
+  bullets/steam-mk2:
+    <<: *bullet-steam
+    code: 116
+    damage: ['fire', 0.6]
+    scale base: 0.6
+    color animation:
+      life: 0.5
+      colors:
+        - ffffff
+        - cccccc
+  bullets/steam-mk3:
+    <<: *bullet-steam
+    code: 117
+    damage: ['fire', 0.9]
+    scale base: 0.7
+    color animation:
+      life: 0.5
+      colors:
+        - ffffdd
+        - ffffff
+        - eeeeee
+
+
+  bullets/acid-base: &bullet-acid
+    <<: *bullet
+    health: 0.3
+    material: acid
+    density: 0.85
+    sprite: particles/acid-1
+    sprites:
+      - ['body', ['particles/acid', 4]]
+    spritesV3: ['particles/acid', 4]
+    collision emitter: acid spatter
+    angular velocity range: 20
+    scale animation:
+      life: 0.9
+      scale: 1.1
+    sound: radio_static_11
+
+  bullets/acid:
+    <<: *bullet-acid
+    code: 120
+    damage: ['acid', 0.4]
+    gravity: 0.5
+    scale base: 0.5
+    color animation:
+      life: 1.2
+      colors:
+        - ffd467
+        - ffffff
+        - ffffcc
+  bullets/acid-mk2:
+    <<: *bullet-acid
+    code: 121
+    damage: ['acid', 0.8]
+    gravity: 0.4
+    scale base: 0.6
+    color animation:
+      life: 1.2
+      colors:
+        - ffd467
+        - ffffff
+        - ccffcc
+  bullets/acid-mk3:
+    <<: *bullet-acid
+    code: 122
+    damage: ['acid', 1.2]
+    gravity: 0.3
+    scale base: 0.7
+    color animation:
+      life: 1.2
+      colors:
+        - ffe447
+        - ffffff
+        - 99ff99
+
+  bullets/fiery: &bullets-fiery
+    <<: *bullet
+    health: 0.25
+    material: fire
+    gravity: 0.4
+    density: 0.3
+
+  bullets/fire-base: &bullets-fire-base
+    <<: *bullets-fiery
+    sprite: particles/fire-1
+    sprites:
+      - ['body', ['particles/fire', 4]]
+    spritesV3: ['particles/fire', 4]
+    collision emitter: fire spatter
+    angular velocity range: 20
+    sound: torch_whoosh12
+
+  bullets/fire:
+    <<: *bullets-fire-base
+    code: 125
+    damage: ['fire', 0.4]
+
+  bullets/fire-mk2:
+    <<: *bullets-fire-base
+    code: 161
+    damage: ['fire', 0.8]
+
+  bullets/fire-mk3:
+    <<: *bullets-fire-base
+    code: 162
+    damage: ['fire', 1.2]
+
+  bullets/flame-base: &bullet-flame
+    <<: *bullets-fiery
+    sprite: particles/steam-1
+    sprites:
+      - ['body', ['particles/steam', 4]]
+    spritesV3: ['particles/steam', 4]
+    angular velocity range: 10
+    scale animation:
+      life: 1.0
+      scale: 1.3
+    sound: fireball_flame_01
+
+  bullets/flame:
+    <<: *bullet-flame
+    code: 126
+    damage: ['fire', 0.5]
+    scale base: 0.5
+    color animation:
+      life: 1.0
+      colors:
+        - ffdc1e
+        - c89b0a
+        - ff4b0a
+        - ff1002
+        - 3a2929
+  bullets/flame-mk2:
+    <<: *bullet-flame
+    code: 127
+    damage: ['fire', 1.0]
+    scale base: 0.625
+    color animation:
+      life: 1.0
+      colors:
+        - fffee2
+        - ffdc1e
+        - c89b0a
+        - ff4b0a
+        - ff1002
+        - 2b2a2a
+  bullets/flame-mk3:
+    <<: *bullet-flame
+    code: 128
+    damage: ['fire', 1.5]
+    scale base: 0.75
+    color animation:
+      life: 1.0
+      colors:
+        - fffff1
+        - ffddaa
+        - ff4b0a
+        - ff1002
+        - 1a1919
+
+  bullets/frost-base: &bullet-frost
+    <<: *bullet
+    health: 0.25
+    material: frost
+    density: 0.3
+    sprite: particles/snow-1
+    sprites:
+      - ['body', ['particles/snow-1', 'particles/snow-2', 'particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4', 'particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']]
+    spritesV3: ['particles/snow-1', 'particles/snow-2', 'particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4', 'particles/steam-1', 'particles/steam-2', 'particles/steam-3', 'particles/steam-4']
+    angular velocity range: 10
+
+  bullets/frost:
+    <<: *bullet-frost
+    code: 130
+    gravity: 0.4
+    damage: ['cold', 0.45]
+    scale base: 0.45
+    color animation:
+      life: 1.0
+      colors:
+        - f2f2ff
+        - 8888ff
+        - 25257a
+  bullets/frost-mk2:
+    <<: *bullet-frost
+    code: 131
+    gravity: 0.35
+    damage: ['cold', 0.9]
+    scale base: 0.6
+    color animation:
+      life: 1.0
+      colors:
+        - f2f2ff
+        - aaaaff
+        - 25256a
+  bullets/frost-mk3:
+    <<: *bullet-frost
+    code: 132
+    gravity: 0.3
+    damage: ['cold', 1.35]
+    scale base: 0.75
+    color animation:
+      life: 1.0
+      colors:
+        - f2f2ff
+        - ccccff
+        - 15155a
+
+  bullets/energy-base: &bullet-energy
+    <<: *bullet
+    health: 0.25
+    material: energy
+    density: 0.1
+    sprite: particles/energy-1
+    sprites:
+      - ['body', ['particles/energy-1', 'particles/energy-2', 'particles/energy-3', 'particles/energy-4']]
+    spritesV3: ['particles/energy-1', 'particles/energy-2', 'particles/energy-3', 'particles/energy-4']
+    angular velocity range: 3
+    scale animation:
+      life: 1.0
+      scale: 1.5
+    color: bbbb00
+    color animation:
+      life: 1.0
+      colors:
+        - f2f244
+        - ffffff
+        - 3a3a33
+
+  bullets/energy:
+    <<: *bullet-energy
+    code: 135
+    gravity: 0.2
+    damage: ['energy', 0.425]
+    scale base: 0.15
+  bullets/energy-mk2:
+    <<: *bullet-energy
+    code: 136
+    gravity: 0.15
+    damage: ['energy', 0.85]
+    scale base: 0.275
+  bullets/energy-mk3:
+    <<: *bullet-energy
+    code: 137
+    gravity: 0.1
+    damage: ['energy', 1.275]
+    scale base: 0.4
+
+  bullets/dessication-base: &bullet-dessication-base
+    health: 0.25
+    material: energy
+    gravity: 0.2
+    density: 0.1
+    sprite: particles/energy-1
+    sprites:
+      - ['body', ['particles/energy-1', 'particles/energy-2', 'particles/energy-3', 'particles/energy-4']]
+    spritesV3: ['particles/energy-1', 'particles/energy-2', 'particles/energy-3', 'particles/energy-4']
+    angular velocity range: 3
+    scale base: 0.25
+    scale animation:
+      life: 1.0
+      scale: 1.5
+    color: f222f2
+    color animation:
+      life: 1.0
+      colors:
+        - f222e2
+        - ffffff
+        - 4a003a
+
+  bullets/dessication:
+    <<: *bullet-dessication-base
+    code: 140
+    damage: ['dessication', 5.0]
+  bullets/dessication-mk2:
+    <<: *bullet-dessication-base
+    code: 164
+    damage: ['dessication', 7.5]
+  bullets/dessication-mk3:
+    <<: *bullet-dessication-base
+    code: 163
+    damage: ['dessication', 10.0]
+
+
+  bullets/direct:
+    <<: *bullet
+    code: 145
+    health: 0.25
+    material: energy
+    gravity: 0
+    collides: false
+    sprite: particles/energy-1
+    sprites:
+      - ['body', ['particles/energy-1', 'particles/energy-2', 'particles/energy-3', 'particles/energy-4']]
+    spritesV3: ['particles/energy-1', 'particles/energy-2', 'particles/energy-3', 'particles/energy-4']
+    damage: ['energy', 0]
+    angular velocity range: 3
+    scale base: 0.2
+    scale animation:
+      life: 1.0
+      scale: 1.5
+    color: ff1155
+    color animation:
+      life: 1.0
+      colors:
+        - f2d1e1
+        - ffffff
+        - 5a1122
+
+  bullets/shadow:
+    <<: *bullet
+    code: 146
+    health: 0.25
+    material: fire
+    gravity: 0.2
+    density: 0.3
+    sprite: particles/steam-1
+    sprites:
+      - ['body', ['particles/steam', 4]]
+    spritesV3: ['particles/steam', 4]
+    damage: ['crushing', 0.5]
+    angular velocity range: 10
+    scale animation:
+      life: 1.0
+      scale: 1.45
+    color animation:
+      life: 1.0
+      colors:
+        - 2a1a1a
+        - 3a1a1a
+        - 0f0a0a
+    sound: fireball_flame_01
+
+  bullets/ice:
+    <<: *bullet
+    code: 147
+    health: 0.1
+    material: glass
+    gravity: 0.8
+    density: 0.9
+    sprite: particles/ice-1
+    sprites:
+      - ['body', ['particles/ice', 4]]
+    spritesV3: ['particles/ice', 4]
+    damage: ['cold', 0.333]
+    collision emitter: ice spatter
+    angular velocity range: 30
+    sound: torch_whoosh06
+
+  bullets/stink:
+    <<: *bullet
+    code: 148
+    health: 0.1
+    material: steam
+    gravity: 0.4
+    density: 0.2
+    scale animation:
+      life: 1.0
+      scale: 1.1
+    sprite: particles/steam-1
+    sprites:
+      - ['body', ['particles/steam', 4]]
+    spritesV3: ['particles/steam', 4]
+    damage: ['stink', 0.1]
+    angular velocity range: 10
+    sound: torch_whoosh06
+    color: 5d7747
+    color animation:
+      life: 1.0
+      colors:
+        - 5d7747
+        - 7b835c
+        - 4a4a33
+
+  bullets/magnet:
+    <<: *bullet
+    code: 160
+    health: 0.5
+    material: metal
+    gravity: 0.3
+    density: 0.3
+    magnetism: 0.25
+    scale base: 0.4
+    sprite: bullets/bomb-magnet
+    sprites:
+      - ['body', 'bullets/bomb-magnet']
+    spritesV3: ['bullets/bomb-magnet']
+    damage: ['crushing', 2.0]
+    collision effect: ['bomb-fire', 2]
+    smart collision: true
+    angular velocity range: 30
+    sound: torch_whoosh06
+
+  bullets/earth:
+    <<: *bullet
+    code: 149
+    scale base: 1.2
+    scale range: 0.6
+    life: 8.0
+    health: 0.1
+    material: earth
+    gravity: 1.0
+    density: 1.0
+    scale base: 0.6
+    sprite: particles/steam-1
+    sprites:
+      - ['body', ['particles/steam', 4]]
+    spritesV3: ['particles/steam', 4]
+    color: 38210a
+    color animation:
+      life: 1.0
+      colors:
+        - 38210a
+    angular velocity range: 40
+    sound: ['ExplosionDistant']
+
+
+
+
+  # ===== Aquatic ===== #
+
+  aquatic: &aquatic
+    group: creature
+    material: squish
+    spine_scale_base: 1.0
+    scale base: 0.85
+    scale range: 0.3
+    damage emitter: guts
+    death emitter: guts
+    friendly: true
+    weakness:
+      piercing: 0.2
+    loot:
+      - item: ground/giblets
+
+  # Fish
+
+  fish: &fish
+    <<: *aquatic
+    #ambient sound: ['crow-chatter-1', 'crow-chatter-2']
+    #death sound: crow-die
+
+    behavior:
+      - type: flyer
+        aquatic: true
+        animation: swim
+    animations:
+      - name: swim
+      - name: flop
+
+  aquatic/clownfish:
+    <<: *fish
+    code: 300
+    title: Clownfish
+    spine: fish-small
+    spine_skin: clownfish
+    health: 1.0
+    speed: 4
+
+  aquatic/flame-hawkfish:
+    <<: *fish
+    code: 301
+    title: Flame Hawkfish
+    spine: fish-small
+    spine_skin: flame-hawkfish
+    health: 1.0
+    speed: 4
+
+  aquatic/sergeant-major:
+    <<: *fish
+    code: 302
+    title: Sergeant Major Fish
+    spine: fish-small
+    spine_skin: sergeant-major
+    health: 1.0
+    speed: 4
+
+  aquatic/almaco-jack:
+    <<: *fish
+    code: 303
+    title: Almaco Jack Fish
+    spine: fish-large
+    spine_skin: almaco-jack
+    health: 2.5
+    speed: 4
+
+  aquatic/angelfish:
+    <<: *fish
+    code: 304
+    title: Angelfish
+    spine: fish-large
+    spine_skin: angelfish
+    health: 3.5
+    speed: 4
+
+  aquatic/codfish:
+    <<: *fish
+    code: 305
+    title: Codfish
+    spine: fish-large
+    spine_skin: codfish
+    health: 2.0
+    speed: 4
+
+  aquatic/herring:
+    <<: *fish
+    code: 306
+    title: Herring Fish
+    spine: fish-large
+    spine_skin: herring
+    health: 3.0
+    speed: 4
+
+  aquatic/piranha:
+    <<: *fish
+    code: 307
+    title: Piranha
+    spine: piranha
+    health: 1.5
+    xp: 3
+    speed: 5
+
+    friendly: false
+    damage: ['piercing', 0.667]
+    behavior:
+      - type: aquatic
+      - type: flyer
+      - type: randomly_target
+        range: 10
+
+  # Anemones
+
+  anemone: &anemone
+    <<: *aquatic
+    spine: anemone
+    behavior:
+      - type: idle
+    animations:
+      - name: idle
+    health: 2.5
+
+  aquatic/anemone-red:
+    <<: *anemone
+    code: 315
+    title: Red Anemone
+    spine_skin: red
+
+  aquatic/anemone-magenta:
+    <<: *anemone
+    code: 316
+    title: Magenta Anemone
+    spine_skin: magenta
+
+  aquatic/anemone-electric:
+    <<: *anemone
+    code: 317
+    title: Electric Anemone
+    spine_skin: electric
+    damage: ['energy', 1.0]
+    xp: 3
+

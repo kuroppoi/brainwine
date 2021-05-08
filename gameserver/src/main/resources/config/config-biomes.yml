@@ -1,0 +1,895 @@
+biomes:
+  plain:
+    sky:
+      day color: ['82BAF0', 'CDE066']
+      night color: ['1F2438', '1F3428']
+      gradients:
+        - ['2e3343', '0b183f']
+        - ['2e3343', '0b183f']
+        - ['403b65', '0c183f']
+        - ['edadc2', '142968']
+        - ['96c4ff', '1444e2']
+        - ['96c4ff', '1444e2']
+        - ['d1946b', '172a69']
+        - ['68b8de', '0c1840']
+        - ['2e3343', '0b183f']
+        - ['2e3343', '0b183f']
+      gradients acidic:
+        - ['1d2b0b', '052500']
+        - ['d0e6a9', '1b3912']
+        - ['d3dc98', '8dbc39']
+        - ['d3d469', '0d2901']
+        - ['1d2b0b', '052500']
+      precipitation color: '333333'
+    rubble:
+      base sprites:
+        - rubble-bottom-high-1
+        - rubble-bottom-high-2
+        - rubble-bottom-high-3
+        - rubble-high-high-1
+        - rubble-high-high-2
+        - rubble-high-high-3
+        - rubble-low-low-1
+        - rubble-low-low-2
+        - rubble-low-low-3
+        - rubble-low-mid-1
+        - rubble-low-mid-2
+        - rubble-low-mid-3
+        - rubble-mid-high-1
+        - rubble-mid-high-2
+        - rubble-mid-high-3
+        - rubble-mid-mid-1
+        - rubble-mid-mid-2
+        - rubble-mid-mid-3
+        - rubble-solid
+      detail sprites:
+        - rubble-building-1
+        - rubble-building-10
+        - rubble-building-11
+        - rubble-building-12
+        - rubble-building-2
+        - rubble-building-3
+        - rubble-building-4
+        - rubble-building-5
+        - rubble-building-6
+        - rubble-building-7
+        - rubble-building-8
+        - rubble-building-9
+        - rubble-stump-1
+        - rubble-stump-2
+        - rubble-stump-3
+        - rubble-stump-4
+        - rubble-tree-1
+        - rubble-tree-10
+        - rubble-tree-11
+        - rubble-tree-12
+        - rubble-tree-2
+        - rubble-tree-3
+        - rubble-tree-4
+        - rubble-tree-5
+        - rubble-tree-6
+        - rubble-tree-7
+        - rubble-tree-8
+        - rubble-tree-9
+    caverns:
+      shallow color: ['82BAF0', 'CDE066']
+      deep color: ['eeee22', 'ee5511']
+    ground color: ['6a4b2b', '2d2e1b']
+    map:
+      ground:
+        - ['ffffff', 0.03]
+        - ['5db830', 0.05]
+        - ['417431', 0.08]
+        - ['414e1c', 0.12]
+        - ['4e441c', 0.17]
+        - ['2a240c', 0.26]
+        - ['18150b', 0.3]
+    precipitation: rain
+    precipitation damage: ['acid', 0.3]
+    items:
+      base/earth: temperate/earth-base
+      base/earth-accent-1: temperate/earth-base-accent-small-1
+      base/earth-accent-2: temperate/earth-base-accent-small-2
+      base/earth-accent-3: temperate/earth-base-accent-small-3
+      base/earth-accent-4: temperate/earth-base-accent-small-4
+      base/earth-accent-5: temperate/earth-base-accent-small-5
+      base/earth-accent-6: temperate/earth-base-accent-small-6
+      base/earth-accent-7: temperate/earth-base-accent-small-7
+      base/earth-accent-8: temperate/earth-base-accent-small-8
+      base/earth-accent-9: temperate/earth-base-accent-large-1
+      base/earth-accent-10: temperate/earth-base-accent-large-2
+      base/earth-accent-11: temperate/earth-base-accent-large-3
+      base/earth-accent-12: temperate/earth-base-accent-large-4
+      base/earth-accent-13: temperate/earth-base-accent-large-5
+      base/earth-accent-14: temperate/earth-base-accent-large-6
+      ground/earth: temperate/earth-front
+      ground/earth-deep: temperate/earth-front-deep
+      ground/earth-deeper: temperate/earth-front-deeper
+      ground/earth-deepest: temperate/earth-front-deeper
+      ground/stalagmite-1: temperate/stalagmite-1
+      ground/stalagmite-2: temperate/stalagmite-2
+      ground/stalagmite-3: temperate/stalagmite-3
+      ground/stalagmite-4: temperate/stalagmite-4
+      ground/stalagmite-5: temperate/stalagmite-5
+    soundv2:
+      aboveground:
+        day:
+          loop:
+            wind: wind_desert_01_30
+          periodic:
+            windgust02: 1
+            windgust03: 1
+            windgust07: 1
+            silence: 1
+        night:
+          loop:
+            wind: wind_desert_01_30
+            nature: crickets_amb_03_15
+      belowground:
+        loop:
+          cavern: hallway_of_fear_sub_air_dark_hollow_wide_01_10
+        periodic:
+          drip-1: 1
+          drip-2: 1
+          drip-3: 1
+          drip-4: 1
+          drip-5: 1
+          drip-6: 1
+          rockfall-1: 1
+          rockfall-2: 1
+          rockfall-3: 1
+          rockfall-4: 1
+          rockfall-5: 1
+          bats-1:
+          bats-2:
+          bats-3:
+    sound:
+      underground:
+        drip-1: 10
+        drip-2: 10
+        drip-3: 10
+        drip-4: 10
+        drip-5: 10
+        drip-6: 10
+        rockfall-1: 10
+        rockfall-2: 10
+        rockfall-3: 10
+        rockfall-4: 10
+        rockfall-5: 10
+    regen:
+      survival: 1
+      amount: 0.2
+      bonus: 0.025
+    icon: icons/mountains
+
+  deep:
+    sky:
+      day color: ['82BAF0', 'CDE066']
+      night color: ['1F2438', '1F3428']
+      gradients:
+        - ['2e3343', '0b183f']
+        - ['edadc2', '142968']
+        - ['96c4ff', '1444e2']
+        - ['d1946b', '172a69']
+        - ['2e3343', '0b183f']
+    caverns:
+      shallow color: ['82BAF0', 'CDE066']
+      deep color: ['eeee22', 'ee5511']
+    ground color: ['6a4b2b', '2d2e1b']
+    map:
+      ground:
+        - ['ffffff', 0.03]
+        - ['5db830', 0.05]
+        - ['417431', 0.08]
+        - ['414e1c', 0.12]
+        - ['4e441c', 0.17]
+        - ['2a240c', 0.26]
+        - ['18150b', 0.3]
+    items:
+      base/earth: deep/earth-base
+      base/earth-accent-1: deep/earth-base-accent-small-1
+      base/earth-accent-2: deep/earth-base-accent-small-2
+      base/earth-accent-3: deep/earth-base-accent-small-3
+      base/earth-accent-4: deep/earth-base-accent-small-4
+      base/earth-accent-5: deep/earth-base-accent-small-5
+      base/earth-accent-6: deep/earth-base-accent-small-6
+      base/earth-accent-7: deep/earth-base-accent-small-7
+      base/earth-accent-8: deep/earth-base-accent-small-8
+      base/earth-accent-9: deep/earth-base-accent-large-1
+      base/earth-accent-10: deep/earth-base-accent-large-2
+      base/earth-accent-11: deep/earth-base-accent-large-3
+      base/earth-accent-12: deep/earth-base-accent-large-4
+      base/earth-accent-13: deep/earth-base-accent-large-5
+      base/earth-accent-14: deep/earth-base-accent-large-6
+      ground/earth: deep/earth-front
+      ground/earth-deep: deep/earth-front-deep
+      ground/earth-deeper: deep/earth-front-deeper
+      ground/earth-deepest: deep/earth-front-deepest
+      ground/stalagmite-1: deep/stalagmite-3
+      ground/stalagmite-2: deep/stalagmite-4
+      ground/stalagmite-3: deep/stalagmite-5
+      ground/stalagmite-4: deep/stalagmite-1
+      ground/stalagmite-5: deep/stalagmite-2
+    sound:
+      underground:
+        drip-1: 10
+        drip-2: 10
+        drip-3: 10
+        drip-4: 10
+        drip-5: 10
+        drip-6: 10
+        rockfall-1: 10
+        rockfall-2: 10
+        rockfall-3: 10
+        rockfall-4: 10
+        rockfall-5: 10
+    soundv2:
+      belowground:
+        loop:
+          cavern: hallway_of_fear_sub_air_dark_hollow_wide_01_10
+        periodic:
+          drip-1: 1
+          drip-2: 1
+          drip-3: 1
+          drip-4: 1
+          drip-5: 1
+          drip-6: 1
+          rockfall-1: 1
+          rockfall-2: 1
+          rockfall-3: 1
+          rockfall-4: 1
+          rockfall-5: 1
+          bats-1:
+          bats-2:
+          bats-3:
+    regen:
+      survival: 1
+      amount: 0.2
+      bonus: 0.025
+    icon: icons/deep
+
+  arctic:
+    survival_requirement: 2
+    sky:
+      day color: ['82CAF0', '82CAF0']
+      night color: ['0F2438', '0F3428']
+      gradients:
+        - ['2e3343', '0b183f']
+        - ['edadc2', '142968']
+        - ['96c4ff', '1444e2']
+        - ['d1946b', '172a69']
+        - ['2e3343', '0b183f']
+      precipitation color: dddddd
+    rubble:
+      base sprites:
+        - rubble-arctic-bottom-high-1
+        - rubble-arctic-bottom-high-2
+        - rubble-arctic-bottom-high-3
+        - rubble-arctic-high-high-1
+        - rubble-arctic-high-high-2
+        - rubble-arctic-high-high-3
+        - rubble-arctic-low-low-1
+        - rubble-arctic-low-low-2
+        - rubble-arctic-low-low-3
+        - rubble-arctic-low-mid-1
+        - rubble-arctic-low-mid-2
+        - rubble-arctic-low-mid-3
+        - rubble-arctic-mid-high-1
+        - rubble-arctic-mid-high-2
+        - rubble-arctic-mid-high-3
+        - rubble-arctic-mid-mid-1
+        - rubble-arctic-mid-mid-2
+        - rubble-arctic-mid-mid-3
+        - rubble-arctic-solid
+      detail sprites:
+        - rubble-arctic-building-1
+        - rubble-arctic-building-10
+        - rubble-arctic-building-11
+        - rubble-arctic-building-12
+        - rubble-arctic-building-2
+        - rubble-arctic-building-3
+        - rubble-arctic-building-4
+        - rubble-arctic-building-5
+        - rubble-arctic-building-6
+        - rubble-arctic-building-7
+        - rubble-arctic-building-8
+        - rubble-arctic-building-9
+        - rubble-arctic-stump-1
+        - rubble-arctic-stump-2
+        - rubble-arctic-stump-3
+        - rubble-arctic-stump-4
+        - rubble-arctic-tree-1
+        - rubble-arctic-tree-10
+        - rubble-arctic-tree-11
+        - rubble-arctic-tree-12
+        - rubble-arctic-tree-2
+        - rubble-arctic-tree-3
+        - rubble-arctic-tree-4
+        - rubble-arctic-tree-5
+        - rubble-arctic-tree-6
+        - rubble-arctic-tree-7
+        - rubble-arctic-tree-8
+        - rubble-arctic-tree-9
+    caverns:
+      shallow color: ['82BAF0', '66A0CC']
+      deep color: ['2299dd', '1a22cc']
+    ground color: ['9793a3', '271704']
+    precipitation: snow
+    items:
+      base/earth: arctic/earth-base
+      base/earth-accent-1: arctic/earth-base-accent-small-1
+      base/earth-accent-2: arctic/earth-base-accent-small-2
+      base/earth-accent-3: arctic/earth-base-accent-small-3
+      base/earth-accent-4: arctic/earth-base-accent-small-4
+      base/earth-accent-5: arctic/earth-base-accent-small-5
+      base/earth-accent-6: arctic/earth-base-accent-small-6
+      base/earth-accent-7: arctic/earth-base-accent-small-7
+      base/earth-accent-8: arctic/earth-base-accent-small-8
+      base/earth-accent-9: arctic/earth-base-accent-large-1
+      base/earth-accent-10: arctic/earth-base-accent-large-2
+      base/earth-accent-11: arctic/earth-base-accent-large-3
+      base/earth-accent-12: arctic/earth-base-accent-large-4
+      base/earth-accent-13: arctic/earth-base-accent-large-5
+      base/earth-accent-14: arctic/earth-base-accent-large-6
+      ground/earth: arctic/earth-front
+      ground/earth-deep: arctic/earth-front-deep
+      ground/earth-deeper: arctic/earth-front-deeper
+      ground/earth-deepest: arctic/earth-front-deeper
+      ground/stalagmite-1: arctic/icicle-1
+      ground/stalagmite-2: arctic/icicle-2
+      ground/stalagmite-3: arctic/icicle-3
+      ground/stalagmite-4: arctic/icicle-4
+      ground/stalagmite-5: arctic/icicle-5
+    map:
+      ground:
+        - ['ffffff', 0.03]
+        - ['75a49e', 0.05]
+        - ['456b74', 0.08]
+        - ['33535f', 0.12]
+        - ['2d4f5d', 0.17]
+        - ['142e3f', 0.26]
+        - ['0b1a25', 0.3]
+
+    sound:
+      underground:
+        rockfall-1: 10
+        rockfall-2: 10
+        rockfall-3: 10
+        rockfall-4: 10
+        rockfall-5: 10
+        bats-1: 3
+        bats-2: 3
+        bats-3: 3
+    soundv2:
+      aboveground:
+        day:
+          loop:
+            wind: wind_desert_01_30
+          periodic:
+            windgust02: 1
+            windgust03: 1
+            windgust07: 1
+            silence: 1
+        night:
+          loop:
+            wind: wind_desert_01_30
+      belowground:
+        loop:
+          cavern: hallway_of_fear_sub_air_dark_hollow_wide_01_10
+        periodic:
+          rockfall-1: 1
+          rockfall-2: 1
+          rockfall-3: 1
+          rockfall-4: 1
+          rockfall-5: 1
+          bats-1:
+          bats-2:
+          bats-3:
+    regen:
+      survival: 3
+      amount: 0.185
+      bonus: 0.0225
+    icon: icons/ice
+
+
+  hell:
+    survival_requirement: 3
+    sky:
+      day color: ['370f02', '370f02']
+      night color: ['1a0501', '1a0501']
+      gradients:
+        - ['4d0000', '000000']
+        - ['bb4c06', '220000']
+        - ['4d0000', '000000']
+      precipitation color: dd9933
+    rubble:
+      detail sprites:
+        - rubble-hell-castle-1
+        - rubble-hell-castle-2
+        - rubble-hell-face-1
+        - rubble-hell-face-2
+        - rubble-hell-face-3
+        - rubble-hell-giant-1
+        - rubble-hell-giant-2
+        - rubble-hell-giant-3
+        - rubble-hell-hand-1
+        - rubble-hell-hand-2
+        - rubble-hell-spikes-1
+        - rubble-hell-spikes-2
+        - rubble-hell-spikes-3
+        - rubble-hell-spikes-4
+        - rubble-hell-thorn-1
+        - rubble-hell-thorn-2
+        - rubble-hell-thorn-3
+        - rubble-hell-thorn-4
+        - rubble-hell-thorn-5
+        - rubble-hell-thornpatch
+    caverns:
+      shallow color: ['F0BA82', 'CDA066']
+      deep color: ['dd9922', 'dd2211']
+    ground color: ['3c0c0f', '1e1c1f']
+    precipitation: ash rain
+    precipitation damage: ['fire', 0.4]
+    map:
+      ground:
+        - ['ffffff', 0.03]
+        - ['be8d6f', 0.05]
+        - ['905548', 0.08]
+        - ['7f3c32', 0.12]
+        - ['6f3932', 0.17]
+        - ['5f1814', 0.26]
+        - ['380e0d', 0.3]
+    items:
+      base/earth: hell/earth-base
+      base/earth-accent-1: hell/earth-base-accent-small-1
+      base/earth-accent-2: hell/earth-base-accent-small-2
+      base/earth-accent-3: hell/earth-base-accent-small-3
+      base/earth-accent-4: hell/earth-base-accent-small-4
+      base/earth-accent-5: hell/earth-base-accent-small-5
+      base/earth-accent-6: hell/earth-base-accent-small-6
+      base/earth-accent-7: hell/earth-base-accent-small-7
+      base/earth-accent-8: hell/earth-base-accent-small-8
+      base/earth-accent-9: hell/earth-base-accent-large-1
+      base/earth-accent-10: hell/earth-base-accent-large-2
+      base/earth-accent-11: hell/earth-base-accent-large-3
+      base/earth-accent-12: hell/earth-base-accent-large-4
+      base/earth-accent-13: hell/earth-base-accent-large-5
+      base/earth-accent-14: hell/earth-base-accent-large-6
+      ground/earth: hell/earth-front
+      ground/earth-deep: hell/earth-front-deep
+      ground/earth-deeper: hell/earth-front-deeper
+      ground/earth-deepest: hell/earth-front-deepest
+      ground/stalagmite-1: hell/stalagmite-1
+      ground/stalagmite-2: hell/stalagmite-2
+      ground/stalagmite-3: hell/stalagmite-3
+      ground/stalagmite-4: hell/stalagmite-4
+      ground/stalagmite-5: hell/stalagmite-5
+    sound:
+      underground:
+        rockfall-1: 10
+        rockfall-2: 10
+        rockfall-3: 10
+        rockfall-4: 10
+        rockfall-5: 10
+    soundv2:
+      aboveground:
+        day:
+          loop:
+            wind: wind_desert_01_30
+          periodic:
+            windgust02: 1
+            windgust03: 1
+            windgust07: 1
+            silence: 1
+        night:
+          loop:
+            wind: wind_desert_01_30
+      belowground:
+        loop:
+          cavern: hallway_of_fear_sub_air_dark_hollow_wide_01_10
+        periodic:
+          rockfall-1: 1
+          rockfall-2: 1
+          rockfall-3: 1
+          rockfall-4: 1
+          rockfall-5: 1
+    regen:
+      survival: 5
+      amount: 0.15
+      bonus: 0.02
+    icon: icons/fire
+
+  brain:
+    survival_requirement: 4
+    sky:
+      day color: ['3f0257', '3f0257']
+      night color: ['1f0227', '1f0227']
+      gradients:
+        - ['3f0257', '000000']
+        - ['a19273', '400257']
+        - ['3f0257', '000000']
+    rubble:
+      base sprites:
+        - rubble-brain-bottom-high-1
+        - rubble-brain-bottom-high-2
+        - rubble-brain-bottom-high-3
+        - rubble-brain-high-high-1
+        - rubble-brain-high-high-2
+        - rubble-brain-high-high-3
+        - rubble-brain-low-low-1
+        - rubble-brain-low-low-2
+        - rubble-brain-low-low-3
+        - rubble-brain-low-mid-1
+        - rubble-brain-low-mid-2
+        - rubble-brain-low-mid-3
+        - rubble-brain-mid-high-1
+        - rubble-brain-mid-high-2
+        - rubble-brain-mid-high-3
+        - rubble-brain-mid-mid-1
+        - rubble-brain-mid-mid-2
+        - rubble-brain-mid-mid-3
+        - rubble-brain-solid
+      detail sprites:
+        - rubble-brain-building-1
+        - rubble-brain-building-10
+        - rubble-brain-building-11
+        - rubble-brain-building-12
+        - rubble-brain-building-2
+        - rubble-brain-building-3
+        - rubble-brain-building-4
+        - rubble-brain-building-5
+        - rubble-brain-building-6
+        - rubble-brain-building-7
+        - rubble-brain-building-8
+        - rubble-brain-building-9
+        - rubble-brain-desert-tree-1
+        - rubble-brain-stump-1
+        - rubble-brain-stump-2
+        - rubble-brain-stump-3
+        - rubble-brain-stump-4
+        - rubble-brain-tree-10
+        - rubble-brain-tree-11
+        - rubble-brain-tree-12
+        - rubble-brain-tree-2
+        - rubble-brain-tree-3
+        - rubble-brain-tree-4
+        - rubble-brain-tree-5
+        - rubble-brain-tree-6
+        - rubble-brain-tree-7
+        - rubble-brain-tree-8
+        - rubble-brain-tree-9
+    caverns:
+      shallow color: ['B2BAF0', 'A6A0CC']
+      deep color: ['7299dd', '6a22cc']
+    ground color: ['181012', '685c70']
+    map:
+      ground:
+        - ['ffffff', 0.03]
+        - ['a19599', 0.05]
+        - ['705c6e', 0.08]
+        - ['5d4257', 0.12]
+        - ['4e3e55', 0.17]
+        - ['3b1c36', 0.26]
+        - ['2a0b28', 0.3]
+    items:
+      base/earth: brain/earth-base
+      base/earth-accent-1: ''
+      base/earth-accent-2: ''
+      base/earth-accent-3: ''
+      base/earth-accent-4: ''
+      base/earth-accent-5: ''
+      base/earth-accent-6: ''
+      base/earth-accent-7: ''
+      base/earth-accent-8: ''
+      base/earth-accent-9: ''
+      base/earth-accent-10: ''
+      base/earth-accent-11: ''
+      base/earth-accent-12: ''
+      base/earth-accent-13: ''
+      base/earth-accent-14: ''
+      ground/earth: brain/earth-front
+      ground/earth-deep: brain/earth-front-deep
+      ground/earth-deeper: brain/earth-front-deeper
+      ground/earth-deepest: brain/earth-front-deeper
+    sound:
+      underground:
+        rockfall-1: 10
+        rockfall-2: 10
+        rockfall-3: 10
+        rockfall-4: 10
+        rockfall-5: 10
+    soundv2:
+      aboveground:
+        day:
+          loop:
+            wind: wind_desert_01_30
+          periodic:
+            windgust02: 1
+            windgust03: 1
+            windgust07: 1
+            silence: 1
+        night:
+          loop:
+            wind: wind_desert_01_30
+      belowground:
+        loop:
+          cavern: hallway_of_fear_sub_air_dark_hollow_wide_01_10
+        periodic:
+          drip-1: 1
+          drip-2: 1
+          drip-3: 1
+          drip-4: 1
+          drip-5: 1
+          drip-6: 1
+          rockfall-1: 1
+          rockfall-2: 1
+          rockfall-3: 1
+          rockfall-4: 1
+          rockfall-5: 1
+    regen:
+      survival: 5
+      amount: 0.15
+      bonus: 0.02
+    icon: icons/brain
+
+  desert:
+    sky:
+      day color: ['F2CA80', 'F2CA80']
+      night color: ['3F2408', '2F3408']
+      gradients:
+        - ['2e3343', '0b183f']
+        - ['edadc2', '142968']
+        - ['96c4ff', '1444e2']
+        - ['d1946b', '172a69']
+        - ['2e3343', '0b183f']
+    rubble:
+      base sprites:
+        - rubble-desert-bottom-high-1
+        - rubble-desert-bottom-high-2
+        - rubble-desert-bottom-high-3
+        - rubble-desert-high-high-1
+        - rubble-desert-high-high-2
+        - rubble-desert-high-high-3
+        - rubble-desert-low-low-1
+        - rubble-desert-low-low-2
+        - rubble-desert-low-low-3
+        - rubble-desert-low-mid-1
+        - rubble-desert-low-mid-2
+        - rubble-desert-low-mid-3
+        - rubble-desert-mid-high-1
+        - rubble-desert-mid-high-2
+        - rubble-desert-mid-high-3
+        - rubble-desert-mid-mid-1
+        - rubble-desert-mid-mid-2
+        - rubble-desert-mid-mid-3
+        - rubble-desert-solid
+      detail sprites:
+        - rubble-desert-building-1
+        - rubble-desert-building-10
+        - rubble-desert-building-11
+        - rubble-desert-building-12
+        - rubble-desert-building-2
+        - rubble-desert-building-3
+        - rubble-desert-building-4
+        - rubble-desert-building-5
+        - rubble-desert-building-6
+        - rubble-desert-building-7
+        - rubble-desert-building-8
+        - rubble-desert-building-9
+        - rubble-desert-stump-1
+        - rubble-desert-stump-2
+        - rubble-desert-stump-3
+        - rubble-desert-stump-4
+        - rubble-desert-tree-1
+        - rubble-desert-tree-10
+        - rubble-desert-tree-11
+        - rubble-desert-tree-12
+        - rubble-desert-tree-2
+        - rubble-desert-tree-3
+        - rubble-desert-tree-4
+        - rubble-desert-tree-5
+        - rubble-desert-tree-6
+        - rubble-desert-tree-7
+        - rubble-desert-tree-8
+        - rubble-desert-tree-9
+    caverns:
+      shallow color: ['F0DA82', 'CDB066']
+      deep color: ['ddb922', 'dda211']
+    ground color: ['ddb17a', 'ab753a']
+    map:
+      ground:
+        - ['ecde93', 0.03]
+        - ['b18e58', 0.05]
+        - ['7b5822', 0.08]
+        - ['614312', 0.12]
+        - ['4e350c', 0.17]
+        - ['322209', 0.26]
+        - ['1e1506', 0.3]
+    acidity: Aridity
+    items:
+      base/earth: desert/earth-base
+      base/earth-accent-1: desert/earth-base-accent-small-1
+      base/earth-accent-2: desert/earth-base-accent-small-2
+      base/earth-accent-3: desert/earth-base-accent-small-3
+      base/earth-accent-4: desert/earth-base-accent-small-4
+      base/earth-accent-5: desert/earth-base-accent-small-5
+      base/earth-accent-6: desert/earth-base-accent-small-6
+      base/earth-accent-7: desert/earth-base-accent-small-7
+      base/earth-accent-8: desert/earth-base-accent-small-8
+      base/earth-accent-9: desert/earth-base-accent-large-1
+      base/earth-accent-10: desert/earth-base-accent-large-2
+      base/earth-accent-11: desert/earth-base-accent-large-3
+      base/earth-accent-12: desert/earth-base-accent-large-4
+      base/earth-accent-13: desert/earth-base-accent-large-5
+      base/earth-accent-14: desert/earth-base-accent-large-6
+      ground/earth: desert/earth-front
+      ground/earth-deep: desert/earth-front
+      ground/earth-deeper: desert/earth-front
+      ground/earth-deepest: desert/earth-front
+      ground/stalagmite-1: desert/stalagmite-1
+      ground/stalagmite-2: desert/stalagmite-2
+      ground/stalagmite-3: desert/stalagmite-3
+      ground/stalagmite-4: desert/stalagmite-4
+      ground/stalagmite-5: desert/stalagmite-5
+      vegetation/shrub-dead-1: desert/shrub-4
+      vegetation/shrub-dead-2: desert/shrub-wide
+      vegetation/shrub-dead-3: desert/shrub-1
+      vegetation/shrub-dead-4: desert/shrub-2
+      vegetation/shrub-dead-5: desert/shrub-3
+      vegetation/shrub-dead-6: desert/shrub-4
+    sound:
+      underground:
+        rockfall-1: 10
+        rockfall-2: 10
+        rockfall-3: 10
+        rockfall-4: 10
+        rockfall-5: 10
+    soundv2:
+      aboveground:
+        day:
+          loop:
+            wind: wind_desert_01_30
+          periodic:
+            windgust02: 1
+            windgust03: 1
+            windgust07: 1
+            silence: 1
+        night:
+          loop:
+            wind: wind_desert_01_30
+      belowground:
+        loop:
+          cavern: hallway_of_fear_sub_air_dark_hollow_wide_01_10
+        periodic:
+          rockfall-1: 1
+          rockfall-2: 1
+          rockfall-3: 1
+          rockfall-4: 1
+          rockfall-5: 1
+    regen:
+      survival: 5
+      amount: 0.15
+      bonus: 0.02
+    icon: icons/desert
+
+  space:
+    survival_requirement: 4
+    sky:
+      day color: ['111111', '3f0257']
+      night color: ['111111', '1f0227']
+      gradients:
+        - ['111111', '000000']
+        - ['111111', '000000']
+        - ['111111', '000000']
+      gradients acidic:
+        - ['111111', '000000']
+        - ['111111', '000000']
+        - ['111111', '000000']
+    ground color: ['222222', '444444']
+    map:
+      ground:
+        - ['ffffff', 0.03]
+        - ['eeeeee', 0.05]
+        - ['dddddd', 0.08]
+        - ['cccccc', 0.12]
+        - ['bbbbbb', 0.17]
+        - ['aaaaaa', 0.26]
+        - ['999999', 0.3]
+    items:
+      base/earth: space/earth-base
+      base/earth-accent-1: ''
+      base/earth-accent-2: ''
+      base/earth-accent-3: ''
+      base/earth-accent-4: ''
+      base/earth-accent-5: ''
+      base/earth-accent-6: ''
+      base/earth-accent-7: ''
+      base/earth-accent-8: ''
+      base/earth-accent-9: ''
+      base/earth-accent-10: ''
+      base/earth-accent-11: ''
+      base/earth-accent-12: ''
+      base/earth-accent-13: ''
+      base/earth-accent-14: ''
+      ground/earth: space/earth-front
+      ground/earth-deep: space/earth-front
+      ground/earth-deeper: space/earth-front-deep
+      ground/earth-deepest: space/earth-front-deeper
+      ground/stalagmite-1: space/stalagmite-1
+      ground/stalagmite-2: space/stalagmite-2
+      ground/stalagmite-3: space/stalagmite-3
+      ground/stalagmite-4: space/stalagmite-4
+      ground/stalagmite-5: space/stalagmite-5
+    sound:
+      underground:
+        rockfall-1: 10
+        rockfall-2: 10
+        rockfall-3: 10
+        rockfall-4: 10
+        rockfall-5: 10
+    soundv2:
+      aboveground:
+        day:
+          loop:
+            wind: null
+          periodic:
+            silence: 1
+        night:
+          loop:
+            wind: null
+      belowground:
+        loop:
+          cavern: null
+        periodic:
+          silence: 1
+    regen:
+      survival: 5
+      amount: 0.15
+      bonus: 0.02
+    caverns:
+      shallow color: ['82BAF0', 'CDE066']
+      deep color: ['eeee22', 'ee5511']
+    icon: icons/space
+
+
+  ocean:
+    sky:
+      day color: ['82d0ef', '7dc5c4']
+      night color: ['1d5254', '174e46']
+      gradients:
+        - ['2e3343', '0b183f']
+        - ['edadc2', '142968']
+        - ['96c4ff', '1444e2']
+        - ['d1946b', '172a69']
+        - ['2e3343', '0b183f']
+    caverns:
+      shallow color: ['82BAF0', 'CDE066']
+      deep color: ['eeee22', 'ee5511']
+    ground color: ['6a4b2b', '2d2e1b']
+    map:
+      ground:
+        - ['ffffff', 0.03]
+        - ['5db830', 0.05]
+        - ['417431', 0.08]
+        - ['414e1c', 0.12]
+        - ['4e441c', 0.17]
+        - ['2a240c', 0.26]
+        - ['18150b', 0.3]
+    precipitation: rain
+    precipitation damage: ['acid', 0.3]
+    items:
+      base/earth: ocean/earth-base
+      ground/earth: ocean/earth-front
+    sound:
+      underground:
+        drip-1: 10
+        drip-2: 10
+        drip-3: 10
+        drip-4: 10
+        drip-5: 10
+        drip-6: 10
+    regen:
+      survival: 1
+      amount: 0.2
+      bonus: 0.025
+    icon: icons/ocean

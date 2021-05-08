@@ -1,0 +1,916 @@
+achievement-bonus-0: &achievement-bonus-0
+  xp: 1000
+achievement-bonus-1: &achievement-bonus-1
+  xp: 2000
+achievement-bonus-2: &achievement-bonus-2
+  xp: 5000
+achievement-bonus-3: &achievement-bonus-3
+  xp: 10000
+achievement-bonus-4: &achievement-bonus-4
+  xp: 20000
+achievement-bonus-5: &achievement-bonus-5
+  xp: 30000
+achievement-bonus-6: &achievement-bonus-6
+  xp: 40000
+
+achievement-tier-1: &achievement-tier-1
+  tier: 1
+achievement-tier-2: &achievement-tier-2
+  tier: 2
+achievement-tier-3: &achievement-tier-3
+  tier: 3
+achievement-tier-4: &achievement-tier-4
+  tier: 4
+
+
+achievements:
+  Miner: &miner
+    <<: *achievement-tier-1
+    <<: *achievement-bonus-1
+    description: There may have been an apocalypse, but at least the ground is still full of precious goodies.
+    directions: Mine 100 mineral blocks.
+    type: MiningAchievement
+    commands:
+      - BlockMine
+    group: mineral
+    quantity: 100
+    facebook_points: 10
+    progress: minerals mined
+    notify: mined * ore
+
+  Master Miner:
+    <<: *miner
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-2
+    base: Miner
+    previous: Miner
+    quantity: 500
+    directions: Mine 500 mineral blocks.
+
+  Grandmaster Miner:
+    <<: *miner
+    <<: *achievement-tier-3
+    <<: *achievement-bonus-3
+    base: Miner
+    previous: Master Miner
+    quantity: 2500
+    directions: Mine 2500 mineral blocks.
+
+  Legendary Miner:
+    <<: *miner
+    <<: *achievement-tier-4
+    <<: *achievement-bonus-4
+    base: Miner
+    previous: Grandmaster Miner
+    quantity: 10000
+    directions: Mine 10000 mineral blocks.
+
+  Lumberjack: &lumberjack
+    <<: *achievement-tier-1
+    <<: *achievement-bonus-1
+    description: Hardware stores are a little hard to come by in the wastelands, so harvesting lumber is all up to you.
+    directions: Chop down 50 tree blocks.
+    type: MiningAchievement
+    commands:
+      - BlockMine
+    group: tree
+    quantity: 50
+    facebook_points: 10
+    progress: trees mined
+    notify: cut down * trees
+
+  Master Lumberjack:
+    <<: *lumberjack
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-2
+    base: Lumberjack
+    previous: Lumberjack
+    quantity: 250
+    directions: Chop down 250 tree blocks.
+
+  Grandmaster Lumberjack:
+    <<: *lumberjack
+    <<: *achievement-tier-3
+    <<: *achievement-bonus-3
+    base: Lumberjack
+    previous: Master Lumberjack
+    quantity: 1000
+    directions: Chop down 1000 tree blocks.
+
+  Legendary Lumberjack:
+    <<: *lumberjack
+    <<: *achievement-tier-4
+    <<: *achievement-bonus-4
+    base: Lumberjack
+    previous: Grandmaster Lumberjack
+    quantity: 5000
+    directions: Chop down 5000 tree blocks.
+
+  Scavenger: &scavenger
+    <<: *achievement-bonus-1
+    description: It's a hard world out there. You'll need a lot of different kinds of items to survive.
+    directions: Mine 10 different kinds of items.
+    type: ScavengingAchievement
+    commands:
+      - BlockMine
+    quantity: 10
+    facebook_points: 10
+    progress_method: item_types_mined
+    notify: mined * kinds of items
+
+  Master Scavenger:
+    <<: *scavenger
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-2
+    base: Scavenger
+    quantity: 50
+    directions: Mine 50 different kinds of items.
+
+  Grandmaster Scavenger:
+    <<: *scavenger
+    <<: *achievement-tier-3
+    <<: *achievement-bonus-3
+    base: Scavenger
+    previous: Master Scavenger
+    quantity: 200
+    directions: Mine 200 different kinds of items.
+
+  Legendary Scavenger:
+    <<: *scavenger
+    <<: *achievement-tier-4
+    <<: *achievement-bonus-4
+    base: Scavenger
+    previous: Grandmaster Scavenger
+    quantity: 500
+    directions: Mine 500 different kinds of items.
+
+  Forager:
+    <<: *achievement-bonus-2
+    type: ScavengingAchievement
+    directions: Discover and mine one of each kind of mushroom.
+    commands:
+      - BlockMine
+    quantity_method: foraging_types_quantity
+    facebook_points: 25
+    progress_method: foraging_types_discovered
+    notify: foraged * kinds of mushrooms
+    items:
+      - vegetation/mushroom-amanita
+      - vegetation/mushroom-willow
+      - vegetation/mushrooms-tiny
+      - vegetation/mushroom-acid
+      - vegetation/mushroom-anbaric
+      - vegetation/mushroom-morel
+      - vegetation/mushroom-oyster
+      - vegetation/mushroom-portabella
+      - vegetation/mushroom-porcini
+      - vegetation/mushroom-chanterelle
+      - vegetation/mushroom-hell
+      - vegetation/mushroom-lava
+      - vegetation/mushroom-arctic
+      - vegetation/mushroom-apostate
+
+  # Master Forager:
+  #   <<: *achievement-bonus-3
+  #   base: Forager
+  #   type: ScavengingAchievement
+  #   directions: Discover and mine one of each kind of mushroom, including elders.
+  #   commands:
+  #     - BlockMine
+  #   quantity_method: master_foraging_types_quantity
+  #   facebook_points: 25
+  #   progress_method: master_foraging_types_discovered
+  #   notify: foraged * kinds of mushrooms
+  #   items:
+  #     - vegetation/mushroom-amanita
+  #     - vegetation/mushroom-willow
+  #     - vegetation/mushrooms-tiny
+  #     - vegetation/mushroom-acid
+  #     - vegetation/mushroom-acid-tall
+  #     - vegetation/mushroom-anbaric
+  #     - vegetation/mushroom-anbaric-elder
+  #     - vegetation/mushroom-morel
+  #     - vegetation/mushroom-morel-elder
+  #     - vegetation/mushroom-oyster
+  #     - vegetation/mushroom-portabella
+  #     - vegetation/mushroom-porcini
+  #     - vegetation/mushroom-chanterelle
+  #     - vegetation/mushroom-hell
+  #     - vegetation/mushroom-hell-elder
+  #     - vegetation/mushroom-lava
+  #     - vegetation/mushroom-lava-elder
+  #     - vegetation/mushroom-arctic
+  #     - vegetation/mushroom-arctic-elder
+  #     - vegetation/mushroom-apostate
+  #     - vegetation/mushroom-apostate-elder
+
+  Horticulturalist:
+    <<: *achievement-bonus-3
+    type: ScavengingAchievement
+    directions: Grow and mine 10 of each kind of basic flower.
+    commands:
+      - BlockMine
+    quantity_method: horticulturalist_types_quantity
+    facebook_points: 25
+    progress_method: horticulturalist_progress
+    notify: cultivated * kinds of flowers
+    items:
+      - vegetation/flower-amaryllis
+      - vegetation/flower-asphodelus
+      - vegetation/flower-birds-foot-trefoil
+      - vegetation/flower-carnations
+      - vegetation/flower-coxcomb
+      - vegetation/flower-delphinium
+      - vegetation/flower-lobelia
+      - vegetation/flower-tuberose
+
+  # Master Horticulturalist:
+  #   <<: *achievement-bonus-4
+  #   base: Horticulturalist
+  #   type: ScavengingAchievement
+  #   directions: Grow and mine 10 of each kind of flower, including rare flowers and trees.
+  #   commands:
+  #     - BlockMine
+  #   quantity_method: master_horticulturalist_types_quantity
+  #   facebook_points: 25
+  #   progress_method: master_horticulturalist_progress
+  #   notify: cultivated * kinds of flowers
+  #   items:
+  #     - vegetation/flower-amaryllis
+  #     - vegetation/flower-asphodelus
+  #     - vegetation/flower-birds-foot-trefoil
+  #     - vegetation/flower-carnations
+  #     - vegetation/flower-coxcomb
+  #     - vegetation/flower-delphinium
+  #     - vegetation/flower-lobelia
+  #     - vegetation/flower-tuberose
+  #     - vegetation/flower-bird-of-paradise
+  #     - vegetation/flower-cactus
+  #     - vegetation/flower-echinacea
+  #     - vegetation/flower-sunflower
+  #     - vegetation/flower-trumpets
+  #     - vegetation/tree-bonsai
+  #     - vegetation/tree-hellish
+
+  Alpha Tester:
+    <<: *achievement-bonus-1
+    type: AgeAchievement
+    play_time: 3600
+    created_before: 2012-5-1 00:00:00.0 +0:00
+    facebook_points: 10
+    hidden: true
+
+  Beta Tester:
+    <<: *achievement-bonus-1
+    type: AgeAchievement
+    play_time: 3600
+    created_before: 2012-6-1 00:00:00.0 +0:00
+    created_after: 2012-5-1 00:00:00.0 +0:00
+    facebook_points: 10
+    hidden: true
+
+  Undertaker: &undertaker
+    <<: *achievement-tier-1
+    <<: *achievement-bonus-1
+    description: The apocalypse left a lot of people in a sorry state. A little dignity for their bones would go a long way.
+    directions: Give 5 skeletons a proper burial.
+    type: UndertakerAchievement
+    commands:
+      - BlockPlace
+    quantity: 5
+    facebook_points: 10
+    progress: undertakings
+    notify: performed * undertakings
+    url: undertaker-achievement
+
+  Master Undertaker:
+    <<: *undertaker
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-2
+    base: Undertaker
+    previous: Undertaker
+    quantity: 25
+    directions: Give 25 skeletons a proper burial.
+
+  Grandmaster Undertaker:
+    <<: *undertaker
+    <<: *achievement-tier-3
+    <<: *achievement-bonus-3
+    base: Undertaker
+    previous: Master Undertaker
+    quantity: 100
+    directions: Give 100 skeletons a proper burial.
+
+  Legendary Undertaker:
+    <<: *undertaker
+    <<: *achievement-tier-4
+    <<: *achievement-bonus-4
+    base: Undertaker
+    previous: Grandmaster Undertaker
+    quantity: 500
+    directions: Give 500 skeletons a proper burial.
+
+  Deliverer: &deliverer
+    <<: *achievement-bonus-2
+    description: Hell is overflowing with ghosts who don't belong there. Send a few of 'em to a better place.
+    directions: Deliver 10 ghosts from the fires of Hell using an Expiator.
+    survival_requirement: 3
+    type: DeliveranceAchievement
+    quantity: 10
+    facebook_points: 25
+    progress: deliverances
+    notify: delivered * ghosts
+
+  Master Deliverer:
+    <<: *deliverer
+    <<: *achievement-bonus-3
+    base: Deliverer
+    quantity: 50
+    directions: Deliver 50 ghosts from the fires of Hell using an Expiator.
+
+  Hunter: &hunter
+    <<: *achievement-bonus-1
+    <<: *achievement-tier-1
+    description: The wastes have turned animals into mutant caricatures of their former selves. Put 'em out of their misery.
+    directions: Hunt down and kill 100 creatures.
+    type: HuntingAchievement
+    group: creature
+    quantity: 100
+    facebook_points: 10
+    progress: creatures killed
+    notify: killed * creatures
+
+  Master Hunter:
+    <<: *hunter
+    <<: *achievement-bonus-2
+    <<: *achievement-tier-2
+    base: Hunter
+    quantity: 500
+    directions: Hunt down and kill 500 creatures.
+
+  Grandmaster Hunter:
+    <<: *hunter
+    <<: *achievement-bonus-3
+    <<: *achievement-tier-3
+    base: Hunter
+    previous: Master Hunter
+    quantity: 2500
+    directions: Hunt down and kill 2,500 creatures.
+
+  Legendary Hunter:
+    <<: *hunter
+    <<: *achievement-bonus-4
+    <<: *achievement-tier-4
+    base: Hunter
+    previous: Grandmaster Hunter
+    quantity: 10000
+    directions: Hunt down and kill 10,000 creatures.
+
+  Recycler: &recycler
+    <<: *achievement-tier-1
+    <<: *achievement-bonus-1
+    description: Automatons were created to help humankind, but now they just love to hurt. Return the favor.
+    directions: Hunt down and junk 100 automata.
+    type: HuntingAchievement
+    group: automata
+    quantity: 100
+    facebook_points: 10
+    progress: automata killed
+    notify: bashed * automata
+    url: recycler-achievement
+
+  Master Recycler:
+    <<: *recycler
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-2
+    base: Recycler
+    quantity: 500
+    directions: Hunt down and junk 500 automata.
+
+  Grandmaster Recycler:
+    <<: *recycler
+    <<: *achievement-tier-3
+    <<: *achievement-bonus-3
+    base: Recycler
+    previous: Master Recycler
+    quantity: 2500
+    directions: Hunt down and junk 2,500 automata.
+
+  Legendary Recycler:
+    <<: *recycler
+    <<: *achievement-tier-4
+    <<: *achievement-bonus-4
+    base: Recycler
+    previous: Grandmaster Recycler
+    quantity: 10000
+    directions: Hunt down and junk 10,000 automata.
+
+  Ghost Hunter: &ghost-hunter
+    <<: *achievement-tier-1
+    <<: *achievement-bonus-1
+    description: Sometimes ghosts just get in the way of your energy gun. At least in ectoplasmic form they're useful, right?
+    directions: Destroy 100 ghosts.
+    survival_requirement: 3
+    type: HuntingAchievement
+    group: supernatural
+    quantity: 100
+    facebook_points: 25
+    progress: supernatural killed
+    notify: destroyed * ghosts
+
+  Master Ghost Hunter:
+    <<: *ghost-hunter
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-2
+    base: Ghost Hunter
+    quantity: 500
+    directions: Destroy 500 ghosts.
+
+  Grandmaster Ghost Hunter:
+    <<: *ghost-hunter
+    <<: *achievement-tier-3
+    <<: *achievement-bonus-3
+    base: Ghost Hunter
+    previous: Master Ghost Hunter
+    quantity: 2500
+    directions: Destroy 2,500 ghosts.
+
+  Legendary Ghost Hunter:
+    <<: *ghost-hunter
+    <<: *achievement-tier-4
+    <<: *achievement-bonus-4
+    base: Ghost Hunter
+    previous: Grandmaster Ghost Hunter
+    quantity: 10000
+    directions: Destroy 10,000 ghosts.
+
+  Rebel: &rebel
+    <<: *achievement-bonus-2
+    type: HuntingAchievement
+    directions: Hunt down and obliterate 20 brains.
+    group: brains
+    quantity: 20
+    facebook_points: 25
+    progress: brains killed
+    notify: obliterated * brains
+
+  Master Rebel:
+    <<: *rebel
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-3
+    base: Rebel
+    previous: Rebel
+    quantity: 100
+    directions: Hunt down and obliterate 100 brains.
+
+  Grandmaster Rebel:
+    <<: *rebel
+    <<: *achievement-tier-3
+    <<: *achievement-bonus-4
+    base: Rebel
+    previous: Master Rebel
+    quantity: 500
+    directions: Hunt down and obliterate 500 brains.
+
+  Legendary Rebel:
+    <<: *rebel
+    <<: *achievement-tier-4
+    <<: *achievement-bonus-5
+    base: Rebel
+    previous: Grandmaster Rebel
+    quantity: 2500
+    directions: Hunt down and obliterate 2500 brains.
+
+  Insurrectionist: &insurrectionist
+    <<: *achievement-tier-1
+    <<: *achievement-bonus-2
+    type: InsurrectionAchievement
+    directions: Destroy 5 brain evokers by activating inhibitors nearby
+    quantity: 5
+    facebook_points: 25
+    progress: inhibitors activated
+    notify: activated * inhibitors
+
+  Master Insurrectionist:
+    <<: *insurrectionist
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-3
+    base: Insurrectionist
+    previous: Insurrectionist
+    quantity: 20
+    directions: Destroy 20 brain evokers by activating inhibitors nearby
+
+  Grandmaster Insurrectionist:
+    <<: *insurrectionist
+    <<: *achievement-tier-3
+    <<: *achievement-bonus-4
+    base: Insurrectionist
+    previous: Master Insurrectionist
+    quantity: 50
+    directions: Destroy 50 brain evokers by activating inhibitors nearby
+
+  Legendary Insurrectionist:
+    <<: *insurrectionist
+    <<: *achievement-tier-4
+    <<: *achievement-bonus-5
+    base: Insurrectionist
+    previous: Grandmaster Insurrectionist
+    quantity: 100
+    directions: Destroy 100 brain evokers by activating inhibitors nearby
+
+  Sidekick: &sidekick
+    <<: *achievement-bonus-1
+    description: Good adventurerers go on the prowl together. You never know what kind of enemies you might encounter.
+    directions: Assist others in the destruction of 20 enemies.
+    type: SidekickAchievement
+    quantity: 20
+    facebook_points: 10
+    progress: creatures maimed
+    notify: helped kill * baddies
+
+  Master Sidekick:
+    <<: *sidekick
+    <<: *achievement-bonus-2
+    base: Sidekick
+    quantity: 100
+    directions: Assist others in the destruction of 100 enemies.
+
+  Teleporter Repairman: &teleporter-repairman
+    <<: *achievement-bonus-1
+    description: "The teleporter networks are a bit glitchy, but savvy adventurers can fix 'em right up."
+    directions: Repair 5 teleporters.
+    type: DiscoveryAchievement
+    item: mechanical/teleporter
+    quantity: 5
+    facebook_points: 10
+    progress: teleporters discovered
+    notify: discovered * teleporters
+
+  Master Teleporter Repairman:
+    <<: *teleporter-repairman
+    <<: *achievement-bonus-2
+    base: Teleporter Repairman
+    quantity: 25
+    directions: Repair 25 teleporters.
+
+  Ecologist: &ecologist
+    <<: *achievement-bonus-1
+    description: The world is in a sorry state, but you can do your part by helping to revitalize the environment. In Deepworld, too!
+    directions: Recover 5 ecological machine parts.
+    type: DiscoveryAchievement
+    group: ecology
+    quantity: 5
+    facebook_points: 10
+    progress: purifier parts discovered
+    notify: discovered * ecological machine parts
+
+  Master Ecologist:
+    <<: *ecologist
+    <<: *achievement-bonus-2
+    base: Ecologist
+    quantity: 25
+    directions: Recover 25 ecological machine parts.
+
+  Infernal Scout: &infernal-scout
+    <<: *achievement-bonus-2
+    description: It's tough to deliver ghosts without the right equipment. You totally wanted to explore Hell, right?
+    directions: Recover 5 expiator parts.
+    survival_requirement: 3
+    type: DiscoveryAchievement
+    group: infernal
+    quantity: 5
+    facebook_points: 10
+    progress: infernal parts discovered
+    notify: discovered * infernal machine parts
+
+  Master Infernal Scout:
+    <<: *infernal-scout
+    <<: *achievement-bonus-3
+    base: Infernal Scout
+    quantity: 25
+    directions: Recover 25 expiator parts.
+
+  Craftsman: &craftsman
+    <<: *achievement-tier-1
+    <<: *achievement-bonus-1
+    description: Not everything is hidden in the dirt. You'll need to learn how to make new things from the resources you find.
+    directions: Craft 10 different items.
+    type: CraftingAchievement
+    commands:
+      - Craft
+    quantity: 10
+    facebook_points: 10
+    progress_method: item_types_crafted
+    notify: crafted * different items
+
+  Master Craftsman:
+    <<: *craftsman
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-2
+    base: Craftsman
+    previous: Craftsman
+    quantity: 50
+    directions: Craft 50 different items.
+
+  Grandmaster Craftsman:
+    <<: *craftsman
+    <<: *achievement-tier-3
+    <<: *achievement-bonus-3
+    base: Craftsman
+    previous: Master Craftsman
+    quantity: 150
+    directions: Craft 150 different items.
+
+  Legendary Craftsman:
+    <<: *craftsman
+    <<: *achievement-tier-4
+    <<: *achievement-bonus-4
+    base: Craftsman
+    previous: Grandmaster Craftsman
+    quantity: 300
+    directions: Craft 300 different items.
+
+  Scientist: &scientist
+    <<: *achievement-tier-1
+    <<: *achievement-bonus-2
+    description: Steampunk wonder workshop or mad science laboratory - it's your choice! Crank up the Tesla Coils and make some stuff!
+    directions: Workshop 5 different items.
+    type: CraftingAchievement
+    commands:
+      - Craft
+    quantity: 5
+    facebook_points: 10
+    progress_method: item_types_workshopped
+    notify: workshopped * different items
+
+  Master Scientist:
+    <<: *scientist
+    <<: *achievement-tier-2
+    <<: *achievement-bonus-3
+    base: Scientist
+    quantity: 10
+    directions: Workshop 10 different items.
+
+  # Grandmaster Scientist:
+  #   <<: *scientist
+  #   <<: *achievement-tier-3
+  #   <<: *achievement-bonus-4
+  #   base: Scientist
+  #   previous: Master Scientist
+  #   quantity: 20
+  #   directions: Workshop 20 different items.
+
+  # Legendary Scientist:
+  #   <<: *scientist
+  #   <<: *achievement-tier-4
+  #   <<: *achievement-bonus-5
+  #   base: Scientist
+  #   previous: Grandmaster Scientist
+  #   quantity: 40
+  #   directions: Workshop 40 different items.
+
+  Spelunker:
+    <<: *achievement-bonus-0
+    description: "It's dangerous in the depths, but that doesn't mean you should stay away. Face your fears and start spelunking."
+    directions: Visit the bottom of the world.
+    type: PositionAchievement
+    interval: true
+    bottom: 1
+    facebook_points: 10
+
+  Explorer: &explorer
+    <<: *achievement-bonus-1
+    description: You don't know what's there until you go looking for it. Discover someplace new and let the world know I WAS HERE.
+    directions: Discover 100 unexplored areas.
+    type: ExploringAchievement
+    quantity: 100
+    facebook_points: 10
+    progress: chunks explored
+    notify: visited * unexplored areas
+
+  Master Explorer:
+    <<: *explorer
+    <<: *achievement-bonus-2
+    base: Explorer
+    quantity: 500
+    directions: Discover 500 unexplored areas.
+
+  Pest Control: &pest-control
+    <<: *achievement-bonus-1
+    description: Nothing ruins lunch like a terrapus bursting out of the earth. Craft some plugs and squeeze 'em into those annoying maws.
+    directions: Plug 20 monster maws or pipes.
+    type: SpawnerStoppageAchievement
+    group: maw
+    quantity: 20
+    facebook_points: 10
+    progress: maws plugged
+    notify: plugged * maws
+
+  Master Pest Control:
+    <<: *pest-control
+    <<: *achievement-bonus-2
+    base: Pest Control
+    quantity: 100
+    directions: Plug 100 monster maws or pipes.
+
+  Raider: &raider
+    <<: *achievement-bonus-1
+    directions: Raid 10 dungeons.
+    type: RaiderAchievement
+    quantity: 10
+    facebook_points: 10
+    progress: dungeons raided
+    notify: raided * dungeons
+
+  Master Raider:
+    <<: *raider
+    <<: *achievement-bonus-2
+    base: Raider
+    directions: Raid 50 dungeons.
+    quantity: 50
+
+  Looter: &looter
+    <<: *achievement-bonus-1
+    directions: Loot 50 chests, crates, or sacks.
+    type: LooterAchievement
+    quantity: 50
+    progress: chests looted
+    notify: looted * chests
+
+  Master Looter:
+    <<: *looter
+    <<: *achievement-bonus-2
+    base: Looter
+    quantity: 250
+    directions: Loot 250 chests, crates, or sacks.
+
+  Killer: &killer
+    <<: *achievement-bonus-1
+    directions: Kill 50 different players in PvP.
+    type: KillerAchievement
+    quantity: 50
+    facebook_points: 25
+    progress: players killed
+    progress_method: players_killed
+    notify: killed * players
+
+  Master Killer:
+    <<: *killer
+    <<: *achievement-bonus-2
+    base: Killer
+    quantity: 250
+    directions: Kill 250 different players in PvP.
+
+  Casualty: &casualty
+    <<: *achievement-bonus-1
+    directions: Get killed by 50 different players in PvP.
+    type: KillerAchievement
+    quantity: 50
+    facebook_points: 10
+    progress_method: players_killed_by
+    notify: been killed by * players
+
+  Master Casualty:
+    <<: *casualty
+    <<: *achievement-bonus-2
+    base: Casualty
+    quantity: 250
+    directions: Get killed by 250 different players in PvP.
+
+  Merchant: &merchant
+    <<: *achievement-bonus-1
+    directions: Trade with 50 different players.
+    type: TradingAchievement
+    quantity: 50
+    facebook_points: 10
+    progress_method: players_traded
+    notify: traded with * players
+
+  Master Merchant:
+    <<: *merchant
+    <<: *achievement-bonus-2
+    base: Merchant
+    directions: Trade with 250 different players.
+    quantity: 250
+
+  Earthbomber:
+    <<: *achievement-bonus-1
+    directions: Give 1000 earth blocks to 50 different players.
+    type: TradingAchievement
+    quantity: 50
+    facebook_points: 10
+    progress_method: players_earthbombed
+    notify: earthbombed * players
+
+  Trapper: &trapper
+    <<: *achievement-bonus-1
+    directions: Find and trap 20 animals.
+    type: TrappingAchievement
+    commands:
+      - BlockPlace
+    quantity: 20
+    facebook_points: 10
+    progress: animals trapped
+    notify: trapped * animals
+
+  Master Trapper:
+    <<: *trapper
+    <<: *achievement-bonus-2
+    base: Trapper
+    quantity: 100
+    directions: Find and trap 100 animals.
+
+  Appraiser: &appraiser
+    <<: *achievement-bonus-1
+    directions: Vote on 20 different landmarks.
+    type: VotingAchievement
+    quantity: 20
+    facebook_points: 10
+    progress: landmarks upvoted
+    notify: upvoted * landmarks
+
+  Master Appraiser:
+    <<: *appraiser
+    <<: *achievement-bonus-2
+    base: Appraiser
+    quantity: 100
+    directions: Vote on 100 different landmarks.
+
+  Architect: &architect
+    <<: *achievement-bonus-2
+    directions: Build landmarks and get 100 votes.
+    type: ArchitectAchievement
+    quantity: 100
+    facebook_points: 10
+    progress_method: landmark_votes
+    notify: received * votes
+
+  Master Architect:
+    <<: *architect
+    <<: *achievement-bonus-3
+    base: Architect
+    quantity: 500
+    directions: Build landmarks and get 500 votes.
+
+  Journeyman:
+    <<: *achievement-bonus-0
+    directions: Escape your bunker and venture out into the wide world!
+    facebook_points: 10
+    progress_method: journeys
+
+milestones:
+  10000: ten thousandth
+  50000: fifty thousandth
+  100000: hundred thousandth
+  250000: quarter millionth
+  500000: half millionth
+  1000000: millionth
+  2000000: two millionth
+  3000000: three millionth
+  4000000: four millionth
+  5000000: five millionth
+  6000000: six millionth
+  7000000: seven millionth
+  8000000: eight millionth
+  9000000: nine millionth
+  10000000: ten millionth
+  11000000: eleven millionth
+  12000000: twelve millionth
+  13000000: thirteen millionth
+  14000000: fourteen millionth
+  15000000: fifteen millionth
+  16000000: sixteen millionth
+  17000000: seventeen millionth
+  18000000: eighteen millionth
+  19000000: nineteen millionth
+  20000000: twenty millionth
+  21000000: twenty-one millionth
+  22000000: twenty-two millionth
+  23000000: twenty-three millionth
+  24000000: twenty-four millionth
+  25000000: twenty-five millionth
+  26000000: twenty-six millionth
+  27000000: twenty-seven millionth
+  28000000: twenty-eight millionth
+  29000000: twenty-nine millionth
+  30000000: thirty millionth
+  31000000: thirty-one millionth
+  32000000: thirty-two millionth
+  33000000: thirty-three millionth
+  34000000: thirty-four millionth
+  35000000: thirty-five millionth
+  36000000: thirty-six millionth
+  37000000: thirty-seven millionth
+  38000000: thirty-eight millionth
+  39000000: thirty-nine millionth
+  40000000: fourty millionth
+  41000000: fourty-one millionth
+  42000000: fourty-two millionth
+  43000000: fourty-three millionth
+  44000000: fourty-four millionth
+  45000000: fourty-five millionth
+  46000000: fourty-six millionth
+  47000000: fourty-seven millionth
+  48000000: fourty-eight millionth
+  49000000: fourty-nine millionth
+  50000000: fifty millionth

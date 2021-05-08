@@ -1,0 +1,218 @@
+skills:
+  agility:
+    description: Move faster, reduce physical damage, and increase dexterity bonuses
+    info:
+      - title: Agility
+      - text: "- Move/climb/swim faster"
+      - text: "- Jump higher"
+      - text: "- Reduce physical damage"
+      - text: "- Increase stealth cloak duration"
+      - text: "- Increase chance of reclaiming flower bulbs"
+    levels:
+      "2": Move faster, reduce physical damage, and increase stealth duration
+      "3": Unlock the Horticulture skill and move even faster.
+      "4": Move faster, reduce physical damage, and increase stealth duration
+      "5": Move faster, reduce physical damage, and increase stealth duration
+      "6": Move faster, reduce physical damage, and increase stealth duration
+      "7": Move faster, reduce physical damage, and increase stealth duration
+      "8": Move faster, reduce physical damage, and increase stealth duration
+      "9": Move faster, reduce physical damage, and increase stealth duration
+      "10": Move faster, reduce physical damage, and increase stealth duration
+
+  automata:
+    description: Increase Butler Bot duration and use more powerful directives
+    info:
+      - title: Automata
+      - text: "- Increase Butler Bot duration"
+      - text: "- Use more powerful Butler Bot directives"
+      - text: "- Craft better Butler Bots"
+      - text: "- Control more Butler Bots at the same time"
+    levels:
+      "2": Craft pistol turrets
+      "3": Craft fire turrets and batteries
+      "4": Craft acid turrets and brass butler bots
+      "5": Craft flame turrets
+      "6": Craft dessication turrets and diamond butler bots
+      "7": Increase butler bot utility
+      "8": Craft onyx butler bots
+      "9": Increase butler bot utility
+      "10": Increase butler bot utility
+
+  building:
+    description: Craft better items and place blocks farther away
+    info:
+      - title: Building
+      - text: "- Craft better items"
+      - text: "- Place objects farther away"
+    levels:
+      "2": Place farther away and craft fine pickaxes, fences, brass doors, signs, and more.
+      "3": Unlock the Engineering skill and craft scaffolding, rope bridges, plush furniture, and more.
+      "4": Craft diamond tools, wooden bridges, falcon statues, streetlights, and bidets.
+      "5": Craft balloons, stone bridges, gargoyles, paper lights, pedestals, and landmark plaques.
+      "6": Craft onyx tools, metal bridges, gothic statues, elegant couches, and fancy streetlights.
+      "7": Craft blue crystal blocks, demon statues, clocks, pianos, and onyx nets/spades.
+      "8": Craft red and purple crystal blocks and onyx rapiers.
+      "9": Craft platinum tools and beautiful fountains.
+      "10": Craft platinum nets and spades, and giant mechanical clocks,
+
+  combat:
+    description: Increase gun efficiency, critical hit rate, and bomb damage
+    info:
+      - title: Combat
+      - text: "- Increase gun efficiency"
+      - text: "- Increase critical hit rate"
+      - text: "- Increase bomb damage"
+    levels:
+      "2": Increase gun efficiency, bomb damage, and critical hit rate
+      "3": Increase gun efficiency, bomb damage, and critical hit rate
+      "4": Increase gun efficiency, bomb damage, and critical hit rate
+      "5": Increase gun efficiency, bomb damage, and critical hit rate
+      "6": Increase gun efficiency, bomb damage, and critical hit rate
+      "7": Increase gun efficiency, bomb damage, and critical hit rate
+      "8": Increase gun efficiency, bomb damage, and critical hit rate
+      "9": Increase gun efficiency, bomb damage, and critical hit rate
+      "10": Increase gun efficiency, bomb damage, and critical hit rate
+
+  engineering:
+    description: Craft better items, increase steam efficiency, and use more advanced devices
+    info:
+      - title: Engineering
+      - text: "- Craft better items"
+      - text: "- Use steam more efficiently"
+      - text: "- Use advanced weaponry and devices"
+      - text: "- Increase Target Teleporter distance"
+    levels:
+      "2": Use steam more efficiently and craft pistols, muskets, mechanical doors, and switches.
+      "3": Unlock the Science skill, craft brass jetpacks, steam pistols, acid shields, and more.
+      "4": Craft compressors, stopwatches, incendiary bombs, dig bombs, and lathes.
+      "5": Craft diamond jetpacks and flashlights, flame pistols, tesla clubs, micro protectors, and inhibitors.
+      "6": Craft acid cannons, energy pistols, power compressors, pocketwatches, electric bombs, and force shields.
+      "7": Craft flame and frost cannons, onyx jetpacks and flashlights, protectors, and looms.
+      "8": Craft energy cannons, onyx compressors and pocketwatches, mega bombs, turret upgrades, and exploders.
+      "9": Craft bomb suppressors and large protectors.
+      "10": Craft onyx weapon and turret upgrades, onyx scopes, and reset switches.
+
+  horticulture:
+    description: Plant fancier flora and recover bulbs more often
+    info:
+      - title: Horticulture
+      - text: "- Plant fancier flora"
+      - text: "- Recover bulbs more often"
+    levels:
+      "2": Plant echinacea flowers and recover bulbs more often.
+      "3": Plant sunflowers and recover bulbs more often.
+      "4": Plant cactii and recover bulbs more often.
+      "5": Plant birds of paradise and recover bulbs more often.
+      "6": Plant trumpet flowers and recover bulbs more often.
+      "7": Recover bulbs more often.
+      "8": Plant hellish trees and recover bulbs more often.
+      "9": Recover bulbs more often.
+      "10": Plant bonsai trees and recover bulbs more often.
+
+  luck:
+    description: Unlock better loot and get larger quantities of loot
+    info:
+      - title: Luck
+      - text: "- Unlock better loot"
+      - text: "- Get larger quantities of loot"
+    levels:
+      "2": Unlock better loot and get higher quantities of loot.
+      "3": Unlock better loot and get higher quantities of loot.
+      "4": Unlock better loot and get higher quantities of loot.
+      "5": Unlock better loot and get higher quantities of loot.
+      "6": Unlock better loot and get higher quantities of loot.
+      "7": Unlock better loot and get higher quantities of loot.
+      "8": Unlock better loot and get higher quantities of loot.
+      "9": Unlock better loot and get higher quantities of loot.
+      "10": Unlock better loot and get higher quantities of loot.
+
+  mining:
+    description: Mine deeper/faster and increase mining bonuses
+    info:
+      - title: Mining
+      - text: "- Mine deeper"
+      - text: "- Mine faster"
+      - text: "- Increase chance of bonus minerals"
+    levels:
+      "2": Mine down through the second layer of earth, mine faster, and increase mineral bonuses.
+      "3": Mine down through the third layer of earth, mine faster, and increase mineral bonuses.
+      "4": Mine down through the final layer of earth, mine faster, and increase mineral bonuses.
+      "5": Mine faster, mine farther, and increase mineral bonuses.
+      "6": Mine faster, mine farther, and increase mineral bonuses.
+      "7": Mine faster, mine farther, and increase mineral bonuses.
+      "8": Mine faster, mine farther, and increase mineral bonuses.
+      "9": Mine faster, mine farther, and increase mineral bonuses.
+      "10": Mine faster, mine farther, and increase mineral bonuses.
+
+  perception:
+    description: Improve minimap, increase zoom, and unlock abilities
+    info:
+      - title: Perception
+      - text: "- See teleporters on map (Lv 2)"
+      - text: "- See protector range overlays (Lv 3)"
+      - text: "- Zoom out farther (Lv 4+)"
+      - text: "- Teleport to any explored, non-protected location with portables (Lv 7)"
+    levels:
+      "2": See teleporters on the map and increase your zoom.
+      "3": Unlock the Survival skill and increase your zoom even farther.
+      "4": Increase your zoom even farther.
+      "5": Increase your zoom even farther.
+      "6": Increase your zoom even farther.
+      "7": Use consumable teleporters to teleport any non-explored, non-protected area.
+      "8": Increase your zoom even farther.
+      "9": Increase your zoom even farther.
+      "10": Increase your zoom even farther.
+
+  science:
+    description: Craft better items, avoid workshop incidents, and reduce dessication
+    info:
+      - title: Science
+      - text: "- Avoid crafting workshop incidents"
+      - text: "- Craft better items"
+      #- text: "- Reduce dessication"
+    levels:
+      "2": Craft control panels and decrease the chance of workshop incidents.
+      "3": Unlock the Automata skill and craft mini tesla coils.
+      "4": Craft large control panels and decrease the chance of workshop incidents.
+      "5": Craft large magnets, tesla coils, and decrease the chance of workshop incidents.
+      "6": Decrease the chance of workshop incidents.
+      "7": Decrease the chance of workshop incidents.
+      "8": Decrease the chance of workshop incidents.
+      "9": Decrease the chance of workshop incidents.
+      "10": Craft brain wine and decrease the chance of workshop incidents.
+
+  stamina:
+    description: Increase max health and add accessory slots
+    info:
+      - title: Stamina
+      - text: "- Increase max health"
+      - text: "- Add accessory slots (one per additional level)"
+    levels:
+      "2": Increase max health to 5.5 and accessory slots to 7.
+      "3": Unlock the Combat skill and increase max health to 6 and accessory slots to 8.
+      "4": Increase max health to 6.5 and accessory slots to 9.
+      "5": Increase max health to 7 and accessory slots to 10.
+      "6": Increase max health to 7.5 and accessory slots to 11.
+      "7": Increase max health to 8 and accessory slots to 12.
+      "8": Increase max health to 8.5 and accessory slots to 13.
+      "9": Increase max health to 9 and accessory slots to 14.
+      "10": Increase max health to 10 and accessory slots to 15.
+
+  survival:
+    description: Reduce elemental damage, avoid environmental damage, and craft better items
+    info:
+      - title: Survival
+      - text: "- Reduce elemental damage"
+      - text: "- Avoid acid rain damage (Lv 10)"
+      - text: "- Avoid ash rain damage (Lv 15)"
+      - text: "- Craft better items"
+    levels:
+      "2": Reduce elemental and environmental damage.
+      "3": Unlock the Luck skill and craft power jerky.
+      "4": Reduce elemental and environmental damage.
+      "5": Craft fire filets and reduce elemental and environmental damage.
+      "6": Craft chemistry sets and reduce elemental and environmental damage.
+      "7": Reduce elemental and environmental damage.
+      "8": Reduce elemental and environmental damage.
+      "9": Reduce elemental and environmental damage.
+      "10": Reduce elemental and environmental damage.
