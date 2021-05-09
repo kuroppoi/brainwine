@@ -9,6 +9,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.msgpack.models.BlockUseData;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Zone;
@@ -19,6 +20,8 @@ public class BlockUseRequest extends PlayerRequest {
     public int x;
     public int y;
     public Layer layer;
+    
+    @OptionalField
     public BlockUseData data;
     
     @Override

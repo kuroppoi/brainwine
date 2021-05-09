@@ -3,6 +3,7 @@ package brainwine.gameserver.server;
 import java.io.IOException;
 import java.lang.reflect.Field;
 
+import org.msgpack.type.ValueType;
 import org.msgpack.unpacker.Unpacker;
 
 import brainwine.gameserver.server.pipeline.Connection;
@@ -24,14 +25,15 @@ public abstract class Request {
         
         for(Field field : fields) {
             try {
-                unpacker.getNextType();
+                if(unpacker.getNextType() == ValueType.NIL && field.getAnnotation(OptionalField.class) == null) {
+                    throw new IOException("Value is nil, but field is required!");
+                }
             } catch(Exception e) {
                 if(field.getAnnotation(OptionalField.class) == null) {
-                    System.out.println(field.getName());
                     throw e;
                 }
                 
-                break;
+                continue;
             }
             
             field.set(this, unpacker.read(field.getType()));

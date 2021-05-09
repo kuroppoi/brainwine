@@ -3,6 +3,7 @@ package brainwine.gameserver.server.requests;
 import brainwine.gameserver.entity.player.ContainerType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
 
 /**
@@ -12,7 +13,11 @@ import brainwine.gameserver.server.PlayerRequest;
 public class InventoryMoveRequest extends PlayerRequest {
     
     public Item item;
+    
+    @OptionalField
     public ContainerType container;
+    
+    @OptionalField
     public int slot;
     
     @Override
