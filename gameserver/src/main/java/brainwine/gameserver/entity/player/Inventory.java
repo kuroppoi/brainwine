@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.item.Item;
-import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
@@ -33,7 +32,6 @@ public class Inventory {
     
     public Inventory(Player player) {
         this.player = player;
-        addItem(ItemRegistry.getItem("tools/pickaxe")); // default pickaxe TODO move elsewhere, this is for convenience only.
     }
     
     @ConstructorProperties({"hotbar", "accessories"})

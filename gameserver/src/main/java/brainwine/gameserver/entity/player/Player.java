@@ -183,6 +183,16 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
         sendMessage(new PlayerPositionMessage((int)x, (int)y));
         sendMessage(new HealthMessage(health));
+        
+        if(inventory.isEmpty()) {
+            Item pickaxe = ItemRegistry.getItem("tools/pickaxe");
+            Item jetpack = ItemRegistry.getItem("accessories/jetpack");
+            inventory.addItem(pickaxe);
+            inventory.addItem(jetpack);
+            inventory.moveItemToContainer(pickaxe, ContainerType.HOTBAR, 0);
+            inventory.moveItemToContainer(jetpack, ContainerType.ACCESSORIES, 0);
+        }
+        
         sendMessage(new InventoryMessage(inventory));
         sendMessage(new WardrobeMessage(wardrobe));
         
