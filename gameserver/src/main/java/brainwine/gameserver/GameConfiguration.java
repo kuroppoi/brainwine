@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
@@ -70,6 +71,11 @@ public class GameConfiguration {
         // Client wants this
         baseConfig.putObject("shop.currency", new HashMap<>());
         Map<String, Object> items = baseConfig.getMap("items");
+        
+        // Add custom commands to the client config
+        CommandManager.getCommandNames().forEach(command -> {
+            baseConfig.putObject(String.format("commands.%s", command), true);
+        });
         
         // Map inventory positions for items
         Map<String, int[]> inventoryPositions = new HashMap<>();
