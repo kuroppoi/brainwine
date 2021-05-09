@@ -17,14 +17,19 @@ public class RequestDecoder extends MessageToMessageDecoder<ByteBuf> {
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
         int id = buf.readByte() & 0xFF;
-        buf.readIntLE(); // body length
+        int length = buf.readIntLE();
+        
+        if(length > 1024) {
+            throw new IOException("Request exceeds max length of 1024 bytes");
+        }
+        
         Request request = NetworkRegistry.instantiateRequest(id);
         
         if(request == null) {
             throw new IOException("Client sent invalid request: " + id);
         }
         
-        byte[] bytes = new byte[buf.readableBytes()];
+        byte[] bytes = new byte[length];
         buf.readBytes(bytes);
         Unpacker unpacker = MessagePackHelper.createBufferUnpacker(bytes);
         request.unpack(unpacker);

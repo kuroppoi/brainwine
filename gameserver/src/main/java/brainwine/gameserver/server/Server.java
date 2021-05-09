@@ -54,7 +54,7 @@ public class Server {
             @Override
             protected void initChannel(Channel channel) throws Exception {
                 Connection connection = new Connection();
-                channel.pipeline().addLast("framer", new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, Short.MAX_VALUE, 1, 4, 0, 0, true));
+                channel.pipeline().addLast("framer", new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, 1024, 1, 4, 0, 0, true));
                 channel.pipeline().addLast("encoder", new MessageEncoder(connection));
                 channel.pipeline().addLast("decoder", new RequestDecoder());
                 channel.pipeline().addLast("handler", connection);
