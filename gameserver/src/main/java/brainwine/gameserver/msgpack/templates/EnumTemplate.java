@@ -13,17 +13,28 @@ import org.msgpack.template.AbstractTemplate;
 import org.msgpack.type.ValueType;
 import org.msgpack.unpacker.Unpacker;
 
+import brainwine.gameserver.msgpack.DefaultEnumValue;
 import brainwine.gameserver.msgpack.EnumValue;
 
+@SuppressWarnings("unchecked")
 public class EnumTemplate<T> extends AbstractTemplate<T> {
     
     private final Map<T, Object> ids = new HashMap<>();
     private final Map<Object, T> values = new HashMap<>();
+    private T defaultValue;
     
     public EnumTemplate(Class<T> type) {
         T[] entries = type.getEnumConstants();
         
         for(Field field : type.getFields()) {
+            if(field.getType() == type && field.isAnnotationPresent(DefaultEnumValue.class)) {
+                try {
+                    defaultValue = (T)field.get(type);
+                } catch (IllegalArgumentException | IllegalAccessException e) {
+                    throw new MessageTypeException(e);
+                }
+            }
+            
             if(field.isAnnotationPresent(EnumValue.class)) {
                 try {
                     for(T entry : entries) {
@@ -85,9 +96,9 @@ public class EnumTemplate<T> extends AbstractTemplate<T> {
         ValueType next = unpacker.getNextType();
         
         if(next == ValueType.INTEGER) {
-            return values.get(unpacker.readInt());
+            return values.getOrDefault(unpacker.readInt(), defaultValue);
         } else if(next == ValueType.RAW) {
-            return values.get(unpacker.readString());
+            return values.getOrDefault(unpacker.readString(), defaultValue);
         }
         
         throw new MessageTypeException("Unsupported enum id type");
