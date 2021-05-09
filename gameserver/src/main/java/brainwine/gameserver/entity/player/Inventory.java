@@ -96,6 +96,12 @@ public class Inventory {
     public void setItem(Item item, int quantity) {
         if(quantity <= 0) {
             items.remove(item);
+            hotbar.removeItem(item);
+            
+            if(accessories.hasItem(item)) {
+                accessories.removeItem(item);
+                player.sendMessageToPeers(new EntityChangeMessage(player.getId(), player.getStatusConfig()));
+            }
         } else {
             items.put(item, quantity);
         }
