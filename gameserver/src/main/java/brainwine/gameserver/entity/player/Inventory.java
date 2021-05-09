@@ -52,20 +52,27 @@ public class Inventory {
     }
     
     public void moveItemToContainer(Item item, ContainerType type, int slot) {
+        boolean accessoriesUpdated = false;
+        hotbar.removeItem(item);
+        
+        if(accessories.hasItem(item)) {
+            accessories.removeItem(item);
+            accessoriesUpdated = true;
+        }
+        
         switch(type) {
+        case INVENTORY:
+            break;
         case HOTBAR:
-            moveItemToContainer(item, hotbar, slot);
+            hotbar.moveItem(item, slot);
             break;
         case ACCESSORIES:
-            moveItemToContainer(item, accessories, slot);
+            accessories.moveItem(item, slot);
+            accessoriesUpdated = true;
             break;
         }
-    }
-    
-    public void moveItemToContainer(Item item, ItemContainer container, int slot) {
-        container.moveItem(item, slot);
         
-        if(container == accessories) {
+        if(accessoriesUpdated) {
             player.sendMessageToPeers(new EntityChangeMessage(player.getId(), player.getStatusConfig()));
         }
     }

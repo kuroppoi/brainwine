@@ -6,6 +6,7 @@ import brainwine.gameserver.msgpack.RegisterEnum;
 @RegisterEnum
 public enum ContainerType {
     
+    INVENTORY("i"),
     HOTBAR("h"),
     ACCESSORIES("a");
     
