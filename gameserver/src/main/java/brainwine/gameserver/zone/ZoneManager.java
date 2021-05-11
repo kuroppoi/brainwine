@@ -3,7 +3,9 @@ package brainwine.gameserver.zone;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -150,12 +152,32 @@ public class ZoneManager {
     }
     
     public List<Zone> searchZones(Predicate<Zone> predicate) {
+        return searchZones(predicate, null);
+    }
+    
+    public List<Zone> searchZones(Comparator<Zone> comparator) {
+        return searchZones(null, comparator);
+    }
+    
+    public List<Zone> searchZones(Predicate<Zone> predicate, Comparator<Zone> comparator) {
         List<Zone> result = new ArrayList<>();
         Collection<Zone> zones = this.zones.values();
         
         for(Zone zone : zones) {
-            if(predicate.test(zone)) {
+            if(predicate == null || predicate.test(zone)) {
                 result.add(zone);
+            }
+        }
+        
+        if(comparator != null) {
+            result.sort(comparator);
+        }
+        
+        if(result.size() > 50) {
+            Iterator<Zone> it = result.listIterator(50);
+            
+            while(it.next() != null) {
+                it.remove();
             }
         }
         

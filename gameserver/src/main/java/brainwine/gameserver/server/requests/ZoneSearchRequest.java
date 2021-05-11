@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.player.Player;
@@ -15,10 +14,6 @@ import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
 
-/**
- * TODO followees 'n junk
- * also sort instead of just filter
- */
 public class ZoneSearchRequest extends PlayerRequest {
     
     public String type;
@@ -26,15 +21,7 @@ public class ZoneSearchRequest extends PlayerRequest {
     @Override
     public void process(Player player) {
         List<Zone> result = new ArrayList<>();
-        List<Zone> zones = new ArrayList<>();
-        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
-        
-        if(type.equals("Random")) {
-            zones.addAll(zoneManager.getZones());
-        } else {
-            zones = zoneManager.searchZones(getFilter());
-        }
-        
+        List<Zone> zones = searchZones(GameServer.getInstance().getZoneManager());
         Collections.shuffle(zones);
         Set<Integer> indices = new HashSet<>();
         int index = (int)(Math.random() * zones.size());
@@ -52,28 +39,45 @@ public class ZoneSearchRequest extends PlayerRequest {
         player.sendDelayedMessage(new ZoneSearchMessage(type, result, 0));
     }
     
-    private Predicate<Zone> getFilter() {
+    private List<Zone> searchZones(ZoneManager manager) {
+        List<Zone> zones = new ArrayList<>();
+        
         switch(type) {
+        case "Random":
+            zones.addAll(manager.searchZones(null, null));
+            break;
         case "Plain":
-            return zone -> zone.getBiome() == Biome.PLAIN;
+            zones.addAll(manager.searchZones(zone -> zone.getBiome() == Biome.PLAIN));
+            break;
         case "Arctic":
-            return zone -> zone.getBiome() == Biome.ARCTIC;
+            zones.addAll(manager.searchZones(zone -> zone.getBiome() == Biome.ARCTIC));
+            break;
         case "Hell":
-            return zone -> zone.getBiome() == Biome.HELL;
+            zones.addAll(manager.searchZones(zone -> zone.getBiome() == Biome.HELL));
+            break;
         case "Desert":
-            return zone -> zone.getBiome() == Biome.DESERT;
+            zones.addAll(manager.searchZones(zone -> zone.getBiome() == Biome.DESERT));
+            break;
         case "Brain":
-            return zone -> zone.getBiome() == Biome.BRAIN;
+            zones.addAll(manager.searchZones(zone -> zone.getBiome() == Biome.BRAIN));
+            break;
         case "Deep":
-            return zone -> zone.getBiome() == Biome.DEEP;
+            zones.addAll(manager.searchZones(zone -> zone.getBiome() == Biome.DEEP));
+            break;
         case "Space":
-            return zone -> zone.getBiome() == Biome.SPACE;
+            zones.addAll(manager.searchZones(zone -> zone.getBiome() == Biome.SPACE));
+            break;
         case "Unexplored":
-            return zone -> zone.getExplorationProgress() < 0.5;
+            zones.addAll(manager.searchZones(zone -> zone.getExplorationProgress() < 0.7, (a, b) -> Float.compare(a.getExplorationProgress(), b.getExplorationProgress())));
+            break;
         case "Popular":
-            return zone -> !zone.getPlayers().isEmpty();
+            zones.addAll(manager.searchZones(zone -> zone.getPlayers().size() > 0, (a, b) -> Integer.compare(b.getPlayers().size(), a.getPlayers().size())));
+            break;
         default:
-            return zone -> zone.getName().toLowerCase().contains(type.toLowerCase());
+            zones.addAll(manager.searchZones(zone -> zone.getName().toLowerCase().contains(type.toLowerCase())));
+            break;
         }
+        
+        return zones;
     }
 }
