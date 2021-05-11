@@ -176,7 +176,8 @@ public class ZoneManager {
         if(result.size() > 50) {
             Iterator<Zone> it = result.listIterator(50);
             
-            while(it.next() != null) {
+            while(it.hasNext()) {
+                it.next();
                 it.remove();
             }
         }
