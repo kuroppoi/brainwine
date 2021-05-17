@@ -25,6 +25,7 @@ import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.VersionUtils;
 
 @SuppressWarnings("unchecked")
@@ -32,9 +33,9 @@ public class GameConfiguration {
     
     private static final Logger logger = LogManager.getLogger();
     private static final ObjectMapper mapper = new ObjectMapper();
-    private static final Configuration baseConfig = new Configuration();
-    private static final Map<String, Configuration> configUpdates = new HashMap<>();
-    private static final Map<String, Configuration> versionedConfigs = new HashMap<>();
+    private static final Map<String, Object> baseConfig = new HashMap<String, Object>();
+    private static final Map<String, Map<String, Object>> configUpdates = new HashMap<>();
+    private static final Map<String, Map<String, Object>> versionedConfigs = new HashMap<>();
     private static Yaml yaml;
     
     public static void init() {
@@ -55,7 +56,7 @@ public class GameConfiguration {
     
     private static void cacheVersionedConfigs() {
         configUpdates.keySet().forEach(version -> {
-            Configuration config = copy(baseConfig, new TypeReference<Configuration>(){});
+            Map<String, Object> config = copy(baseConfig, new TypeReference<Map<String, Object>>(){});
             
             configUpdates.forEach((version2, update) -> {
                 if(VersionUtils.isGreaterOrEqualTo(version2, version2)) {
@@ -69,17 +70,17 @@ public class GameConfiguration {
     
     private static void configure() {
         // Client wants this
-        baseConfig.putObject("shop.currency", new HashMap<>());
-        Map<String, Object> items = baseConfig.getMap("items");
+        MapHelper.put(baseConfig, "shop.currency", new HashMap<>());
+        Map<String, Object> items = MapHelper.getMap(baseConfig, "items");
         
         // Add custom commands to the client config
         CommandManager.getCommandNames().forEach(command -> {
-            baseConfig.putObject(String.format("commands.%s", command), true);
+            MapHelper.put(baseConfig, String.format("commands.%s", command), true);
         });
         
         // Map inventory positions for items
         Map<String, int[]> inventoryPositions = new HashMap<>();
-        List<Object> inventoryCategories = baseConfig.getList("inventory");
+        List<Object> inventoryCategories = MapHelper.getList(baseConfig, "inventory");
         
         for(int i = 0; i < inventoryCategories.size(); i++) {
             Map<String, Object> map = (Map<String, Object>)inventoryCategories.get(i);
@@ -91,7 +92,7 @@ public class GameConfiguration {
         }
         
         // Configure items
-        Configuration configV3 = configUpdates.get("3.0.0");
+        Map<String, Object> configV3 = configUpdates.get("3.0.0");
         
         if(items != null) {
             List<String> ignoredItems = new ArrayList<>();
@@ -112,7 +113,7 @@ public class GameConfiguration {
                     
                     // Move change definitions to item root, but *only* for V3 clients
                     if(useConfig.containsKey("change")) {
-                        configV3.putObject(String.format("items.%s.change", name), Arrays.asList(useConfig.get("change")));
+                        MapHelper.put(configV3, String.format("items.%s.change", name), Arrays.asList(useConfig.get("change")));
                     }
                 }
                 
@@ -122,7 +123,7 @@ public class GameConfiguration {
                 case "back":
                 case "front":
                 case "liquid":
-                    config.putIfAbsent("layer", category);
+                    config.put("layer", category);
                     break;
                 case "ground":
                 case "building":
@@ -134,7 +135,7 @@ public class GameConfiguration {
                 case "rubble":
                 case "containers":
                 case "arctic":
-                    config.putIfAbsent("layer", "front");
+                    config.put("layer", "front");
                     break;
                 }
                 
@@ -161,7 +162,7 @@ public class GameConfiguration {
             }
         }
         
-        logger.info("Successfully loaded {} items", ItemRegistry.getItems().size());
+        logger.info("Successfully loaded {} item(s)", ItemRegistry.getItems().size());
     }
     
     private static void loadConfigFiles() {
@@ -181,7 +182,7 @@ public class GameConfiguration {
                     }
                     
                     String version = segments[2];
-                    configUpdates.put(segments[2], new Configuration((Map<String, Object>)config.get(version)));
+                    configUpdates.put(segments[2], (Map<String, Object>)config.get(version));
                     continue;
                 }
                 
@@ -222,14 +223,14 @@ public class GameConfiguration {
         });
     }
     
-    public static Configuration getBaseConfig() {
+    public static Map<String, Object> getBaseConfig() {
         return baseConfig;
     }
     
-    public static Configuration getClientConfig(Player player) {
-        Configuration config = baseConfig;
+    public static Map<String, Object> getClientConfig(Player player) {
+        Map<String, Object> config = baseConfig;
         
-        for(Entry<String, Configuration> entry : versionedConfigs.entrySet()) {
+        for(Entry<String, Map<String, Object>> entry : versionedConfigs.entrySet()) {
             if(VersionUtils.isGreaterOrEqualTo(player.getClientVersion(), entry.getKey())) {
                 config = entry.getValue();
             }

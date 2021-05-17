@@ -14,6 +14,7 @@ import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.msgpack.models.AppearanceData;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.DialogMessage;
+import brainwine.gameserver.util.MapHelper;
 
 /**
  * TODO we should actually check if the sent value is even compatible with the slot.
@@ -31,7 +32,7 @@ public class ChangeAppearanceRequest extends PlayerRequest {
             if(meta.equals("randomize")) {
                 player.alert("Sorry, you can't randomize your appearance yet.");
             } else {
-                Map<String, Object> panel = GameConfiguration.getBaseConfig().getMap(String.format("wardrobe_panel.dialogs.%s", meta));
+                Map<String, Object> panel = MapHelper.getMap(GameConfiguration.getBaseConfig(), String.format("wardrobe_panel.dialogs.%s", meta));
                 
                 if(panel != null) {
                     Map<String, Object> dialog = new HashMap<>();

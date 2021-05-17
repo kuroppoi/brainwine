@@ -11,6 +11,7 @@ import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.msgpack.models.BlockUseData;
 import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Zone;
 
@@ -48,15 +49,16 @@ public class BlockUseRequest extends PlayerRequest {
                 case CREATE_DIALOG:
                     // TODO rework dialog system and clean this mess up
                     Map<String, Object> config = (Map<String, Object>)v;
+                    String target = MapHelper.getString(config, "target");
                     
-                    switch((String)config.get("target")) {
+                    switch(target) {
                     case "meta":
                         Map<String, Object> metadata = new HashMap<>();
-                        List<Map<String, Object>> sections = (List<Map<String, Object>>)config.get("sections");
+                        List<Map<String, Object>> sections = MapHelper.getList(config, "sections");
                         int i = 0;
                         
                         for(Map<String, Object> section : sections) {
-                            metadata.put((String) ((Map<String, Object>)section.get("input")).get("key"), data[i++]);
+                            metadata.put(MapHelper.getString(section, "input.key"), data[i++]);
                         }
                         
                         zone.setMetaBlock(x, y, item, player, metadata);
