@@ -1,5 +1,8 @@
 package brainwine.gameserver.command.commands;
 
+import static brainwine.gameserver.command.NotificationType.ALERT;
+import static brainwine.gameserver.command.NotificationType.SYSTEM;
+
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
@@ -13,7 +16,7 @@ public class PlayerIdCommand extends Command {
         
         if(!(executor instanceof Player)) {
             if(args.length < 1) {
-                executor.sendMessage("Usage: /pid <player>");
+                executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
                 return;
             }
         } else {
@@ -25,11 +28,11 @@ public class PlayerIdCommand extends Command {
         }
         
         if(target == null) {
-            executor.sendMessage("This player does not exist.");
+            executor.notify("This player does not exist.", SYSTEM);
             return;
         }
         
-        executor.sendMessage(target.getDocumentId());
+        executor.notify(target.getDocumentId(), SYSTEM);
     }
     
     @Override
@@ -43,12 +46,12 @@ public class PlayerIdCommand extends Command {
     }
     
     @Override
-    public String getUsage() {
-        return "/pid [player]";
+    public String getUsage(CommandExecutor executor) {
+        return String.format("/pid %s", executor instanceof Player ? "[player]" : "<player>");
     }
     
     @Override
-    public boolean requiresAdmin() {
-        return true;
+    public boolean canExecute(CommandExecutor executor) {
+        return executor.isAdmin();
     }
 }

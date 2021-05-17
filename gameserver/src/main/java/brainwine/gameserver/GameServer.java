@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.PlayerManager;
 import brainwine.gameserver.msgpack.MessagePackHelper;
@@ -15,7 +14,7 @@ import brainwine.gameserver.server.Server;
 import brainwine.gameserver.zone.ZoneManager;
 import brainwine.gameserver.zone.gen.StaticZoneGenerator;
 
-public class GameServer implements CommandExecutor {
+public class GameServer {
     
     public static final int GLOBAL_SAVE_INTERVAL = 30000; // 30 seconds
     private static final Logger logger = LogManager.getLogger();
@@ -50,11 +49,6 @@ public class GameServer implements CommandExecutor {
     
     public static GameServer getInstance() {
         return instance;
-    }
-    
-    @Override
-    public void sendMessage(String text) {
-        logger.info(text);
     }
     
     public void tick() {

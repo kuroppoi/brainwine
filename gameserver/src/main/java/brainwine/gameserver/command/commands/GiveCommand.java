@@ -1,5 +1,8 @@
 package brainwine.gameserver.command.commands;
 
+import static brainwine.gameserver.command.NotificationType.ALERT;
+import static brainwine.gameserver.command.NotificationType.SYSTEM;
+
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
@@ -12,14 +15,14 @@ public class GiveCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length < 2) {
-            executor.sendMessage(String.format("Usage: %s", getUsage()));
+            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
             return;
         }
         
         Player target = GameServer.getInstance().getPlayerManager().getPlayer(args[0]);
         
         if(target == null) {
-            executor.sendMessage("That player does not exist.");
+            executor.notify("That player does not exist.", ALERT);
             return;
         }
         
@@ -32,7 +35,7 @@ public class GiveCommand extends Command {
         }
         
         if(item.isAir()) {
-            executor.sendMessage("This item does not exist.");
+            executor.notify("This item does not exist.", ALERT);
             return;
         }
         
@@ -42,7 +45,7 @@ public class GiveCommand extends Command {
             try {
                 quantity = Integer.parseInt(args[2]);
             } catch(NumberFormatException e) {
-                executor.sendMessage("Quantity must be a valid number.");
+                executor.notify("Quantity must be a valid number.", ALERT);
                 return;
             }
         }
@@ -50,11 +53,11 @@ public class GiveCommand extends Command {
         if(quantity > 0) {
             target.getInventory().addItem(item, quantity);
             target.alert(String.format("You received %s %s from an administrator.", quantity, item.getTitle()));
-            executor.sendMessage(String.format("Gave %s %s to %s", quantity, item.getTitle(), target.getName()));
+            executor.notify(String.format("Gave %s %s to %s", quantity, item.getTitle(), target.getName()), SYSTEM);
         } else {
             target.getInventory().removeItem(item, -quantity);
             target.alert(String.format("%s %s was taken from your inventory.", -quantity, item.getTitle()));
-            executor.sendMessage(String.format("Took %s %s from %s", quantity, item.getTitle(), target.getName()));
+            executor.notify(String.format("Took %s %s from %s", quantity, item.getTitle(), target.getName()), SYSTEM);
         }
     }
 
@@ -65,16 +68,16 @@ public class GiveCommand extends Command {
     
     @Override
     public String getDescription() {
-        return "Gives the specified amount of the specified item to the specified player.";
+        return "Adds items to a player's inventory.";
     }
     
     @Override
-    public String getUsage() {
+    public String getUsage(CommandExecutor executor) {
         return "/give <player> <item> [quantity]";
     }
     
     @Override
-    public boolean requiresAdmin() {
-        return true;
+    public boolean canExecute(CommandExecutor executor) {
+        return executor.isAdmin();
     }
 }

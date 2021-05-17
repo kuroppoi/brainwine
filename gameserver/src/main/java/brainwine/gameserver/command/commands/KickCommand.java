@@ -1,5 +1,8 @@
 package brainwine.gameserver.command.commands;
 
+import static brainwine.gameserver.command.NotificationType.ALERT;
+import static brainwine.gameserver.command.NotificationType.SYSTEM;
+
 import java.util.Arrays;
 
 import brainwine.gameserver.GameServer;
@@ -12,17 +15,17 @@ public class KickCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length < 1) {
-            executor.sendMessage(String.format("Usage: %s", getUsage()));
+            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
             return;
         }
         
         Player player = GameServer.getInstance().getPlayerManager().getPlayer(args[0]);
         
         if(player == null) {
-            executor.sendMessage("This player does not exist.");
+            executor.notify("This player does not exist.", ALERT);
             return;
         } else if(!player.isOnline()) {
-            executor.sendMessage("This player is offline.");
+            executor.notify("This player is offline.", ALERT);
             return;
         }
         
@@ -33,7 +36,7 @@ public class KickCommand extends Command {
         }
         
         player.kick(reason);
-        executor.sendMessage("Kicked player " + player.getName() + " for '" + reason + "'");
+        executor.notify("Kicked player " + player.getName() + " for '" + reason + "'", SYSTEM);
     }
     
     @Override
@@ -47,12 +50,12 @@ public class KickCommand extends Command {
     }
     
     @Override
-    public String getUsage() {
+    public String getUsage(CommandExecutor executor) {
         return "/kick <player> [reason]";
     }
     
     @Override
-    public boolean requiresAdmin() {
-        return true;
+    public boolean canExecute(CommandExecutor executor) {
+        return executor.isAdmin();
     }
 }

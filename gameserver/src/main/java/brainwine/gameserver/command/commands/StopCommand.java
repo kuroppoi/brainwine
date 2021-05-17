@@ -27,7 +27,7 @@ public class StopCommand extends Command {
     }
     
     @Override
-    public boolean requiresAdmin() {
-        return true;
+    public boolean canExecute(CommandExecutor executor) {
+        return executor.isAdmin();
     }
 }

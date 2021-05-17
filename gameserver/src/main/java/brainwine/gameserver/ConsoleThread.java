@@ -7,11 +7,13 @@ import java.io.InputStreamReader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandManager;
+import brainwine.gameserver.command.NotificationType;
 
-public class ConsoleThread extends Thread {
+public class ConsoleThread extends Thread implements CommandExecutor {
     
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger("Console");
     private final GameServer server;
     
     public ConsoleThread(GameServer server) {
@@ -37,8 +39,18 @@ public class ConsoleThread extends Thread {
         server.queueSynchronousTask(new Runnable() {
             @Override
             public void run() {
-                CommandManager.executeCommand(server, commandLine);
+                CommandManager.executeCommand(ConsoleThread.this, commandLine);
             }
         });
+    }
+
+    @Override
+    public void notify(String text, NotificationType type) {
+        logger.info(text);
+    }
+
+    @Override
+    public boolean isAdmin() {
+        return true;
     }
 }

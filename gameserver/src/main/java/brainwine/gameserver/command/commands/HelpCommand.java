@@ -1,28 +1,23 @@
 package brainwine.gameserver.command.commands;
 
+import static brainwine.gameserver.command.NotificationType.CHAT;
+
 import java.util.Collection;
 
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandManager;
-import brainwine.gameserver.entity.player.Player;
 
 public class HelpCommand extends Command {
 
     @Override
     public void execute(CommandExecutor executor, String[] args) {
-        boolean admin = true;
-        
-        if(executor instanceof Player) {
-            admin = ((Player)executor).isAdmin();
-        }
-        
         Collection<Command> commands = CommandManager.getCommands();
-        executor.sendMessage("Command List");
+        executor.notify("Command List", CHAT);
         
         for(Command command : commands) {
-            if(!command.requiresAdmin() || admin) {
-                executor.sendMessage(String.format("%s - %s", command.getUsage(), command.getDescription()));
+            if(command.canExecute(executor)) {
+                executor.notify(String.format("%s - %s", command.getUsage(executor), command.getDescription()), CHAT);
             }
         }
     }

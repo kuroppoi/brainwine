@@ -1,5 +1,7 @@
 package brainwine.gameserver.command.commands;
 
+import static brainwine.gameserver.command.NotificationType.*;
+
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.dialogs.RegistrationDialog;
@@ -9,15 +11,10 @@ public class RegisterCommand extends Command{
 
     @Override
     public void execute(CommandExecutor executor, String[] args) {
-        if(!(executor instanceof Player)) {
-            executor.sendMessage("Only players can use this command.");
-            return;
-        }
-        
         Player player = (Player)executor;
         
         if(player.isRegistered()) {
-            player.sendMessage("You have already registered your account.");
+            player.notify("You have already registered your account.", ALERT);
             return;
         }
         
@@ -32,5 +29,10 @@ public class RegisterCommand extends Command{
     @Override
     public String getDescription() {
         return "Shows a prompt with which you can register your account.";
+    }
+    
+    @Override
+    public boolean canExecute(CommandExecutor executor) {
+        return executor instanceof Player;
     }
 }

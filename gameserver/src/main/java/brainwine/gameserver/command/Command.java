@@ -14,11 +14,11 @@ public abstract class Command {
         return "No description for this command";
     }
     
-    public String getUsage() {
+    public String getUsage(CommandExecutor executor) {
         return "/" + getName();
     }
     
-    public boolean requiresAdmin() {
-        return false;
+    public boolean canExecute(CommandExecutor executor) {
+        return true;
     }
 }

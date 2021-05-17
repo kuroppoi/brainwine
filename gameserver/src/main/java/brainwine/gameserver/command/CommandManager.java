@@ -1,5 +1,7 @@
 package brainwine.gameserver.command;
 
+import static brainwine.gameserver.command.NotificationType.ALERT;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,16 +87,9 @@ public class CommandManager {
         
         Command command = commands.getOrDefault(commandName, aliases.get(commandName));
         
-        if(command == null) {
-            executor.sendMessage("Unknown command. Type '/help' for a list of commands.");
+        if(command == null || !command.canExecute(executor)) {
+            executor.notify("Unknown command. Type '/help' for a list of commands.", ALERT);
             return;
-        }
-        
-        if(executor instanceof Player && command.requiresAdmin()) {
-            if(!((Player)executor).isAdmin()) {
-                executor.sendMessage("Sorry, you do not have the required permissions for this command.");
-                return;
-            }
         }
         
         command.execute(executor, args);

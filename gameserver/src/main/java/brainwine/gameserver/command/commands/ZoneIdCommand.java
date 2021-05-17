@@ -1,5 +1,8 @@
 package brainwine.gameserver.command.commands;
 
+import static brainwine.gameserver.command.NotificationType.ALERT;
+import static brainwine.gameserver.command.NotificationType.SYSTEM;
+
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
@@ -14,7 +17,7 @@ public class ZoneIdCommand extends Command {
         
         if(!(executor instanceof Player)) {
             if(args.length < 1) {
-                executor.sendMessage("Usage: /zid <zone>");
+                executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
                 return;
             }
         } else {
@@ -26,11 +29,11 @@ public class ZoneIdCommand extends Command {
         }
         
         if(target == null) {
-            executor.sendMessage("This zone does not exist.");
+            executor.notify("This zone does not exist.", ALERT);
             return;
         }
         
-        executor.sendMessage(target.getDocumentId());
+        executor.notify(target.getDocumentId(), SYSTEM);
     }
     
     @Override
@@ -44,12 +47,12 @@ public class ZoneIdCommand extends Command {
     }
     
     @Override
-    public String getUsage() {
-        return "/zid [zone]";
+    public String getUsage(CommandExecutor executor) {
+        return String.format("/zid %s", executor instanceof Player ? "[zone]" : "<zone>");
     }
     
     @Override
-    public boolean requiresAdmin() {
-        return true;
+    public boolean canExecute(CommandExecutor executor) {
+        return executor.isAdmin();
     }
 }

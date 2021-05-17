@@ -1,5 +1,7 @@
 package brainwine.gameserver.command.commands;
 
+import static brainwine.gameserver.command.NotificationType.*;
+
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.entity.player.ChatType;
@@ -9,13 +11,8 @@ public class SayCommand extends Command {
 
     @Override
     public void execute(CommandExecutor executor, String[] args) {
-        if(!(executor instanceof Player)) {
-            executor.sendMessage("Only players can use this command.");
-            return;
-        }
-        
         if(args.length == 0) {
-            executor.sendMessage(String.format("Usage: %s", getUsage()));
+            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
             return;
         }
         
@@ -35,7 +32,12 @@ public class SayCommand extends Command {
     }
     
     @Override
-    public String getUsage() {
+    public String getUsage(CommandExecutor executor) {
         return "/say <message>";
+    }
+    
+    @Override
+    public boolean canExecute(CommandExecutor executor) {
+        return executor instanceof Player;
     }
 }

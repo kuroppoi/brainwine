@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.command.NotificationType;
 import brainwine.gameserver.dialog.ConfigurableDialog;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
@@ -142,8 +143,13 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     @Override
-    public void sendMessage(String message) {
-        notify(message, 9);
+    public void notify(String text, NotificationType type) {
+        sendMessage(new NotificationMessage(text, type));
+    }
+    
+    @Override
+    public boolean isAdmin() {
+        return admin;
     }
     
     @Override
@@ -211,10 +217,10 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         if(isV3()) {
-            notify("Welcome to " + zone.getName(), 6);
             sendMessage(new EventMessage("zoneEntered", null));
+            notify("Welcome to " + zone.getName(), NotificationType.WELCOME);
         } else {
-            notify("Welcome to " + zone.getName(), 333);
+            notify("Welcome to " + zone.getName(), NotificationType.WELCOME_IOS);
         }
         
         checkRegistration();
@@ -383,12 +389,8 @@ public class Player extends Entity implements CommandExecutor {
         }
     }
     
-    public void notify(String text, int type) {
-        sendMessage(new NotificationMessage(text, type));
-    }
-    
     public void alert(String text) {
-        notify(text, 1);
+        notify(text, NotificationType.ALERT);
     }
     
     public void setHeldItem(Item item) {
@@ -437,10 +439,6 @@ public class Player extends Entity implements CommandExecutor {
     
     public void setAdmin(boolean admin) {
         this.admin = admin;
-    }
-    
-    public boolean isAdmin() {
-        return admin;
     }
     
     public void setKarma(int karma) {

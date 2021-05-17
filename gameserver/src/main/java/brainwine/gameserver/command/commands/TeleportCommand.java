@@ -1,5 +1,7 @@
 package brainwine.gameserver.command.commands;
 
+import static brainwine.gameserver.command.NotificationType.ALERT;
+
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.entity.player.Player;
@@ -8,13 +10,8 @@ public class TeleportCommand extends Command {
 
     @Override
     public void execute(CommandExecutor executor, String[] args) {
-        if(!(executor instanceof Player)) {
-            executor.sendMessage("Only players can use this command.");
-            return;
-        }
-        
         if(args.length !=  2) {
-            executor.sendMessage(String.format("Usage: %s", getUsage()));
+            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
             return;
         }
         
@@ -26,12 +23,12 @@ public class TeleportCommand extends Command {
             x = Integer.parseInt(args[0]);
             y = Integer.parseInt(args[1]);
         } catch(NumberFormatException e) {
-            player.sendMessage("x and y must be numerical.");
+            player.notify("x and y must be numerical.", ALERT);
             return;
         }
         
         if(!player.getZone().areCoordinatesInBounds(x, y)) {
-            player.sendMessage("Cannot teleport out of bounds!");
+            player.notify("Cannot teleport out of bounds!", ALERT);
             return;
         }
         
@@ -54,7 +51,12 @@ public class TeleportCommand extends Command {
     }
     
     @Override
-    public String getUsage() {
+    public String getUsage(CommandExecutor executor) {
         return "/teleport <x> <y>";
+    }
+    
+    @Override
+    public boolean canExecute(CommandExecutor executor) {
+        return executor instanceof Player;
     }
 }
