@@ -1,7 +1,6 @@
 package brainwine.gameserver.zone.gen;
 
 import java.io.File;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,7 +17,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.zone.Biome;
-import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.Zone;
 
 public class StaticZoneGenerator {
@@ -64,11 +62,7 @@ public class StaticZoneGenerator {
         
         try {
             if(!file.exists()) {
-                InputStream stream = StaticZoneGenerator.class.getResourceAsStream("/generators.json");
-                byte[] bytes = new byte[stream.available()];
-                stream.read(bytes);
-                stream.close();
-                Files.write(file.toPath(), bytes);
+                Files.copy(StaticZoneGenerator.class.getResourceAsStream("/generators.json"), file.toPath());
             }
             
             Map<Biome, GeneratorConfig> configs = mapper.readValue(new File("generators.json"), new TypeReference<Map<Biome, GeneratorConfig>>(){});
