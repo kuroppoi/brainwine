@@ -7,7 +7,7 @@ import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.dialogs.RegistrationDialog;
 import brainwine.gameserver.entity.player.Player;
 
-public class RegisterCommand extends Command{
+public class RegisterCommand extends Command {
 
     @Override
     public void execute(CommandExecutor executor, String[] args) {
