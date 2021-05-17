@@ -1,9 +1,5 @@
 package brainwine.gameserver.zone.gen.caves;
 
-import java.beans.ConstructorProperties;
-import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,8 +14,8 @@ import brainwine.gameserver.zone.gen.models.MushroomType;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MushroomCaveDecorator extends CaveDecorator {
     
-    @JsonIgnore
-    private final WeightedList<MushroomType> list = new WeightedList<>();
+    @JsonProperty("mushrooms")
+    private final WeightedList<MushroomType> mushrooms = new WeightedList<>();
     
     @JsonProperty("mushroom_chance")
     private double rate = 0.2;
@@ -27,19 +23,10 @@ public class MushroomCaveDecorator extends CaveDecorator {
     @JsonProperty("elder_chance")
     private double elderRate = 0.05;
     
-    @ConstructorProperties({"mushrooms"})
-    public MushroomCaveDecorator(Map<MushroomType, Integer> mushrooms) {
-        if(mushrooms != null) {
-            mushrooms.forEach((k, v) -> {
-                list.addEntry(k, v);
-            });
-        }
-    }
-    
     @Override
     public void decorate(GeneratorContext ctx, Cave cave) {
-        if(!list.isEmpty()) {
-            MushroomType mushroom = list.next(ctx.getRandom());
+        if(!mushrooms.isEmpty()) {
+            MushroomType mushroom = mushrooms.next(ctx.getRandom());
             
             for(BlockPosition block : cave.getFloorBlocks()) {
                 if(ctx.nextDouble() <= rate) {
@@ -49,12 +36,10 @@ public class MushroomCaveDecorator extends CaveDecorator {
                     
                     if(mushroom.hasStalk()) {
                         growMushroom(ctx, x, y, item, mushroom.getStalk(), mushroom.getMaxHeight());
+                    } else if(mushroom.hasElder() && ctx.nextDouble() <= elderRate){
+                        ctx.updateBlock(x, y, Layer.FRONT, mushroom.getElder());
                     } else {
-                        if(mushroom.hasElder() && ctx.nextDouble() <= elderRate) {
-                            ctx.updateBlock(x, y, Layer.FRONT, mushroom.getElder());
-                        } else {
-                            ctx.updateBlock(x, y, Layer.FRONT, item);
-                        }
+                        ctx.updateBlock(x, y, Layer.FRONT, item);
                     }
                 }
             }

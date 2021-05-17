@@ -14,14 +14,11 @@ import brainwine.gameserver.zone.gen.models.StoneVariant;
 
 public class CaveGenerator implements GeneratorTask {
     
-    private final WeightedList<StoneVariant> stoneVariants = new WeightedList<>();
+    private final WeightedList<StoneVariant> stoneVariants;
     private final List<CaveDecorator> decorators;
     
     public CaveGenerator(GeneratorConfig config) {
-        config.getStoneVariants().forEach((k, v) -> {
-            stoneVariants.addEntry(k, v);
-        });
-        
+        stoneVariants = config.getStoneVariants();
         decorators = config.getCaveDecorators();
     }
     

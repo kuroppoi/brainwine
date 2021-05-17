@@ -1,9 +1,5 @@
 package brainwine.gameserver.zone.gen.caves;
 
-import java.beans.ConstructorProperties;
-import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -18,25 +14,16 @@ import brainwine.gameserver.zone.gen.models.Cave;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class RareCrystalCaveDecorator extends CaveDecorator {
     
-    @JsonIgnore
-    private final WeightedList<Item> list = new WeightedList<>();
+    @JsonProperty("crystals")
+    private final WeightedList<Item> crystals = new WeightedList<>();
     
     @JsonProperty("crystal_chance")
     private double rate = 0.05;
     
-    @ConstructorProperties({"crystals"})
-    public RareCrystalCaveDecorator(Map<Item, Integer> crystals) {
-        if(crystals != null) {
-            crystals.forEach((k, v) -> {
-                list.addEntry(k, v);
-            });
-        }
-    }
-    
     @Override
     public void decorate(GeneratorContext ctx, Cave cave) {
-        if(!list.isEmpty()) {
-            Item crystal = list.next(ctx.getRandom());
+        if(!crystals.isEmpty()) {
+            Item crystal = crystals.next(ctx.getRandom());
             
             for(BlockPosition block : cave.getFloorBlocks()) {
                 if(ctx.nextDouble() <= rate) {

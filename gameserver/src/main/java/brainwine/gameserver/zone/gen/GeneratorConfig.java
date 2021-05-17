@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.util.WeightedList;
 import brainwine.gameserver.zone.gen.models.BaseResourceType;
 import brainwine.gameserver.zone.gen.models.Deposit;
 import brainwine.gameserver.zone.gen.models.OreDeposit;
@@ -28,7 +29,7 @@ public class GeneratorConfig {
     private Item[] speleothems = {};
     
     @JsonProperty("stone_variants")
-    private Map<StoneVariant, Integer> stoneVariants = new HashMap<>();
+    private WeightedList<StoneVariant> stoneVariants = new WeightedList<>();
     
     @JsonProperty("cave_types")
     @JsonDeserialize(using = CaveDecoratorListDeserializer.class)
@@ -52,7 +53,7 @@ public class GeneratorConfig {
         return speleothems;
     }
     
-    public Map<StoneVariant, Integer> getStoneVariants() {
+    public WeightedList<StoneVariant> getStoneVariants() {
         return stoneVariants;
     }
     

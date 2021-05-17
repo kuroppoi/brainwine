@@ -2,16 +2,37 @@ package brainwine.gameserver.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class WeightedList<T> {
     
     private final List<T> entries = new ArrayList<>();
     
-    public void addEntry(T entry, int weight) {
+    @JsonCreator
+    public WeightedList(Map<T, Integer> map) {
+        map.forEach((k, v) -> {
+            addEntry(k, v);
+        });
+    }
+    
+    @JsonCreator
+    public WeightedList(List<T> list) {
+        for(T t : list) {
+            addEntry(t, 1);
+        }
+    }
+    
+    public WeightedList() {}
+    
+    public WeightedList<T> addEntry(T entry, int weight) {
         for(int i = 0; i < weight; i++) {
             entries.add(entry);
         }
+        
+        return this;
     }
     
     public T next(Random random) {
