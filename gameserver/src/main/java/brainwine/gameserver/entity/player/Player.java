@@ -96,7 +96,7 @@ public class Player extends Entity implements CommandExecutor {
     private final Map<Integer, Long> activeChunks = new HashMap<>();
     private final Map<Integer, ConfigurableDialog> dialogs = new HashMap<>();
     private String clientVersion;
-    private Item heldItem = Item.AIR; // TODO send on entity add
+    private Item heldItem = Item.AIR;
     private int teleportX;
     private int teleportY;
     private long lastHeartbeat;
@@ -285,6 +285,7 @@ public class Player extends Entity implements CommandExecutor {
     public void changeZone(Zone zone) {
         this.zone.removePlayer(this);
         this.zone = zone;
+        sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
     }
     
