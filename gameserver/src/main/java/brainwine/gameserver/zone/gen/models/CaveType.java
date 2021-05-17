@@ -2,6 +2,7 @@ package brainwine.gameserver.zone.gen.models;
 
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
+import brainwine.gameserver.zone.gen.CaveDecorator;
 import brainwine.gameserver.zone.gen.caves.BatCaveDecorator;
 import brainwine.gameserver.zone.gen.caves.CandyCaneCaveDecorator;
 import brainwine.gameserver.zone.gen.caves.CrystalCaveDecorator;

@@ -3,6 +3,8 @@ package brainwine.gameserver.zone.gen.models;
 import java.util.ArrayList;
 import java.util.List;
 
+import brainwine.gameserver.zone.gen.CaveDecorator;
+
 public class Cave {
 
     private final List<BlockPosition> blocks = new ArrayList<>();

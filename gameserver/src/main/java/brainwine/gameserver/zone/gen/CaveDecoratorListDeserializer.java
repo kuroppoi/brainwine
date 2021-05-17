@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import brainwine.gameserver.zone.gen.models.CaveDecorator;
 import brainwine.gameserver.zone.gen.models.CaveType;
 
 /**

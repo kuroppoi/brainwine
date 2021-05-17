@@ -10,7 +10,6 @@ import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.WeightedList;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
 import brainwine.gameserver.zone.gen.models.Cave;
-import brainwine.gameserver.zone.gen.models.CaveDecorator;
 import brainwine.gameserver.zone.gen.models.StoneVariant;
 
 public class CaveGenerator implements GeneratorTask {

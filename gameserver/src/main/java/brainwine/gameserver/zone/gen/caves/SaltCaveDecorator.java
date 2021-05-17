@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.zone.gen.CaveDecorator;
 import brainwine.gameserver.zone.gen.GeneratorContext;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
 import brainwine.gameserver.zone.gen.models.Cave;
-import brainwine.gameserver.zone.gen.models.CaveDecorator;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SaltCaveDecorator extends CaveDecorator {

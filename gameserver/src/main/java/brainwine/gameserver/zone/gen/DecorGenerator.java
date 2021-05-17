@@ -7,7 +7,6 @@ import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.zone.gen.models.BaseResourceType;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
 import brainwine.gameserver.zone.gen.models.Cave;
-import brainwine.gameserver.zone.gen.models.CaveDecorator;
 import brainwine.gameserver.zone.gen.models.Deposit;
 import brainwine.gameserver.zone.gen.models.ModTileBlock;
 import brainwine.gameserver.zone.gen.models.OreDeposit;

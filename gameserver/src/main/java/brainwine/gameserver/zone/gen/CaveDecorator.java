@@ -1,9 +1,9 @@
-package brainwine.gameserver.zone.gen.models;
+package brainwine.gameserver.zone.gen;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import brainwine.gameserver.zone.gen.GeneratorContext;
+import brainwine.gameserver.zone.gen.models.Cave;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class CaveDecorator {

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.zone.gen.models.BaseResourceType;
-import brainwine.gameserver.zone.gen.models.CaveDecorator;
 import brainwine.gameserver.zone.gen.models.Deposit;
 import brainwine.gameserver.zone.gen.models.OreDeposit;
 import brainwine.gameserver.zone.gen.models.StoneVariant;
