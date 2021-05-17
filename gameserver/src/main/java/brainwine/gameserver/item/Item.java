@@ -64,10 +64,10 @@ public class Item {
     private boolean invulnerable;
     
     @JsonProperty("inventory")
-    private String inventoryItem;
+    private LazyItemGetter inventoryItem;
     
     @JsonProperty("decay inventory")
-    private String decayInventoryItem;
+    private LazyItemGetter decayInventoryItem;
     
     @JsonProperty("crafting quantity")
     private int craftingQuantity = 1;
@@ -179,19 +179,11 @@ public class Item {
     }
     
     public Item getInventoryItem() {
-        if(inventoryItem == null) {
-            return this;
-        }
-        
-        return ItemRegistry.getItem(inventoryItem);
+        return inventoryItem == null ? this : inventoryItem.get();
     }
     
     public Item getDecayInventoryItem() {
-        if(decayInventoryItem == null) {
-            return this;
-        }
-        
-        return ItemRegistry.getItem(decayInventoryItem);
+        return decayInventoryItem == null ? this : decayInventoryItem.get();
     }
     
     public int getCraftingQuantity() {

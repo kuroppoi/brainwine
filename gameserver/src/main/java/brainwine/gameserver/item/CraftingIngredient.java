@@ -4,26 +4,26 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class CraftingIngredient {
     
-    private String item;
-    private int quantity;
+    private final LazyItemGetter item;
+    private final int quantity;
     
-    public CraftingIngredient(String item, int quantity) {
+    private CraftingIngredient(LazyItemGetter item, int quantity) {
         this.item = item;
         this.quantity = quantity;
     }
     
     @JsonCreator
-    public CraftingIngredient(String item) {
-        this(item, 1);
+    private CraftingIngredient(String item) {
+        this(new LazyItemGetter(item), 1);
     }
     
     @JsonCreator
     private CraftingIngredient(Object[] data) {
-        this((String)data[0], (int)data[1]);
+        this(new LazyItemGetter((String)data[0]), (int)data[1]);
     }
     
     public Item getItem() {
-        return ItemRegistry.getItem(item);
+        return item.get();
     }
     
     public int getQuantity() {
