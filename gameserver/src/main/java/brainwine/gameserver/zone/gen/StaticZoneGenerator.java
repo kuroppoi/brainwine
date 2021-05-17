@@ -34,7 +34,8 @@ public class StaticZoneGenerator {
         "Crumsidle", "Bankswund", "Fiddletrast", "Bournpan", "St.",
         "Funderbost", "Bexwoddly", "Pilkingheld", "Wittlepen", "Rabbitbleaker",
         "Griffingumby", "Guilthead", "Bigglelund", "Bunnymold", "Rosesidle",
-        "Crushthorn", "Tanlyward", "Ahncrace"
+        "Crushthorn", "Tanlyward", "Ahncrace", "Pilkingking", "Dingstrath",
+        "Axebury", "Ginglingtap", "Ballybibby", "Shadehoven"
     };
         
     private static final String[] LAST_NAMES = {
@@ -46,7 +47,8 @@ public class StaticZoneGenerator {
         "Ridge", "Alresford", "Place", "Bridge", "Glade",
         "Mill", "Court", "Dooftory", "Hills", "Specklewint",
         "Grove", "Aylesbury", "Wagwouth", "Russetcumby", "Point",
-        "Canyon", "Cranwarry"
+        "Canyon", "Cranwarry", "Bluff", "Passage", "Crantippy",
+        "Kerbodome", "Dale", "Cemetery"
     };
     
     private static final Logger logger = LogManager.getLogger();
