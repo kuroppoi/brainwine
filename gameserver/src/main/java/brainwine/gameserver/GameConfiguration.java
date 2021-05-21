@@ -1,16 +1,17 @@
 package brainwine.gameserver;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -166,15 +167,11 @@ public class GameConfiguration {
     
     private static void loadConfigFiles() {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(GameConfiguration.class.getResourceAsStream("/config")));
-            String fileName = null;
+            Reflections reflections = new Reflections("config", new ResourcesScanner());
+            Set<String> fileNames = reflections.getResources(x -> x.endsWith(".yml"));
             
-            while((fileName = reader.readLine()) != null) {
-                if(!fileName.endsWith(".yml")) {
-                    continue;
-                }
-                
-                Map<String, Object> config = yaml.load(GameConfiguration.class.getResourceAsStream(String.format("/config/%s", fileName)));
+            for(String fileName : fileNames) {
+                Map<String, Object> config = yaml.load(GameConfiguration.class.getResourceAsStream(String.format("/%s", fileName)));
                 
                 if(fileName.contains("versions")) {
                     String[] segments = fileName.replace(".yml", "").split("-");
@@ -190,8 +187,6 @@ public class GameConfiguration {
                 
                 baseConfig.putAll(config);
             }
-            
-            reader.close();
         } catch(Exception e) {
             logger.fatal("Could not load configuration files", e);
             System.exit(-1);
