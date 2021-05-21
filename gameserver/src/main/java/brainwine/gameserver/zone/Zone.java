@@ -562,6 +562,7 @@ public class Zone {
                 
                 if(block.getFrontItem().isWhole()) {
                     sunlight[x] = y;
+                    pendingSunlight.remove(x);
                     return;
                 }
             } else {
