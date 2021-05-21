@@ -1,0 +1,293 @@
+borders:
+  '1': [["top", 0]] # 0001
+  '2': [["top", 90]] # 0010
+  '3': [["top-right", 0]] # 0011
+  '4': [["top", 180]] # 0100
+  '5': [["top", 0], ["top", 180]] # 0101
+  '6': [["top-right", 90]] # 0110
+  '7': [["top-right-bottom", 0]] # 0111
+  '8': [["top", 270]] # 1000
+  '9': [["top-right", 270]] # 1001
+  '10': [["top", 90], ["top", 270]] # 1010
+  '11': [["top-right-bottom", 270]] # 1011
+  '12': [["top-right", 180]] # 1100
+  '13': [["top-right-bottom", 180]] # 1101
+  '14': [["top-right-bottom", 90]] # 1110
+  '15': [["all", 0]] # 1111
+  '16': [["nub", 0]]
+
+connectors:
+  '0': [[null, 0]] # 0000
+  '1': [[null, 180]] # 0001
+  '2': [[null, 270]] # 0010
+  '3': [["top-right", 0]] # 0011
+  '4': [[null, 0]] # 0100
+  '5': [[null, 0]] # 0101
+  '6': [["top-right", 90]] # 0110
+  '7': [["top-right-bottom", 0]] # 0111
+  '8': [[null, 90]] # 1000
+  '9': [["top-right", 270]] # 1001
+  '10': [[null, 90]] # 1010
+  '11': [["top-right-bottom", 270]] # 1011
+  '12': [["top-right", 180]] # 1100
+  '13': [["top-right-bottom", 180]] # 1101
+  '14': [["top-right-bottom", 90]] # 1110
+  '15': [["all", 0]] # 1111
+
+connectors-left-right:
+  '0': [[null, 0]] # 0000
+  '1': [[null, 0]] # 0001
+  '2': [["left", 0]] # 0010
+  '3': [["left", 0]] # 0011
+  '4': [[null, 0]] # 0100
+  '5': [[null, 0]] # 0101
+  '6': [["left", 0]] # 0110
+  '7': [["left", 0]] # 0111
+  '8': [["right", 0]] # 1000
+  '9': [["right", 0]] # 1001
+  '10': [[null, 0]] # 1010
+  '11': [[null, 0]] # 1011
+  '12': [["right", 0]] # 1100
+  '13': [["right", 0]] # 1101
+  '14': [[null, 0]] # 1110
+  '15': [[null, 0]] # 1111
+
+connectors-square:
+  '0': [[null, 0]] # 0000
+  '1': [["top", 180]] # 0001
+  '2': [["left", 0]] # 0010
+  '3': [["top-left", 0, 0, 1]] # 0011
+  '4': [["top", 0]] # 0100
+  '5': [[null, 0]] # 0101
+  '6': [["top-left", 0]] # 0110
+  '7': [["left", 0]] # 0111
+  '8': [["right", 0]] # 1000
+  '9': [["top-right", 0, 0, 1]] # 1001
+  '10': [[null, 0]] # 1010
+  '11': [["top", 0, 0, 1]] # 1011
+  '12': [["top-right", 0]] # 1100
+  '13': [["right", 0]] # 1101
+  '14': [["top", 0]] # 1110
+  '15': [[null, 0]] # 1111
+
+connectors-balloon:
+  '0': [['all', 0]] # 0000
+  '1': [['top-right-bottom', 90]] # 0001
+  '2': [["top-right-bottom", 0, 1, 0]] # 0010
+  '3': [["bottom-left", 0, 0, 0]] # 0011
+  '4': [["top-right-bottom", 90, 1, 0]] # 0100
+  '5': [['top-bottom', 90]] # 0101
+  '6': [["top-left", 0]] # 0110
+  '7': [["left", 0]] # 0111
+  '8': [["top-right-bottom", 0]] # 1000
+  '9': [["bottom-right", 0, 0, 0]] # 1001
+  '10': [['top-bottom', 0]] # 1010
+  '11': [["bottom", 0, 0, 0]] # 1011
+  '12': [["top-right", 0]] # 1100
+  '13': [["right", 0]] # 1101
+  '14': [["top", 0]] # 1110
+  '15': [[null, 0]] # 1111
+
+connectors-balloon-striped:
+  '0': [['all', 0]] # 0000
+  '1': [['left-top-right', 0, 0, 1]] # 0001
+  '2': [["top-right-bottom", 0, 1, 0]] # 0010
+  '3': [["bottom-left", 0, 0, 0]] # 0011
+  '4': [["left-top-right", 0]] # 0100
+  '5': [['left-right', 0]] # 0101
+  '6': [["top-left", 0]] # 0110
+  '7': [["left", 0]] # 0111
+  '8': [["top-right-bottom", 0]] # 1000
+  '9': [["bottom-right", 0, 0, 0]] # 1001
+  '10': [['top-bottom', 0]] # 1010
+  '11': [["bottom", 0, 0, 0]] # 1011
+  '12': [["top-right", 0]] # 1100
+  '13': [["right", 0]] # 1101
+  '14': [["top", 0]] # 1110
+  '15': [[null, 0]] # 1111
+
+continuity:
+  mask:
+    '1': ["top", 0] # 0001
+    '2': ["top", 90] # 0010
+    '3': ["top-right", 0] # 0011
+    '4': ["top", 180] # 0100
+    '5': ["top-bottom", 0] # 0101
+    '6': ["top-right", 90] # 0110
+    '7': ["top-right-bottom", 0] # 0111
+    '8': ["top", 270] # 1000
+    '9': ["top-right", 270] # 1001
+    '10': ["top-bottom", 90] # 1010
+    '11': ["top-right-bottom", 270] # 1011
+    '12': ["top-right", 180] # 1100
+    '13': ["top-right-bottom", 180] # 1101
+    '14': ["top-right-bottom", 90] # 1110
+    '15': ["all", 0] # 1111
+
+  borders:
+    '1': ["top", 0] # 0001
+    '2': ["top", 90] # 0010
+    '3': ["top-right", 0] # 0011
+    '4': ["top", 180] # 0100
+    '5': ["top", 0] #, ["top", 180] # 0101
+    '6': ["top-right", 90] # 0110
+    '7': ["top-right-bottom", 0] # 0111
+    '8': ["top", 270] # 1000
+    '9': ["top-right", 270] # 1001
+    '10': ["top", 90] #, ["top", 270] # 1010
+    '11': ["top-right-bottom", 270] # 1011
+    '12': ["top-right", 180] # 1100
+    '13': ["top-right-bottom", 180] # 1101
+    '14': ["top-right-bottom", 90] # 1110
+    '15': ["all", 0] # 1111
+    '16': ["nub", 0]
+
+  connectors:
+    '0': [null, 0] # 0000
+    '1': [null, 180] # 0001
+    '2': [null, 270] # 0010
+    '3': ["top-right", 0] # 0011
+    '4': [null, 0] # 0100
+    '5': [null, 0] # 0101
+    '6': ["top-right", 90] # 0110
+    '7': ["top-right-bottom", 0] # 0111
+    '8': [null, 90] # 1000
+    '9': ["top-right", 270] # 1001
+    '10': [null, 90] # 1010
+    '11': ["top-right-bottom", 270] # 1011
+    '12': ["top-right", 180] # 1100
+    '13': ["top-right-bottom", 180] # 1101
+    '14': ["top-right-bottom", 90] # 1110
+    '15': ["all", 0] # 1111
+
+  connectors-left-right:
+    '0': [null, 0] # 0000
+    '1': [null, 0] # 0001
+    '2': ["left", 0] # 0010
+    '3': ["left", 0] # 0011
+    '4': [null, 0] # 0100
+    '5': [null, 0] # 0101
+    '6': ["left", 0] # 0110
+    '7': ["left", 0] # 0111
+    '8': ["right", 0] # 1000
+    '9': ["right", 0] # 1001
+    '10': [null, 0] # 1010
+    '11': [null, 0] # 1011
+    '12': ["right", 0] # 1100
+    '13': ["right", 0] # 1101
+    '14': [null, 0] # 1110
+    '15': [null, 0] # 1111
+
+  connectors-square:
+    '0': [null, 0] # 0000
+    '1': ["top", 180] # 0001
+    '2': ["left", 0] # 0010
+    '3': ["top-left", 0, 0, 1] # 0011
+    '4': ["top", 0] # 0100
+    '5': [null, 0] # 0101
+    '6': ["top-left", 0] # 0110
+    '7': ["left", 0] # 0111
+    '8': ["right", 0] # 1000
+    '9': ["top-right", 0, 0, 1] # 1001
+    '10': [null, 0] # 1010
+    '11': ["top", 0, 0, 1] # 1011
+    '12': ["top-right", 0] # 1100
+    '13': ["right", 0] # 1101
+    '14': ["top", 0] # 1110
+    '15': [null, 0] # 1111
+
+  connectors-balloon:
+    '0': ['all', 0] # 0000
+    '1': ['top-right-bottom', 90] # 0001
+    '2': ["top-right-bottom", 180] # 0010
+    '3': ["bottom-left", 0, 0, 0] # 0011
+    '4': ["top-right-bottom", 270] # 0100
+    '5': ['top-bottom', 90] # 0101
+    '6': ["top-left", 0] # 0110
+    '7': ["left", 0] # 0111
+    '8': ["top-right-bottom", 0] # 1000
+    '9': ["bottom-right", 0, 0, 0] # 1001
+    '10': ['top-bottom', 0] # 1010
+    '11': ["bottom", 0, 0, 0] # 1011
+    '12': ["top-right", 0] # 1100
+    '13': ["right", 0] # 1101
+    '14': ["top", 0] # 1110
+    '15': [null, 0] # 1111
+
+  connectors-balloon-striped:
+    '0': ['all', 0] # 0000
+    '1': ['left-top-right', 180] # 0001
+    '2': ["top-right-bottom", 180] # 0010
+    '3': ["bottom-left", 0, 0, 0] # 0011
+    '4': ["left-top-right", 0] # 0100
+    '5': ['left-right', 90] # 0101
+    '6': ["top-left", 0] # 0110
+    '7': ["left", 0] # 0111
+    '8': ["top-right-bottom", 0] # 1000
+    '9': ["bottom-right", 0, 0, 0] # 1001
+    '10': ['top-bottom', 0] # 1010
+    '11': ["bottom", 0, 0, 0] # 1011
+    '12': ["top-right", 0] # 1100
+    '13': ["right", 0] # 1101
+    '14': ["top", 0] # 1110
+    '15': [null, 0] # 1111
+
+masks:
+  decay:
+    '0': [[['decay-a-1', 'decay-a-2', 'decay-a-3', 'decay-a-4', 'decay-a-5'], 0], [['decay-b-1', 'decay-b-2', 'decay-b-3', 'decay-b-4', 'decay-b-5'], 0]] # 0000
+
+    '1': [['decay-bottom-1', 180], ['decay-bottom-2', 180], ['decay-bottom-3', 180], ['decay-bottom-4', 180]] # 0001
+    '17': [['decay-bottom-1', 180], ['decay-bottom-2', 180], ['decay-bottom-3', 180], ['decay-bottom-4', 180]] # 00010001
+    '129': [['decay-bottom-1', 180], ['decay-bottom-2', 180], ['decay-bottom-3', 180], ['decay-bottom-4', 180]] # 10000001
+
+    '2': [['decay-bottom-1', 270], ['decay-bottom-2', 270], ['decay-bottom-3', 270], ['decay-bottom-4', 270]] # 0010
+    '34': [['decay-bottom-1', 270], ['decay-bottom-2', 270], ['decay-bottom-3', 270], ['decay-bottom-4', 270]] # 00100010
+    '18': [['decay-bottom-1', 270], ['decay-bottom-2', 270], ['decay-bottom-3', 270], ['decay-bottom-4', 270]] # 00010010
+
+    '4': [['decay-bottom-1', 0], ['decay-bottom-2', 0], ['decay-bottom-3', 0], ['decay-bottom-4', 0]] # 0100
+    '36': [['decay-bottom-1', 0], ['decay-bottom-2', 0], ['decay-bottom-3', 0], ['decay-bottom-4', 0]] # 00100100
+    '68': [['decay-bottom-1', 0], ['decay-bottom-2', 0], ['decay-bottom-3', 0], ['decay-bottom-4', 0]] # 01000100
+
+    '8': [['decay-bottom-1', 90], ['decay-bottom-2', 90], ['decay-bottom-3', 90], ['decay-bottom-4', 90]] # 1000
+    '72': [['decay-bottom-1', 90], ['decay-bottom-2', 90], ['decay-bottom-3', 90], ['decay-bottom-4', 90]] # 01001000
+    '136': [['decay-bottom-1', 90], ['decay-bottom-2', 90], ['decay-bottom-3', 90], ['decay-bottom-4', 90]] # 10001000
+
+    '5': [['decay-top-bottom', 0]] # 0101
+    '10': [['decay-top-bottom', 90]] # 1010
+
+    '3': [['decay-top-right', 0], ['decay-left-top', 90], ['decay-bottom-left', 180], ['decay-right-bottom', 270]] # 0011
+    '6': [['decay-top-right', 90], ['decay-left-top', 180], ['decay-bottom-left', 270], ['decay-right-bottom', 0]] # 0110
+    '9': [['decay-top-right', 270], ['decay-left-top', 0], ['decay-bottom-left', 90], ['decay-right-bottom', 180]] # 1001
+    '12': [['decay-top-right', 180], ['decay-left-top', 270], ['decay-bottom-left', 0], ['decay-right-bottom', 90]] # 1100
+
+    '19': [['decay-top-right-open', 0], ['decay-left-top-open', 90], ['decay-bottom-left-open', 180], ['decay-right-bottom-open', 270]] # 00010011 top/right/top-right
+    '38': [['decay-top-right-open', 90], ['decay-left-top-open', 180], ['decay-bottom-left-open', 270], ['decay-right-bottom-open', 0]] # 00100110 right/bottom/right-bottom
+    '76': [['decay-top-right-open', 180], ['decay-left-top-open', 270], ['decay-bottom-left-open', 0], ['decay-right-bottom-open', 90]] # 01001100 bottom/left/bottom-left
+    '137': [['decay-top-right-open', 270], ['decay-left-top-open', 0], ['decay-bottom-left-open', 90], ['decay-right-bottom-open', 180]] # 10001001 top/left/top-left
+
+    #'7': [['decay-right-bottom-left', 270]] # 0111
+    #'11': [['decay-right-bottom-left', 180]] # 1011
+    #'13': [['decay-right-bottom-left', 90]] # 1101
+    #'14': [['decay-right-bottom-left', 0]] # 1110
+
+
+
+decay:
+  materials:
+    paper: [['cracks', 3], ['dirt', 2], ['gouges', 2], ['mold', 3]]
+    glass: [['cracks', 1], ['dirt', 1], ['scratches', 3]]
+    wood: [['cracks', 3], ['dirt', 1], ['gouges', 2], ['mold', 1]]
+    stone: [['cracks', 3], ['dirt', 1], ['gouges', 2]]
+    metal: [['cracks', 3], ['scratches', 1], ['gouges', 2]]
+  single:
+    #- ['decay-a-1', 'decay-a-2', 'decay-a-3']
+    #- ['decay-b-1', 'decay-b-2', 'decay-b-3']
+    - ['decay-c-1', 'decay-c-2', 'decay-c-3']
+    - ['decay-d-1', 'decay-d-2', 'decay-d-3']
+    - ['decay-e-1', 'decay-e-2', 'decay-e-3']
+    - ['decay-f-1', 'decay-f-2', 'decay-f-3']
+    - ['decay-g-1', 'decay-g-2', 'decay-g-3']
+    - ['decay-h-1', 'decay-h-2', 'decay-h-3']
+
+lighting:
+  player: 6

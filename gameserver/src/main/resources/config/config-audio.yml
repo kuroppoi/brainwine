@@ -1,0 +1,82 @@
+audio:
+  gui:
+    click: ['click']
+    place: ['place']
+    error: ['error']
+    craft: ['craft']
+    notification: ['notification']
+
+  footsteps:
+    earth: ['Gravelstep1', 'Gravelstep2', 'Gravelstep3']
+    wood: ['Leatherstep1', 'Leatherstep2', 'Leatherstep3', 'Leatherstep4', 'Leatherstep5']
+    stone: ['Stonestep1', 'Stonestep2', 'Stonestep3', 'Stonestep4', 'Stonestep5']
+    metal: ['Slabstep1', 'Slabstep2', 'Stonestep2']
+    default: ['Gravelstep1', 'Gravelstep2', 'Gravelstep3']
+
+  mining:
+    default: ['HitHard1', 'HitHard2', 'HitHard3', 'HitHard4']
+    earth: ['dirt-1', 'dirt-2', 'dirt-3', 'dirt-4', 'dirt-5']
+    soft: ['ThudOnBack', 'ThudOnBody', 'ThudOnClothes', 'ThudOnTorso']
+    squish: ['squish-1', 'squish-2']
+    crunch: ['bone_crush_03', 'bone_crush_05', 'bone_snap_small_03']
+    wood: ['ThudOnWood']
+    metal: ['metal_med_misc_impact_02', 'metal_med_misc_impact_01']
+    hard_metal: ['HitMetal1', 'HitMetal2', 'HitMetal3', 'HitMetal4']
+    little_machine: ['metal_impact21', 'metal_med_hollow_impact_06', 'metal_med_misc_impact_06', 'metal_med_misc_impact_03']
+    big_machine: ['metal_impact02', 'metal_impact05', 'metal_impact10', 'metal_impact18']
+    air: ['whoosh-1']
+
+  liquid:
+    splash:
+      in: ['water-splash-in']
+      out: ['water-splash-out']
+      under: ['underwater-splash-1', 'underwater-splash-2', 'underwater-splash-3']
+
+  atmosphere:
+    thunder: ['thunder02', 'thunder03', 'thunder_14']
+
+  rain:
+    - rain_forest_02_15
+    - forest_rain_01_15
+
+  wind:
+    - wind_desert_01_30
+
+  flame:
+    - fire_05_loop10
+
+  steam:
+    - steam_leak_01
+
+  shield:
+    - forcefield_magnetic_loop_03
+
+  electricity:
+    - electric-arc-1
+
+  jetpack:
+    - jetpack
+
+  earthquake:
+    - earthquake_rumble
+
+  direct:
+    - direct
+
+  ouch:
+    male:
+      light:
+        - ouch-male-2
+        - ouch-male-3
+      heavy:
+        - ouch-male-1
+        - ouch-male-4
+        - ouch-male-5
+    female:
+      light:
+        - ouch-female-4
+        - ouch-female-4
+      heavy:
+        - ouch-female-1
+        - ouch-female-2
+        - ouch-female-3

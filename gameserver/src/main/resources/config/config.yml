@@ -1,0 +1,4430 @@
+features:
+  tapjoy_offerwall: true
+tapjoy: 1
+
+client_version:
+  default: 2.11.0
+  'iPh|iPo|iPa': 2.11.0
+  Windows: 3.8.0
+  Unity: 3.8.0
+
+item_key_map:
+  tileable: tileable
+  opaque: opaque
+  whole: whole
+  shape: shape
+  shadow: shadow
+  solid: solid
+  border_shadow: border_shadow
+  mod: mod
+  rotation: rotation
+  code: code
+  visible: visible
+  invulnerable: invulnerable
+  placeover: placeover
+  char: char
+  hintt: hintt
+  gui: gui
+  excavatable: excavatable
+  continuity: continuity
+  sprites+: sprites+
+  title: title
+  sprites: sprites
+  color: color
+  border_wholeness: border-wholeness
+  spawn: spawn
+  background: background
+  sprite_continuity: sprite-continuity
+  sprite_continuity_animation: sprite-continuity-animation
+  sprite_continuity_animation_opacity: sprite_continuity_animation_opacity
+  sprite_z: sprite_z
+  sprite: sprite
+  border-continuity_external: border-continuity-external
+  border_continuity_external: border_continuity_external
+  border_continuity_color: border_continuity_color
+  sprite_opacity: sprite_opacity
+  karma: karma
+  drain_level: drain_level
+  mod_max: mod_max
+  rarity: rarity
+  damage: damage
+  light: light
+  light_color: light_color
+  emitter: emitter
+  level: level
+  lootable: lootable
+  material: material
+  ingredients: ingredients
+  crafting_quantity: crafting quantity
+  border_continuity: border-continuity
+  toughness: toughness
+  decay_inventory: decay inventory
+  border_continuity_color: border-continuity-color
+  crafting_skill: crafting skill
+  border_inventory: border-inventory
+  group: group
+  craftable: craftable
+  inventory: inventory
+  diggable: diggable
+  earthy: earthy
+  overlay_prefab: overlay_prefab
+  spawn_entity: spawn_entity
+  mask: mask
+  mask_alternative: mask_alternative
+  mining_skill: mining skill
+  wiki: wiki
+  stealable: stealable
+  use: use
+  adjacent_mine: adjacent_mine
+  growth: growth
+  carryable: carryable
+  hint: hint
+  mounted: mounted
+  inventory_frame: inventory_frame
+  frequency: frequency
+  biome: biome
+  mining_bonus: mining_bonus
+  fieldable: fieldable
+  mining_bonus: mining bonus
+  report: report
+  damage_min_velocity: damage_min_velocity
+  entity: entity
+  use_proximity: use_proximity
+  spawn_entity_crafting_quantity: spawn_entity_crafting quantity
+  jiggle: jiggle
+  change: change
+  inventory_sprite: inventory sprite
+  door: door
+  shelter: shelter
+  sprite_continuity_config: sprite-continuity-config
+  continuity_corners: continuity_corners
+  sprite-color: sprite-color
+  shape_definition: shape_definition
+  craft: craft
+  custom_place: custom_place
+  meta: meta
+  spacing: spacing
+  spacing_items: spacing_items
+  target: target
+  sections: sections
+  place_hint: place_hint
+  place_constraints: place_constraints
+  mod_inventory: mod_inventory
+  spawn_spacing: spawn_spacing
+  field: field
+  role: role
+  special_placement: special placement
+  tradeable: tradeable
+  membership: membership
+  custom_mine: custom_mine
+  ownership: ownership
+  size: size
+  admin_sprite: admin_sprite
+  metadata: metadata
+  center: center
+  adjacent_change: adjacent_change
+  place_mod: place mod
+  placing_skill: placing skill
+  sprite_animation: sprite animation
+  light_position: light position
+  light_position: light_position
+  timer: timer
+  timer_delay: timer_delay
+  quantity: quantity
+  place_transform: place_transform
+  loot: loot
+  loot_graphic: loot_graphic
+  loot_xp: loot_xp
+  field_place: field_place
+  placing_cost: placing_cost
+  place_entity: place_entity
+  place_entity_sprite: place_entity_sprite
+  door_switched: door_switched
+  speed: speed
+  burst: burst
+  steam: steam
+  crafting_helper: crafting_helper
+  power: power
+  crafting_helpers: crafting_helpers
+  crafting_events: crafting_events
+  sound_loop: sound_loop
+  sound_loop_volume: sound_loop_volume
+  guard: guard
+  xp: xp
+  spawner: spawner
+  field_coverage: field_coverage
+  timer_requirement: timer_requirement
+  timer_mine: timer_mine
+  sound: sound
+  reach: reach
+  chromatic: chromatic
+  field_damage: field_damage
+  sprite_animation_color: sprite animation color
+  damage_duration: damage_duration
+  damage_range: damage range
+  action: action
+  powerV3: powerV3
+  bonus: bonus
+  life: life
+  auto_equip: auto_equip
+  critical_hit: critical_hit
+  glow: glow
+  glow_sprite: glow_sprite
+  ammo_cost: ammo cost
+  rate: rate
+  shoot_emitter: shoot emitter
+  muzzle: muzzle
+  inventory type: inventory type
+  defense: defense
+  tooltip: tooltip
+  short_hint: short_hint
+  consumable: consumable
+  action_track: action_track
+  power_bonus: power_bonus
+  duration: duration
+  convert: convert
+  placeable: placeable
+  wardrobe: wardrobe
+  base: base
+  deprecated: deprecated
+  spine_sprite: spine_sprite
+  hand: hand
+  covered: covered
+  input_sprite: input_sprite
+  type: type
+  secondary: secondary
+  bounce: bounce
+  animations: animations
+  animation: animation
+  appearance: appearance
+  supercede_inventory: supercede_inventory
+  damage_range: damage_range
+  attack_interval: attack_interval
+  attack_duration: attack_duration
+  layer: layer
+  category: category
+  block_size: size
+  inherit: inherit
+          
+# ===== Inventory order ===== #
+
+inventory:
+  - name: resources
+    icon: inventory/ground/stone
+    items:
+      - accessories/shillings
+      - ground/earth
+      - ground/earth-compost
+      - ground/sandstone
+      - ground/limestone
+      - ground/sand
+      - ground/blackrock
+      - rubble/wood-1
+      - rubble/stone-pile-1
+      - ground/flax
+      - ground/resin
+      - ground/clay
+      - ground/salt
+      - ground/fire-salt
+      - ground/iron-ore
+      - ground/copper-ore
+      - ground/zinc-ore
+      - ground/lead-ore
+      - ground/quartz-ore
+      - ground/sulfur-ore
+      - ground/marble-ore
+      - ground/bloodstone-ore
+      - ground/beryllium-ore
+      - ground/diamond-ore
+      - ground/platinum-ore
+      - ground/crystal-blue-1
+      - ground/crystal-blue-2
+      - ground/crystal-blue-4
+      - ground/crystal-purple-1
+      - ground/crystal-purple-large
+      - ground/crystal-red-1
+      - ground/crystal-red-large
+      - ground/crystal-orange
+      - ground/crystal-yellow
+      - ground/crystal-green-small
+      - ground/crystal-green-large
+      - ground/crystal-white-small
+      - ground/crystal-white-large
+      - ground/crystal-rainbow
+      - ground/onyx
+
+      - arctic/ice
+      - arctic/snow
+      - liquid/water
+      - liquid/acid
+      - liquid/magma
+
+      - desert/rock-small
+      - desert/rock-tall
+      - desert/rock-wide
+      - desert/rock-large
+
+  - name: construction
+    icon: inventory/back/glass
+    crafting: true
+    items:
+      - building/wood
+      - ground/stone
+      - building/pitch
+      - back/wood
+      - back/wood-panel
+      - back/wood-panel-decorative
+      - building/wood-board
+      - building/wood-decorative
+      - back/glass
+      - back/glass-divided
+      - building/glass
+      - building/porcelain
+      - back/earth-brick
+      - building/earth-brick
+      - back/adobe
+      - building/adobe
+      - back/stone
+      - building/stone
+      - back/cobblestone-gray
+      - building/cobblestone-gray
+      - back/cobblestone-tan
+      - building/cobblestone-tan
+      - back/sandstone
+      - building/sandstone
+      - back/limestone
+      - building/limestone
+      - building/brick
+      - back/brick
+      - building/brick-mixed
+      - back/brick-mixed
+      - building/brick-tan
+      - back/brick-tan
+      - building/brick-blue
+      - back/brick-blue
+      - chromatic/block
+      - chromatic/block-reinforced
+      - back/chromatic
+
+  - name: architecture
+    icon: inventory/building/roof-edge
+    crafting: true
+    items:
+      - building/roof
+      - building/roof-edge
+      - building/roof-edge-large
+      - building/roof-brown
+      - building/roof-brown-edge
+      - building/roof-brown-edge-large
+      - building/roof-spanish
+      - building/roof-spanish-edge
+      - building/roof-spanish-edge-large
+      - building/roof-brass
+      - building/roof-brass-edge
+      - building/roof-brass-edge-large
+      - back/ice-brick
+      - arctic/ice-brick
+      - back/snow-brick
+      - arctic/snow-brick
+      - arctic/snowball
+      - building/bridge-rope-block
+      - building/bridge-rope-end
+      - building/bridge-rope-railing
+      - building/bridge-wood
+      - building/bridge-wood-block
+      - building/bridge-wood-railing
+      - building/bridge-stone
+      - building/bridge-stone-block
+      - building/bridge-stone-railing
+      - building/bridge
+      - building/bridge-block
+      - building/fence-square
+      - rubble/gravestone
+      - rubble/hell-gravestone
+      - ground/bone-wall
+
+  - name: metallurgy
+    icon: inventory/back/scaffold
+    crafting: true
+    items:
+      - rubble/iron
+      - rubble/copper
+      - rubble/brass
+      - building/iron
+      - back/iron
+      - building/iron-reinforced
+      - building/grate
+      - back/scaffold-wood
+      - back/scaffold
+      - back/scaffold-decayed
+      - building/copper
+      - building/copper-reinforced
+      - back/copper
+      - building/brass
+      - back/brass
+      - building/brass-reinforced
+      - mechanical/pipe-iron
+      - mechanical/pipe
+
+  - name: tools
+    icon: inventory/tools/pickaxe-fine
+    crafting: true
+    items:
+      - tools/pickaxe
+      - tools/pickaxe-fine
+      - tools/pickaxe-diamond
+      - tools/pickaxe-onyx
+      - tools/pickaxe-platinum
+      - tools/shovel
+      - tools/shovel-diamond
+      - tools/shovel-onyx
+      - tools/shovel-platinum
+      - tools/hatchet
+      - tools/hatchet-diamond
+      - tools/hatchet-onyx
+      - tools/hatchet-platinum
+      - tools/net
+      - tools/net-diamond
+      - tools/net-onyx
+      - tools/net-platinum
+      - tools/spade
+      - tools/spade-diamond
+      - tools/spade-onyx
+      - tools/spade-platinum
+      - tools/cane
+      - tools/cane-diamond
+      - tools/cane-onyx
+      - tools/cane-platinum
+      - tools/sledgehammer
+      - tools/sledgehammer-fine
+      - tools/sledgehammer-diamond
+      - tools/sledgehammer-onyx
+      - tools/sledgehammer-platinum
+      - tools/rapier
+      - tools/rapier-diamond
+      - tools/rapier-onyx
+      - tools/rapier-platinum
+      - tools/tesla-club
+
+  - name: utility
+    icon: inventory/building/ladder-brass
+    crafting: true
+    items:
+      - building/door-wood
+      - building/trapdoor-wood
+      - building/ladder-wood
+      - building/door-brass
+      - building/trapdoor-brass
+      - building/ladder-brass
+      - building/staircase
+      - building/ladder-rope
+      - building/plug
+      - containers/chest
+      - containers/chest-large
+      - containers/bucket
+      - containers/cage
+      - containers/cage-pet
+      - containers/pet-bunny
+      - containers/pet-skunk
+      - containers/pet-crow
+      - containers/pet-vulture
+      - containers/pet-terrapus
+      - containers/jar
+      - containers/jar-water
+      - containers/jar-acid
+      - containers/vial-poison
+      - containers/tin-wax
+      - building/scarecrow
+      - building/tinman
+      - furniture/keyring
+      - furniture/scale
+      - furniture/market
+      - containers/wine-bottle
+      - containers/flower-pot-clay
+      - containers/flower-pot-glass
+      - containers/flower-pot-brass
+      - containers/flower-pot-porcelain
+      - containers/fertilizer
+      - furniture/pet-carrier
+      - furniture/pet-bowl
+      - containers/canned-food
+      - containers/pandora
+      - signs/obelisk
+      - music/bass-drum
+      - music/snare-drum
+      - music/gong
+      - music/piano
+      - music/harp
+      - music/symphonium
+      - music/synthesizer
+      - music/phonograph
+      - furniture/easel
+      - furniture/easel-tall
+      - mechanical/ship-wheel
+      - mechanical/compass
+      - mechanical/compass-dark
+      - mechanical/compass-icy
+      - mechanical/compass-sandy
+      - mechanical/compass-burned
+      - holiday/door-festive
+      - signs/checkpoint
+
+  - name: signs
+    icon: inventory/signs/brass-small
+    crafting: true
+    items:
+      - signs/wood-small
+      - signs/wood-large
+      - signs/iron-small
+      - signs/iron-large
+      - signs/copper-small
+      - signs/copper-large
+      - signs/brass-small
+      - signs/brass-large
+      - signs/plaque
+      - signs/plaque-ruby
+      - signs/plaque-landmark
+      - signs/mechanical
+      - building/hanger
+
+      - signs/note-wall
+      - signs/guild
+
+  - name: lighting
+    icon: inventory/lighting/candle
+    crafting: true
+    items:
+      - lighting/lantern
+      - lighting/floorlamp
+      - lighting/streetlight
+      - lighting/streetlight-triple
+      - lighting/candle
+      - lighting/candlelabra
+      - lighting/chandelier
+      - lighting/fancy-lamp-1
+      - lighting/fancy-lamp-2
+      - lighting/fancy-lamp-3
+      - lighting/fancy-lamp-4
+      - lighting/fancy-lamp-5
+      - lighting/fancy-lamp-6
+      - lighting/fancy-lamp-7
+      - lighting/fancy-lamp-8
+      - furniture/fireplace
+      - furniture/fireplace-large
+      - furniture/brazier
+      - lighting/industrial
+      - lighting/industrial-cord
+      - lighting/grow-lamp
+      - lighting/paper
+      - holiday/christmas-lights-colored
+      - holiday/christmas-lights-white
+      - holiday/christmas-lights-reindeer
+      - holiday/christmas-lights-sleigh
+
+  - name: furniture
+    icon: inventory/furniture/davenport
+    crafting: true
+    items:
+      - furniture/mirror
+      - furniture/mirror-wall
+      - furniture/wardrobe
+      - furniture/hatrack
+      - furniture/chair-a
+      - furniture/chair-a-side
+      - furniture/chair-b
+      - furniture/chair-b-side
+      - furniture/chair-plush
+      - furniture/chair-fine
+      - furniture/fainting
+      - furniture/davenport
+      - furniture/park-bench
+      - furniture/cabinet
+      - furniture/bookshelf-tall
+      - furniture/bookshelf-tall-full
+      - furniture/table
+      - furniture/shelf
+      - furniture/shelf-end
+      - furniture/wine-rack
+      - furniture/wine-rack-large
+      - furniture/bed
+      - furniture/bed-covered
+      - furniture/sink
+      - furniture/toilet
+      - furniture/bidet
+      - furniture/bathtub
+      - furniture/wastebasket
+      - furniture/grandfather-clock
+      - furniture/clock-giant
+      - mechanical/typewriter
+      - furniture/fountain
+
+  - name: decoration
+    icon: inventory/building/fence-wood-2
+    crafting: true
+    items:
+      - back/paper
+      - back/wallpaper-1
+      - back/wallpaper-2
+      - back/wallpaper-3
+      - back/wallpaper-4
+      - back/wallpaper-5
+      - back/wallpaper-6
+      - back/wallpaper-7
+      - back/wallpaper-8
+      - back/wallpaper-9
+      - back/wallpaper-10
+      - back/wallpaper-11
+      - back/wallpaper-12
+      - back/cork
+      - building/post-wood
+      - building/fence-wood-1
+      - building/fence-wood-2
+      - building/fence-wood-tall-1
+      - building/fence-wood-tall-2
+      - building/fence-iron-1
+      - building/fence-iron-2
+      - building/fence-iron-tall-1
+      - building/fence-iron-tall-2
+      - building/chain
+      - building/rope
+      - building/rope-knotted
+      - building/post-iron
+      - building/weathervane
+      - building/mailbox
+
+      - furniture/map
+      - furniture/daguerreotype-small
+      - furniture/daguerreotype-large
+      - furniture/marionette
+
+      - furniture/stuffed-bear
+      - furniture/stuffed-crow
+      - furniture/stuffed-android
+      - furniture/stuffed-terrapus
+      - furniture/stuffed-panda
+      - furniture/stuffed-squid
+      - furniture/stuffed-cthulhu
+      - furniture/stuffed-brain
+      - furniture/stuffed-snowman
+
+      - furniture/head-fish
+      - furniture/head-deer
+      - furniture/head-bear
+      - furniture/head-tiger
+      - furniture/head-zebra
+      - furniture/head-cthulhu
+      - furniture/head-jackalope
+      - furniture/head-predator
+      - furniture/head-mammoth
+
+      - furniture/pinned-cockroach
+      - furniture/pinned-bee
+      - furniture/pinned-beetle
+      - furniture/pinned-dragonfly
+      - furniture/pinned-millipede
+      - furniture/pinned-scorpion
+      - furniture/pinned-tarantula
+      - furniture/pinned-preying-mantis
+
+      - vegetation/jack-o-lantern
+      - vegetation/jack-o-lantern-lit
+      - holiday/coffin
+      - holiday/cornucopia
+      - holiday/candy-cane-small
+      - holiday/candy-cane-large
+      - building/candy-cane-block
+      - holiday/gingerbread-house
+      - holiday/gift-small
+      - holiday/gift-large
+      - holiday/gift-tall
+      - holiday/mistletoe
+      - holiday/stocking
+      - holiday/stocking-onyx
+      - holiday/holly-garland
+      - holiday/wreath-small
+      - holiday/wreath-large
+      - holiday/sleigh
+      - vegetation/pine-tree-festive
+      - vegetation/pine-tree-festive-giant
+      - holiday/tree-charlie-brown
+      - holiday/snowflake
+
+  - name: armaments
+    icon: inventory/tools/pistol
+    crafting: true
+    items:
+      - parts/gun-barrel
+      - parts/pistol-stock
+      - parts/musket-stock
+      - ammo/bullets
+      - ammo/gunpowder
+      - tools/pistol
+      - tools/pistol-mk2
+      - tools/pistol-mk3
+      - tools/musket
+      - tools/musket-mk2
+      - tools/musket-mk3
+      - tools/blunderbuss
+      - tools/blunderbuss-mk2
+      - tools/blunderbuss-mk3
+      - tools/gun-steam-pistol
+      - tools/gun-steam-pistol-mk2
+      - tools/gun-steam-pistol-mk3
+      - tools/gun-flame-pistol
+      - tools/gun-flame-pistol-mk2
+      - tools/gun-flame-pistol-mk3
+      - tools/gun-frost-pistol
+      - tools/gun-frost-pistol-mk2
+      - tools/gun-frost-pistol-mk3
+      - tools/gun-energy-pistol
+      - tools/gun-energy-pistol-mk2
+      - tools/gun-energy-pistol-mk3
+      - tools/gun-steam
+      - tools/gun-steam-mk2
+      - tools/gun-steam-mk3
+      - tools/gun-acid
+      - tools/gun-acid-mk2
+      - tools/gun-acid-mk3
+      - tools/gun-flame
+      - tools/gun-flame-mk2
+      - tools/gun-flame-mk3
+      - tools/gun-frost
+      - tools/gun-frost-mk2
+      - tools/gun-frost-mk3
+      - tools/gun-energy
+      - tools/gun-energy-mk2
+      - tools/gun-energy-mk3
+      - tools/speargun
+      - tools/speargun-mk2
+      - tools/speargun-mk3
+      - tools/confetti-launcher
+      - tools/confetti-launcher-mk2
+      - tools/confetti-launcher-mk3
+      - mechanical/bomb
+      - mechanical/bomb-large
+      - mechanical/bomb-mega
+      - mechanical/bomb-incendiary
+      - mechanical/bomb-electric
+      - mechanical/bomb-smoke
+      - mechanical/bomb-stink
+      - mechanical/bomb-clown
+      - mechanical/bomb-water
+      - mechanical/bomb-acid
+      - mechanical/bomb-lava
+      - mechanical/bomb-dig
+      - mechanical/bomb-spawner
+      - mechanical/bomb-spawner-large
+      - mechanical/bomb-health
+      - mechanical/trap-mine
+      - mechanical/trap-mine-buried
+      - mechanical/trap-electric
+      - mechanical/spikes-small
+      - mechanical/spikes
+      - mechanical/spikes-brain-small
+      - mechanical/spikes-brain
+      - chromatic/spikes
+      - chromatic/spikes-small
+      - chromatic/bomb
+      - chromatic/mine
+      - mechanical/turret-trap-bullet
+      - mechanical/turret-trap-steam
+      - mechanical/turret-trap-frost
+      - mechanical/turret-trap-flame
+      - mechanical/turret-trap-acid
+      - mechanical/turret-trap-energy
+      - mechanical/turret-pistol
+      - mechanical/turret-pistol-mk2
+      - mechanical/turret-pistol-mk3
+      - mechanical/turret-fire
+      - mechanical/turret-fire-mk2
+      - mechanical/turret-fire-mk3
+      - mechanical/turret-acid
+      - mechanical/turret-acid-mk2
+      - mechanical/turret-acid-mk3
+      - mechanical/turret-flame
+      - mechanical/turret-flame-mk2
+      - mechanical/turret-flame-mk3
+      - mechanical/turret-frost
+      - mechanical/turret-frost-mk2
+      - mechanical/turret-frost-mk3
+      - mechanical/turret-energy
+      - mechanical/turret-energy-mk2
+      - mechanical/turret-energy-mk3
+      - mechanical/turret-dessicator
+      - mechanical/turret-dessicator-mk2
+      - mechanical/turret-dessicator-mk3
+      - chromatic/turret-small
+      - chromatic/turret-large
+
+  - name: accessories
+    icon: inventory/accessories/flashlight-brass
+    crafting: true
+    items:
+      - consumables/jerky
+      - consumables/jerky-power
+      - consumables/filet
+      - consumables/filet-fire
+      - consumables/heart
+      - consumables/canister
+      - consumables/tea
+      - consumables/hot-chocolate
+      - consumables/cloak
+      - consumables/teleporter
+      - accessories/teleporter-infinite
+      - consumables/brain-wine
+      - consumables/book-skill
+      - consumables/skill-reset
+      - consumables/perfume
+      - accessories/makeup
+      - consumables/name-change
+      - accessories/exo-skin
+      - accessories/breathing-apparatus
+      - consumables/weapon-upgrade-diamond
+      - consumables/weapon-upgrade-onyx
+      - consumables/turret-upgrade-diamond
+      - consumables/turret-upgrade-onyx
+
+      - consumables/cartridge-recycle
+      - consumables/cartridge-scatter
+      - consumables/cartridge-power
+      - consumables/locator-machine
+      - consumables/locator-android
+
+      - consumables/gift
+      - consumables/premium-upgrade
+      - consumables/world-key
+      - accessories/battery
+      - accessories/program
+      - accessories/butler-extender
+      - accessories/building-extender
+      - accessories/toolbelt
+      - accessories/afterburner
+      - accessories/dowsing-rod
+      - accessories/whistle-brass
+      - accessories/whistle-diamond
+      - accessories/whistle-onyx
+      - accessories/schematic
+      - accessories/paintbrush
+      - accessories/paintbrush-diamond
+      - accessories/paintbrush-onyx
+      - accessories/lockpick
+      - accessories/key
+      - accessories/key-skeleton
+      - accessories/key-clown
+      - accessories/key-lizard
+
+      - accessories/flashlight-brass
+      - accessories/flashlight-diamond
+      - accessories/flashlight-onyx
+      - accessories/compressor-basic
+      - accessories/compressor
+      - accessories/compressor-onyx
+      - accessories/jetpack
+      - accessories/jetpack-brass
+      - accessories/jetpack-diamond
+      - accessories/jetpack-onyx
+      - accessories/aquapack-brass
+      - accessories/aquapack-diamond
+      - accessories/aquapack-onyx
+      - accessories/zeppelin
+      - accessories/memory
+      - accessories/memory-diamond
+      - accessories/memory-onyx
+      - accessories/interface
+      - accessories/abacus
+      - accessories/t-square
+      - accessories/stopwatch
+      - accessories/pocketwatch
+      - accessories/pocketwatch-onyx
+      - accessories/clover
+      - accessories/horseshoe
+      - accessories/rabbitfoot
+      - accessories/seashell
+      - accessories/sand-dollar
+      - accessories/conch
+      - accessories/army-knife
+      - accessories/army-knife-diamond
+      - accessories/army-knife-onyx
+      - accessories/glove
+      - accessories/glove-diamond
+      - accessories/glove-onyx
+      - accessories/agility-brass
+      - accessories/agility-diamond
+      - accessories/agility-onyx
+      - accessories/scope-brass
+      - accessories/scope-diamond
+      - accessories/scope-onyx
+      - accessories/rake
+      - accessories/rake-diamond
+      - accessories/rake-onyx
+      - accessories/science-magnifying-glass
+      - accessories/science-magnifying-headset
+      - accessories/science-microscope
+      - accessories/sprocket
+      - accessories/widget
+
+      - shields/acid
+      - shields/fire
+      - shields/force
+
+  - name: engineering
+    icon: inventory/mechanical/dish
+    crafting: true
+    items:
+      - mechanical/furnace
+      - mechanical/zone-teleporter
+      - mechanical/teleporter
+      - mechanical/teleporter-mini
+      - mechanical/teleporter-mini-diamond
+      - mechanical/teleporter-mini-onyx
+      - mechanical/beacon
+      - chromatic/beacon
+      - mechanical/dish-micro
+      - mechanical/dish
+      - mechanical/dish-large
+      - mechanical/dish-mega
+      - mechanical/dish-giga
+      - mechanical/spawner-small
+      - mechanical/spawner
+      - mechanical/spawner-brain
+      - mechanical/inhibitor
+      - mechanical/suppressor
+      - mechanical/switch
+      - mechanical/switch-timed
+      - mechanical/switch-large
+      - mechanical/switch-large-timed
+      - mechanical/switch-large-fancy
+      - mechanical/touchplate
+      - mechanical/touchplate-timed
+      - mechanical/touchplate-fancy
+      - mechanical/touchplate-timed-fancy
+      - mechanical/touchplate-finish
+      - mechanical/bomb-suppressor
+      - mechanical/relay
+      - mechanical/door
+      - mechanical/door-beefy
+      - mechanical/trapdoor-small
+      - mechanical/trapdoor-large
+      - mechanical/platform
+      - mechanical/vault
+      - containers/chest-mechanical
+      - containers/chest-mechanical-large
+      - mechanical/exploder
+      - mechanical/butler-brass
+      - mechanical/butler-diamond
+      - mechanical/butler-onyx
+
+      - mechanical/friend-parts-boxing-gloves
+      - mechanical/friend-parts-foot
+      - mechanical/friend-parts-gear
+      - mechanical/friend-parts-head
+      - mechanical/friend-parts-joint
+      - mechanical/friend-parts-key
+      - mechanical/friend-parts-scissors
+
+      - machines/gun-suppressor
+      - machines/gun-suppressor-diamond
+      - machines/gun-suppressor-onyx
+      - machines/holograph
+      - machines/holograph-diamond
+      - machines/holograph-onyx
+      - machines/mass-teleporter
+      - machines/mass-teleporter-diamond
+      - machines/mass-teleporter-onyx
+      - machines/mass-spawner
+      - machines/mass-spawner-diamond
+      - machines/mass-spawner-onyx
+      - machines/weather-machine
+      - machines/weather-machine-diamond
+      - machines/weather-machine-onyx
+
+      - containers/android
+      - containers/cat
+      - containers/dog
+
+      - furniture/blueprint-boot-brass
+      - furniture/blueprint-boot-diamond
+      - furniture/blueprint-boot-onyx
+      - furniture/blueprint-butlerbot-brass
+      - furniture/blueprint-butlerbot-diamond
+      - furniture/blueprint-butlerbot-onyx
+      - furniture/blueprint-clock-brass
+      - furniture/blueprint-clock-diamond
+      - furniture/blueprint-clock-onyx
+      - furniture/blueprint-compressor-brass
+      - furniture/blueprint-compressor-diamond
+      - furniture/blueprint-compressor-onyx
+      - furniture/blueprint-dish-brass
+      - furniture/blueprint-dish-diamond
+      - furniture/blueprint-dish-onyx
+      - furniture/blueprint-exploder-brass
+      - furniture/blueprint-exploder-diamond
+      - furniture/blueprint-exploder-onyx
+      - furniture/blueprint-glove-brass
+      - furniture/blueprint-glove-diamond
+      - furniture/blueprint-glove-onyx
+      - furniture/blueprint-gun-suppressor-brass
+      - furniture/blueprint-gun-suppressor-diamond
+      - furniture/blueprint-gun-suppressor-onyx
+      - furniture/blueprint-holograph-brass
+      - furniture/blueprint-holograph-diamond
+      - furniture/blueprint-holograph-onyx
+      - furniture/blueprint-knife-brass
+      - furniture/blueprint-knife-diamond
+      - furniture/blueprint-knife-onyx
+      - furniture/blueprint-mass-spawner-brass
+      - furniture/blueprint-mass-spawner-diamond
+      - furniture/blueprint-mass-spawner-onyx
+      - furniture/blueprint-mass-teleporter-brass
+      - furniture/blueprint-mass-teleporter-diamond
+      - furniture/blueprint-mass-teleporter-onyx
+      - furniture/blueprint-scope-brass
+      - furniture/blueprint-scope-diamond
+      - furniture/blueprint-scope-onyx
+      - furniture/blueprint-spawner-brass
+      - furniture/blueprint-spawner-diamond
+      - furniture/blueprint-spawner-onyx
+      - furniture/blueprint-weapon-upgrade-brass
+      - furniture/blueprint-weapon-upgrade-diamond
+      - furniture/blueprint-weapon-upgrade-onyx
+      - furniture/blueprint-weather-machine-brass
+      - furniture/blueprint-weather-machine-diamond
+      - furniture/blueprint-weather-machine-onyx
+
+  - name: industrial
+    icon: inventory/industrial/crane-large
+    crafting: true
+    items:
+      - containers/barrel
+      - containers/barrel-windowed
+      - containers/barrel-tall
+      - containers/sack-small
+      - containers/sack-large
+      - containers/crate-small
+      - containers/crate-large
+      - containers/crate-industrial-small
+      - containers/crate-industrial-large
+      - building/balloon
+      - building/balloon-striped
+      - mechanical/rail
+      - industrial/vat
+      - industrial/vat-acid
+      - industrial/conveyor
+      - industrial/crane-base
+      - industrial/chain
+      - industrial/crane
+      - industrial/crane-base-large
+      - industrial/chain-large
+      - industrial/crane-large
+
+      - mechanical/collector
+      - mechanical/forge
+      - mechanical/engine
+      - mechanical/tesla-coil
+      - mechanical/wine-press
+      - mechanical/mill
+      - mechanical/lathe
+      - mechanical/loom
+      - mechanical/magnet-large
+      - mechanical/replenisher
+      - mechanical/control-panel
+      - mechanical/control-panel-large
+
+      - mechanical/toolbox
+      - mechanical/science-scrap
+      - mechanical/science-gadget
+      - mechanical/science-bulb
+      - mechanical/chemistry-set
+      - mechanical/mini-tesla
+
+      - mechanical/steam-jet-small
+      - mechanical/steam-jet-large
+
+      - brain/pipe
+      - brain/tank-base
+      - brain/tank
+      - brain/tank-brass-top
+
+      - mechanical/template-capturer
+      - mechanical/template-connector
+      - mechanical/template-planner
+      - mechanical/template-fabricator
+
+  - name: organic
+    icon: inventory/vegetation/mushroom-porcini
+    items:
+      - ground/giblets
+      - ground/guano
+      - ground/feathers
+      - ground/fur
+      - ground/ectoplasm
+      - ground/scorpion-tail
+      - ground/snake-skin
+      - ground/turtle-shell
+      - ground/beehive
+      - ground/beehive-hanging
+
+      - vegetation/mushrooms-tiny
+      - vegetation/mushroom-portabella
+      - vegetation/mushroom-oyster
+      - vegetation/mushroom-porcini
+      - vegetation/mushroom-willow
+      - vegetation/mushroom-amanita
+      - vegetation/mushroom-chanterelle
+      - vegetation/mushroom-morel
+      - vegetation/mushroom-morel-elder
+      - vegetation/mushroom-acid
+      - vegetation/mushroom-acid-tall
+      - vegetation/mushroom-lava
+      - vegetation/mushroom-lava-elder
+      - vegetation/mushroom-arctic
+      - vegetation/mushroom-arctic-elder
+      - vegetation/mushroom-hell
+      - vegetation/mushroom-hell-elder
+      - vegetation/mushroom-anbaric
+      - vegetation/mushroom-anbaric-elder
+      - vegetation/mushroom-apostate
+      - vegetation/mushroom-apostate-elder
+      - vegetation/mushroom-devils-cigar
+      - vegetation/mushroom-shade
+
+      - ground/lichen-green
+      - ground/lichen-blue
+
+      - vegetation/cactus-small
+      - vegetation/tumbleweed
+
+      - vegetation/flower-amaryllis-bulb
+      - vegetation/flower-asphodelus-bulb
+      - vegetation/flower-birds-foot-trefoil-bulb
+      - vegetation/flower-carnations-bulb
+      - vegetation/flower-coxcomb-bulb
+      - vegetation/flower-delphinium-bulb
+      - vegetation/flower-lobelia-bulb
+      - vegetation/flower-tuberose-bulb
+      - vegetation/flower-bird-of-paradise-bulb
+      - vegetation/flower-cactus-bulb
+      - vegetation/flower-echinacea-bulb
+      - vegetation/flower-sunflower-bulb
+      - vegetation/flower-trumpets-bulb
+      - vegetation/tree-bonsai-bulb
+      - vegetation/tree-hellish-bulb
+
+      - vegetation/flower-amaryllis
+      - vegetation/flower-asphodelus
+      - vegetation/flower-birds-foot-trefoil
+      - vegetation/flower-carnations
+      - vegetation/flower-coxcomb
+      - vegetation/flower-delphinium
+      - vegetation/flower-lobelia
+      - vegetation/flower-tuberose
+      - vegetation/flower-bird-of-paradise
+      - vegetation/flower-cactus
+      - vegetation/flower-echinacea
+      - vegetation/flower-sunflower
+      - vegetation/flower-trumpets
+      - vegetation/tree-bonsai
+      - vegetation/tree-hellish
+
+      - vegetation/pumpkin-seeds
+      - vegetation/pumpkin
+      - vegetation/pumpkin-giant
+
+      - vegetation/pine-tree
+
+      - furniture/butterfly-mounted-moth
+      - furniture/butterfly-mounted-monarch
+      - furniture/butterfly-mounted-papilio-ulysses
+      - furniture/butterfly-mounted-swallowtail
+      - furniture/butterfly-mounted-green
+      - furniture/butterfly-mounted-owl
+      - furniture/butterfly-mounted-paper-kite
+      - furniture/butterfly-mounted-rumanzovia
+
+      - rubble/bone-pile
+      - rubble/skeleton
+      - rubble/bones-small
+      - rubble/bones-large
+
+      - ground/fossil-fish-buried
+      - ground/fossil-mammoth-buried
+      - ground/fossil-miner-buried
+      - ground/fossil-oldone-buried
+      - ground/fossil-pterodactyl-buried
+      - ground/fossil-shell-buried
+      - ground/fossil-trex-buried
+      - ground/fossil-trilobyte-buried
+
+      - ground/cobweb
+
+      - ground/terrapus-egg
+      - ground/terrapus-egg-large
+      - ground/terrapus-pet-egg
+
+      - desert/cactus-base
+      - desert/cactus-mid
+      - desert/cactus-top
+      - desert/cactus-mid-left-large
+      - desert/cactus-mid-left-small
+      - desert/cactus-mid-right-large
+      - desert/cactus-mid-right-left
+      - desert/cactus-mid-right-small
+
+
+  - name: opulence
+    icon: inventory/building/gargoyle-large-demon-side
+    crafting: true
+    items:
+      - back/marble
+      - building/marble
+      - building/pedestal-marble
+      - building/marble-column
+      - back/bloodstone
+      - building/bloodstone
+      - building/pedestal-bloodstone
+      - building/bloodstone-column
+
+      - building/crystal-blue
+      - building/crystal-purple
+      - building/crystal-red
+
+      - building/gargoyle-falcon-front
+      - building/gargoyle-falcon-side
+      - building/gargoyle-small-demon-front
+      - building/gargoyle-small-demon-side
+      - building/gargoyle-wall-front
+      - building/gargoyle-wall-side
+      - building/gargoyle-large-demon-front
+      - building/gargoyle-large-demon-side
+      - building/statue-gothic-front
+      - building/statue-gothic-side
+
+      - building/statue-figurine-1
+      - building/statue-figurine-2
+      - building/statue-figurine-3
+      - building/statue-figurine-large-1
+      - building/statue-figurine-large-2
+      - building/statue-figurine-large-3
+      - building/statue-figurine-large-4
+      - building/statue-marble-1
+      - building/statue-marble-2
+      - building/statue-marble-3
+      - building/statue-marble-large-1
+      - building/statue-marble-large-2
+      - building/statue-marble-large-3
+      - building/statue-marble-large-4
+      - building/statue-bloodstone-1
+      - building/statue-bloodstone-2
+      - building/statue-bloodstone-3
+      - building/statue-bloodstone-large-1
+      - building/statue-bloodstone-large-2
+      - building/statue-bloodstone-large-3
+      - building/statue-bloodstone-large-4
+
+      - furniture/painting-landscape
+      - furniture/painting-une-pipe
+      - furniture/painting-son-of-man
+      - furniture/painting-gashlycrumb
+      - furniture/painting-smasheroid
+      - furniture/painting-leapquest
+      - furniture/painting-surfer
+      - furniture/painting-outling
+      - furniture/painting-alpaca
+      - furniture/painting-northerners
+      - furniture/painting-digdug
+      - furniture/painting-notch
+      - furniture/painting-autumn
+      - furniture/painting-mayflower
+
+      - arctic/ice-sculpture-swan
+      - arctic/ice-sculpture-seahorse
+      - arctic/ice-sculpture-penguin
+      - arctic/ice-sculpture-android
+      - arctic/ice-sculpture-liberty
+      - arctic/ice-sculpture-eiffel-tower
+      - arctic/ice-sculpture-carriage
+      - arctic/ice-sculpture-dragon
+
+      - ground/fossil-fish
+      - ground/fossil-mammoth
+      - ground/fossil-miner
+      - ground/fossil-oldone
+      - ground/fossil-pterodactyl
+      - ground/fossil-shell
+      - ground/fossil-trex
+      - ground/fossil-trilobyte
+
+      - furniture/ship-in-bottle
+      - furniture/airship-in-bottle
+      - furniture/globe
+      - furniture/moon
+      - furniture/mars
+      - furniture/solar-system-diorama
+      - mechanical/telescope
+      - furniture/companion-cube
+      - furniture/brass-throne
+
+  - name: admin
+    icon: inventory/signs/guild
+    items:
+      - air
+      - ground/bedrock
+      - base/empty
+      - base/earth
+      - base/earth-accent
+      - base/maw
+      - base/maw-plugged
+      - base/pipe
+      - base/pipe-plugged
+      - base/sandstone
+      - base/limestone
+      - base/vent
+      - base/vent-cap
+      - base/water
+      - base/drawing-modern
+      - base/drawing-historical
+      - base/drawing-danger
+      - ground/earth-dug
+      - ground/earth-disintegrating
+      - ground/earth-mid
+      - ground/earth-deep
+      - ground/earth-very-deep
+      - ground/deep-earth
+      - ground/deep-earth-mid
+      - ground/deep-earth-deep
+      - ground/deep-earth-very-deep
+      - ground/geyser-small
+      - ground/geyser-large
+      - ground/salt-crystal
+      - ground/fire-salt-crystal
+      - ground/crystal-blue-3
+      - signs/newton
+      - signs/obelisk
+      - signs/obelisk-spawn
+      - signs/obelisk-notification
+      - signs/obelisk-waypoint
+      - signs/pvp
+      - vegetation/shrub-dead
+      - vegetation/grass
+      - vegetation/arctic-growth
+      - vegetation/shrub-a
+      - vegetation/shrub-b
+      - vegetation/shrub-c
+      - vegetation/shrub-d
+      - vegetation/shrub-e
+      - vegetation/shrub-f
+      - vegetation/shrub-g
+      - vegetation/tree-dead-roots-1
+      - vegetation/tree-dead-roots-2
+      - vegetation/tree-dead-trunk
+      - vegetation/tree-dead-top-1
+      - vegetation/tree-dead-top-2
+      - containers/chest-plenty
+      - containers/sack-plenty
+      - containers/chest-industrial
+      - mechanical/thinking-cap
+      - mechanical/dish-broken
+      - mechanical/protector-enemy
+      - mechanical/protector-enemy-fancy
+      - mechanical/protector-enemy-epic
+      - mechanical/spawner-admin
+      - mechanical/target-zone-teleporter
+      - mechanical/target-teleporter
+      - mechanical/spawn-teleporter
+      - signs/obelisk-checkpoint
+      - hell/dish
+      - mechanical/dish-competition-5
+      - mechanical/dish-competition-20
+      - mechanical/dish-competition-25
+      - mechanical/stand
+      - chromatic/flag
+      - containers/pandora-open
+
+
+zone search v2:
+  - Recent
+  - Popular
+  - Search
+  - Personal:
+    - Friends
+    - Owned
+    - Member
+    - Bookmarked
+  - Experiences:
+    - Market
+    - Unexplored
+    - Developed
+    - PvP
+    - Random
+  - Biomes:
+    - Arctic
+    - Hell
+    - Desert
+    - Deep
+    - Brain
+    - Space
+
+zone_search_v3:
+  - Arctic
+  - Brain
+  - Deep
+  - Desert
+  - Developed
+  - Hell
+  - Space
+  - Market
+  - PvP
+  - Random
+  - Unexplored
+
+zone_search_v4:
+  facets:
+    search: true
+    biome:
+      - Temperate
+      - Arctic
+      - Brain
+      - Deep
+      - Desert
+      - Hell
+      - Space
+    development:
+      - Unexplored
+      - Explored
+      - Outpost
+      - City
+      - Metropolis
+    needs:
+      - Machines
+      - Maws
+      - Beautification
+      - Raidings
+    popularity:
+      - Empty
+      - Hangout
+      - Popular
+      - Thriving
+    scenario:
+      - Market
+      - Quarry
+
+zone_search_v5:
+  home:
+    - name: Popular
+      params:
+        sort: popularity
+    - name: Unexplored
+      params:
+        development: '1-'
+        protected: 'false'
+        sort: created
+    - name: Developed
+      params:
+        development: 5
+        sort: popularity
+    - name: Market
+      params:
+        activity: market
+        sort: popularity
+    - name: PvP
+      params:
+        pvp: true
+        sort: popularity
+
+  personal:
+    - name: Owned
+      params:
+        residency: owned
+        sort: popularity
+    - name: Member
+      params:
+        residency: member
+        sort: popularity
+    # - name: Friends
+    #   params:
+    #     residency: friends
+    - name: Recent
+      params:
+        account: recent
+    - name: Quests
+      params:
+        account: quests
+    - name: Bookmarked
+      params:
+        account: bookmarked
+
+  biomes:
+    - name: Temperate
+      params:
+        protected: 'false'
+        sort: created
+        biome: plain
+    - name: Arctic
+      params:
+        protected: 'false'
+        sort: created
+        biome: arctic
+    - name: Desert
+      params:
+        protected: 'false'
+        sort: created
+        biome: desert
+    - name: Hell
+      params:
+        protected: 'false'
+        sort: created
+        biome: hell
+    - name: Deep
+      params:
+        protected: 'false'
+        sort: created
+        biome: deep
+    - name: Brain
+      params:
+        protected: 'false'
+        sort: created
+        biome: brain
+    - name: Space
+      params:
+        protected: 'false'
+        sort: created
+        biome: space
+
+scenarios:
+  market:
+    icon: icons/market
+
+damage:
+  piercing:
+    code: 0
+  slashing:
+    code: 1
+  bludgeoning:
+    code: 2
+  crushing:
+    code: 3
+  acid:
+    code: 4
+  fire:
+    code: 5
+  cold:
+    code: 6
+  energy:
+    code: 7
+  sonic:
+    code: 8
+  ink:
+    code: 9
+  dessication:
+    code: 10
+  suffocation:
+    code: 11
+  stink:
+    code: 11
+    emitter: stink
+    emitter_code: 1
+    emitter_duration: 999999
+
+wardrobe:
+  c*: skin-color
+  h*: hair-color
+  h: hair
+  fh: facialhair
+  t: tops
+  b: bottoms
+  fw: footwear
+  hg: headgear
+  fg: facialgear
+  fg*: facialgear-glow
+  u: suit
+  to: tops-overlay
+  to*: tops-overlay-glow
+  ao: arms-overlay
+  lo: legs-overlay
+  fo: footwear-overlay
+  skin-color: ['fcebd0', 'f2d9b3', 'cea977', 'b38e59', '866a40', '4d2e18']
+  skin-color-bonus: ['aeba77', 'c4ae60', 'ee9e9e', 'b18786', 'edbbfd', '87b2ba']
+  hair-color: ["faeca2","c4a347","856a43","53371b","96422b","d8815c","d27725","f2f2f2","c5bdb8","5a5a5d","1a1a1d"]
+  hair-color-bonus: ["fa9a40","f39bad","bb0017","a869ec","374287","0f93f2","2affef","3ba09c","3e881f","d6da30","a5ad98"]
+
+wardrobe_panel:
+  dialogs:
+    tops:
+      title: Top
+      type: item
+      key: t
+      options: '@entities.avatar.options.tops'
+    bottoms:
+      title: Bottom
+      type: item
+      key: b
+      options: '@entities.avatar.options.bottoms'
+    footwear:
+      title: Footwear
+      type: item
+      key: fw
+      options: '@entities.avatar.options.footwear'
+    headgear:
+      title: Headwear
+      type: item
+      key: hg
+      options: '@entities.avatar.options.headgear'
+    facialgear:
+      title: Facewear
+      type: item
+      key: fg
+      options: '@entities.avatar.options.facialgear'
+    hair:
+      title: Hair
+      type: item
+      key: h
+      options: '@entities.avatar.options.hair'
+    facialhair:
+      title: Facial Hair
+      type: item
+      key: fh
+      options: '@entities.avatar.options.facialhair'
+    skincolor:
+      title: Skin Color
+      type: color
+      key: c*
+      options: '@entities.avatar.options.skin-color'
+    haircolor:
+      title: Hair Color
+      type: color
+      key: h*
+      options: '@entities.avatar.options.hair-color'
+      tint: ['h', 'fh']
+
+  rows:
+    - items:
+        - icon: icons/wardrobe-top
+          title: Top
+          category: tops
+        - icon: icons/wardrobe-bottom
+          title: Bottom
+          category: bottoms
+        - icon: icons/wardrobe-footwear
+          title: Footwear
+          category: footwear
+    - items:
+        - icon: icons/wardrobe-headgear
+          title: Headgear
+          category: headgear
+        - icon: icons/wardrobe-facialgear
+          title: Facewear
+          category: facialgear
+        - icon: icons/wardrobe-skin-color
+          title: Skin Color
+          category: skincolor
+        - icon: icons/wardrobe-random
+          title: Randomize!
+          category: randomize
+    - items:
+        - icon: icons/wardrobe-hair
+          title: Hair
+          category: hair
+        - icon: icons/wardrobe-facialhair
+          title: Facial Hair
+          category: facialhair
+        - icon: icons/wardrobe-hair-color
+          title: Hair Color
+          category: haircolor
+
+
+
+commands:
+  help: true
+  chop: true
+  report: true
+  whelp: true
+  winfo: true
+  wrecode: true
+  wrename: true
+  wpvp: true
+  wpublic: true
+  wprotected: true
+  wadd: true
+  wremove: true
+  wenter: true
+  wmute: true
+  wban: true
+  wunban: true
+  drain: true
+  ghelp: true
+  ginfo: true
+  ginvite: true
+  gremove: true
+  gleader: true
+  gquit: true
+  trading: true
+  exo: true
+  team: true
+  entry: true
+  construct: true
+  think: true
+  say: true
+  pm: true
+  order: true
+  imapro: true
+  mute: true
+  mutex: true
+  unmute: true
+  count: true
+  nearest: true
+  despam: true
+  freeze: true
+  register: true
+  tp: true
+  su: true
+  meta: true
+  evoke: true
+  lead: true
+  modmute: true
+  modrestrict: true
+  modpastnames: true
+
+notifications:
+  1:
+    prefab: small
+  2:
+    prefab: small
+  3:
+    type: emote
+  4:
+    type: emote
+    color: ffff00
+  5:
+    prefab: small
+  6:
+    prefab: large
+  9:
+    type: chat
+    color: ffff00
+  10:
+    prefab: large
+  11:
+    type: chat
+    color: ff9900
+  12:
+    prefab: large
+  13:
+    prefab: small
+  14:
+    prefab: small
+  15:
+    prefab: large
+  18:
+    prefab: small
+  19:
+    type: chat
+    color: '00ff00'
+  20:
+    type: chat
+    color: eeeeee
+  21:
+    prefab: LevelUp
+    duration: 10
+  22:
+    prefab: Achievement
+  23:
+    prefab: small
+    duration: 12
+  64:
+    prefab: small
+  333:
+    prefab: small
+  503:
+    prefab: small
+
+machines:
+  p:
+    name: Purifier
+    parts: 8
+  c:
+    name: Composter
+    parts: 6
+  e:
+    name: Expiator
+    parts: 8
+  r:
+    name: Recycler
+    parts: 6
+
+
+urls:
+  guide: http://deepworld-codex.herokuapp.com
+  forums: http://forums.deepworldgame.com
+
+
+feed:
+  unread:
+    color: '20a000'
+  pm:
+    action: Reply
+    color: '605000'
+  world:
+    color: '20a020'
+  sys:
+    color: 'a02000'
+  inv:
+    action: Respond
+    color: '2000a0'
+    glow: true
+  invr:
+    color: '100070'
+
+other_apps:
+  # - name: Caludo
+  #   icon: apps/caludo
+  #   url: http://itunes.apple.com/us/app/caludo/id894340865?mt=8
+  - name: Smasheroid
+    icon: apps/smasheroid
+    url: http://itunes.apple.com/us/app/smasheroid/id409217764?mt=8
+
+settings:
+  - title: Controls
+    dialog: settings_controls
+  - title: Game
+    dialog: settings_game
+  - title: Account
+    dialog: settings_account
+
+daily_bonuses:
+  # hair/secret-agent
+  # hair/joker
+  # hair/scissorhands
+  # hair/rabbit
+  # hair/boxer-har
+  # hair/elvis
+  # hair/bride
+  #
+  #
+  #
+
+  "2017-10-02":
+    item: consumables/brain-wine
+    xp: 1500
+  "2017-10-03":
+    item: mechanical/dish
+    xp: 1500
+  "2017-10-05":
+    item: accessories/schematic
+    xp: 1500
+
+  "2017-10-07":
+    item: mechanical/dish-mega
+    xp: 1500
+  "2017-10-08":
+    item: furniture/daguerreotype-large
+    xp: 1500
+  "2017-10-10":
+    item: mechanical/bomb-water
+    quantity: 5
+    xp: 1500
+  "2017-10-12":
+    item: consumables/cloak
+    quantity: 3
+    xp: 1500
+
+  "2017-10-14":
+    item: consumables/book-skill
+    xp: 1500
+  "2017-10-15":
+    item: headgear/crow
+    xp: 1500
+  "2017-10-17":
+    item: mechanical/dish
+    xp: 1500
+  "2017-10-19":
+    item: consumables/skill-reset
+    xp: 1500
+
+  "2017-10-21":
+    item: mechanical/teleporter
+    xp: 1500
+  "2017-10-22":
+    item: consumables/name-change
+    xp: 1500
+  "2017-10-24":
+    item: consumables/canister
+    quantity: 10
+    xp: 1500
+  "2017-10-26":
+    item: mechanical/spawner-small
+    xp: 1500
+
+  "2017-10-28":
+    item: consumables/weapon-upgrade-diamond
+    xp: 1500
+  "2017-10-29":
+    item: mechanical/dish-large
+    xp: 1500
+  "2017-10-30":
+    item: mechanical/bomb-lava
+    quantity: 10
+    xp: 1500
+  "2017-10-31":
+    item: vegetation/pumpkin-giant
+    xp: 1500
+
+  "2017-11-04":
+    item: headgear/tiny-top-hat
+    xp: 1500
+  "2017-11-05":
+    item: consumables/brain-wine
+    xp: 2500
+  "2017-11-07":
+    item: ground/blackrock
+    quantity: 20
+    xp: 1500
+  "2017-11-09":
+    item: lighting/fancy-lamp-6
+    xp: 2500
+
+  "2017-11-10":
+    item: containers/pandora
+  "2017-11-12":
+    item: mechanical/spawner
+    xp: 2500
+  "2017-11-14":
+    item: mechanical/bomb-acid
+    quantity: 10
+  "2017-11-16":
+    item: furniture/painting-landscape
+    xp: 2500
+
+  "2017-11-18":
+    item: mechanical/dish-micro
+    quantity: 5
+  "2017-11-19":
+    item: furniture/stuffed-bear
+  "2017-11-20":
+    item: mechanical/bomb-spawner-large
+    quantity: 3
+  "2017-11-21":
+    item: furniture/pinned-millipede
+  "2017-11-22":
+    item: containers/android
+  "2017-11-23":
+    item: headgear/kitty-hat
+  "2017-11-24":
+    item: mechanical/steam-jet-small
+    quantity: 2
+  "2017-11-25":
+    item: furniture/head-fish
+  "2017-11-26":
+    item: consumables/cloak
+    quantity: 3
+
+  "2017-12-02":
+    item: consumables/weapon-upgrade-diamond
+  "2017-12-03":
+    item: mechanical/dish-large
+
+
+  "2017-12-07":
+    item: mechanical/dish-micro
+    quantity: 7
+  "2017-12-08":
+    item: mechanical/compass
+    xp: 2500
+  "2017-12-09":
+    item: furniture/stuffed-snowman
+  "2017-12-10":
+    item: consumables/skill-reset
+  "2017-12-12":
+    item: vegetation/flower-lobelia-bulb
+    quantity: 2
+  "2017-12-13":
+    item: mechanical/bomb-mega
+    quantity: 3
+  "2017-12-14":
+    item: mechanical/teleporter
+  "2017-12-15":
+    item: furniture/marionette
+  "2017-12-16":
+    item: mechanical/dish-giga
+  "2017-12-17":
+    item: furniture/head-bear
+
+  "2017-12-21":
+    item: containers/pandora
+  "2017-12-22":
+    item: lighting/fancy-lamp-4
+  "2017-12-23":
+    item: mechanical/dish-mega
+    xp: 1500
+  "2017-12-24":
+    item: consumables/turret-upgrade-onyx
+    xp: 1500
+  "2017-12-25":
+    item: consumables/weapon-upgrade-onyx
+    xp: 2000
+  "2017-12-26":
+    item: consumables/book-skill
+    xp: 2000
+  "2017-12-27":
+    item: ground/terrapus-pet-egg
+  "2017-12-28":
+    item: furniture/stuffed-panda
+    xp: 1500
+  "2017-12-29":
+    item: consumables/name-change
+    xp: 1500
+  "2017-12-30":
+    item: furniture/ship-in-bottle
+    xp: 1500
+  "2017-12-31":
+    item: containers/dog
+    xp: 2000
+  "2018-01-01":
+    item: consumables/brain-wine
+    xp: 2000
+
+  "2018-01-04":
+    item: mechanical/bomb-water
+    quantity: 5
+    xp: 1500
+  "2018-01-05":
+    item: mechanical/spawner
+    xp: 1500
+  "2018-01-06":
+    item: headgear/elven-circlet
+  "2018-01-07":
+    item: consumables/turret-upgrade-diamond
+    xp: 2000
+
+  "2018-01-11":
+    item: containers/pandora
+    xp: 1500
+  "2018-01-12":
+    item: mechanical/dish-large
+    xp: 1500
+  "2018-01-13":
+    item: mechanical/steam-jet-small
+    quantity: 3
+  "2018-01-14":
+    item: consumables/skill-reset
+    xp: 1500
+
+  "2018-01-18":
+    item: furniture/painting-landscape
+    xp: 1500
+  "2018-01-19":
+    item: containers/cat
+    xp: 2500
+  "2018-01-20":
+    item: consumables/weapon-upgrade-diamond
+    xp: 2000
+  "2018-01-21":
+    item: furniture/pinned-bee
+    xp: 1500
+
+  "2018-01-26":
+    item: mechanical/teleporter
+    xp: 1500
+  "2018-01-27":
+    item: furniture/map
+    xp: 2000
+  "2018-01-28":
+    item: mechanical/compass-sandy
+    xp: 2000
+
+  "2018-02-02":
+    item: mechanical/dish-large
+  "2018-02-03":
+    item: vegetation/flower-trumpets-bulb
+  "2018-02-04":
+    item: mechanical/science-bulb
+
+  "2018-02-06":
+    item: consumables/canister
+    quantity: 25
+  "2018-02-08":
+    item: lighting/fancy-lamp-7
+  "2018-02-09":
+    item: tools/net-diamond
+  "2018-02-10":
+    item: furniture/stuffed-squid
+  "2018-02-11":
+    item: building/statue-figurine-large-4
+
+  "2018-02-13":
+    item: furniture/easel-tall
+  "2018-02-14":
+    item: furniture/companion-cube
+    xp: 2000
+  "2018-02-15":
+    item: containers/pandora
+  "2018-02-16":
+    item: furniture/pinned-dragonfly
+  "2018-02-17":
+    item: consumables/turret-upgrade-diamond
+  "2018-02-18":
+    item: mechanical/compass-icy
+
+  "2018-02-20":
+    item: ground/terrapus-egg-large
+    quantity: 3
+  "2018-02-22":
+    item: mechanical/bomb-water
+    quantity: 5
+  "2018-02-23":
+    item: mechanical/dish-giga
+    xp: 2000
+  "2018-02-24":
+    item: consumables/book-skill
+    xp: 2000
+  "2018-02-25":
+    item: mechanical/bomb-spawner-large
+    quantity: 4
+
+
+  "2018-02-27":
+    item: furniture/ship-in-bottle
+    xp: 2000
+  "2018-03-01":
+    item: furniture/head-fish
+    xp: 1500
+
+  "2018-03-03":
+    item: mechanical/teleporter
+    xp: 1500
+  "2018-03-04":
+    item: vegetation/tree-bonsai-bulb
+    xp: 1500
+
+  "2018-03-06":
+    item: ground/crystal-purple-1
+    xp: 1500
+  "2018-03-08":
+    item: furniture/stuffed-crow
+  "2018-03-09":
+    item: mechanical/steam-jet-small
+    xp: 2000
+  "2018-03-10":
+    item: lighting/fancy-lamp-6
+    xp: 2500
+  "2018-03-11":
+    item: mechanical/spawner-small
+
+  "2018-03-13":
+    item: consumables/teleporter
+    quantity: 5
+  "2018-03-15":
+    item: consumables/skill-reset
+  "2018-03-16":
+    item: mechanical/dish-mega
+    xp: 2000
+  "2018-03-17":
+    item: containers/pandora
+    xp: 1500
+  "2018-03-18":
+    item: containers/android
+    xp: 2000
+
+  "2018-03-20":
+    item: furniture/map
+  "2018-03-22":
+    item: furniture/easel
+    xp: 1500
+  "2018-03-23":
+    item: mechanical/chemistry-set
+    xp: 1500
+  "2018-03-24":
+    item: mechanical/friend-parts-scissors
+  "2018-03-25":
+    item: mechanical/compass-dark
+    xp: 2500
+
+  "2018-03-27":
+    item: containers/fertilizer
+    quantity: 10
+  "2018-03-28":
+    item: ground/crystal-red-large
+    xp: 2000
+  "2018-03-29":
+    item: furniture/painting-landscape
+    xp: 1500
+  "2018-03-30":
+    item: furniture/head-tiger
+    xp: 3000
+  "2018-03-31":
+    item: consumables/brain-wine
+    xp: 2000
+  "2018-04-01":
+    item: consumables/turret-upgrade-diamond
+    xp: 2500
+
+  "2018-04-03":
+    item: vegetation/flower-lobelia-bulb
+    quantity: 2
+  "2018-04-05":
+    item: mechanical/dish-large
+    xp: 2000
+  "2018-04-06":
+    item: furniture/pinned-millipede
+    xp: 2000
+  "2018-04-07":
+    item: mechanical/spawner
+    xp: 2000
+  "2018-04-08":
+    item: consumables/name-change
+    xp: 2000
+
+  "2018-04-19":
+    item: lighting/fancy-lamp-3
+    xp: 2000
+  "2018-04-20":
+    item: containers/cat
+    xp: 2000
+  "2018-04-21":
+    item: mechanical/teleporter
+    xp: 2000
+  "2018-04-22":
+    item: mechanical/bomb-water
+    quantity: 6
+    xp: 2000
+
+  "2018-04-24":
+    item: mechanical/science-bulb
+    xp: 2000
+  "2018-04-26":
+    item: furniture/painting-landscape
+    xp: 2000
+  "2018-04-27":
+    item: containers/pandora
+    xp: 1500
+  "2018-04-28":
+    item: consumables/book-skill
+    xp: 2000
+  "2018-04-29":
+    item: furniture/stuffed-snowman
+    xp: 2000
+
+  "2018-05-01":
+    item: vegetation/flower-trumpets-bulb
+    xp: 2000
+  "2018-05-03":
+    item: mechanical/ship-wheel
+    xp: 2000
+  "2018-05-04":
+    item: mechanical/friend-parts-boxing-gloves
+    xp: 2000
+  "2018-05-05":
+    item: mechanical/dish-mega
+    xp: 2000
+  "2018-05-06":
+    item: mechanical/compass-burned
+    xp: 2000
+
+  "2018-05-08":
+    item: consumables/skill-reset
+    xp: 2000
+  "2018-05-10":
+    item: mechanical/spawner-small
+    xp: 2000
+  "2018-05-11":
+    item: consumables/weapon-upgrade-diamond
+    xp: 2000
+  "2018-05-12":
+    item: mechanical/steam-jet-small
+    xp: 2000
+  "2018-05-13":
+    item: furniture/companion-cube
+    xp: 2000
+
+  "2018-05-18":
+    item: signs/checkpoint
+    xp: 2000
+  "2018-05-19":
+    item: lighting/fancy-lamp-6
+    xp: 2500
+  "2018-05-20":
+    item: furniture/pinned-bee
+    xp: 2000
+
+  "2018-05-22":
+    item: furniture/daguerreotype-small
+    xp: 2000
+  "2018-05-24":
+    item: consumables/teleporter
+    quantity: 5
+    xp: 2000
+  "2018-05-25":
+    item: building/crystal-red
+    xp: 2000
+    quantity: 3
+  "2018-05-26":
+    item: consumables/turret-upgrade-onyx
+    xp: 2500
+  "2018-05-27":
+    item: mechanical/dish-large
+    xp: 2000
+
+  "2018-05-29":
+    item: mechanical/bomb-acid
+    quantity: 3
+    xp: 2000
+  "2018-05-31":
+    item: mechanical/teleporter-mini-diamond
+    xp: 2000
+  "2018-06-01":
+    item: furniture/stuffed-android
+    xp: 2000
+  "2018-06-02":
+    item: vegetation/flower-bird-of-paradise-bulb
+    xp: 2000
+  "2018-06-03":
+    item: machines/mass-spawner
+    xp: 2500
+
+  "2018-06-05":
+    item: mechanical/chemistry-set
+    xp: 2000
+  "2018-06-07":
+    item: consumables/cloak
+    quantity: 3
+    xp: 2000
+  "2018-06-08":
+    item: mechanical/teleporter
+    xp: 2500
+  "2018-06-09":
+    item: mechanical/spawner
+    xp: 2000
+  "2018-06-10":
+    item: accessories/rake-diamond
+    xp: 2500
+
+  "2018-06-13":
+    item: mechanical/dish
+    xp: 1500
+  "2018-06-14":
+    item: accessories/science-magnifying-glass
+    xp: 2000
+  "2018-06-15":
+    item: containers/vial-poison
+    xp: 2000
+  "2018-06-16":
+    item: containers/dog
+    xp: 2500
+  "2018-06-17":
+    item: furniture/ship-in-bottle
+    xp: 2000
+
+  "2018-06-20":
+    item: vegetation/flower-cactus-bulb
+    xp: 1500
+  "2018-06-21":
+    item: consumables/skill-reset
+    xp: 2000
+  "2018-06-22":
+    item: containers/pandora
+    xp: 2000
+  "2018-06-23":
+    item: consumables/book-skill
+    xp: 2500
+  "2018-06-24":
+    item: furniture/marionette
+    xp: 2000
+
+  "2018-06-28":
+    item: lighting/fancy-lamp-2
+    xp: 1500
+  "2018-06-29":
+    item: ground/terrapus-pet-egg
+    xp: 2000
+  "2018-06-30":
+    item: mechanical/dish-mega
+    xp: 2500
+  "2018-07-01":
+    item: furniture/pinned-beetle
+    xp: 2000
+  "2018-07-03":
+    item: furniture/stuffed-crow
+    xp: 2000
+  "2018-07-04":
+    item: consumables/weapon-upgrade-onyx
+    xp: 2500
+
+  "2018-07-06":
+    item: consumables/name-change
+    xp: 2000
+  "2018-07-07":
+    item: containers/android
+    xp: 2000
+  "2018-07-08":
+    item: ground/turtle-shell
+    xp: 2500
+  "2018-07-10":
+    item: consumables/teleporter
+    quantity: 5
+    xp: 2000
+  "2018-07-12":
+    item: containers/pandora
+    xp: 2000
+
+  "2018-07-15":
+    item: ground/crystal-white-small
+    xp: 2500
+  "2018-07-16":
+    item: furniture/map
+    xp: 2000
+  "2018-07-18":
+    item: mechanical/bomb-water
+    quantity: 6
+    xp: 2000
+
+  "2018-07-20":
+    item: consumables/turret-upgrade-diamond
+    xp: 2000
+  "2018-07-21":
+    item: consumables/brain-wine
+    xp: 2500
+  "2018-07-22":
+    item: mechanical/dish
+    xp: 2000
+
+  "2018-07-24":
+    item: furniture/easel
+    xp: 2000
+  "2018-07-26":
+    item: furniture/daguerreotype-large
+    xp: 2000
+  "2018-07-27":
+    item: lighting/fancy-lamp-3
+    xp: 2500
+  "2018-07-28":
+    item: mechanical/steam-jet-small
+    xp: 2000
+  "2018-07-29":
+    item: containers/cat
+    xp: 2000
+
+  "2018-07-31":
+    item: furniture/stuffed-android
+    xp: 2000
+  "2018-08-02":
+    item: ground/terrapus-pet-egg
+    xp: 2000
+
+  "2018-08-04":
+    item: furniture/blueprint-dish-brass
+    xp: 2000
+
+  "2018-08-05":
+    item: mechanical/compass-dark
+    xp: 2500
+
+  "2018-08-06":
+    item: mechanical/bomb-lava
+    quantity: 10
+    xp: 1500
+
+  "2018-08-07":
+    item: ground/blackrock
+    quantity: 20
+    xp: 1500
+
+  "2018-08-08":
+    item: furniture/companion-cube
+    xp: 2000
+
+  "2018-08-09":
+    item: furniture/stuffed-panda
+    xp: 1500
+
+  "2018-08-10":
+    item: building/crystal-red
+    xp: 2000
+    quantity: 3
+
+  "2018-08-11":
+    item: furniture/head-fish
+
+  "2018-08-12":
+    item: consumables/book-skill
+    xp: 2000
+
+  "2018-08-13":
+    item: mechanical/bomb-spawner-large
+    quantity: 3
+
+  "2018-08-14":
+    item: ground/terrapus-egg-large
+    quantity: 3
+
+  "2018-08-15":
+    item: vegetation/flower-cactus-bulb
+    xp: 1500
+
+  "2018-08-16":
+    item: mechanical/teleporter-mini-diamond
+    xp: 2000
+
+  "2018-08-17":
+    item: furniture/head-tiger
+    xp: 3000
+
+  "2018-08-18":
+    item: furniture/stuffed-squid
+
+  "2018-08-19":
+    item: mechanical/science-bulb
+
+  "2018-08-20":
+    item: furniture/pinned-bee
+    xp: 2000
+
+  "2018-08-21":
+    item: containers/fertilizer
+    quantity: 10
+
+  "2018-08-22":
+    item: ground/crystal-red-large
+    xp: 2500
+
+  "2018-08-23":
+    item: consumables/cloak
+    quantity: 3
+    xp: 1500
+
+  "2018-08-24":
+    item: mechanical/compass
+    xp: 2500
+
+  "2018-08-25":
+    item: furniture/stuffed-snowman
+    xp: 2000
+
+  "2018-08-26":
+    item: vegetation/tree-bonsai-bulb
+    xp: 2000
+
+  "2018-08-27":
+    item: consumables/filet-fire
+    quantity: 10
+
+  "2018-08-28":
+    item: furniture/daguerreotype-small
+    xp: 2000
+
+  "2018-08-29":
+    item: mechanical/bomb-mega
+    quantity: 3
+
+  "2018-08-30":
+    item: lighting/fancy-lamp-6
+    xp: 2500
+
+  "2018-08-31":
+    item: containers/vial-poison
+    xp: 2000
+
+  "2018-09-03":
+    item: furniture/blueprint-scope-brass
+    xp: 2000
+
+  "2018-09-04":
+    item: ground/crystal-purple-1
+    xp: 1500
+
+  "2018-09-05":
+    item: containers/android
+    xp: 2000
+
+  "2018-09-06":
+    item: lighting/fancy-lamp-2
+    xp: 1500
+
+  "2018-09-07":
+    item: signs/checkpoint
+    xp: 2000
+
+  "2018-09-08":
+    item: mechanical/dish-mega
+    xp: 1500
+
+  "2018-09-09":
+    item: building/statue-figurine-large-4
+
+  "2018-09-10":
+    item: consumables/brain-wine
+    xp: 1500
+
+  "2018-09-11":
+    item: vegetation/flower-lobelia-bulb
+    quantity: 2
+
+  "2018-09-13":
+    item: furniture/stuffed-crow
+
+  "2018-09-14":
+    item: furniture/pinned-dragonfly
+
+  "2018-09-15":
+    item: mechanical/dish-giga
+
+  "2018-09-16":
+    item: furniture/stuffed-bear
+
+  "2018-09-18":
+    item: mechanical/bomb-water
+    quantity: 5
+    xp: 1500
+
+  "2018-09-20":
+    item: accessories/science-magnifying-glass
+    xp: 2000
+
+  "2018-09-21":
+    item: mechanical/friend-parts-boxing-gloves
+    xp: 2000
+
+  "2018-09-22":
+    item: vegetation/flower-bird-of-paradise-bulb
+    xp: 2000
+
+  "2018-09-23":
+    item: mechanical/compass-burned
+    xp: 2000
+
+  "2018-09-25":
+    item: furniture/easel-tall
+
+  "2018-09-26":
+    item: ground/terrapus-pet-egg
+
+  "2018-09-27":
+    item: mechanical/ship-wheel
+    xp: 2000
+
+  "2018-09-28":
+    item: consumables/weapon-upgrade-diamond
+    xp: 2000
+
+  "2018-09-29":
+    item: headgear/paper
+    xp: 2000
+
+  "2018-09-30":
+    item: mechanical/compass-sandy
+    xp: 2000
+
+  "2018-10-01":
+    item: mechanical/bomb-lava
+    quantity: 10
+    xp: 1500
+
+  "2018-10-02":
+    item: furniture/pinned-millipede
+
+  "2018-10-03":
+    item: furniture/companion-cube
+    xp: 2000
+
+  "2018-10-04":
+    item: furniture/stuffed-panda
+    xp: 1500
+
+  "2018-10-05":
+    item: mechanical/chemistry-set
+    xp: 1500
+
+  "2018-10-06":
+    item: furniture/map
+    xp: 2000
+
+  "2018-10-07":
+    item: mechanical/dish-large
+    xp: 1500
+
+  "2018-10-08":
+    item: mechanical/bomb-spawner-large
+    quantity: 3
+
+  "2018-10-09":
+    item: mechanical/bomb-acid
+    quantity: 10
+
+  #"2018-10-10": {}
+
+  "2018-10-11":
+    item: furniture/easel
+    xp: 1500
+
+  "2018-10-12":
+    item: containers/cat
+    xp: 2500
+
+  "2018-10-13":
+    item: containers/pandora
+    xp: 2000
+
+  "2018-10-14":
+    item: consumables/name-change
+    xp: 1500
+
+  "2018-10-16":
+    item: ground/terrapus-egg-large
+    quantity: 3
+
+  "2018-10-20":
+    item: consumables/weapon-upgrade-diamond
+    xp: 2000
+
+  "2018-10-21":
+    item: lighting/fancy-lamp-7
+    xp: 2000
+
+  "2018-10-22":
+    event: discover
+    data: ["id", "ground/earth"]
+
+  "2018-10-23":
+    item: consumables/teleporter
+    quantity: 5
+    event: kill
+    data: ["key", "terrapus/adult"]
+    description: Kill adult terrapi
+
+  "2018-10-24":
+    event: discover
+    data: ["group", "fungi"]
+    description: Forage for mushrooms
+
+  "2018-10-25":
+    item: mechanical/compass-icy
+    xp: 2000
+    event: kill
+    data: ["group", "revenant"]
+    description: Ravage revenants
+
+  "2018-10-26":
+    item: furniture/marionette
+    event: discover
+    data: ["id", "ground/cobweb"]
+    description: Clear out cobwebs
+    score_description: cobwebs cleared
+
+  "2018-10-27":
+    item: furniture/ship-in-bottle
+    xp: 1500
+    event: discover
+    data: ["id", "rubble/skeleton"]
+    description: Scrounge for skeletons
+    score_description: skeletons
+
+  "2018-10-28":
+    item: accessories/rake-diamond
+    xp: 2500
+    event: discover
+    data: ["id", "vegetation/pumpkin"]
+    description: Harvest pumpkins
+    score_description: pumpkins
+
+  "2018-10-29":
+    event: undertake
+    description: Give skeletons a proper burial
+    score_description: undertakings
+
+  "2018-10-30":
+    item: vegetation/pumpkin-giant
+    xp: 2000
+    event: consume
+    data: ["group", "jerky"]
+    description: Eat delicious jerky
+    score_description: jerkies nommed
+
+  "2018-10-31":
+    item: containers/pandora
+    xp: 1500
+    event: craft
+    data: ["group", "jack-o-lantern"]
+    description: Craft Jack-o-Lanterns
+    score_description: jack-o-lanterns crafted
+
+  "2018-11-01":
+    item: accessories/schematic
+    xp: 1500
+    event: discover
+    data: ["id", "ground/zinc"]
+    description: Mine zinc ore
+    score_description: zinc mined
+
+  "2018-11-02":
+    item: tools/net-diamond
+    event: kill
+    data: ["group", "brains"]
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2018-11-03":
+    item: mechanical/teleporter
+    xp: 1500
+    event: discover
+    data: ["id", "ground/guano"]
+    description: Scoop up some guano
+    score_description: guano gathered
+
+  "2018-11-04":
+    item: ground/turtle-shell
+    xp: 2500
+    event: discover
+    data: ["id", "rubble/skeleton"]
+    description: Scrounge for skeletons
+    score_description: skeletons
+
+  "2018-11-05":
+    event: loot_container
+    data: ["group", "sack"]
+    description: Loot sacks
+    score_description: sacks looted
+
+  "2018-11-06":
+    item: mechanical/dish
+    xp: 1500
+    event: kill
+    data: ["subgroup", "bird"]
+    current_item: ["damage_type", "bludgeoning"]
+    description: Bash birds
+    score_description: birds bashed
+
+  "2018-11-07":
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2018-11-08":
+    item: consumables/skill-reset
+    xp: 1500
+    event: discover
+    data: ["group", "wallpaper"]
+    description: Recover wallpaper
+    score_description: wallpaper recovered
+
+  "2018-11-09":
+    item: mechanical/steam-jet-small
+    quantity: 2
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2018-11-10":
+    item: mechanical/dish-micro
+    quantity: 5
+    event: raid
+    description: Raid dungeons
+    score_description: dungeons raided
+
+  "2018-11-11":
+    item: furniture/pinned-beetle
+    xp: 2000
+    event: deliverance
+    description: Deliver lost souls
+    score_description: lost souls delivered
+
+  "2018-11-12":
+    event: place_transform
+    data: ["group", "jar"]
+    description: Fill up jars
+    score_description: jars filled
+
+  "2018-11-13":
+    event: machine_part
+    description: Recover machine parts
+    score_description: machine parts recovered
+
+  "2018-11-14":
+    event: loot
+    data: ["group", "butterfly"]
+    description: Catch butterflies
+    score_description: butterflies caught
+
+  # "2018-11-15":
+  #   event: discover
+  #   data: ["group", "door"]
+  #   description: Knock down doors
+  #   score_description: doors knocked down
+
+  "2018-11-16":
+    item: mechanical/dish-large
+    xp: 1500
+    event: discover
+    data: ["group", "enemy_protector"]
+    description: Destroy dungeon protectors
+    score_description: dungeon protectors destroyed
+
+  "2018-11-17":
+    event: loot_container
+    description: Loot everything!
+    score_description: loots looted
+
+  "2018-11-18":
+    event: kill
+    data: ["group", "turret"]
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2018-11-19":
+    event: kill
+    data: ["species", "crow"]
+    description: Hunt down crows
+    score_description: crows clobbered
+
+  "2018-11-20":
+    event: discover
+    data: ["group", "crystal"]
+    description: Cultivate crystals
+    score_description: crystals cultivated
+
+  "2018-11-21":
+    item: mechanical/teleporter
+    xp: 2000
+    event: teleporter_repair
+    description: Repair teleporters
+    score_description: teleporters repaired
+
+  "2018-11-22":
+    item: tops/fur-coat
+    event: discover
+    data: ["group", "salt"]
+    description: Mine salt
+    score_description: salt mined
+
+  "2018-11-23":
+    item: containers/cat
+    xp: 2000
+    event: discover
+    data: ["group", "brick"]
+    description: Recover bricks
+    score_description: bricks recovered
+
+  "2018-11-24":
+    item: furniture/blueprint-mass-teleporter-brass
+    xp: 2500
+    event: craft
+    data: ["group", "balloon"]
+    description: Craft balloons
+    score_description: balloons crafted
+
+  "2018-11-25":
+    item: consumables/book-skill
+    xp: 2500
+    event: kill
+    data: ["subgroup", "worm"]
+    current_item: ["damage_type", "bludgeoning"]
+    description: Smash worms
+    score_description: worms smashed
+
+  "2018-11-26":
+    event: discover
+    data: ["id", "ground/copper"]
+    description: Mine copper ore
+    score_description: copper mined
+
+  "2018-11-27":
+    event: consume
+    data: ["group", "filet"]
+    description: Eat hearty filets
+    score_description: filets nommed
+
+  "2018-11-30":
+    item: mechanical/dish-large
+    xp: 2000
+    event: discover
+    data: ["group", "egg"]
+    description: Scrounge for eggs
+    score_description: eggs scrounged
+
+  "2018-12-01":
+    item: furniture/painting-landscape
+    xp: 2000
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2018-12-02":
+    item: containers/pandora
+    xp: 2000
+    event: loot_container
+    data: ["group", "barrel"]
+    description: Loot barrels
+    score_description: barrels looted
+
+  "2018-12-03":
+    event: discover
+    data: ["group", "speleothem"]
+    description: Break up stalagmites and stalactites
+    score_description: stalagmites and stalactites
+
+  "2018-12-04":
+    event: discover
+    data: ["id", "vegetation/mushrooms-tiny"]
+    description: Forage for tiny mushrooms
+    score_description: tiny mushrooms foraged
+
+  "2018-12-05":
+    item: furniture/daguerreotype-small
+    event: kill
+    data: ["subgroup", "tiny_brain"]
+    current_item: ["damage_type", "slashing"]
+    description: Slash tiny brains
+    score_description: tiny brains slashed
+
+  "2018-12-06":
+    item: consumables/canister
+    quantity: 10
+    event: discover
+    data: ["id", "brain/pipe"]
+    description: Recover neurons
+    score_description: neurons recovered
+
+  "2018-12-07":
+    item: mechanical/spawner-small
+    xp: 2000
+    event: discover
+    data: ["id", "vegetation/flower-carnations"]
+    description: Harvest carnations
+    score_description: carnations harvested
+
+  "2018-12-08":
+    item: consumables/brain-wine
+    xp: 2000
+    event: discover
+    data: ["id", "lighting/candle"]
+    description: Reclaim candles
+    score_description: candles reclaimed
+
+  "2018-12-09":
+    item: building/crystal-red
+    xp: 2000
+    quantity: 3
+    event: raid
+    description: Raid dungeons
+    score_description: dungeons raided
+
+  "2018-12-10":
+    event: discover
+    data: ["group", "root"]
+    description: Rip up roots
+    score_description: roots ripped
+
+  "2018-12-11":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2018-12-12":
+    item: mechanical/dish
+    event: discover
+    data: ["group", "mineral"]
+    description: Mine ores
+    score_description: ores mined
+
+  "2018-12-13":
+    item: ground/terrapus-egg-large
+    quantity: 3
+    event: kill
+    data: ["group", "brains"]
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2018-12-14":
+    item: mechanical/teleporter
+    xp: 2000
+    event: discover
+    data: ["id", "music/phonograph"]
+    description: Salvage old phonographs
+    score_description: phonographs salvaged
+
+  "2018-12-15":
+    item: consumables/weapon-upgrade-diamond
+    xp: 2000
+    event: discover
+    data: ["group", "shrub"]
+    description: Harvest shrubs
+    score_description: shrubs harvested
+
+  "2018-12-16":
+    item: consumables/turret-upgrade-diamond
+    xp: 2000
+    event: teleporter_repair
+    description: Repair teleporters
+    score_description: teleporters repaired
+
+  "2018-12-20":
+    item: furniture/blueprint-mass-spawner-brass
+    xp: 2500
+    event: discover
+    data: ["group", "wallpaper"]
+    description: Recover wallpaper
+    score_description: wallpaper recovered
+
+  "2018-12-21":
+    item: consumables/book-skill
+    xp: 2000
+    event: kill
+    data: ["group", "turret"]
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2018-12-22":
+    item: lighting/fancy-lamp-6
+    xp: 2000
+    event: consume
+    data: ["group", "jerky"]
+    description: Eat delicious jerky
+    score_description: jerkies nommed
+
+  "2018-12-23":
+    item: mechanical/dish-mega
+    xp: 2000
+    event: deliverance
+    description: Deliver lost souls
+    score_description: lost souls delivered
+
+  "2018-12-24":
+    item: containers/dog
+    xp: 1500
+    event: discover
+    data: ["group", "fungi"]
+    description: Forage for mushrooms
+
+  "2018-12-25":
+    item: lighting/fancy-lamp-5
+    xp: 2000
+    event: machine_part
+    description: Recover machine parts
+    score_description: machine parts recovered
+
+  "2018-12-26":
+    item: consumables/cloak
+    quantity: 5
+    xp: 1500
+    event: loot_container
+    data: ["group", "sack"]
+    description: Loot sacks
+    score_description: sacks looted
+
+  "2018-12-27":
+    item: consumables/teleporter
+    quantity: 10
+    event: place_transform
+    data: ["group", "jar"]
+    description: Fill up jars
+    score_description: jars filled
+
+  "2018-12-28":
+    item: furniture/stuffed-panda
+    xp: 1500
+    event: raid
+    description: Raid dungeons
+    score_description: dungeons raided
+
+  "2018-12-29":
+    item: furniture/easel-tall
+    xp: 2000
+    event: discover
+    data: ["id", "ground/guano"]
+    description: Scoop up some guano
+    score_description: guano gathered
+
+  "2018-12-30":
+    item: mechanical/zone-teleporter
+    xp: 1500
+    event: discover
+    data: ["group", "brick"]
+    description: Recover bricks
+    score_description: bricks recovered
+
+  "2018-12-31":
+    item: containers/pandora
+    quantity: 3
+    event: kill
+    data: ["species", "crow"]
+    description: Hunt down crows
+    score_description: crows clobbered
+
+  "2019-01-01":
+    item: containers/tin-wax
+    xp: 2000
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2019-01-02":
+    event: loot_container
+    data: ["group", "barrel"]
+    description: Loot barrels
+    score_description: barrels looted
+
+  "2019-01-03":
+    event: kill
+    data: ["group", "turret"]
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2019-01-04":
+    event: discover
+    data: ["group", "enemy_protector"]
+    description: Destroy dungeon protectors
+    score_description: dungeon protectors destroyed
+
+  "2019-01-05":
+    event: discover
+    data: ["id", "vegetation/flower-coxcomb"]
+    description: Harvest coxcombs
+    score_description: coxcombs harvested
+
+  "2019-01-06":
+    event: discover
+    data: ["group", "speleothem"]
+    description: Break up stalagmites and stalactites
+    score_description: stalagmites and stalactites
+
+  "2019-01-07":
+    event: discover
+    data: ["group", "root"]
+    description: Rip up roots
+    score_description: roots ripped
+
+  "2019-01-08":
+    item: mechanical/teleporter
+    xp: 2000
+    event: teleporter_repair
+    description: Repair teleporters
+    score_description: teleporters repaired
+
+  "2019-01-09":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-01-10":
+    item: mechanical/dish
+    event: loot_container
+    description: Loot everything!
+    score_description: loots looted
+
+  "2019-01-11":
+    item: ground/terrapus-egg-large
+    quantity: 3
+    event: kill
+    data: ["group", "brains"]
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2019-01-14":
+    event: discover
+    data: ["group", "mineral"]
+    description: Mine ores
+    score_description: ores mined
+
+  "2019-01-15":
+    item: mechanical/spawner
+    xp: 2000
+    event: discover
+    data: ["id", "music/piano"]
+    description: Salvage pianos
+    score_description: pianos salvaged
+
+  "2019-01-16":
+    item: mechanical/dish-large
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2019-01-17":
+    item: consumables/filet-fire
+    quantity: 5
+    event: discover
+    data: ["id", "lighting/candle"]
+    description: Reclaim candles
+    score_description: candles reclaimed
+
+  "2019-01-18":
+    item: mechanical/dish
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - brick
+    description: Recover bricks
+    score_description: bricks recovered
+
+  "2019-01-19":
+    item: containers/cat
+    xp: 2500
+    event: craft
+    data:
+    - group
+    - balloon
+    description: Craft balloons
+    score_description: balloons crafted
+
+  "2019-01-20":
+    item: consumables/book-skill
+    xp: 2500
+    event: kill
+    data:
+    - subgroup
+    - worm
+    current_item:
+    - damage_type
+    - bludgeoning
+    description: Smash worms
+    score_description: worms smashed
+
+  "2019-01-21":
+    event: discover
+    data:
+    - id
+    - ground/copper
+    description: Mine copper ore
+    score_description: copper mined
+
+  "2019-01-22":
+    event: consume
+    data:
+    - group
+    - filet
+    description: Eat hearty filets
+    score_description: filets nommed
+
+  "2019-01-25":
+    item: mechanical/dish-large
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - egg
+    description: Scrounge for eggs
+    score_description: eggs scrounged
+
+  "2019-01-26":
+    item: furniture/painting-landscape
+    xp: 2000
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2019-01-27":
+    item: containers/pandora
+    xp: 2000
+    event: loot_container
+    data:
+    - group
+    - barrel
+    description: Loot barrels
+    score_description: barrels looted
+
+  "2019-01-28":
+    event: discover
+    data:
+    - group
+    - speleothem
+    description: Break up stalagmites and stalactites
+    score_description: stalagmites and stalactites
+
+  "2019-01-29":
+    event: discover
+    data:
+    - id
+    - vegetation/mushrooms-tiny
+    description: Forage for tiny mushrooms
+    score_description: tiny mushrooms foraged
+
+  "2019-01-30":
+    item: furniture/daguerreotype-small
+    event: kill
+    data:
+    - subgroup
+    - tiny_brain
+    current_item:
+    - damage_type
+    - slashing
+    description: Slash tiny brains
+    score_description: tiny brains slashed
+
+  "2019-01-31":
+    item: consumables/canister
+    quantity: 10
+    event: discover
+    data:
+    - id
+    - brain/pipe
+    description: Recover neurons
+    score_description: neurons recovered
+
+  "2019-02-01":
+    item: mechanical/spawner-small
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - vegetation/flower-carnations
+    description: Harvest carnations
+    score_description: carnations harvested
+
+  "2019-02-02":
+    item: consumables/brain-wine
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - lighting/candle
+    description: Reclaim candles
+    score_description: candles reclaimed
+
+  "2019-02-03":
+    item: building/crystal-red
+    xp: 2000
+    quantity: 3
+    event: raid
+    description: Raid dungeons
+    score_description: dungeons raided
+
+  "2019-02-04":
+    event: discover
+    data:
+    - group
+    - root
+    description: Rip up roots
+    score_description: roots ripped
+
+  "2019-02-05":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-02-06":
+    item: mechanical/dish
+    event: discover
+    data:
+    - group
+    - mineral
+    description: Mine ores
+    score_description: ores mined
+
+  "2019-02-07":
+    item: ground/terrapus-egg-large
+    quantity: 3
+    event: kill
+    data:
+    - group
+    - brains
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2019-02-08":
+    item: mechanical/teleporter
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - music/phonograph
+    description: Salvage old phonographs
+    score_description: phonographs salvaged
+
+  "2019-02-09":
+    item: consumables/weapon-upgrade-diamond
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - shrub
+    description: Harvest shrubs
+    score_description: shrubs harvested
+
+  "2019-02-10":
+    item: consumables/turret-upgrade-diamond
+    xp: 2000
+    event: teleporter_repair
+    description: Repair teleporters
+    score_description: teleporters repaired
+
+  "2019-02-11":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-02-12":
+    item: mechanical/dish
+    event: loot_container
+    description: Loot everything!
+    score_description: loots looted
+
+  "2019-02-13":
+    item: ground/terrapus-egg-large
+    quantity: 3
+    event: kill
+    data: ["group", "brains"]
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2019-02-14":
+    item: furniture/companion-cube
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - wallpaper
+    description: Recover wallpaper
+    score_description: wallpaper recovered
+
+  "2019-02-15":
+    item: consumables/book-skill
+    xp: 2000
+    event: kill
+    data:
+    - group
+    - turret
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2019-02-16":
+    item: lighting/fancy-lamp-6
+    xp: 2000
+    event: consume
+    data:
+    - group
+    - jerky
+    description: Eat delicious jerky
+    score_description: jerkies nommed
+
+  "2019-02-17":
+    item: mechanical/dish-mega
+    xp: 2000
+    event: deliverance
+    description: Deliver lost souls
+    score_description: lost souls delivered
+
+  "2019-02-18":
+    event: discover
+    data:
+    - group
+    - fungi
+    description: Forage for mushrooms
+
+  "2019-02-19":
+    event: machine_part
+    description: Recover machine parts
+    score_description: machine parts recovered
+
+  "2019-02-20":
+    item: consumables/cloak
+    quantity: 5
+    xp: 1500
+    event: loot_container
+    data:
+    - group
+    - sack
+    description: Loot sacks
+    score_description: sacks looted
+
+  "2019-02-21":
+    item: consumables/teleporter
+    quantity: 10
+    event: place_transform
+    data:
+    - group
+    - jar
+    description: Fill up jars
+    score_description: jars filled
+
+  "2019-02-22":
+    item: furniture/stuffed-snowman
+    xp: 1500
+    event: raid
+    description: Raid dungeons
+    score_description: dungeons raided
+
+  "2019-02-23":
+    item: furniture/easel-tall
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - ground/guano
+    description: Scoop up some guano
+    score_description: guano gathered
+
+  "2019-02-24":
+    item: mechanical/zone-teleporter
+    xp: 1500
+    event: discover
+    data:
+    - group
+    - brick
+    description: Recover bricks
+    score_description: bricks recovered
+
+  "2019-02-25":
+    item: containers/pandora
+    event: kill
+    data:
+    - species
+    - crow
+    description: Hunt down crows
+    score_description: crows clobbered
+
+  "2019-02-26":
+    item: containers/tin-wax
+    xp: 2000
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2019-02-27":
+    event: loot_container
+    data:
+    - group
+    - barrel
+    description: Loot barrels
+    score_description: barrels looted
+
+  "2019-02-28":
+    event: kill
+    data:
+    - group
+    - turret
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2019-03-01":
+    event: discover
+    data:
+    - group
+    - enemy_protector
+    description: Destroy dungeon protectors
+    score_description: dungeon protectors destroyed
+
+  "2019-03-02":
+    event: discover
+    data:
+    - id
+    - vegetation/flower-coxcomb
+    description: Harvest coxcombs
+    score_description: coxcombs harvested
+
+  "2019-03-03":
+    event: discover
+    data:
+    - group
+    - speleothem
+    description: Break up stalagmites and stalactites
+    score_description: stalagmites and stalactites
+
+  "2019-03-04":
+    event: discover
+    data:
+    - group
+    - root
+    description: Rip up roots
+    score_description: roots ripped
+
+  "2019-03-05":
+    item: mechanical/teleporter
+    xp: 2000
+    event: teleporter_repair
+    description: Repair teleporters
+    score_description: teleporters repaired
+
+  "2019-03-06":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-03-07":
+    item: mechanical/dish
+    event: loot_container
+    description: Loot everything!
+    score_description: loots looted
+
+  "2019-03-08":
+    item: ground/terrapus-egg-large
+    quantity: 3
+    event: kill
+    data:
+    - group
+    - brains
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2019-03-19":
+    event: consume
+    data:
+    - group
+    - filet
+    description: Eat hearty filets
+    score_description: filets nommed
+
+  "2019-03-20":
+    event: discover
+    data:
+    - id
+    - ground/copper
+    description: Mine copper ore
+    score_description: copper mined
+
+  "2019-03-21":
+    item: ground/crystal-red-large
+    xp: 2000
+    event: kill
+    data:
+    - group
+    - turret
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2019-03-22":
+    item: mechanical/dish-large
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - egg
+    description: Scrounge for eggs
+    score_description: eggs scrounged
+
+  "2019-03-23":
+    item: furniture/painting-landscape
+    xp: 2000
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2019-03-24":
+    item: containers/pandora
+    xp: 2000
+    event: loot_container
+    data:
+    - group
+    - barrel
+    description: Loot barrels
+    score_description: barrels looted
+
+  "2019-03-25":
+    event: discover
+    data:
+    - group
+    - speleothem
+    description: Break up stalagmites and stalactites
+    score_description: stalagmites and stalactites
+
+  "2019-03-26":
+    event: discover
+    data:
+    - id
+    - vegetation/mushrooms-tiny
+    description: Forage for tiny mushrooms
+    score_description: tiny mushrooms foraged
+
+  "2019-03-27":
+    item: furniture/daguerreotype-small
+    event: kill
+    data:
+    - subgroup
+    - tiny_brain
+    current_item:
+    - damage_type
+    - slashing
+    description: Slash tiny brains
+    score_description: tiny brains slashed
+
+  "2019-03-28":
+    item: consumables/canister
+    quantity: 10
+    event: discover
+    data:
+    - id
+    - brain/pipe
+    description: Recover neurons
+    score_description: neurons recovered
+
+  "2019-03-29":
+    item: mechanical/spawner-small
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - vegetation/flower-carnations
+    description: Harvest carnations
+    score_description: carnations harvested
+
+  "2019-03-30":
+    item: consumables/brain-wine
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - lighting/candle
+    description: Reclaim candles
+    score_description: candles reclaimed
+
+  "2019-03-31":
+    item: building/crystal-purple
+    xp: 2000
+    quantity: 3
+    event: raid
+    description: Raid dungeons
+    score_description: dungeons raided
+
+  "2019-04-01":
+    event: discover
+    data:
+    - group
+    - root
+    description: Rip up roots
+    score_description: roots ripped
+
+  "2019-04-02":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-04-03":
+    item: mechanical/dish
+    event: discover
+    data:
+    - group
+    - mineral
+    description: Mine ores
+    score_description: ores mined
+
+  "2019-04-04":
+    item: ground/terrapus-egg-large
+    quantity: 3
+    event: kill
+    data:
+    - group
+    - brains
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2019-04-05":
+    item: mechanical/teleporter
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - music/phonograph
+    description: Salvage old phonographs
+    score_description: phonographs salvaged
+
+  "2019-04-06":
+    item: consumables/turret-upgrade-onyx
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - shrub
+    description: Harvest shrubs
+    score_description: shrubs harvested
+
+  "2019-04-07":
+    item: consumables/name-change
+    xp: 2000
+    event: teleporter_repair
+    description: Repair teleporters
+    score_description: teleporters repaired
+
+  "2019-04-08":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-04-09":
+    item: mechanical/dish
+    event: loot_container
+    description: Loot everything!
+    score_description: loots looted
+
+  "2019-04-10":
+    item: ground/terrapus-egg-large
+    quantity: 3
+    event: kill
+    data:
+    - group
+    - brains
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2019-04-11":
+    item: furniture/companion-cube
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - wallpaper
+    description: Recover wallpaper
+    score_description: wallpaper recovered
+
+  "2019-04-12":
+    item: consumables/book-skill
+    xp: 2000
+    event: kill
+    data:
+    - group
+    - turret
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2019-04-13":
+    item: lighting/fancy-lamp-6
+    xp: 2000
+    event: consume
+    data:
+    - group
+    - jerky
+    description: Eat delicious jerky
+    score_description: jerkies nommed
+
+  "2019-04-14":
+    item: mechanical/dish-mega
+    xp: 2000
+    event: deliverance
+    description: Deliver lost souls
+    score_description: lost souls delivered
+
+  "2019-04-15":
+    event: discover
+    data:
+    - group
+    - fungi
+    description: Forage for mushrooms
+
+  "2019-04-16":
+    event: machine_part
+    description: Recover machine parts
+    score_description: machine parts recovered
+
+  "2019-04-17":
+    item: consumables/cloak
+    quantity: 5
+    xp: 1500
+    event: loot_container
+    data:
+    - group
+    - sack
+    description: Loot sacks
+    score_description: sacks looted
+
+  "2019-04-18":
+    item: consumables/teleporter
+    quantity: 10
+    event: place_transform
+    data:
+    - group
+    - jar
+    description: Fill up jars
+    score_description: jars filled
+
+  "2019-04-19":
+    item: furniture/stuffed-panda
+    xp: 1500
+    event: raid
+    description: Raid dungeons
+    score_description: dungeons raided
+
+  "2019-04-20":
+    item: machines/mass-teleporter
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - ground/guano
+    description: Scoop up some guano
+    score_description: guano gathered
+
+  "2019-04-21":
+    item: mechanical/zone-teleporter
+    xp: 1500
+    event: discover
+    data:
+    - group
+    - brick
+    description: Recover bricks
+    score_description: bricks recovered
+
+  "2019-04-22":
+    item: containers/pandora
+    event: kill
+    data:
+    - species
+    - crow
+    description: Hunt down crows
+    score_description: crows clobbered
+
+  "2019-04-23":
+    item: containers/tin-wax
+    xp: 2000
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2019-04-24":
+    event: loot_container
+    data:
+    - group
+    - barrel
+    description: Loot barrels
+    score_description: barrels looted
+
+  "2019-04-25":
+    event: kill
+    data:
+    - group
+    - turret
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2019-04-26":
+    event: discover
+    data:
+    - group
+    - enemy_protector
+    description: Destroy dungeon protectors
+    score_description: dungeon protectors destroyed
+
+  "2019-04-27":
+    event: discover
+    data:
+    - id
+    - vegetation/flower-coxcomb
+    description: Harvest coxcombs
+    score_description: coxcombs harvested
+
+  "2019-04-28":
+    event: discover
+    data:
+    - group
+    - speleothem
+    description: Break up stalagmites and stalactites
+    score_description: stalagmites and stalactites
+
+  "2019-04-29":
+    event: discover
+    data:
+    - group
+    - root
+    description: Rip up roots
+    score_description: roots ripped
+
+  "2019-04-30":
+    item: mechanical/teleporter
+    xp: 2000
+    event: teleporter_repair
+    description: Repair teleporters
+    score_description: teleporters repaired
+
+  "2019-05-01":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-05-02":
+    item: mechanical/dish
+    event: loot_container
+    description: Loot everything!
+    score_description: loots looted
+
+  "2019-05-03":
+    item: machines/weather-machine
+    xp: 1500
+    event: kill
+    data:
+    - group
+    - brains
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2019-05-14":
+    event: consume
+    data:
+    - group
+    - filet
+    description: Eat hearty filets
+    score_description: filets nommed
+
+  "2019-05-15":
+    event: discover
+    data:
+    - id
+    - ground/copper
+    description: Mine copper ore
+    score_description: copper mined
+
+  "2019-05-16":
+    item: ground/crystal-red-large
+    xp: 2000
+    event: kill
+    data:
+    - group
+    - turret
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2019-05-17":
+    item: mechanical/dish-large
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - egg
+    description: Scrounge for eggs
+    score_description: eggs scrounged
+
+  "2019-05-18":
+    item: furniture/painting-landscape
+    xp: 2000
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2019-05-19":
+    item: containers/pandora
+    xp: 2000
+    event: loot_container
+    data:
+    - group
+    - barrel
+    description: Loot barrels
+    score_description: barrels looted
+
+  "2019-05-20":
+    event: discover
+    data:
+    - group
+    - speleothem
+    description: Break up stalagmites and stalactites
+    score_description: stalagmites and stalactites
+
+  "2019-05-21":
+    event: discover
+    data:
+    - id
+    - vegetation/mushrooms-tiny
+    description: Forage for tiny mushrooms
+    score_description: tiny mushrooms foraged
+
+  "2019-05-22":
+    item: furniture/daguerreotype-small
+    event: kill
+    data:
+    - subgroup
+    - tiny_brain
+    current_item:
+    - damage_type
+    - slashing
+    description: Slash tiny brains
+    score_description: tiny brains slashed
+
+  "2019-05-23":
+    item: consumables/canister
+    quantity: 10
+    event: discover
+    data:
+    - id
+    - brain/pipe
+    description: Recover neurons
+    score_description: neurons recovered
+
+  "2019-05-24":
+    item: mechanical/spawner-small
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - vegetation/flower-carnations
+    description: Harvest carnations
+    score_description: carnations harvested
+
+  "2019-05-25":
+    item: consumables/brain-wine
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - lighting/candle
+    description: Reclaim candles
+    score_description: candles reclaimed
+
+  "2019-05-26":
+    item: building/crystal-purple
+    xp: 2000
+    quantity: 3
+    event: raid
+    description: Raid dungeons
+    score_description: dungeons raided
+
+  "2019-05-27":
+    event: discover
+    data:
+    - group
+    - root
+    description: Rip up roots
+    score_description: roots ripped
+
+  "2019-05-28":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-05-29":
+    item: mechanical/dish
+    event: discover
+    data:
+    - group
+    - mineral
+    description: Mine ores
+    score_description: ores mined
+
+  "2019-05-30":
+    item: ground/terrapus-egg-large
+    quantity: 3
+    event: kill
+    data:
+    - group
+    - brains
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2019-05-31":
+    item: mechanical/teleporter
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - music/phonograph
+    description: Salvage old phonographs
+    score_description: phonographs salvaged
+
+  "2019-06-01":
+    item: consumables/turret-upgrade-diamond
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - shrub
+    description: Harvest shrubs
+    score_description: shrubs harvested
+
+  "2019-06-02":
+    item: consumables/name-change
+    xp: 2000
+    event: teleporter_repair
+    description: Repair teleporters
+    score_description: teleporters repaired
+
+  "2019-06-03":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-06-04":
+    item: mechanical/dish
+    event: loot_container
+    description: Loot everything!
+    score_description: loots looted
+
+  "2019-06-05":
+    item: ground/terrapus-egg-large
+    quantity: 3
+    event: kill
+    data:
+    - group
+    - brains
+    description: Hunt down brains
+    score_description: brains bashed
+
+  "2019-06-06":
+    item: furniture/companion-cube
+    xp: 2000
+    event: discover
+    data:
+    - group
+    - wallpaper
+    description: Recover wallpaper
+    score_description: wallpaper recovered
+
+  "2019-06-07":
+    item: consumables/book-skill
+    xp: 2000
+    event: kill
+    data:
+    - group
+    - turret
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2019-06-08":
+    item: lighting/fancy-lamp-6
+    xp: 2000
+    event: consume
+    data:
+    - group
+    - jerky
+    description: Eat delicious jerky
+    score_description: jerkies nommed
+
+  "2019-06-09":
+    item: mechanical/dish-mega
+    xp: 2000
+    event: deliverance
+    description: Deliver lost souls
+    score_description: lost souls delivered
+
+  "2019-06-10":
+    event: discover
+    data:
+    - group
+    - fungi
+    description: Forage for mushrooms
+
+  "2019-06-11":
+    event: machine_part
+    description: Recover machine parts
+    score_description: machine parts recovered
+
+  "2019-06-12":
+    item: consumables/cloak
+    quantity: 5
+    xp: 1500
+    event: loot_container
+    data:
+    - group
+    - sack
+    description: Loot sacks
+    score_description: sacks looted
+
+  "2019-06-13":
+    item: consumables/teleporter
+    quantity: 10
+    event: place_transform
+    data:
+    - group
+    - jar
+    description: Fill up jars
+    score_description: jars filled
+
+  "2019-06-14":
+    item: furniture/stuffed-panda
+    xp: 1500
+    event: raid
+    description: Raid dungeons
+    score_description: dungeons raided
+
+  "2019-06-15":
+    item: machines/mass-teleporter
+    xp: 2000
+    event: discover
+    data:
+    - id
+    - ground/guano
+    description: Scoop up some guano
+    score_description: guano gathered
+
+  "2019-06-16":
+    item: mechanical/zone-teleporter
+    xp: 1500
+    event: discover
+    data:
+    - group
+    - brick
+    description: Recover bricks
+    score_description: bricks recovered
+
+  "2019-06-17":
+    item: containers/pandora
+    event: kill
+    data:
+    - species
+    - crow
+    description: Hunt down crows
+    score_description: crows clobbered
+
+  "2019-06-18":
+    item: containers/tin-wax
+    xp: 2000
+    event: plug
+    description: Plug maws
+    score_description: maws plugged
+
+  "2019-06-19":
+    event: loot_container
+    data:
+    - group
+    - barrel
+    description: Loot barrels
+    score_description: barrels looted
+
+  "2019-06-20":
+    event: kill
+    data:
+    - group
+    - turret
+    description: Junk turrets
+    score_description: turrets junked
+
+  "2019-06-21":
+    event: discover
+    data:
+    - group
+    - enemy_protector
+    description: Destroy dungeon protectors
+    score_description: dungeon protectors destroyed
+
+  "2019-06-22":
+    event: discover
+    data:
+    - id
+    - vegetation/flower-coxcomb
+    description: Harvest coxcombs
+    score_description: coxcombs harvested
+
+  "2019-06-23":
+    event: discover
+    data:
+    - group
+    - speleothem
+    description: Break up stalagmites and stalactites
+    score_description: stalagmites and stalactites
+
+  "2019-06-24":
+    event: discover
+    data:
+    - group
+    - root
+    description: Rip up roots
+    score_description: roots ripped
+
+  "2019-06-25":
+    item: mechanical/teleporter
+    xp: 2000
+    event: teleporter_repair
+    description: Repair teleporters
+    score_description: teleporters repaired
+
+  "2019-06-26":
+    event: trapping
+    description: Trap critters
+    score_description: critters trapped
+
+  "2019-06-27":
+    item: mechanical/dish
+    event: loot_container
+    description: Loot everything!
+    score_description: loots looted
+
+  "2019-06-28":
+    item: containers/dog
+    xp: 1500
+    event: kill
+    data:
+    - group
+    - brains
+    description: Hunt down brains
+    score_description: brains bashed

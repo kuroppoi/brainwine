@@ -1,13 +1,13 @@
 package brainwine.gameserver;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -166,18 +166,21 @@ public class GameConfiguration {
     
     private static void loadConfigFiles() {
         try {
-            ZipInputStream inputStream = new ZipInputStream(GameConfiguration.class.getResourceAsStream("/config.zip"));
-            ZipEntry zipEntry = null;
+            BufferedReader reader = new BufferedReader(new InputStreamReader(GameConfiguration.class.getResourceAsStream("/config")));
+            String fileName = null;
             
-            while((zipEntry = inputStream.getNextEntry()) != null) {
-                Map<String, Object> config = yaml.load(inputStream);
-                String name = zipEntry.getName();
+            while((fileName = reader.readLine()) != null) {
+                if(!fileName.endsWith(".yml")) {
+                    continue;
+                }
                 
-                if(name.contains("versions")) {
-                    String[] segments = name.replace(".yml", "").split("-");
+                Map<String, Object> config = yaml.load(GameConfiguration.class.getResourceAsStream(String.format("/config/%s", fileName)));
+                
+                if(fileName.contains("versions")) {
+                    String[] segments = fileName.replace(".yml", "").split("-");
                     
                     if(segments.length < 3) {
-                        throw new IllegalArgumentException(String.format("Invalid name for config update '%s', expected format: config-versions-{version}.yml", name));
+                        throw new IllegalArgumentException(String.format("Invalid name for config update '%s', expected format: config-versions-{version}.yml", fileName));
                     }
                     
                     String version = segments[2];
@@ -188,7 +191,7 @@ public class GameConfiguration {
                 baseConfig.putAll(config);
             }
             
-            inputStream.close();
+            reader.close();
         } catch(Exception e) {
             logger.fatal("Could not load configuration files", e);
             System.exit(-1);
