@@ -15,7 +15,6 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.MapperFeature;
@@ -56,7 +55,7 @@ public class GameConfiguration {
     
     private static void cacheVersionedConfigs() {
         configUpdates.keySet().forEach(version -> {
-            Map<String, Object> config = copy(baseConfig, new TypeReference<Map<String, Object>>(){});
+            Map<String, Object> config = MapHelper.copy(baseConfig);
             
             configUpdates.forEach((version2, update) -> {
                 if(VersionUtils.isGreaterOrEqualTo(version2, version2)) {
@@ -194,17 +193,6 @@ public class GameConfiguration {
             logger.fatal("Could not load configuration files", e);
             System.exit(-1);
         }
-    }
-    
-    private static <T> T copy(T original, TypeReference<T> reference) {
-        try {
-            return mapper.readValue(mapper.writeValueAsString(original), reference);
-        } catch (JsonProcessingException e) {
-            logger.fatal("Copy creation failed", e);
-            System.exit(-1);
-        }
-        
-        return null;
     }
     
     private static void merge(Map<String, Object> dst, Map<String, Object> src) {

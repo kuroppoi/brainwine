@@ -1,11 +1,32 @@
 package brainwine.gameserver.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @SuppressWarnings("unchecked")
 public class MapHelper {
+    
+    private static final Logger logger = LogManager.getLogger();
+    private static final ObjectMapper mapper = new ObjectMapper();
+    
+    public static <K, V> Map<K, V> copy(Map<K, V> map) {
+        try {
+            return mapper.readValue(mapper.writeValueAsString(map), new TypeReference<Map<K, V>>(){});
+        } catch (JsonProcessingException e) {
+            logger.error("Map copy failed", e);
+        }
+        
+        return new HashMap<>();
+    }
     
     public static void put(Map<?, ?> map, String path, Object value) {
         String[] segments = path.split("\\.");
@@ -68,7 +89,15 @@ public class MapHelper {
     }
     
     public static byte getByte(Map<?, ?> map, String path, byte def) {
-        return get(map, path, Byte.class, def);
+        return ((Number)get(map, path, Number.class, def)).byteValue();
+    }
+    
+    public static boolean getBoolean(Map<?, ?> map, String path) {
+        return getBoolean(map, path, false);
+    }
+    
+    public static boolean getBoolean(Map<?, ?> map, String path, boolean def) {
+        return get(map, path, Boolean.class, def);
     }
     
     public static short getShort(Map<?, ?> map, String path) {
@@ -76,7 +105,7 @@ public class MapHelper {
     }
     
     public static short getShort(Map<?, ?> map, String path, short def) {
-        return get(map, path, Short.class, def);
+        return ((Number)get(map, path, Number.class, def)).shortValue();
     }
     
     public static int getInt(Map<?, ?> map, String path) {
@@ -84,7 +113,7 @@ public class MapHelper {
     }
     
     public static int getInt(Map<?, ?> map, String path, int def) {
-        return get(map, path, Integer.class, def);
+        return ((Number)get(map, path, Number.class, def)).intValue();
     }
     
     public static float getFloat(Map<?, ?> map, String path) {
@@ -92,7 +121,7 @@ public class MapHelper {
     }
     
     public static float getFloat(Map<?, ?> map, String path, float def) {
-        return get(map, path, Float.class, def);
+        return ((Number)get(map, path, Number.class, def)).floatValue();
     }
     
     public static long getLong(Map<?, ?> map, String path) {
@@ -100,7 +129,7 @@ public class MapHelper {
     }
     
     public static long getLong(Map<?, ?> map, String path, long def) {
-        return get(map, path, Long.class, def);
+        return ((Number)get(map, path, Number.class, def)).longValue();
     }
     
     public static double getDouble(Map<?, ?> map, String path) {
@@ -108,7 +137,13 @@ public class MapHelper {
     }
     
     public static double getDouble(Map<?, ?> map, String path, double def) {
-        return get(map, path, Double.class, def);
+        return ((Number)get(map, path, Number.class, def)).doubleValue();
+    }
+    
+    public static void appendList(Map<?, ?> map, String path, Object object) {
+        List<Object> list = getList(map, path, new ArrayList<>());
+        list.add(object);
+        put(map, path, list);
     }
     
     public static <T> List<T> getList(Map<?, ?> map, String path) {
