@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.command.CommandExecutor;
-import brainwine.gameserver.command.NotificationType;
 import brainwine.gameserver.dialog.ConfigurableDialog;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
