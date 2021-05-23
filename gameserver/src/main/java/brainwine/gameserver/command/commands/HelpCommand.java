@@ -1,6 +1,6 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.command.NotificationType.CHAT;
+import static brainwine.gameserver.entity.player.NotificationType.CHAT;
 
 import java.util.Collection;
 

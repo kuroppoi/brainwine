@@ -1,4 +1,4 @@
-package brainwine.gameserver.command;
+package brainwine.gameserver.entity.player;
 
 import brainwine.gameserver.msgpack.EnumValue;
 import brainwine.gameserver.msgpack.RegisterEnum;
@@ -7,14 +7,17 @@ import brainwine.gameserver.msgpack.RegisterEnum;
 public enum NotificationType {
     
     ALERT(1),
+    STANDARD(2),
     EMOTE(3),
-    WELCOME(6),
+    INVISIBLE_DIALOG(5),
+    LARGE(6),
+    ACCOMPLISHMENT(10),
     SYSTEM(11),
-    PM(19),
+    REWARD(12),
     CHAT(20),
     LEVEL_UP(21),
     ACHIEVEMENT(22),
-    WELCOME_IOS(333);
+    WELCOME(333);
     
     private final int id;
     

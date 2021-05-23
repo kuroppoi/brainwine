@@ -143,8 +143,13 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     @Override
-    public void notify(String text, NotificationType type) {
-        sendMessage(new NotificationMessage(text, type));
+    public void notify(Object message, NotificationType type) {
+        if(type == NotificationType.SYSTEM && !isV3()) {
+            sendMessage(new NotificationMessage(message, NotificationType.STANDARD));
+            return;
+        }
+        
+        sendMessage(new NotificationMessage(message, type));
     }
     
     @Override
@@ -218,9 +223,9 @@ public class Player extends Entity implements CommandExecutor {
         
         if(isV3()) {
             sendMessage(new EventMessage("zoneEntered", null));
-            notify("Welcome to " + zone.getName(), NotificationType.WELCOME);
+            notify("Welcome to " + zone.getName(), NotificationType.LARGE);
         } else {
-            notify("Welcome to " + zone.getName(), NotificationType.WELCOME_IOS);
+            notify("Welcome to " + zone.getName(), NotificationType.WELCOME);
         }
         
         checkRegistration();

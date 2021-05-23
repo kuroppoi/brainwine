@@ -1,6 +1,6 @@
 package brainwine.gameserver.command;
 
-import static brainwine.gameserver.command.NotificationType.ALERT;
+import static brainwine.gameserver.entity.player.NotificationType.ALERT;
 
 import java.util.Collection;
 import java.util.HashMap;

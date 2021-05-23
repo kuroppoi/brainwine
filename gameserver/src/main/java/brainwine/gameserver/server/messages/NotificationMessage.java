@@ -1,15 +1,15 @@
 package brainwine.gameserver.server.messages;
 
-import brainwine.gameserver.command.NotificationType;
+import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.server.Message;
 
 public class NotificationMessage extends Message {
     
-    public String text;
+    public Object message;
     public NotificationType type;
     
-    public NotificationMessage(String text, NotificationType type) {
-        this.text = text;
+    public NotificationMessage(Object message, NotificationType type) {
+        this.message = message;
         this.type = type;
     }
 }

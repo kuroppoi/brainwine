@@ -9,7 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandManager;
-import brainwine.gameserver.command.NotificationType;
+import brainwine.gameserver.entity.player.NotificationType;
 
 public class ConsoleThread extends Thread implements CommandExecutor {
     
@@ -45,8 +45,8 @@ public class ConsoleThread extends Thread implements CommandExecutor {
     }
 
     @Override
-    public void notify(String text, NotificationType type) {
-        logger.info(text);
+    public void notify(Object message, NotificationType type) {
+        logger.info(message);
     }
 
     @Override

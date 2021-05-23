@@ -1,6 +1,6 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.command.NotificationType.*;
+import static brainwine.gameserver.entity.player.NotificationType.ALERT;
 
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
