@@ -630,19 +630,23 @@ public class Zone {
      * @return A float between 0 and 1, where 0 is completely unexplored and 1 is fully explored.
      */
     public float getExplorationProgress() {
-        int numChunksExplored = 0;
-        
-        for(boolean flag : chunksExplored) {
-            if(flag) {
-                numChunksExplored++;
-            }
-        }
-        
-        return (float)numChunksExplored / (numChunksWidth * numChunksHeight);
+        return (float)getChunksExploredCount() / (numChunksWidth * numChunksHeight);
     }
     
     public boolean[] getChunksExplored() {
         return chunksExplored;
+    }
+    
+    public int getChunksExploredCount() {
+        int count = 0;
+        
+        for(boolean explored : chunksExplored) {
+            if(explored) {
+                count++;
+            }
+        }
+        
+        return count;
     }
     
     public String getDocumentId() {
@@ -715,6 +719,7 @@ public class Zone {
         config.put("chunk_size", new int[]{chunkWidth, chunkHeight});
         config.put("surface", surface);
         config.put("chunks_explored", chunksExplored);
+        config.put("chunks_explored_count", getChunksExploredCount());
         Map<String, Object> depth = new HashMap<>();
         List<Object> earth = new ArrayList<>();
         
