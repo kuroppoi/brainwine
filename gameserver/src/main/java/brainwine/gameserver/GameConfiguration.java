@@ -101,7 +101,22 @@ public class GameConfiguration {
                 String[] segments = name.split("/", 2);
                 String category = segments.length == 2 ? segments[0] : "unknown";
                 config.put("id", name);
-                config.putIfAbsent("title", segments.length == 2 ? segments[1] : segments[0]);
+                
+                // Create an item title if it's missing
+                if(!config.containsKey("title")) {
+                    String title = (segments.length > 1 ? segments[1] : segments[0]);
+                    String[] words = title.split("-");
+                    
+                    for(int i = 0; i < words.length; i++) {
+                        String word = words[i];
+                        char[] chars = word.toCharArray();
+                        chars[0] = Character.toUpperCase(chars[0]);
+                        words[i] = new String(chars);
+                    }
+                    
+                    config.put("title", String.join(" ", words));
+                }
+                
                 config.putIfAbsent("category", category);
                 config.putIfAbsent("inventory_position", inventoryPositions.getOrDefault(name, new int[]{16, 0}));
                 config.putIfAbsent("block_size", new int[]{1, 1});
