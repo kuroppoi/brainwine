@@ -59,7 +59,11 @@ public class GenerateZoneCommand extends Command {
         
         executor.notify("Your zone is being generated. It should be ready soon!", ALERT);
         GameServer.getInstance().getZoneManager().generateZoneAsync(biome, width, height, seed, zone -> {
-            executor.notify(String.format("Your zone '%s' is ready for exploration!", zone.getName()), ALERT);
+            if(zone == null) {
+                executor.notify("An unexpected error occured while generating your zone.", ALERT);
+            } else {
+                executor.notify(String.format("Your zone '%s' is ready for exploration!", zone.getName()), ALERT);
+            }
         });
     }
 

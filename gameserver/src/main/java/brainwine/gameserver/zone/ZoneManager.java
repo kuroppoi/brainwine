@@ -132,7 +132,10 @@ public class ZoneManager {
     
     public void generateZoneAsync(Biome biome, int width, int height, int seed, AsyncZoneGeneratedHandler callback) {
         asyncGenerator.generateZone(biome, width, height, seed, zone -> {
-            putZone(zone);
+            if(zone != null) {
+                putZone(zone);
+            }
+            
             callback.handle(zone);
         });
     }
