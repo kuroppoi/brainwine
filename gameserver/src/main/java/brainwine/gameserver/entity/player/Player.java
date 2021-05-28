@@ -51,7 +51,7 @@ import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
-@JsonIncludeProperties({"name", "email", "password_hash", "token_hash", "admin", "karma", "inventory", "equipped_clothing", "equipped_colors", "current_zone"})
+@JsonIncludeProperties({"name", "email", "password_hash", "token_hash", "admin", "karma", "crowns", "inventory", "equipped_clothing", "equipped_colors", "current_zone"})
 public class Player extends Entity implements CommandExecutor {
     
     public static final int MAX_SKILL_LEVEL = 15;
@@ -78,6 +78,9 @@ public class Player extends Entity implements CommandExecutor {
     
     @JsonProperty("karma")
     private int karma;
+    
+    @JsonProperty("crowns")
+    private int crowns;
     
     @JsonManagedReference
     @JsonProperty("inventory")
@@ -464,6 +467,27 @@ public class Player extends Entity implements CommandExecutor {
         return KarmaLevel.POOR;
     }
     
+    public boolean hasEnoughCrowns(int crowns) {
+        return this.crowns >= crowns;
+    }
+    
+    public void addCrowns(int crowns) {
+        setCrowns(this.crowns + crowns);
+    }
+    
+    public void removeCrowns(int crowns) {
+        setCrowns(this.crowns - crowns);
+    }
+    
+    public void setCrowns(int crowns) {
+        this.crowns = crowns;
+        sendMessage(new StatMessage("crowns", crowns));
+    }
+    
+    public int getCrowns() {
+        return crowns;
+    }
+    
     public void setClothing(ClothingSlot slot, Item item) {
         if(!item.isClothing()) {
             return;
@@ -566,6 +590,7 @@ public class Player extends Entity implements CommandExecutor {
         map.put("name", name);
         map.put("admin", admin);
         map.put("karma", karma);
+        map.put("crowns", crowns);
         map.put("current_zone", zone.getDocumentId());
         map.put("equipped_colors", colors);
         map.put("equipped_clothing", clothing);
@@ -596,6 +621,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("name", name);
         config.put("admin", admin);
         config.put("karma", getKarmaLevel());
+        config.put("crowns", crowns);
         config.put("appearance", getAppearanceConfig());
         config.put("settings", settings);
         return config;

@@ -26,6 +26,7 @@ import brainwine.gameserver.server.messages.LightMessage;
 import brainwine.gameserver.server.messages.NotificationMessage;
 import brainwine.gameserver.server.messages.PlayerPositionMessage;
 import brainwine.gameserver.server.messages.SkillMessage;
+import brainwine.gameserver.server.messages.StatMessage;
 import brainwine.gameserver.server.messages.TeleportMessage;
 import brainwine.gameserver.server.messages.WardrobeMessage;
 import brainwine.gameserver.server.messages.ZoneExploredMessage;
@@ -50,6 +51,7 @@ import brainwine.gameserver.server.requests.InventoryMoveRequest;
 import brainwine.gameserver.server.requests.InventoryUseRequest;
 import brainwine.gameserver.server.requests.MoveRequest;
 import brainwine.gameserver.server.requests.StatusRequest;
+import brainwine.gameserver.server.requests.TransactionRequest;
 import brainwine.gameserver.server.requests.ZoneChangeRequest;
 import brainwine.gameserver.server.requests.ZoneSearchRequest;
 
@@ -88,6 +90,7 @@ public class NetworkRegistry {
         registerRequest(23, ZoneSearchRequest.class);
         registerRequest(24, ZoneChangeRequest.class);
         registerRequest(25, BlocksIgnoreRequest.class);
+        registerRequest(41, TransactionRequest.class);
         registerRequest(45, DialogRequest.class);
         registerRequest(47, ConsoleRequest.class);
         registerRequest(51, EntitiesRequest.class);
@@ -117,6 +120,7 @@ public class NetworkRegistry {
         registerMessage(NotificationMessage.class, 33);
         registerMessage(SkillMessage.class, 35);
         registerMessage(WardrobeMessage.class, 39);
+        registerMessage(StatMessage.class, 44);
         registerMessage(DialogMessage.class, 45);
         registerMessage(TeleportMessage.class, 50);
         registerMessage(ZoneExploredMessage.class, 53);
