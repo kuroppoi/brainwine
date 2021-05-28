@@ -40,6 +40,7 @@ import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.server.messages.NotificationMessage;
 import brainwine.gameserver.server.messages.PlayerPositionMessage;
 import brainwine.gameserver.server.messages.SkillMessage;
+import brainwine.gameserver.server.messages.StatMessage;
 import brainwine.gameserver.server.messages.TeleportMessage;
 import brainwine.gameserver.server.messages.WardrobeMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
