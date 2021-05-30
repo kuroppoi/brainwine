@@ -23,6 +23,7 @@ import brainwine.gameserver.msgpack.templates.EnumTemplate;
 import brainwine.gameserver.msgpack.templates.ItemTemplate;
 import brainwine.gameserver.msgpack.templates.AppearanceDataTemplate;
 import brainwine.gameserver.reflections.ReflectionsHelper;
+import brainwine.gameserver.util.ReflectionsHelper;
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Chunk;

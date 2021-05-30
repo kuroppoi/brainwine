@@ -1,4 +1,4 @@
-package brainwine.gameserver.reflections;
+package brainwine.gameserver.util;
 
 import java.lang.annotation.Annotation;
 import java.util.Set;
