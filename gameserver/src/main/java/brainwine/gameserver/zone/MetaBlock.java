@@ -1,58 +1,61 @@
 package brainwine.gameserver.zone;
 
-import java.beans.ConstructorProperties;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
-import brainwine.gameserver.item.ItemRegistry;
 
+@JsonInclude(Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class MetaBlock {
     
-    private final int x;
-    private final int y;
-    private final Item item;
+    @JsonProperty("x")
+    private int x;
+    
+    @JsonProperty("y")
+    private int y;
+    
+    @JsonProperty("item")
+    private Item item;
+    
+    @JsonProperty("owner")
     private String owner;
-    private Map<String, Object> metadata;
+    
+    @JsonProperty("metadata")
+    private Map<String, Object> metadata = new HashMap<>();
+    
+    @JsonCreator
+    private MetaBlock() {}
     
     public MetaBlock(int x, int y) {
         this(x, y, Item.AIR);
     }
     
     public MetaBlock(int x, int y, Item item) {
-        this(x, y, item, new HashMap<String, Object>());
+        this(x, y, item, null);
     }
     
     public MetaBlock(int x, int y, Item item, Map<String, Object> metadata) {
+        this(x, y, item, null, metadata);
+    }
+    
+    public MetaBlock(int x, int y, Item item, Player owner, Map<String, Object> metadata) {
         this.x = x;
         this.y = y;
         this.item = item;
+        setOwner(owner);
         this.metadata = metadata;
-        setMetadata(metadata);
     }
     
-    @ConstructorProperties({"x", "y", "item", "owner", "metadata"})
-    private MetaBlock(int x, int y, int item, String owner, Map<String, Object> metadata) {
-        this(x, y, ItemRegistry.getItem(item), metadata);
-        this.owner = owner;
-    }
-    
-    @JsonValue
-    public Map<String, Object> getJsonValue() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("x", x);
-        map.put("y", y);
-        map.put("item", item.getId());
-        map.put("metadata", metadata);
-        
-        // Don't include owner if there isn't one.
-        if(hasOwner()) {
-            map.put("owner", owner);
-        }
-        
-        return map;
+    public void setOwner(Player owner) {
+        this.owner = owner == null ? null : owner.getDocumentId();
     }
     
     public void setOwner(String owner) {

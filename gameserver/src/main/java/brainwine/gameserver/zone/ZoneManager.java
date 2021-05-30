@@ -12,13 +12,10 @@ import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.msgpack.unpacker.BufferUnpacker;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import brainwine.gameserver.msgpack.MessagePackHelper;
 import brainwine.gameserver.zone.gen.AsyncZoneGeneratedHandler;
 import brainwine.gameserver.zone.gen.AsyncZoneGenerator;
 import brainwine.gameserver.zone.gen.StaticZoneGenerator;
@@ -32,7 +29,6 @@ public class ZoneManager {
     private Map<String, Zone> zonesByName = new HashMap<>();
     
     public ZoneManager() {
-        dataDir.mkdirs();
         loadZones();
         asyncGenerator.setDaemon(true);
         asyncGenerator.start();
@@ -51,27 +47,16 @@ public class ZoneManager {
     }
     
     public void saveZone(Zone zone) {
-        String id = zone.getDocumentId();
-        ObjectMapper mapper = new ObjectMapper();
-        File zoneDir = new File(dataDir, id);
-        zoneDir.mkdirs();
-        
         try {
-            File configFile = new File(zoneDir, "config.json");
-            mapper.writerWithDefaultPrettyPrinter().writeValue(configFile, zone);
-            File shapeFile = new File(zoneDir, "shape.cmp");
-            MessagePackHelper.writeToFile(shapeFile, zone.getSurface(), zone.getSunlight(), zone.getPendingSunlight(), zone.getChunksExplored());
-            File metaFile = new File(zoneDir, "metablocks.json");
-            mapper.writerWithDefaultPrettyPrinter().writeValue(metaFile, zone.getMetaBlocks());
+            zone.save();
         } catch(Exception e) {
-            logger.error("Zone save failure. id: {}", id, e);
+            logger.error("Zone save failure. id: {}", zone.getDocumentId(), e);
         }
-        
-        zone.saveModifiedChunks(); // TODO
     }
     
     private void loadZones() {
         logger.info("Loading zone data ...");
+        dataDir.mkdirs();
         File[] files = dataDir.listFiles();
         
         if(files.length == 0) {
@@ -83,7 +68,9 @@ public class ZoneManager {
         }
         
         for(File file : files) {
-            loadZone(file);
+            if(file.isDirectory()) {
+                loadZone(file);
+            }
         }
         
         logger.info("Successfully loaded {} zone(s)", zonesByName.size());
@@ -99,18 +86,7 @@ public class ZoneManager {
         try {
             File configFile = new File(file, "config.json");
             Zone zone = mapper.readValue(configFile, Zone.class);
-            BufferUnpacker unpacker = MessagePackHelper.readFile(new File(file, "shape.cmp"));
-            zone.setSurface(unpacker.read(int[].class));
-            zone.setSunlight(unpacker.read(int[].class));
-            zone.setPendingSunlight(unpacker.read(int[].class));
-            zone.setChunksExplored(unpacker.read(boolean[].class));
-            File metaFile = new File(file, "metablocks.json");
-            List<MetaBlock> metaBlocks = mapper.readValue(metaFile, new TypeReference<List<MetaBlock>>(){});
-            
-            for(MetaBlock metaBlock : metaBlocks) {
-                zone.setMetaBlock(metaBlock.getX(), metaBlock.getY(), metaBlock);
-            }
-            
+            zone.load();
             putZone(zone);
         } catch (Exception e) {
             logger.error("Zone load failure. id: {}", id, e);

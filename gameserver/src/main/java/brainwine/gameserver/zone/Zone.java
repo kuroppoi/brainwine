@@ -1,10 +1,12 @@
 package brainwine.gameserver.zone;
 
 import java.beans.ConstructorProperties;
+import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -14,11 +16,15 @@ import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Predicate;
+
+import org.msgpack.unpacker.BufferUnpacker;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
@@ -30,6 +36,7 @@ import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MetaType;
+import brainwine.gameserver.msgpack.MessagePackHelper;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
@@ -40,6 +47,7 @@ import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.server.messages.LightMessage;
 import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
+import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 
 @JsonIncludeProperties({"name", "biome", "width", "height"})
@@ -128,9 +136,27 @@ public class Zone {
         }
     }
     
-    public void saveModifiedChunks() {
+    public void load() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        pendingSunlight.clear();
+        File dataDir = new File("zones\\" + documentId);
+        File shapeFile = new File(dataDir, "shape.cmp");
+        BufferUnpacker unpacker = MessagePackHelper.readFiles(shapeFile);
+        unpacker.read(surface);
+        unpacker.read(sunlight);
+        pendingSunlight.addAll(Arrays.asList(unpacker.read(Integer[].class)));
+        unpacker.read(chunksExplored);
+        setMetaBlocks(mapper.readerForListOf(MetaBlock.class).readValue(new File(dataDir, "metablocks.json")));
+    }
+    
+    public void save() throws Exception {
+        File dataDir = new File("zones\\" + documentId);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.writerWithDefaultPrettyPrinter().writeValue(new File(dataDir, "config.json"), this);
         chunkManager.saveModifiedChunks();
         removeInactiveChunks();
+        MessagePackHelper.writeToFile(new File(dataDir, "shape.cmp"), surface, sunlight, pendingSunlight, chunksExplored);
+        mapper.writerWithDefaultPrettyPrinter().writeValue(new File(dataDir, "metablocks.json"), metaBlocks.values());
     }
     
     /**
@@ -229,47 +255,54 @@ public class Zone {
         updateBlock(x, y, Layer.FRONT, 519, 0);
     }
     
+    public void updateBlock(int x, int y, Layer layer, int item) {
+        updateBlock(x, y, layer, item, 0);
+    }
+    
     public void updateBlock(int x, int y, Layer layer, int item, int mod) {
         updateBlock(x, y, layer, item, mod, null);
     }
     
     public void updateBlock(int x, int y, Layer layer, int item, int mod, Player owner) {
-        updateBlock(x, y, layer, ItemRegistry.getItem(item), mod, owner);
+        updateBlock(x, y, layer, ItemRegistry.getItem(item), mod, owner, new HashMap<>());
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, int item, int mod, Player owner, Map<String, Object> metadata) {
+        updateBlock(x, y, layer, ItemRegistry.getItem(item), mod, owner, metadata);
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, Item item) {
+        updateBlock(x, y, layer, item, 0);
     }
     
     public void updateBlock(int x, int y, Layer layer, Item item, int mod) {
         updateBlock(x, y, layer, item, mod, null);
     }
     
-    /**
-     * Updates the block at the specified position, if the coordinates are in bounds.
-     * Also creates/deletes any metadata & updates sunlight if applicable.
-     * 
-     * @param x The x position of the block.
-     * @param y The y position of the block.
-     * @param layer The layer to modify.
-     * @param item The item to set it to.
-     * @param mod The mod to set it to.
-     * @param owner The owner of the block, can be null.
-     */
     public void updateBlock(int x, int y, Layer layer, Item item, int mod, Player owner) {
+        updateBlock(x, y, layer, item, mod, owner, new HashMap<>());
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, Item item, int mod, Player owner, Map<String, Object> metadata) {
         if(!areCoordinatesInBounds(x, y)) {
             return;
         }
         
-        Chunk chunk = getChunk(x, y);
+        Chunk chunk = getChunk(x, y);        
         chunk.getBlock(x, y).updateLayer(layer, item, mod);
         chunk.setModified(true);
         sendMessageToChunk(new BlockChangeMessage(x, y, layer, item, mod), chunk);
         
         if(layer == Layer.FRONT) {
-            setMetaBlock(x, y, item, owner);
+            if(metadata != null && item.hasMeta()) {
+                setMetaBlock(x, y, item, owner, metadata);
+            } else if(!item.hasMeta() && metaBlocks.containsKey(getBlockIndex(x, y))) {
+                setMetaBlock(x, y, 0);
+            }
             
             if(item.isWhole() && y < sunlight[x]) {
-                // If we place the block higher than the current sunlight, move the sunlight there.
                 sunlight[x] = y;
             } else if(!item.isWhole() && y == sunlight[x]) {
-                // If we break the block where the sunlight is at, recalculate from that point.
                 recalculateSunlight(x, sunlight[x]);
             }
             
@@ -296,96 +329,78 @@ public class Zone {
     }
     
     public void setMetaBlock(int x, int y, int item) {
-        setMetaBlock(x, y, item, null);
+        setMetaBlock(x, y, item, null, null);
     }
     
-    public void setMetaBlock(int x, int y, int item, Player owner) {
-        setMetaBlock(x, y, item, owner, new HashMap<String, Object>());
+    public void setMetaBlock(int x, int y, int item, Player owner, Map<String, Object> data) {
+        setMetaBlock(x, y, ItemRegistry.getItem(item), owner, data);
     }
     
-    public void setMetaBlock(int x, int y, int item, Player owner, Map<String, Object> metadata) {
-        setMetaBlock(x, y, ItemRegistry.getItem(item), owner, metadata);
-    }
-    
-    public void setMetaBlock(int x, int y, Item item) {
-        setMetaBlock(x, y, item, null);
-    }
-    
-    public void setMetaBlock(int x, int y, Item item, Player owner) {
-        setMetaBlock(x, y, item, owner, new HashMap<String, Object>());
-    }
-    
-    /**
-     * Sets the metadata of the block at the specified position.
-     * If the provided item has no meta type, existing metadata will be removed instead.
-     */
-    public void setMetaBlock(int x, int y, Item item, Player owner, Map<String, Object> metadata) {
+    public void setMetaBlock(int x, int y, Item item, Player owner, Map<String, Object> data) {
         if(!areCoordinatesInBounds(x, y)) {
             return;
         }
         
-        Chunk chunk = getChunk(x, y);
-        int blockIndex = getBlockIndex(x, y);
-        MetaBlock metaBlock = null;
+        MetaType meta = item.getMeta();
+        int index = getBlockIndex(x, y);
+        Map<String, Object> metadata = data == null ? new HashMap<>() : MapHelper.copy(data);
+        Map<String, Object> toSend = MapHelper.copy(metadata);
+        toSend.put("i", item.getId());
+        
+        if(owner != null) {
+            toSend.put("p", owner.getDocumentId());
+        }
         
         if(item.hasMeta()) {
-            metaBlock = new MetaBlock(x, y, item, metadata);
-            
-            if(owner != null) {
-                metaBlock.setOwner(owner.getDocumentId());
-            }
-            
-            metaBlocks.put(blockIndex, metaBlock);
-            
-            if(item.hasField()) {
-                fieldBlocks.put(blockIndex, metaBlock);
-            }
-            
-            MetaType meta = item.getMeta();
-            
-            if(meta == MetaType.GLOBAL) {
-                globalMetaBlocks.put(blockIndex, metaBlock);
-                sendMessage(new BlockMetaMessage(x, y)); // Landmarks are not properly updated on the client unless they are removed first.
-                sendMessage(new BlockMetaMessage(metaBlock));
-            } else if(meta == MetaType.LOCAL) {
-                sendMessageToChunk(new BlockMetaMessage(metaBlock), chunk);
-            }
-        } else if((metaBlock = metaBlocks.remove(blockIndex)) != null) {
-            globalMetaBlocks.remove(blockIndex);
-            fieldBlocks.remove(blockIndex);
-            MetaType meta = metaBlock.getItem().getMeta();
-            
-            if(meta == MetaType.GLOBAL) {
-                sendMessage(new BlockMetaMessage(x, y));
-            } else if(meta == MetaType.LOCAL) {
-                sendMessageToChunk(new BlockMetaMessage(x, y), chunk);
-            }
+            MetaBlock metaBlock = new MetaBlock(x, y, item, owner, metadata);
+            metaBlocks.put(index, metaBlock);
+            indexMetaBlock(index, metaBlock);
+        } else if(metaBlocks.containsKey(index)) {
+            meta = metaBlocks.remove(index).getItem().getMeta();
+            toSend.clear();
+            unindexMetaBlock(index);
+        }
+        
+        switch(meta) {
+        case LOCAL:
+            sendMessageToChunk(new BlockMetaMessage(x, y, toSend), getChunk(x, y));
+            break;
+        case GLOBAL:
+            sendMessage(new BlockMetaMessage(x, y, Collections.emptyMap()));
+            sendMessage(new BlockMetaMessage(x, y, toSend));
+            break;
+        default:
+            break;
         }
     }
     
-    /**
-     * TODO bad
-     */
-    public void setMetaBlock(int x, int y, MetaBlock metaBlock) {
-        if(!areCoordinatesInBounds(x, y)) {
-            return;
+    private void indexMetaBlock(int index, MetaBlock block) {
+        Item item = block.getItem();
+        metaBlocks.put(index, block);
+        
+        if(item.getMeta() == MetaType.GLOBAL) {
+            globalMetaBlocks.put(index, block);
         }
         
-        int blockIndex = getBlockIndex(x, y);
-        
-        if(metaBlock != null) {
-            metaBlocks.put(blockIndex, metaBlock);
+        if(item.hasField()) {
+            fieldBlocks.put(index, block);
+        }
+    }
+    
+    private void unindexMetaBlock(int index) {
+        metaBlocks.remove(index);
+        globalMetaBlocks.remove(index);
+        fieldBlocks.remove(index);
+    }
+    
+    protected void setMetaBlocks(List<MetaBlock> metaBlocks) {
+        for(MetaBlock metaBlock : metaBlocks) {
+            int x = metaBlock.getX();
+            int y = metaBlock.getY();
             
-            if(metaBlock.getItem().getMeta() == MetaType.GLOBAL) {
-                globalMetaBlocks.put(blockIndex, metaBlock);
+            if(areCoordinatesInBounds(x, y)) {
+                indexMetaBlock(getBlockIndex(x, y), metaBlock);
             }
-            
-            if(metaBlock.getItem().hasField()) {
-                fieldBlocks.put(blockIndex, metaBlock);
-            }
-        } else if((metaBlock = metaBlocks.remove(blockIndex)) != null) {
-            globalMetaBlocks.remove(blockIndex);
-            fieldBlocks.remove(blockIndex);
         }
     }
     
@@ -397,34 +412,27 @@ public class Zone {
         return player.getDocumentId().equals(metaBlock.getOwner());
     }
     
+    public MetaBlock getMetaBlock(int x, int y) {
+        return metaBlocks.get(getBlockIndex(x, y));
+    }
+    
+    public List<MetaBlock> getMetaBlocksWithUse(ItemUseType useType){
+        return getMetaBlocksWhere(block -> block.getItem().hasUse(useType));
+    }
+    
     public List<MetaBlock> getLocalMetaBlocksInChunk(int chunkIndex) {
-        List<MetaBlock> metaBlocks = new ArrayList<>();
-        
-        for(MetaBlock metaBlock : getMetaBlocks()) {
-            if(chunkIndex == getChunkIndex(metaBlock.getX(), metaBlock.getY())) {
-                if(metaBlock.getItem().getMeta() == MetaType.LOCAL) {
-                    metaBlocks.add(metaBlock);
-                }
-            }
-        }
-        
+        return getMetaBlocksWhere(block -> block.getItem().getMeta() == MetaType.LOCAL && chunkIndex == getChunkIndex(block.getX(), block.getY()));
+    }
+    
+    private List<MetaBlock> getMetaBlocksWhere(Predicate<MetaBlock> predicate){
+        List<MetaBlock> metaBlocks = new ArrayList<>(this.metaBlocks.values());
+        metaBlocks.removeIf(predicate.negate());
         return metaBlocks;
     }
     
     public MetaBlock getRandomZoneTeleporter() {
-        List<MetaBlock> zoneTeleporters = new ArrayList<>();
-        
-        for(MetaBlock fieldBlock : fieldBlocks.values()) {
-            if(fieldBlock.getItem().hasUse(ItemUseType.ZONE_TELEPORT)) {
-                zoneTeleporters.add(fieldBlock);
-            }
-        }
-        
-        if(zoneTeleporters.isEmpty()) {
-            return null;
-        }
-        
-        return zoneTeleporters.get((int)(Math.ceil(Math.random()) * (zoneTeleporters.size() - 1)));
+        List<MetaBlock> zoneTeleporters = getMetaBlocksWithUse(ItemUseType.ZONE_TELEPORT);
+        return zoneTeleporters.isEmpty() ? null : zoneTeleporters.get((int)(Math.random() * zoneTeleporters.size()));
     }
     
     public Collection<MetaBlock> getMetaBlocks() {
@@ -538,14 +546,6 @@ public class Zone {
         return chunks.values();
     }
     
-    public void setPendingSunlight(int[] sunlight) {
-        pendingSunlight.clear();
-        
-        for(int i : sunlight) {
-            pendingSunlight.add(i);
-        }
-    }
-    
     private void tryRecalculatePendingSunlight(Chunk chunk) {
         if(!pendingSunlight.isEmpty()) {
             int chunkX = chunk.getX();
@@ -559,24 +559,12 @@ public class Zone {
         }
     }
     
-    public Set<Integer> getPendingSunlight() {
-        return pendingSunlight;
-    }
-    
     public void setSurface(int x, int surface) {
         if(x < 0 || x >= width) {
             return;
         }
         
         this.surface[x] = surface;
-    }
-    
-    public void setSurface(int[] surface) {
-        if(surface.length != width) {
-            return;
-        }
-        
-        System.arraycopy(surface, 0, this.surface, 0, width);
     }
     
     public int[] getSurface() {
@@ -609,14 +597,6 @@ public class Zone {
         this.sunlight[x] = sunlight;
     }
     
-    public void setSunlight(int[] sunlight) {
-        if(sunlight.length != width) {
-            return;
-        }
-        
-        System.arraycopy(sunlight, 0, this.sunlight, 0, width);
-    }
-    
     public int[] getSunlight(int x, int length) {
         int[] sunlight = new int[length];
         
@@ -644,14 +624,6 @@ public class Zone {
         
         sendMessage(new ZoneExploredMessage(chunkIndex));
         return chunksExplored[chunkIndex] = true;
-    }
-    
-    public void setChunksExplored(boolean[] chunksExplored) {
-        if(chunksExplored.length != getChunkCount()) {
-            return;
-        }
-        
-        System.arraycopy(chunksExplored, 0, this.chunksExplored, 0, chunksExplored.length);
     }
     
     /**
