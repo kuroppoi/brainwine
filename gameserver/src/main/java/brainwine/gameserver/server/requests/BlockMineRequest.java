@@ -1,6 +1,7 @@
 package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
@@ -22,6 +23,7 @@ public class BlockMineRequest extends PlayerRequest {
     @Override
     public void process(Player player) {
         Zone zone = player.getZone();
+        boolean digging = item.isDiggable() && player.getHeldItem().getAction() == Action.DIG;
         
         if(!player.isChunkActive(x, y)) {
             player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
@@ -40,13 +42,18 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
-        if(zone.isBlockProtected(x, y, player) && !player.isAdmin()) {
+        if(!digging && zone.isBlockProtected(x, y, player) && !player.isAdmin()) {
             fail(player, "This block is protected.");
             return;
         }
         
         if(item.isInvulnerable() && !player.isAdmin()) {
             fail(player, "This block cannot be mined.");
+            return;
+        }
+        
+        if(digging) {
+            zone.digBlock(x, y);
             return;
         }
         

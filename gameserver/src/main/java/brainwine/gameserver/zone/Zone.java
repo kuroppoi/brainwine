@@ -1,6 +1,7 @@
 package brainwine.gameserver.zone;
 
 import java.beans.ConstructorProperties;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -10,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 
@@ -64,6 +66,7 @@ public class Zone {
     private float precipitation = 0;
     private float acidity = 0;
     private final ChunkIOManager chunkManager;
+    private final Queue<DugBlock> digQueue = new ArrayDeque<>(); // TODO should be saved
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<Integer, Entity> entities = new HashMap<>();
     private final List<Player> players = new ArrayList<>();
@@ -107,6 +110,21 @@ public class Zone {
     public void tick() {
         for(Entity entity : getEntities()) {
             entity.tick();
+        }
+        
+        if(!digQueue.isEmpty()) {
+            DugBlock dugBlock = digQueue.peek();
+            
+            if(System.currentTimeMillis() >= dugBlock.getTime()) {
+                digQueue.poll();
+                int x = dugBlock.getX();
+                int y = dugBlock.getY();
+                Block block = getBlock(x, y);
+                
+                if(block != null && block.getFrontItem().getId() == 519) {
+                    updateBlock(x, y, Layer.FRONT, dugBlock.getItem(), dugBlock.getMod());
+                }
+            }
         }
     }
     
@@ -199,6 +217,16 @@ public class Zone {
         }
         
         return false;
+    }
+    
+    public void digBlock(int x, int y) {
+        if(!areCoordinatesInBounds(x, y)) {
+            return;
+        }
+        
+        Block block = getBlock(x, y);
+        digQueue.add(new DugBlock(x, y, block.getFrontItem(), block.getFrontMod(), System.currentTimeMillis() + 10000));
+        updateBlock(x, y, Layer.FRONT, 519, 0);
     }
     
     public void updateBlock(int x, int y, Layer layer, int item, int mod) {

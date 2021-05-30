@@ -36,6 +36,9 @@ public class Item {
     @JsonProperty("title")
     private String title;
     
+    @JsonProperty("action")
+    private Action action = Action.NONE;
+    
     @JsonProperty("layer")
     private Layer layer = Layer.NONE;
     
@@ -47,6 +50,9 @@ public class Item {
     
     @JsonProperty("field")
     private int field;
+    
+    @JsonProperty("diggable")
+    private boolean diggable;
     
     @JsonProperty("wardrobe")
     private boolean clothing;
@@ -122,6 +128,10 @@ public class Item {
         return id == 0;
     }
     
+    public Action getAction() {
+        return action;
+    }
+    
     public boolean isPlacable() {
         return layer == Layer.BACK || layer == Layer.FRONT;
     }
@@ -156,6 +166,10 @@ public class Item {
     
     public int getField() {
         return field;
+    }
+    
+    public boolean isDiggable() {
+        return diggable;
     }
     
     public boolean isClothing() {
