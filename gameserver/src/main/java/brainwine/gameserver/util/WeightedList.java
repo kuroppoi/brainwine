@@ -7,6 +7,8 @@ import java.util.Random;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import io.netty.util.internal.ThreadLocalRandom;
+
 public class WeightedList<T> {
     
     private final List<T> entries = new ArrayList<>();
@@ -33,6 +35,14 @@ public class WeightedList<T> {
         }
         
         return this;
+    }
+    
+    public T next() {
+        return next((T)null);
+    }
+    
+    public T next(T def) {
+        return next(ThreadLocalRandom.current(), def);
     }
     
     public T next(Random random) {
