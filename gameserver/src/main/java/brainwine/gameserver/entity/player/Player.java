@@ -402,6 +402,10 @@ public class Player extends Entity implements CommandExecutor {
         }
     }
     
+    public void notifyPeers(Object message, NotificationType type) {
+        sendMessageToPeers(new NotificationMessage(message, type));
+    }
+    
     public void alert(String text) {
         notify(text, NotificationType.ALERT);
     }
