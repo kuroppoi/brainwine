@@ -10,6 +10,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.prefab.Prefab;
+import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedList;
 import brainwine.gameserver.zone.gen.models.BaseResourceType;
 import brainwine.gameserver.zone.gen.models.Deposit;
@@ -27,6 +29,21 @@ public class GeneratorConfig {
     
     @JsonProperty("speleothems")
     private Item[] speleothems = {};
+    
+    @JsonProperty("unique_structures")
+    private Prefab[] uniqueStructures = {};
+    
+    @JsonProperty("dungeons")
+    private WeightedList<Prefab> dungeons = new WeightedList<>();
+    
+    @JsonProperty("spawn_towers")
+    private WeightedList<Prefab> spawnTowers = new WeightedList<>();
+    
+    @JsonProperty("dungeon_region")
+    private Vector2i dungeonRegion = new Vector2i(80, 64);
+    
+    @JsonProperty("dungeon_chance")
+    private double dungeonRate = 0.25;
     
     @JsonProperty("stone_variants")
     private WeightedList<StoneVariant> stoneVariants = new WeightedList<>();
@@ -51,6 +68,26 @@ public class GeneratorConfig {
     
     public Item[] getSpeleothems() {
         return speleothems;
+    }
+    
+    public Prefab[] getUniqueStructures() {
+        return uniqueStructures;
+    }
+    
+    public WeightedList<Prefab> getDungeons() {
+        return dungeons;
+    }
+    
+    public WeightedList<Prefab> getSpawnTowers() {
+        return spawnTowers;
+    }
+    
+    public Vector2i getDungeonRegion() {
+        return dungeonRegion;
+    }
+    
+    public double getDungeonRate() {
+        return dungeonRate;
     }
     
     public WeightedList<StoneVariant> getStoneVariants() {

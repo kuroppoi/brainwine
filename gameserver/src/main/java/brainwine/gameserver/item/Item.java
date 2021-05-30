@@ -11,6 +11,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import brainwine.gameserver.util.Vector2i;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Item {
     
@@ -36,6 +38,9 @@ public class Item {
     @JsonProperty("title")
     private String title;
     
+    @JsonProperty("rotation")
+    private String rotation;
+    
     @JsonProperty("loot_graphic")
     private LootGraphic lootGraphic = LootGraphic.NONE;
     
@@ -50,6 +55,9 @@ public class Item {
     
     @JsonProperty("meta")
     private MetaType meta = MetaType.NONE;
+    
+    @JsonProperty("size")
+    private Vector2i size = new Vector2i(1, 1);
     
     @JsonProperty("field")
     private int field;
@@ -130,6 +138,10 @@ public class Item {
         return title;
     }
     
+    public boolean isMirrorable() {
+        return rotation != null && rotation.equalsIgnoreCase("mirror");
+    }
+    
     public boolean isAir() {
         return id == 0;
     }
@@ -164,6 +176,14 @@ public class Item {
     
     public MetaType getMeta() {
         return meta;
+    }
+    
+    public int getBlockWidth() {
+        return size.getX();
+    }
+    
+    public int getBlockHeight() {
+        return size.getY();
     }
     
     public boolean isDish() {

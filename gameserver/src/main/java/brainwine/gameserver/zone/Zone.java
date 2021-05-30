@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -37,7 +38,9 @@ import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MetaType;
+import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.msgpack.MessagePackHelper;
+import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
@@ -246,6 +249,174 @@ public class Zone {
         }
         
         return false;
+    }
+    
+    public Prefab chop(int x, int y, int width, int height) {
+        if(!areCoordinatesInBounds(x, y) || !areCoordinatesInBounds(x + width, y + height)) {
+            return null;
+        }
+        
+        Block[] blocks = new Block[width * height];
+        Map<Integer, Map<String, Object>> metadata = new HashMap<>();
+        
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < height; j++) {
+                int index = j * width + i;
+                Block block = getBlock(x + i, y + j);
+                blocks[index] = new Block(block.getBaseItem(), block.getBackItem(), block.getBackMod(), block.getFrontItem(), block.getFrontMod(), block.getLiquidItem(), block.getLiquidMod());
+                MetaBlock metaBlock = metaBlocks.get(getBlockIndex(x + i, j + y));
+                
+                if(metaBlock != null) {
+                    Map<String, Object> data = MapHelper.copy(metaBlock.getMetadata());
+                    
+                    if(!data.isEmpty()) {
+                        List<List<Integer>> positions = MapHelper.getList(data, ">", Collections.emptyList());
+                        
+                        for(List<Integer> position : positions) {
+                            position.set(0, position.get(0) - x);
+                            position.set(1, position.get(1) - y);
+                        }
+                        
+                        metadata.put(index, data);
+                    }
+                }
+            }
+        }
+        
+        return new Prefab(width, height, blocks, metadata);
+    }
+    
+    public void placePrefab(Prefab prefab, int x, int y) {
+        placePrefab(prefab, x, y, new Random());
+    }
+    
+    public void placePrefab(Prefab prefab, int x, int y, Random random) {
+        int width = prefab.getWidth();
+        int height = prefab.getHeight();
+        Block[] blocks = prefab.getBlocks();
+        int guardBlocks = 0;
+        String dungeonId = prefab.isDungeon() ? UUID.randomUUID().toString() : null;
+        boolean decay = prefab.hasDecay();
+        boolean mirrored = prefab.isMirrorable() && random.nextBoolean();
+        Map<Item, Item> replacedItems = new HashMap<>();
+        
+        // Replacements
+        prefab.getReplacements().forEach((item, list) -> {
+            replacedItems.put(item, list.next(random));
+        });
+        
+        // Corresponding replacements
+        prefab.getCorrespondingReplacements().forEach((item, data) -> {
+            Item keyReplacement = replacedItems.get(data.getKey());
+            
+            if(keyReplacement != null) {
+                Item replacement = data.getValues().get(keyReplacement);
+                
+                if(replacement != null) {
+                    replacedItems.put(item, replacement);
+                }
+            }
+        });
+        
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < height; j++) { 
+                int index = j * width + (mirrored ? width - 1 - i : i);
+                Block block = blocks[index];
+                Item baseItem = replacedItems.getOrDefault(block.getBaseItem(), block.getBaseItem());
+                Item backItem = replacedItems.getOrDefault(block.getBackItem(), block.getBackItem());
+                Item frontItem = replacedItems.getOrDefault(block.getFrontItem(), block.getFrontItem());
+                Item liquidItem = replacedItems.getOrDefault(block.getLiquidItem(), block.getLiquidItem());
+                int backMod = block.getBackMod();
+                int frontMod = block.getFrontMod();
+                int liquidMod = block.getLiquidMod();
+                
+                // Update base item if it isn't empty
+                if(!baseItem.isAir()) {
+                    updateBlock(x + i, y + j, Layer.BASE, baseItem);
+                }
+                
+                // Update back item if it isn't empty
+                if(!backItem.isAir()) {
+                    // Apply decay to back block
+                    if(decay && backItem.getMod() == ModType.DECAY && random.nextBoolean()) {
+                        backMod = random.nextInt(4) + 1;
+                    }
+                    
+                    updateBlock(x + i, y + j, Layer.BACK, backItem, backMod);
+                }
+                
+                // Update front item if either the back, front or liquid item isn't empty
+                if(!backItem.isAir() || !frontItem.isAir() || !liquidItem.isAir()) {
+                    // Apply mods
+                    if(mirrored && frontItem.getMod() == ModType.ROTATION) {
+                        // If rotation == mirror, swap mods 0 and 4, otherwise 1 and 3
+                        if(frontItem.isMirrorable()) {
+                            frontMod = frontMod == 0 ? 4 : frontMod == 4 ? 0 : frontMod;
+                        } else {
+                            frontMod = frontMod == 1 ? 3 : frontMod == 3 ? 1 : frontMod;
+                        }
+                    } else if(decay && frontItem.getMod() == ModType.DECAY && random.nextBoolean()) {
+                        frontMod = random.nextInt(4) + 1;
+                    }
+                    
+                    int offset = mirrored ? -(frontItem.getBlockWidth() - 1) : 0;
+                    
+                    // Clear the block it would normally occupy
+                    if(offset != 0) {
+                        updateBlock(x + i, y + j, Layer.FRONT, 0);
+                    }
+                    
+                    Map<String, Object> metadata = prefab.getMetadata(index);
+                    metadata = metadata == null ? new HashMap<>() : MapHelper.copy(metadata);
+                    
+                    // Add dungeon id to guard blocks and containers, and increment guard block count if applicable
+                    if(dungeonId != null && frontItem.hasUse(ItemUseType.CONTAINER, ItemUseType.GUARD)) {
+                        metadata.put("@", dungeonId);
+                        
+                        if(frontItem.hasUse(ItemUseType.GUARD)) {
+                            guardBlocks++;
+                        }
+                    }
+                    
+                    // Determine lootability for containers
+                    if(prefab.hasLoot() && frontItem.hasUse(ItemUseType.CONTAINER)) {
+                        // If the container is a "high end" container, make it lootable. Otherwise 10% chance.
+                        if(frontItem.hasUse(ItemUseType.FIELDABLE) || random.nextDouble() <= 0.1) {
+                            metadata.put("$", "?");
+                            frontMod = 1;
+                        }
+                    }
+                    
+                    // Block is linked, offset positions
+                    if(metadata.containsKey(">")) {
+                        List<List<Integer>> positions = MapHelper.getList(metadata, ">", Collections.emptyList());
+                        
+                        for(List<Integer> position : positions) {
+                            int pX = position.get(0);
+                            int pY = position.get(1);
+                            
+                            // Create an offset in case the block is bigger than 1x1
+                            Item linkedItem = blocks[pY * width + pX].getFrontItem();
+                            linkedItem = replacedItems.getOrDefault(linkedItem, linkedItem);
+                            int pOffset = -(linkedItem.getBlockWidth() - 1);
+                            position.set(0, (mirrored ? width - 1 - pX + pOffset : pX) + x);
+                            position.set(1, position.get(1) + y);
+                        }
+                    }
+                    
+                    updateBlock(x + i + offset, y + j, Layer.FRONT, frontItem, frontMod, null, metadata);
+                }
+                
+                // Update liquid item if it isn't empty
+                if(!liquidItem.isAir()) {
+                    updateBlock(x + i, y + j, Layer.LIQUID, liquidItem, liquidMod);
+                }
+            }
+        }
+        
+        if(guardBlocks > 0) {
+            dungeons.put(dungeonId, guardBlocks);
+        }
     }
     
     private void indexDungeons() {

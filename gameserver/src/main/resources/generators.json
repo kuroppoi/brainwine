@@ -15,6 +15,34 @@
 	  "sandstone": 4,
 	  "limestone": 2
 	},
+	"unique_structures": [
+	  "paint_bunker",
+	  "head_bunker"
+	],
+	"dungeons": [
+	  "dungeon_large_1",
+	  "dungeon_large_2",
+	  "dungeon_medium_1",
+	  "dungeon_medium_2",
+	  "dungeon_medium_3",
+	  "dungeon_medium_4",
+	  "dungeon_medium_5",
+	  "dungeon_medium_6",
+	  "dungeon_medium_7",
+	  "dungeon_medium_8",
+	  "dungeon_medium_9",
+	  "dungeon_medium_10",
+	  "dungeon_small_1",
+	  "dungeon_small_2",
+	  "dungeon_small_3",
+	  "dungeon_small_4"
+	],
+	"spawn_towers": [
+	  "plain_spawn_tower_1",
+	  "plain_spawn_tower_2",
+	  "plain_spawn_tower_3",
+	  "plain_spawn_tower_4"
+	],
 	"base_resources": {
 	  "clay": {
 	    "per": 1200
@@ -197,6 +225,29 @@
 	  "default": 6,
 	  "limestone": 1
 	},
+	"unique_structures": [
+	  "paint_bunker",
+	  "head_bunker"
+	],
+	"dungeons": [
+	  "dungeon_large_1",
+	  "dungeon_large_2",
+	  "dungeon_medium_1",
+	  "dungeon_medium_2",
+	  "dungeon_medium_3",
+	  "dungeon_medium_4",
+	  "dungeon_medium_5",
+	  "dungeon_medium_6",
+	  "dungeon_medium_7",
+	  "dungeon_medium_8",
+	  "dungeon_medium_9",
+	  "dungeon_medium_10",
+	  "dungeon_small_1",
+	  "dungeon_small_2",
+	  "dungeon_small_3",
+	  "dungeon_small_4"
+	],
+	"dungeon_chance": 0.333,
 	"base_resources": {
 	  "clay": {
 	    "per": 1200
@@ -362,6 +413,29 @@
 	  "ground/stalagmite-4",
 	  "ground/stalagmite-5"
 	],
+	"unique_structures": [
+	  "paint_bunker",
+	  "head_bunker"
+	],
+	"dungeons": [
+	  "dungeon_large_1",
+	  "dungeon_large_2",
+	  "dungeon_medium_1",
+	  "dungeon_medium_2",
+	  "dungeon_medium_3",
+	  "dungeon_medium_4",
+	  "dungeon_medium_5",
+	  "dungeon_medium_6",
+	  "dungeon_medium_7",
+	  "dungeon_medium_8",
+	  "dungeon_medium_9",
+	  "dungeon_medium_10",
+	  "dungeon_small_1",
+	  "dungeon_small_2",
+	  "dungeon_small_3",
+	  "dungeon_small_4"
+	],
+	"dungeon_chance": 0.375,
 	"base_resources": {
 	   "clay": {
 	    "per": 1500
@@ -489,6 +563,29 @@
 	  "default": 6,
 	  "limestone": 1
 	},
+    "unique_structures": [
+	  "paint_bunker",
+	  "head_bunker"
+	],
+	"dungeons": [
+	  "dungeon_large_1",
+	  "dungeon_large_2",
+	  "dungeon_medium_1",
+	  "dungeon_medium_2",
+	  "dungeon_medium_3",
+	  "dungeon_medium_4",
+	  "dungeon_medium_5",
+	  "dungeon_medium_6",
+	  "dungeon_medium_7",
+	  "dungeon_medium_8",
+	  "dungeon_medium_9",
+	  "dungeon_medium_10",
+	  "dungeon_small_1",
+	  "dungeon_small_2",
+	  "dungeon_small_3",
+	  "dungeon_small_4"
+	],
+	"dungeon_chance": 0.4,
 	"base_resources": {
 	  "rocks": {
 	    "per": 200
@@ -608,6 +705,29 @@
 	  "default": 3,
 	  "sandstone": 1
 	},
+	"unique_structures": [
+	  "paint_bunker",
+	  "head_bunker"
+	],
+	"dungeons": [
+	  "dungeon_large_1",
+	  "dungeon_large_2",
+	  "dungeon_medium_1",
+	  "dungeon_medium_2",
+	  "dungeon_medium_3",
+	  "dungeon_medium_4",
+	  "dungeon_medium_5",
+	  "dungeon_medium_6",
+	  "dungeon_medium_7",
+	  "dungeon_medium_8",
+	  "dungeon_medium_9",
+	  "dungeon_medium_10",
+	  "dungeon_small_1",
+	  "dungeon_small_2",
+	  "dungeon_small_3",
+	  "dungeon_small_4"
+	],
+	"dungeon_chance": 0.333,
 	"base_resources": {
 	   "clay": {
 	    "per": 800
@@ -748,6 +868,30 @@
 	  "default": 17,
 	  "limestone": 4
 	},
+	"unique_structures": [
+	  "paint_bunker",
+	  "head_bunker"
+	],
+	"dungeons": [
+	  "dungeon_large_1",
+	  "dungeon_large_2",
+	  "dungeon_medium_1",
+	  "dungeon_medium_2",
+	  "dungeon_medium_3",
+	  "dungeon_medium_4",
+	  "dungeon_medium_5",
+	  "dungeon_medium_6",
+	  "dungeon_medium_7",
+	  "dungeon_medium_8",
+	  "dungeon_medium_9",
+	  "dungeon_medium_10",
+	  "dungeon_small_1",
+	  "dungeon_small_2",
+	  "dungeon_small_3",
+	  "dungeon_small_4"
+	],
+	"dungeon_region": [81, 85],
+	"dungeon_chance": 0.4,
 	"base_resources": {
 	  "clay": {
 	    "per": 1200
@@ -869,6 +1013,30 @@
 	  "ground/stalagmite-4",
 	  "ground/stalagmite-5"
 	],
+	"unique_structures": [
+	  "paint_bunker",
+	  "head_bunker"
+	],
+	"dungeons": [
+	  "dungeon_large_1",
+	  "dungeon_large_2",
+	  "dungeon_medium_1",
+	  "dungeon_medium_2",
+	  "dungeon_medium_3",
+	  "dungeon_medium_4",
+	  "dungeon_medium_5",
+	  "dungeon_medium_6",
+	  "dungeon_medium_7",
+	  "dungeon_medium_8",
+	  "dungeon_medium_9",
+	  "dungeon_medium_10",
+	  "dungeon_small_1",
+	  "dungeon_small_2",
+	  "dungeon_small_3",
+	  "dungeon_small_4"
+	],
+	"dungeon_region": [81, 81],
+	"dungeon_chance": 0.333,
 	"base_resources": {
 	  "rocks": {
 	    "per": 100

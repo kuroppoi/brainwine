@@ -29,13 +29,7 @@ public class ChunkTemplate extends AbstractTemplate<Chunk> {
         packer.write(chunk.getY());
         packer.write(chunk.getWidth());
         packer.write(chunk.getHeight());
-        packer.writeArrayBegin(blocks.length * 3);
-        
-        for(Block block : blocks) {
-            packer.write(block);
-        }
-        
-        packer.writeArrayEnd();
+        packer.write(blocks);
         packer.writeArrayEnd();
     }
 
@@ -50,15 +44,13 @@ public class ChunkTemplate extends AbstractTemplate<Chunk> {
         int y = unpacker.readInt();
         int width = unpacker.readInt();
         int height = unpacker.readInt();
-        unpacker.readArrayBegin();
-        int numBlocks = width * height;
+        Block[] blocks = unpacker.read(Block[].class);
         Chunk chunk = new Chunk(x, y, width, height);
         
-        for(int i = 0; i < numBlocks; i++) {
-            chunk.setBlock(i, unpacker.read(Block.class));
+        for(int i = 0; i < blocks.length; i++) {
+            chunk.setBlock(i, blocks[i]);
         }
         
-        unpacker.readArrayEnd();
         unpacker.readArrayEnd();
         return chunk;
     }

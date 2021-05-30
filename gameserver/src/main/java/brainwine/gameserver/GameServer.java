@@ -10,6 +10,7 @@ import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.PlayerManager;
 import brainwine.gameserver.loot.LootManager;
 import brainwine.gameserver.msgpack.MessagePackHelper;
+import brainwine.gameserver.prefab.PrefabManager;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.server.Server;
 import brainwine.gameserver.zone.ZoneManager;
@@ -23,6 +24,7 @@ public class GameServer {
     private final Thread handlerThread;
     private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
     private final LootManager lootManager;
+    private final PrefabManager prefabManager;
     private final ZoneManager zoneManager;
     private final PlayerManager playerManager;
     private final Server server;
@@ -38,6 +40,7 @@ public class GameServer {
         GameConfiguration.init();
         MessagePackHelper.init();
         lootManager = new LootManager();
+        prefabManager = new PrefabManager();
         StaticZoneGenerator.init();
         zoneManager = new ZoneManager();
         playerManager = new PlayerManager();
@@ -104,6 +107,10 @@ public class GameServer {
     
     public LootManager getLootManager() {
         return lootManager;
+    }
+    
+    public PrefabManager getPrefabManager() {
+        return prefabManager;
     }
     
     public ZoneManager getZoneManager() {

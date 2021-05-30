@@ -1,0 +1,24 @@
+{
+  "dungeon": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "metadata": {
+    "2316": {
+      "cd": true,
+      "m": "",
+      ">": [[ 49, 7 ]]
+    },
+    "2333": {
+      "cd": true,
+      "m": "",
+      ">": [[ 46, 43 ]]
+    },
+    "1977": {
+      "cd": true,
+      "t": "10",
+      "m": "",
+      ">": [[ 11, 39 ]]
+    }
+  }
+}

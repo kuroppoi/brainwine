@@ -13,9 +13,11 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.command.commands.AdminCommand;
 import brainwine.gameserver.command.commands.BroadcastCommand;
+import brainwine.gameserver.command.commands.ExportCommand;
 import brainwine.gameserver.command.commands.GenerateZoneCommand;
 import brainwine.gameserver.command.commands.GiveCommand;
 import brainwine.gameserver.command.commands.HelpCommand;
+import brainwine.gameserver.command.commands.ImportCommand;
 import brainwine.gameserver.command.commands.KickCommand;
 import brainwine.gameserver.command.commands.PlayerIdCommand;
 import brainwine.gameserver.command.commands.PositionCommand;
@@ -62,6 +64,8 @@ public class CommandManager {
         registerCommand(new GiveCommand());
         registerCommand(new GenerateZoneCommand());
         registerCommand(new SeedCommand());
+        registerCommand(new ExportCommand());
+        registerCommand(new ImportCommand());
         registerCommand(new PositionCommand());
     }
     

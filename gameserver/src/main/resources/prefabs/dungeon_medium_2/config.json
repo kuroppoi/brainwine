@@ -1,0 +1,40 @@
+{
+  "dungeon": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "building/roof-brown": [
+	  "building/roof",
+	  "building/roof-brown"
+	]
+  },
+  "corresponding_replace": {
+    "building/roof-edge": {
+	  "key": "building/roof-brown",
+      "values": {
+	  	"building/roof": "building/roof-brown-edge",
+		"building/roof-brown": "building/roof-edge"
+	  }
+	},
+	"building/roof-brown-edge": {
+	  "key": "building/roof-brown",
+      "values": {
+	  	"building/roof": "building/roof-edge",
+		"building/roof-brown": "building/roof-brown-edge"
+	  }
+	}
+  },
+  "metadata": {
+    "1220": {
+      "cd": true,
+      "m": "",
+      ">": [[ 13, 17 ]]
+    },
+    "328": {
+      "cd": true,
+      "m": "",
+      ">": [[ 23, 29 ]]
+    }
+  }
+}

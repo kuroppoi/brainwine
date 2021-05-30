@@ -7,6 +7,7 @@ public class ZoneGenerator {
     private final GeneratorTask terrainGenerator;
     private final GeneratorTask caveGenerator;
     private final GeneratorTask decorGenerator;
+    private final GeneratorTask structureGenerator;
     
     public ZoneGenerator() {
         this(new GeneratorConfig());
@@ -16,6 +17,7 @@ public class ZoneGenerator {
         terrainGenerator = new TerrainGenerator(config);
         caveGenerator = new CaveGenerator(config);
         decorGenerator = new DecorGenerator(config);
+        structureGenerator = new StructureGenerator(config);
     }
     
     public void generate(GeneratorContext ctx) {
@@ -25,7 +27,7 @@ public class ZoneGenerator {
         terrainGenerator.generate(ctx);
         caveGenerator.generate(ctx);
         decorGenerator.generate(ctx);
-        ctx.updateBlock(width / 2, ctx.getZone().getSurface()[width / 2] - 1, Layer.FRONT, 891, 0); // TODO structures
+        structureGenerator.generate(ctx);
         
         for(int x = 0; x < width; x++) {
             ctx.updateBlock(x, height - 1, Layer.FRONT, 666, 0);

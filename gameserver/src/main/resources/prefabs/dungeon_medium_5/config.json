@@ -1,0 +1,19 @@
+{
+  "dungeon": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "metadata": {
+    "708": {
+      "cd": true,
+      "t": "10",
+      "m": "",
+      ">": [[ 19, 22 ]]
+    },
+    "1289": {
+      "cd": true,
+      "m": "",
+      ">": [[ 11, 7 ]]
+    }
+  }
+}
