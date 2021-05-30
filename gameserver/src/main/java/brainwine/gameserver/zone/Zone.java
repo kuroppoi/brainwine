@@ -30,6 +30,7 @@ import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.player.ChatType;
+import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
@@ -79,6 +80,7 @@ public class Zone {
     private final Map<Integer, Entity> entities = new HashMap<>();
     private final List<Player> players = new ArrayList<>();
     private final Map<Integer, Chunk> chunks = new HashMap<>();
+    private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
@@ -147,6 +149,7 @@ public class Zone {
         pendingSunlight.addAll(Arrays.asList(unpacker.read(Integer[].class)));
         unpacker.read(chunksExplored);
         setMetaBlocks(mapper.readerForListOf(MetaBlock.class).readValue(new File(dataDir, "metablocks.json")));
+        indexDungeons();
     }
     
     public void save() throws Exception {
@@ -243,6 +246,40 @@ public class Zone {
         }
         
         return false;
+    }
+    
+    private void indexDungeons() {
+        List<MetaBlock> guardBlocks = getMetaBlocksWithUse(ItemUseType.GUARD);
+        
+        for(MetaBlock metaBlock : guardBlocks) {
+            String dungeonId = MapHelper.getString(metaBlock.getMetadata(), "@");
+            
+            if(dungeonId != null) {
+                int numGuardBlocks = dungeons.getOrDefault(dungeonId, 0);
+                numGuardBlocks++;
+                dungeons.put(dungeonId, numGuardBlocks);
+            }
+        }
+    }
+    
+    public void destroyGuardBlock(String dungeonId, Player destroyer) {
+        if(dungeons.containsKey(dungeonId)) {
+            int guardBlocks = dungeons.get(dungeonId);
+            guardBlocks--;
+            
+            if(guardBlocks <= 0) {
+                dungeons.remove(dungeonId);
+                destroyer.notify("You raided a dungeon!", NotificationType.ACCOMPLISHMENT);
+                destroyer.notifyPeers(String.format("%s raided a dungeon.", destroyer.getName()), NotificationType.SYSTEM);
+                // TODO xp 'n stuff
+            } else {
+                dungeons.put(dungeonId, guardBlocks);
+            }
+        }
+    }
+    
+    public boolean isDungeonIntact(String id) {
+        return dungeons.containsKey(id);
     }
     
     public void digBlock(int x, int y) {

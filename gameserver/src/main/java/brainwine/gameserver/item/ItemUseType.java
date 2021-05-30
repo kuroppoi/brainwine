@@ -9,6 +9,7 @@ public enum ItemUseType {
     CONTAINER,
     CREATE_DIALOG,
     DIALOG,
+    GUARD,
     CHANGE,
     FIELDABLE,
     FLY,

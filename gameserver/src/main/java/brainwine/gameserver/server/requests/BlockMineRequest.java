@@ -89,6 +89,11 @@ public class BlockMineRequest extends PlayerRequest {
                 fail(player, "Can't mine a container with loot in it.");
                 return;
             }
+            
+            if(item.hasUse(ItemUseType.GUARD)) {
+                String dungeonId = MapHelper.getString(metadata, "@");
+                zone.destroyGuardBlock(dungeonId, player);
+            }
         }
         
         Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
