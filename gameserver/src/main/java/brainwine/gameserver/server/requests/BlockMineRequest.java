@@ -1,15 +1,22 @@
 package brainwine.gameserver.server.requests;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
+import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.zone.Block;
+import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
 public class BlockMineRequest extends PlayerRequest {
@@ -36,6 +43,7 @@ public class BlockMineRequest extends PlayerRequest {
         }
         
         Block block = zone.getBlock(x, y);
+        MetaBlock metaBlock = zone.getMetaBlock(x, y);
         
         if(block.getItem(layer) != item) {
             fail(player, "Could not find the item you're trying to mine.");
@@ -55,6 +63,32 @@ public class BlockMineRequest extends PlayerRequest {
         if(digging) {
             zone.digBlock(x, y);
             return;
+        }
+        
+        if(metaBlock != null) {
+            Map<String, Object> metadata = metaBlock.getMetadata();
+            
+            if(!metaBlock.hasOwner() && item.hasUse(ItemUseType.SWITCH)) {
+                List<List<Integer>> positions = MapHelper.getList(metadata, ">", Collections.emptyList());
+                
+                for(List<Integer> position : positions) {
+                    Block target = zone.getBlock(position.get(0), position.get(1));
+                    
+                    if(target != null) {
+                        Item switchedItem = target.getFrontItem();
+                        
+                        if(switchedItem.hasUse(ItemUseType.SWITCHED)) {
+                            fail(player, String.format("This switch cannot be mined before its %s.", switchedItem.getTitle().toLowerCase()));
+                            return;
+                        }
+                    }
+                }
+            }
+            
+            if(item.hasUse(ItemUseType.CONTAINER) && metadata.containsKey("$")) {
+                fail(player, "Can't mine a container with loot in it.");
+                return;
+            }
         }
         
         Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();

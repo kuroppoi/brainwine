@@ -12,6 +12,9 @@ public enum ItemUseType {
     CHANGE,
     FIELDABLE,
     FLY,
+    MULTI,
+    SWITCH,
+    SWITCHED,
     TELEPORT,
     ZONE_TELEPORT,
     

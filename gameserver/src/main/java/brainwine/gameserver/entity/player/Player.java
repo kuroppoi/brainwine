@@ -3,6 +3,7 @@ package brainwine.gameserver.entity.player;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -26,6 +27,8 @@ import brainwine.gameserver.entity.EntityType;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.item.ItemUseType;
+import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.LootGraphic;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
@@ -51,6 +54,7 @@ import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.server.requests.BlocksIgnoreRequest;
 import brainwine.gameserver.server.requests.BlocksRequest;
+import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
@@ -103,6 +107,7 @@ public class Player extends Entity implements CommandExecutor {
     private final Map<Integer, Long> activeChunks = new HashMap<>();
     private final Map<Integer, ConfigurableDialog> dialogs = new HashMap<>();
     private String clientVersion;
+    private Placement lastPlacement;
     private Item heldItem = Item.AIR;
     private int teleportX;
     private int teleportY;
@@ -243,6 +248,7 @@ public class Player extends Entity implements CommandExecutor {
      */
     public void onDisconnect() {
         lastHeartbeat = 0;
+        lastPlacement = null;
         
         if(zone != null) {
             zone.removePlayer(this);
@@ -416,6 +422,53 @@ public class Player extends Entity implements CommandExecutor {
     
     public Item getHeldItem() {
         return heldItem;
+    }
+    
+    public void trackPlacement(int x, int y, Item item) {
+        if(item.getUses().isEmpty() || !zone.areCoordinatesInBounds(x, y)) {
+            return;
+        }
+        
+        boolean linked = false;
+        
+        if(lastPlacement != null) {
+            if(item.hasUse(ItemUseType.SWITCHED) && !item.hasUse(ItemUseType.SWITCH)) {
+                linked = tryLinkSwitchedItem(x, y, item);
+            }
+        }
+        
+        if(!linked) {
+            lastPlacement = new Placement(x, y, item);
+        }
+    }
+    
+    private boolean tryLinkSwitchedItem(int x, int y, Item item) {
+        int pX = lastPlacement.getX();
+        int pY = lastPlacement.getY();
+        Item pItem = lastPlacement.getItem();
+        boolean linked = false;
+        
+        if(pItem.hasUse(ItemUseType.SWITCH)) {
+            MetaBlock metaBlock = zone.getMetaBlock(pX, pY);
+            Map<String, Object> metadata = metaBlock == null ? null : metaBlock.getMetadata();
+            
+            if(metadata != null) {
+                MapHelper.appendList(metadata, ">", Arrays.asList(x, y));
+                
+                if(!(item.getUse(ItemUseType.SWITCHED) instanceof String)) {
+                    int mod = zone.getBlock(pX, pY).getFrontMod();
+                    zone.updateBlock(x, y, Layer.FRONT, item, mod, null, null);
+                }
+                
+                linked = true;
+                
+                if(!pItem.hasUse(ItemUseType.MULTI) || MapHelper.getList(metadata, ">", Collections.emptyList()).size() >= 20) {
+                    lastPlacement = null;
+                }
+            }
+        }
+        
+        return linked;
     }
     
     public double getMiningRange() {

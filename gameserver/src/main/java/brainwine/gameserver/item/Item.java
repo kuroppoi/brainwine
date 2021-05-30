@@ -236,6 +236,10 @@ public class Item {
         return false;
     }
     
+    public Object getUse(ItemUseType type) {
+        return useConfigs.get(type);
+    }
+    
     public Map<ItemUseType, Object> getUses() {
         return useConfigs;
     }
