@@ -127,14 +127,14 @@
 		"max_size": 300,
 		"min_depth": 0.2,
 		"max_depth": 0.5,
-		"frequency": 4
+		"frequency": 2
 	  },
 	  "rare_crystal": {
 		"min_size": 30,
 		"max_size": 80,
 		"min_depth": 0.5,
 		"max_depth": 0.9,
-		"frequency": 2,
+		"frequency": 1,
 		"crystals": {
 		  "ground/crystal-rainbow": 1,
 		  "ground/onyx": 8,
@@ -292,14 +292,14 @@
 		"max_size": 100,
 	    "min_depth": 0.4,
 		"max_depth": 0.7,
-		"frequency": 4
+		"frequency": 2
 	  },
 	  "rare_crystal": {
 	    "min_size": 30,
 		"max_size": 80,
 	    "min_depth": 0.5,
 		"max_depth": 0.9,
-		"frequency": 2,
+		"frequency": 1,
 		"crystals": {
 		  "ground/crystal-rainbow": 1,
 		  "ground/onyx": 8,
@@ -420,14 +420,14 @@
 		"max_size": 100,
 	    "min_depth": 0.4,
 		"max_depth": 0.7,
-		"frequency": 4
+		"frequency": 2
 	  },
 	  "rare_crystal": {
 	  	"min_size": 30,
 		"max_size": 80,
 	    "min_depth": 0.5,
 		"max_depth": 0.9,
-		"frequency": 2,
+		"frequency": 1,
 		"crystals": {
 		  "ground/crystal-rainbow": 1,
 		  "ground/onyx": 8,
@@ -558,14 +558,14 @@
 		"max_size": 100,
 		"min_depth": 0.4,
 		"max_depth": 0.7,
-		"frequency": 4
+		"frequency": 2
 	  },
 	  "rare_crystal": {
 	    "min_size": 30,
 		"max_size": 80,
 		"min_depth": 0.5,
 		"max_depth": 0.9,
-		"frequency": 2,
+		"frequency": 1,
 		"crystals": {
 		  "ground/crystal-rainbow": 1,
 		  "ground/onyx": 8,
@@ -696,14 +696,14 @@
 		"max_size": 100,
 		"min_depth": 0.4,
 		"max_depth": 0.7,
-		"frequency": 4
+		"frequency": 2
 	  },
 	  "rare_crystal": {
 	    "min_size": 30,
 		"max_size": 80,
 		"min_depth": 0.5,
 		"max_depth": 0.9,
-		"frequency": 2,
+		"frequency": 1,
 		"crystals": {
 		  "ground/crystal-rainbow": 1,
 		  "ground/onyx": 8,
@@ -814,12 +814,12 @@
 	  "crystal": {
 	    "min_size": 30,
 		"max_size": 70,
-		"frequency": 4
+		"frequency": 2
 	  },
 	  "rare_crystal": {
 	    "min_size": 30,
 		"max_size": 80,
-		"frequency": 2,
+		"frequency": 1,
 		"crystals": {
 		  "ground/crystal-rainbow": 1,
 		  "ground/crystal-red-1": 45,
@@ -929,14 +929,14 @@
 		"max_size": 100,
 		"min_depth": 0.3,
 		"max_depth": 0.7,
-		"frequency": 4
+		"frequency": 2
 	  },
 	  "rare_crystal": {
 	    "min_size": 30,
 		"max_size": 80,
 		"min_depth": 0.5,
 		"max_depth": 0.9,
-		"frequency": 2,
+		"frequency": 1,
 		"crystals": {
 		  "ground/crystal-rainbow": 1,
 		  "ground/onyx": 8,

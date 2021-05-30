@@ -23,7 +23,7 @@ public class CrystalCaveDecorator extends CaveDecorator {
         .addEntry(ItemRegistry.getItem("ground/crystal-blue-4"), 1);
     
     @JsonProperty("crystal_chance")
-    private double rate = 0.1;
+    private double rate = 0.07;
     
     @Override
     public void decorate(GeneratorContext ctx, Cave cave) {
