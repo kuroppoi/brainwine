@@ -2846,6 +2846,7 @@ items:
   building/bridge:
     <<: *mirrorable
     code: 634
+    size: [4, 3]
     material: metal
     toughness: 5
     shape: polygonal
@@ -3377,6 +3378,7 @@ items:
   signs/small: &sign-small
     <<: *sign
     title: Small Sign
+    size: [3, 1]
     karma: -2
     use:
       sign: true
@@ -3397,6 +3399,7 @@ items:
   signs/large: &sign-large
     <<: *sign
     title: Large Sign
+    size: [3, 2]
     karma: -4
     use:
       sign: true
@@ -4072,6 +4075,7 @@ items:
 
   rubble/skeleton:
     code: 970
+    size: [2, 1]
     group: remains
     craftable: false
     sprite: ['rubble/skeleton', 4]
@@ -5083,6 +5087,7 @@ items:
 
   furniture/bookshelf-tall:
     code: 770
+    size: [2, 4]
     material: wood
     title: Bookshelf
     background: furniture/bookshelf-tall
@@ -5090,6 +5095,7 @@ items:
     ingredients: [['building/wood-board', 5]]
   furniture/bookshelf-tall-full:
     code: 771
+    size: [2, 4]
     material: wood
     craftable: false
     title: Bookshelf
@@ -5203,6 +5209,7 @@ items:
 
   furniture/wardrobe:
     code: 775
+    size: [2, 3]
     material: wood
     ingredients: [['building/wood', 6]]
     karma: -2
@@ -5300,6 +5307,7 @@ items:
       command: true
   furniture/mirror-wall:
     code: 773
+    size: [2, 2]
     material: metal
     ingredients: ['building/wood-decorative', ['back/glass', 2], 'building/brass']
     title: Tall Mirror
@@ -5310,6 +5318,7 @@ items:
   furniture/bed:
     <<: *mirrorable
     code: 791
+    size: [3, 1]
     material: wood
     ingredients: [['building/wood', 3], ['ground/feathers', 4], ['ground/flax', 2]]
     crafting skill: ['building', 2]
@@ -5317,6 +5326,7 @@ items:
   furniture/bed-covered:
     <<: *mirrorable
     code: 792
+    size: [3, 2]
     material: wood
     background: furniture/bed
     sprite: furniture/bed-curtains
@@ -5393,6 +5403,7 @@ items:
   furniture/fireplace-large:
     <<: *furniture-fiery
     code: 795
+    size: [2, 2]
     material: wood
     ingredients: [['building/wood', 6], ['building/pitch', 2]]
     crafting skill: ['building', 3]
@@ -5808,6 +5819,7 @@ items:
 
   containers/full-mod: &containers-full-mod
     mod: change
+    loot_graphic: loot
     change:
       - inherit: true
         emitter: container full
@@ -6404,6 +6416,7 @@ items:
 
   # Music
   music: &music
+    layer: front
     material: wood
     emitter: music
     karma: -3
@@ -7262,6 +7275,7 @@ items:
     <<: *mechanical
     meta: hidden
     code: 853
+    size: [3, 3]
     group: collector
     placing skill: ['engineering', 2]
     ingredients: [['building/brass', 12], ['building/iron', 4], ['ground/quartz-ore', 3], 'ground/crystal-blue-1']
@@ -7367,6 +7381,7 @@ items:
   mechanical/forge:
     <<: *steam-powered
     code: 852
+    size: [3, 3]
     mod: change
     ingredients: [['building/brass', 20], ['building/iron', 10], ['building/pitch', 4], 'ground/crystal-blue-1']
     crafting skill: ['engineering', 3]
@@ -9826,6 +9841,7 @@ items:
 
   industrial/chain-large:
     code: 405
+    size: [2, 1]
     material: metal
     ingredients: [['building/iron', 2]]
     crafting skill: ['building', 3]
@@ -9845,6 +9861,7 @@ items:
 
   industrial/crane-large:
     code: 408
+    size: [2, 2]
     material: metal
     ingredients: [['building/iron', 4], ['building/brass', 4], ['ground/quartz-ore', 2]]
     crafting skill: ['engineering', 4]
@@ -9853,6 +9870,7 @@ items:
 
   industrial/crane-base-large:
     code: 409
+    size: [2, 1]
     material: metal
     ingredients: [['building/iron', 6], ['building/brass', 4]]
     crafting skill: ['building', 3]
@@ -10968,11 +10986,13 @@ items:
   # Ammo
   ammo/bullets:
     code: 1035
+    layer: front
     ingredients: ['ground/lead-ore', 'ammo/gunpowder']
     sprite: containers/ammo-box
     karma: -2
   ammo/gunpowder:
     code: 1036
+    layer: front
     material: wood
     ingredients: ['building/wood', 'ground/guano', 'ground/sulfur-ore']
     sprite: containers/barrel-gunpowder
