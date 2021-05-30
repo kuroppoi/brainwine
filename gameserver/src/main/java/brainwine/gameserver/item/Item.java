@@ -36,6 +36,9 @@ public class Item {
     @JsonProperty("title")
     private String title;
     
+    @JsonProperty("loot_graphic")
+    private LootGraphic lootGraphic = LootGraphic.NONE;
+    
     @JsonProperty("action")
     private Action action = Action.NONE;
     
@@ -77,6 +80,9 @@ public class Item {
     
     @JsonProperty("crafting quantity")
     private int craftingQuantity = 1;
+    
+    @JsonProperty("loot")
+    private String[] lootCategories = {};
     
     @JsonProperty("ingredients")
     private List<CraftingIngredient> ingredients = new ArrayList<>();
@@ -126,6 +132,10 @@ public class Item {
     
     public boolean isAir() {
         return id == 0;
+    }
+    
+    public LootGraphic getLootGraphic() {
+        return lootGraphic;
     }
     
     public Action getAction() {
@@ -198,6 +208,10 @@ public class Item {
     
     public Item getDecayInventoryItem() {
         return decayInventoryItem == null ? this : decayInventoryItem.get();
+    }
+    
+    public String[] getLootCategories() {
+        return lootCategories;
     }
     
     public int getCraftingQuantity() {

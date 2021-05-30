@@ -1,0 +1,1528 @@
+{
+  "resources": [
+    {
+	  "items": {
+	    "building/wood": 15,
+		"building/wood-board": 5
+	  },
+	  "frequency": 200
+	},
+	{
+	  "items": {
+	    "ground/copper-ore": 15,
+		"ground/zinc-ore": 5
+	  },
+	  "frequency": 160
+    },
+	{
+	  "items": {
+	    "ground/zinc-ore": 10
+	  },
+	  "frequency": 150
+    },
+	{
+	  "items": {
+	    "ground/clay": 15
+	  },
+	  "frequency": 160
+    },
+    {
+	  "items": {
+	    "ground/iron-ore": 10,
+		"building/iron": 5
+	  },
+	  "frequency": 120
+    },
+	{
+	  "items": {
+	    "back/paper": 20
+	  },
+	  "frequency": 80
+    },
+	{
+	  "items": {
+	    "ground/quartz-ore": 10,
+		"ground/lead-ore": 5
+	  },
+	  "frequency": 60
+    },
+	{
+	  "items": {
+	    "ground/lead-ore": 10,
+		"ground/iron-ore": 5
+	  },
+	  "frequency": 60
+    },
+	{
+	  "items": {
+	    "back/glass": 15
+	  },
+	  "frequency": 60
+    },
+	{
+	  "items": {
+	    "back/glass-divided": 15
+	  },
+	  "frequency": 50
+    },
+	{
+	  "items": {
+	    "building/brass": 10,
+		"building/iron": 10,
+		"building/copper": 10
+	  },
+	  "frequency": 40
+    },
+	{
+	  "items": {
+	    "mechanical/pipe": 20
+	  },
+	  "frequency": 20
+    },
+	{
+	  "items": {
+	    "ground/marble-ore": 10
+	  },
+	  "frequency": 20
+    },
+	{
+	  "items": {
+	    "ground/bloodstone-ore": 10
+	  },
+	  "frequency": 10
+    },
+	{
+	  "items": {
+	    "ground/salt": 5,
+		"ground/fire-salt": 1
+	  },
+	  "frequency": 15
+    },
+	{
+	  "items": {
+		"building/plug": 5
+	  },
+	  "frequency": 50
+    }
+  ],
+  "treasure": [
+    {
+      "items": {
+        "vegetation/pumpkin-seeds": 2
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "vegetation/flower-coxcomb-bulb": 3
+      },
+      "frequency": 50
+    },
+    {
+      "items": {
+        "vegetation/flower-amaryllis-bulb": 2
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "vegetation/flower-asphodelus-bulb": 2
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "vegetation/flower-birds-foot-trefoil-bulb": 1
+      },
+      "frequency": 9
+    },
+    {
+      "items": {
+        "vegetation/flower-carnations-bulb": 4
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "vegetation/flower-tuberose-bulb": 3
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "vegetation/flower-echinacea-bulb": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "vegetation/flower-sunflower-bulb": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "vegetation/flower-cactus-bulb": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "vegetation/flower-bird-of-paradise-bulb": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "vegetation/flower-trumpets-bulb": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "vegetation/tree-hellish-bulb": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "vegetation/tree-bonsai-bulb": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "furniture/daguerreotype-small": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "furniture/painting-landscape": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "building/gargoyle-falcon-side": 2
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "signs/plaque": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "ground/fire-salt": 5
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "ground/earth-compost": 10
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "accessories/battery": 4
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "ground/fire-salt": 2,
+        "ground/ectoplasm": 2
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "consumables/teleporter": 2
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "mechanical/beacon": 1,
+        "mechanical/teleporter-mini": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "ground/crystal-blue-1": 2
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "building/crystal-blue": 2
+      },
+      "frequency": 9
+    },
+    {
+      "items": {
+	    "building/crystal-red": 1
+	  },
+      "frequency": 6
+    },
+    {
+      "items": {
+	    "bulding/crystal-purple": 1
+	  },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "mechanical/bomb-dig": 2
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "consumables/teleporter": 2
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "building/statue-gothic-front": 1
+      },
+      "frequency": 9
+    },
+    {
+      "items": {
+        "building/statue-gothic-side": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "tools/net": 1,
+        "accessories/shillings": 10
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "accessories/sprocket": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "accessories/widget": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "accessories/flashlight-brass": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "accessories/compressor-basic": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "accessories/program": 1
+      },
+      "frequency": 9
+    },
+    {
+      "items": {
+        "accessories/memory": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "accessories/schematic": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "furniture/companion-cube": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "accessories/key-skeleton": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "accessories/glove": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "accessories/army-knife": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "accessories/clover": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "accessories/seashell": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "accessories/stopwatch": 1
+      },
+      "frequency": 5
+    }
+  ],
+  "treasure+": [
+    {
+	  "crowns": 10,
+	  "frequency": 25
+	},
+	{
+	  "crowns": 20,
+	  "frequency": 12
+	},
+	{
+	  "crowns": 50,
+	  "frequency": 6
+	},
+    {
+      "items": {
+        "furniture/painting-autumn": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "vegetation/flower-tuberose-bulb": 2,
+        "vegetation/flower-amaryllis-bulb": 3
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "vegetation/flower-asphodelus-bulb": 2,
+        "vegetation/flower-carnations-bulb": 3
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "vegetation/pumpkin-seeds": 3
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "vegetation/flower-lobelia-bulb": 2
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "vegetation/flower-lobelia-bulb": 2,
+        "vegetation/flower-birds-foot-trefoil-bulb": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "vegetation/flower-delphinium-bulb": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "vegetation/flower-echinacea-bulb": 2
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "vegetation/flower-sunflower-bulb": 2
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "vegetation/flower-cactus-bulb": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "vegetation/flower-bird-of-paradise-bulb": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "vegetation/flower-trumpets-bulb": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "vegetation/tree-hellish-bulb": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "vegetation/tree-bonsai-bulb": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "furniture/daguerreotype-small": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "furniture/painting-landscape": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "furniture/map": 1
+      },
+      "frequency": 18
+    },
+    {
+      "items": {
+        "mechanical/typewriter": 1
+      },
+      "frequency": 17
+    },
+    {
+      "items": {
+        "accessories/sprocket": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "accessories/widget": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "mechanical/inhibitor": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "furniture/easel": 1
+      },
+      "frequency": 14
+    },
+    {
+      "items": {
+        "furniture/ship-in-bottle": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "mechanical/ship-wheel": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "furniture/head-fish": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "furniture/daguerreotype-large": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "furniture/globe": 1
+      },
+      "frequency": 9
+    },
+    {
+      "items": {
+        "furniture/easel-tall": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "furniture/marionette": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "mechanical/telescope": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "furniture/moon": 1
+      },
+	  "biome": "space",
+      "frequency": 5
+    },
+    {
+      "items": {
+        "furniture/mars": 1
+      },
+	  "biome": "desert",
+      "frequency": 5
+    },
+    {
+      "items": {
+        "furniture/airship-in-bottle": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "solar-system-diorama": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "signs/plaque-landmark": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "furniture/stuffed-bear": 1
+      },
+      "frequency": 18
+    },
+    {
+      "items": {
+        "furniture/stuffed-crow": 1
+      },
+      "frequency": 14
+    },
+    {
+      "items": {
+        "furniture/stuffed-android": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "furniture/stuffed-terrapus": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "furniture/stuffed-snowman": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "furniture/stuffed-panda": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "furniture/stuffed-squid": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "furniture/stuffed-cthulhu": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "furniture/stuffed-brain": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "furniture/pinned-cockroach": 1
+      },
+      "frequency": 18
+    },
+    {
+      "items": {
+        "furniture/pinned-scorpion": 1
+      },
+      "frequency": 14
+    },
+    {
+      "items": {
+        "furniture/pinned-beetle": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "furniture/pinned-bee": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "furniture/pinned-dragonfly": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "furniture/pinned-millipede": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "furniture/pinned-tarantula": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "furniture/pinned-preying-mantis": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "holiday/cornucopia": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "holiday/gingerbread-house": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "holiday/holly-garland": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "holiday/mistletoe": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "holiday/gift-small": 2
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+	    "holiday/gift-tall": 1
+	  },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "holiday/christmas-lights-white": 6
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "holiday/christmas-lights-reindeer": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "holiday/christmas-lights-sleigh": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "holiday/tree-charlie-brown": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "holiday/sleigh": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "building/statue-figurine-1": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "building/statue-figurine-2": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "building/statue-figurine-3": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "building/statue-figurine-large-1": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "building/statue-figurine-large-2": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "building/statue-figurine-large-3": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "building/statue-figurine-large-4": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "mechanical/friend-parts-gear": 1,
+        "mechanical/friend-parts-boxing-gloves": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "mechanical/friend-parts-joint": 2,
+        "mechanical/friend-parts-scissors": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "mechanical/friend-parts-gear": 4
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "mechanical/friend-parts-joint": 1,
+        "mechanical/friend-parts-foot": 2
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "mechanical/friend-parts-key": 1,
+        "mechanical/friend-parts-gear": 2
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "mechanical/friend-parts-head": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "mechanical/bomb-dig": 3
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "mechanical/science-scrap": 1
+      },
+      "frequency": 18
+    },
+    {
+      "items": {
+        "mechanical/chemistry-set": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "mechanical/chemistry-set": 1,
+        "mechanical/science-scrap": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "mechanical/science-bulb": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "mechanical/science-gadget": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "mechanical/bomb-spawner": 2
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+	    "mechanical/bomb-spawner-large": 1
+	  },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "mechanical/beacon": 1,
+        "mechanical/teleporter-mini": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "mechanical/teleporter-mini-diamond": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "accessories/schematic": 1
+      },
+      "frequency": 13
+    },
+    {
+      "items": {
+        "accessories/program": 1
+      },
+      "frequency": 14
+    },
+    {
+      "items": {
+        "accessories/memory": 1
+      },
+      "frequency": 13
+    },
+    {
+      "items": {
+        "containers/fertilizer": 2
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "containers/pandora": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "consumables/teleporter": 3
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "lighting/fancy-lamp-1": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "lighting/fancy-lamp-2": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "lighting/fancy-lamp-7": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "lighting/fancy-lamp-6": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "lighting/fancy-lamp-4": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "lighting/fancy-lamp-3": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "lighting/fancy-lamp-5": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "mechanical/compass": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "mechanical/compass-burned": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "mechanical/compass-icy": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "mechanical/compass-sandy": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "mechanical/compass-dark": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "ground/fire-salt": 6
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "accessories/battery": 6
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "building/crystal-red": 2
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "building/crystal-purple": 2
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "ground/crystal-red-1": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "ground/crystal-purple-1": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "accessories/glove": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "accessories/army-knife": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "accessories/clover": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "accessories/seashell": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "accessories/stopwatch": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "accessories/agility-brass": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "accessories/scope-brass": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "accessories/rake": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "accessories/flashlight-diamond": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "accessories/pocketwatch": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "accessories/horseshoe": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "accessories/sand-dollar": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "accessories/army-knife-diamond": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "accessories/glove-diamond": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "accessories/agility-diamond": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "accessories/scope-diamond": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "accessories/rake-diamond": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "accessories/key-skeleton": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "holiday/coffin": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "vegetation/pumpkin-giant": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "vegetation/pine-tree-festive-giant": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "ground/terrapus-pet-egg": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "furniture/companion-cube": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "containers/cat": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "containers/dog": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "containers/android": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "tools/net-diamond": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "tools/hatchet-diamond": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "tools/spade-diamond": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "mechanical/dish-micro": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "consumables/book-skill": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "consumables/world-key": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "mechanical/dish": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "accessories/shillings": 10
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "accessories/shillings": 25
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "accessories/shillings": 50
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "accessories/shillings": 250
+      },
+      "frequency": 1
+    }
+  ],
+  "armaments": [
+    {
+      "items": {
+        "consumables/jerky-power": 2,
+        "consumables/jerky": 6
+      },
+      "frequency": 70
+    },
+    {
+      "items": {
+        "consumables/canister": 4
+      },
+      "frequency": 60
+    },
+    {
+      "items": {
+        "consumables/jerky": 4,
+        "consumables/canister": 4
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+	    "consumables/cloak": 1,
+		"consumables/canister": 2
+	  },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "ammo/gunpowder": 5,
+        "ammo/bullets": 5
+      },
+      "frequency": 80
+    },
+    {
+      "items": {
+        "mechanical/spikes": 5
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "ground/terrapus-egg": 3
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "consumables/filet": 3
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "ammo/gunpowder": 10,
+        "consumables/canister": 3
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "consumables/tea": 2
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "ammo/gunpowder": 10
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "mechanical/bomb-incendiary": 2
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "mechanical/bomb-electric": 2
+      },
+      "frequency": 32
+    },
+    {
+      "items": {
+        "mechanical/bomb": 3
+      },
+      "frequency": 24
+    },
+    {
+      "items": {
+        "mechanical/trap-mine": 3
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "mechanical/turret-pistol": 1
+      },
+      "frequency": 32
+    }
+  ],
+  "armaments+": [
+    {
+      "items": {
+        "consumables/jerky-power": 10
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "consumables/jerky-power": 5,
+        "consumables/canister": 5
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "ammo/gunpowder": 25
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "consumables/cloak": 2
+      },
+      "frequency": 16
+    },
+    {
+      "items": {
+        "consumables/filet-fire": 3,
+		"consumables/cloak": 1,
+		"consumables/teleporter": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "mechanical/bomb-large": 1,
+        "mechanical/bomb": 5
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "mechanical/trap-mine": 3,
+        "mechanical/bomb-large": 2
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "mechanical/bomb-electric": 2,
+        "mechanical/bomb-incendiary": 3
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "ground/terrapus-egg-large": 1,
+        "ground/terrapus-egg": 5
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "mechanical/turret-fire": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "mechanical/turret-acid": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "mechanical/turret-flame": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "mechanical/turret-dessicator": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "mechanical/bomb-water": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "mechanical/bomb-acid": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "mechanical/bomb-lava": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "shields/acid": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "tools/gun-energy-pistol": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "mechanical/spawner-small": 1
+      },
+      "frequency": 1
+    }
+  ]
+}

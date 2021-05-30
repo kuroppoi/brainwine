@@ -42,6 +42,7 @@ public class GameConfiguration {
         long startTime = System.currentTimeMillis();
         logger.info("Loading game configuration ...");
         mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true);
+        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
         mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
         LoaderOptions options = new LoaderOptions();
         options.setMaxAliasesForCollections(Short.MAX_VALUE);

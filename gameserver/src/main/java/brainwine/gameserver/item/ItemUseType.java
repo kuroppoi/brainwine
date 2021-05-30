@@ -6,9 +6,11 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 public enum ItemUseType {
     
     AFTERBURNER,
+    CONTAINER,
     CREATE_DIALOG,
     DIALOG,
     CHANGE,
+    FIELDABLE,
     FLY,
     TELEPORT,
     ZONE_TELEPORT,

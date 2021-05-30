@@ -2,9 +2,11 @@ package brainwine.gameserver.entity.player;
 
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -24,6 +26,8 @@ import brainwine.gameserver.entity.EntityType;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.item.LootGraphic;
+import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
@@ -523,6 +527,44 @@ public class Player extends Entity implements CommandExecutor {
     
     public int getSkillLevel(Skill skill) {
         return MathUtils.clamp(skills.getOrDefault(skill, 1), 1, MAX_NATURAL_SKILL_LEVEL);
+    }
+    
+    public void awardLoot(Loot loot) {
+        awardLoot(loot, LootGraphic.LOOT);
+    }
+    
+    public void awardLoot(Loot loot, LootGraphic graphic) {
+        List<Map<String, Object>> notifications = new ArrayList<>();
+        
+        loot.getItems().forEach((item, quantity) -> {
+            inventory.addItem(item, quantity);
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("item", item.getId());
+            notification.put("text", String.format("%s x %s", item.getTitle(), quantity));
+            notifications.add(notification);
+        });
+        
+        Map<String, Object> dialog = new HashMap<>();
+        Map<String, Object> section = new HashMap<>();
+        section.put("list", notifications);
+        dialog.put("sections", Arrays.asList(section));
+        int crowns = loot.getCrowns();
+        
+        if(crowns > 0) {
+            addCrowns(crowns);
+            section.put("text", isV3() ? String.format("<color=#ffd95f>%s shiny crowns!</color>", crowns) : String.format("%s shiny crowns!", crowns));
+        }
+        
+        if(isV3()) {
+            dialog.put("title", "You found:");
+            dialog.put("type", graphic);
+            sendMessage(new DialogMessage(0, dialog));
+        } else {
+            section.put("title", "You found:");
+            section.put("text-color", "ffd95f");
+            notify(dialog, NotificationType.REWARD);
+            sendMessage(new EffectMessage(x, y, "chime", 1));
+        }
     }
     
     public Inventory getInventory() {

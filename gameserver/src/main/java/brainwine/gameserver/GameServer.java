@@ -8,6 +8,7 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.PlayerManager;
+import brainwine.gameserver.loot.LootManager;
 import brainwine.gameserver.msgpack.MessagePackHelper;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.server.Server;
@@ -21,6 +22,7 @@ public class GameServer {
     private static GameServer instance;
     private final Thread handlerThread;
     private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
+    private final LootManager lootManager;
     private final ZoneManager zoneManager;
     private final PlayerManager playerManager;
     private final Server server;
@@ -34,8 +36,9 @@ public class GameServer {
         logger.info("Starting GameServer ...");
         CommandManager.init();
         GameConfiguration.init();
-        StaticZoneGenerator.init();
         MessagePackHelper.init();
+        lootManager = new LootManager();
+        StaticZoneGenerator.init();
         zoneManager = new ZoneManager();
         playerManager = new PlayerManager();
         NetworkRegistry.init();
@@ -97,6 +100,10 @@ public class GameServer {
     
     public boolean shouldShutdown() {
         return shutdownRequested;
+    }
+    
+    public LootManager getLootManager() {
+        return lootManager;
     }
     
     public ZoneManager getZoneManager() {
