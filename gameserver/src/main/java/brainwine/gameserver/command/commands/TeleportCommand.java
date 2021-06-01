@@ -57,6 +57,6 @@ public class TeleportCommand extends Command {
     
     @Override
     public boolean canExecute(CommandExecutor executor) {
-        return executor instanceof Player;
+        return executor instanceof Player && executor.isAdmin();
     }
 }
