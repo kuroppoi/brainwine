@@ -56,6 +56,7 @@ import brainwine.gameserver.server.requests.BlocksIgnoreRequest;
 import brainwine.gameserver.server.requests.BlocksRequest;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
@@ -109,6 +110,7 @@ public class Player extends Entity implements CommandExecutor {
     private String clientVersion;
     private Placement lastPlacement;
     private Item heldItem = Item.AIR;
+    private Vector2i spawnPoint = new Vector2i(0, 0);
     private int teleportX;
     private int teleportY;
     private long lastHeartbeat;
@@ -201,6 +203,8 @@ public class Player extends Entity implements CommandExecutor {
             y = spawn.getY();
         }
         
+        spawnPoint.setX((int)x);
+        spawnPoint.setY((int)y);
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
@@ -363,6 +367,15 @@ public class Player extends Entity implements CommandExecutor {
      */
     public void rubberband() {
         sendMessage(new PlayerPositionMessage((int)x, (int)y + 1));
+    }
+    
+    public void respawn() {
+        int x = spawnPoint.getX();
+        int y = spawnPoint.getY();
+        sendMessage(new PlayerPositionMessage(x, y));
+        sendMessage(new HealthMessage(health));
+        sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.REVIVED));
+        zone.sendMessage(new EffectMessage(x, y, "spawn", 20));
     }
     
     /**

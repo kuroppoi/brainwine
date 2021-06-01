@@ -50,6 +50,7 @@ import brainwine.gameserver.server.requests.HeartbeatRequest;
 import brainwine.gameserver.server.requests.InventoryMoveRequest;
 import brainwine.gameserver.server.requests.InventoryUseRequest;
 import brainwine.gameserver.server.requests.MoveRequest;
+import brainwine.gameserver.server.requests.RespawnRequest;
 import brainwine.gameserver.server.requests.StatusRequest;
 import brainwine.gameserver.server.requests.TransactionRequest;
 import brainwine.gameserver.server.requests.ZoneChangeRequest;
@@ -90,6 +91,7 @@ public class NetworkRegistry {
         registerRequest(23, ZoneSearchRequest.class);
         registerRequest(24, ZoneChangeRequest.class);
         registerRequest(25, BlocksIgnoreRequest.class);
+        registerRequest(26, RespawnRequest.class);
         registerRequest(41, TransactionRequest.class);
         registerRequest(45, DialogRequest.class);
         registerRequest(47, ConsoleRequest.class);
