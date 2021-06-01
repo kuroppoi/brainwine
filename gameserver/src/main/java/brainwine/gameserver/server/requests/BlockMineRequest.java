@@ -6,6 +6,7 @@ import java.util.Map;
 
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Action;
+import brainwine.gameserver.item.Fieldability;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
@@ -50,7 +51,8 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
-        if(!digging && zone.isBlockProtected(x, y, player) && !player.isAdmin()) {
+        // TODO block ownership & 'placed' fieldability
+        if(!digging && item.getFieldability() == Fieldability.TRUE && zone.isBlockProtected(x, y, player) && !player.isAdmin()) {
             fail(player, "This block is protected.");
             return;
         }

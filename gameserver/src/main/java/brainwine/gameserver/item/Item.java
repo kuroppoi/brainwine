@@ -41,6 +41,9 @@ public class Item {
     @JsonProperty("rotation")
     private String rotation;
     
+    @JsonProperty("fieldable")
+    private Fieldability fieldability = Fieldability.TRUE;
+    
     @JsonProperty("loot_graphic")
     private LootGraphic lootGraphic = LootGraphic.NONE;
     
@@ -144,6 +147,10 @@ public class Item {
     
     public boolean isAir() {
         return id == 0;
+    }
+    
+    public Fieldability getFieldability() {
+        return fieldability;
     }
     
     public LootGraphic getLootGraphic() {
