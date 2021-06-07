@@ -395,11 +395,17 @@ public class Zone {
                         for(List<Integer> position : positions) {
                             int pX = position.get(0);
                             int pY = position.get(1);
+                            int pIndex = pY * width + pX;
+                            int pOffset = 0;
                             
-                            // Create an offset in case the block is bigger than 1x1
-                            Item linkedItem = blocks[pY * width + pX].getFrontItem();
-                            linkedItem = replacedItems.getOrDefault(linkedItem, linkedItem);
-                            int pOffset = -(linkedItem.getBlockWidth() - 1);
+                            // Make sure that the linked block is in bounds
+                            if(pIndex >= 0 && pIndex < blocks.length) {
+                                // Create an offset in case the block is bigger than 1x1
+                                Item linkedItem = blocks[pIndex].getFrontItem();
+                                linkedItem = replacedItems.getOrDefault(linkedItem, linkedItem);
+                                pOffset = -(linkedItem.getBlockWidth() - 1);
+                            }
+                            
                             position.set(0, (mirrored ? width - 1 - pX + pOffset : pX) + x);
                             position.set(1, position.get(1) + y);
                         }
