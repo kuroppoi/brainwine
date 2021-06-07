@@ -156,7 +156,7 @@ public class Zone {
     }
     
     public void save() throws Exception {
-        File dataDir = new File("zones\\" + documentId);
+        File dataDir = new File("zones", documentId);
         dataDir.mkdirs();
         ObjectMapper mapper = new ObjectMapper();
         mapper.writerWithDefaultPrettyPrinter().writeValue(new File(dataDir, "config.json"), this);
