@@ -67,7 +67,7 @@ public class GiveCommand extends Command {
                 for(Item curItem : ItemRegistry.getItems()) {
                 	target.getInventory().removeItem(curItem, -quantity);
                     target.alert(String.format("%s of all items were taken from your inventory.", -quantity));
-                    executor.notify(String.format("Took %s of all items from %s", quantity, target.getName()), ALERT);
+                    executor.notify(String.format("Took %s of all items from %s", -quantity, target.getName()), ALERT);
                 }
             } else {
                 target.getInventory().removeItem(item, -quantity);
