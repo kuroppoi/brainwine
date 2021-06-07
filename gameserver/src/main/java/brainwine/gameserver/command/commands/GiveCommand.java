@@ -53,7 +53,9 @@ public class GiveCommand extends Command {
         if(quantity > 0) {
             if (args[1].equalsIgnoreCase("all")) {
                 for(Item curItem : ItemRegistry.getItems()) {
-                	target.getInventory().addItem(curItem, quantity);
+                	if (!curItem.isClothing()) {
+                    	target.getInventory().addItem(curItem, quantity);
+                	}
                 }
                 target.alert(String.format("You received %s of every item from an administrator.", quantity));
                 executor.notify(String.format("Gave %s of every item to %s", quantity, target.getName()), ALERT);
