@@ -144,7 +144,7 @@ public class Zone {
     public void load() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         pendingSunlight.clear();
-        File dataDir = new File("zones\\" + documentId);
+        File dataDir = new File("zones", documentId);
         File shapeFile = new File(dataDir, "shape.cmp");
         BufferUnpacker unpacker = MessagePackHelper.readFiles(shapeFile);
         unpacker.read(surface);
