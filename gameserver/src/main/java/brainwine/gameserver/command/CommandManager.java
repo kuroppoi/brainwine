@@ -22,6 +22,7 @@ import brainwine.gameserver.command.commands.KickCommand;
 import brainwine.gameserver.command.commands.PlayerIdCommand;
 import brainwine.gameserver.command.commands.PositionCommand;
 import brainwine.gameserver.command.commands.RegisterCommand;
+import brainwine.gameserver.command.commands.RickrollCommand;
 import brainwine.gameserver.command.commands.SayCommand;
 import brainwine.gameserver.command.commands.SeedCommand;
 import brainwine.gameserver.command.commands.StopCommand;
@@ -67,6 +68,7 @@ public class CommandManager {
         registerCommand(new ExportCommand());
         registerCommand(new ImportCommand());
         registerCommand(new PositionCommand());
+        registerCommand(new RickrollCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {
