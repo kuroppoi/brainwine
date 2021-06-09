@@ -94,32 +94,47 @@ public class PlayerManager {
         }
     }
     
-    public String refreshAuthToken(String name) {
-        Player player = getPlayer(name);
-        String token = UUID.randomUUID().toString();
-        player.setAuthToken(BCrypt.hashpw(token, BCrypt.gensalt()));
-        return token;
-    }
-    
-    public boolean verifyPassword(String name, String password) {
-        Player player = getPlayer(name);
-        return player == null ? false : player.getPassword() == null ? false : BCrypt.checkpw(password, player.getPassword());
-    }
-    
-    public boolean verifyAuthToken(String name, String token) {
-        Player player = getPlayer(name);
-        return player == null ? false : BCrypt.checkpw(token, player.getAuthToken());
-    }
-    
-    public void registerPlayer(String name) {
+    public String register(String name) {
         if(getPlayer(name) != null) {
-            return;
+            return null;
         }
         
         String id = UUID.randomUUID().toString();
         Player player = new Player(id, name, GameServer.getInstance().getZoneManager().getRandomZone()); // TODO tutorial zone
         playersById.put(id, player);
         playersByName.put(name.toLowerCase(), player);
+        String authToken = UUID.randomUUID().toString();
+        player.addAuthToken(BCrypt.hashpw(authToken, BCrypt.gensalt()));
+        return authToken;
+    }
+    
+    public String login(String name, String password) {
+        Player player = getPlayer(name);
+        
+        if(player == null || player.getPassword() == null) {
+            return null;
+        }
+        
+        if(!BCrypt.checkpw(password, player.getPassword())) {
+           return null; 
+        }
+        
+        String authToken = UUID.randomUUID().toString();
+        player.addAuthToken(BCrypt.hashpw(authToken, BCrypt.gensalt()));
+        return authToken;
+    }
+    
+    public boolean verifyAuthToken(String name, String authToken) {
+        Player player = getPlayer(name);
+        
+        // Might not be very efficient...
+        for(String hashedToken : player.getAuthTokens()) {
+            if(BCrypt.checkpw(authToken, hashedToken)) {
+                return true;
+            }
+        }
+        
+        return false;
     }
     
     public void onPlayerAuthenticate(Connection connection, String version, String name, String authToken) {

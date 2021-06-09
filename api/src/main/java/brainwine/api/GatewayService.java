@@ -45,8 +45,7 @@ public class GatewayService {
                 return;
             }
             
-            playerManager.registerPlayer(name);
-            String token = playerManager.refreshAuthToken(name);
+            String token = playerManager.register(name);
             ctx.json(new ServerConnectInfo(api.getGameServerHost(), name, token));
         });
         
@@ -58,7 +57,9 @@ public class GatewayService {
             String token = request.getToken();
             
             if(password != null) {
-                if(!playerManager.verifyPassword(name, password)) {
+                token = playerManager.login(name, password);
+                
+                if(token == null) {
                     ContextUtils.error(ctx, "Username or password is incorrect. Please check your credentials.");
                     return;
                 }
@@ -72,8 +73,7 @@ public class GatewayService {
                 return;
             }
             
-            String newToken = playerManager.refreshAuthToken(name);
-            ctx.json(new ServerConnectInfo(api.getGameServerHost(), name, newToken));
+            ctx.json(new ServerConnectInfo(api.getGameServerHost(), name, token));
         });
         
         // Password reset request

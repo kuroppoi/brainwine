@@ -61,7 +61,7 @@ import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
-@JsonIncludeProperties({"name", "email", "password_hash", "token_hash", "admin", "karma", "crowns", "inventory", "equipped_clothing", "equipped_colors", "current_zone"})
+@JsonIncludeProperties({"name", "email", "password_hash", "auth_tokens", "admin", "karma", "crowns", "inventory", "equipped_clothing", "equipped_colors", "current_zone"})
 public class Player extends Entity implements CommandExecutor {
     
     public static final int MAX_SKILL_LEVEL = 15;
@@ -80,8 +80,8 @@ public class Player extends Entity implements CommandExecutor {
     @JsonProperty("password_hash")
     private String password;
     
-    @JsonProperty("token_hash")
-    private String authToken;
+    @JsonProperty("auth_tokens")
+    private final List<String> authTokens = new ArrayList<>();
     
     @JsonProperty("admin")
     private boolean admin;
@@ -512,12 +512,16 @@ public class Player extends Entity implements CommandExecutor {
         return password;
     }
     
-    protected void setAuthToken(String authToken) {
-        this.authToken = authToken;
+    protected void clearAuthTokens() {
+        authTokens.clear();
     }
     
-    protected String getAuthToken() {
-        return authToken;
+    protected void addAuthToken(String authToken) {
+        authTokens.add(authToken);
+    }
+    
+    protected List<String> getAuthTokens() {
+        return authTokens;
     }
     
     public void setAdmin(boolean admin) {
@@ -699,7 +703,7 @@ public class Player extends Entity implements CommandExecutor {
         Map<String, Object> map = new HashMap<>();
         map.put("email", email);
         map.put("password_hash", password);
-        map.put("token_hash", authToken);
+        map.put("auth_tokens", authTokens);
         map.put("name", name);
         map.put("admin", admin);
         map.put("karma", karma);
