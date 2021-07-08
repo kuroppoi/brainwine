@@ -1,17 +1,15 @@
 package brainwine.api;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import brainwine.api.models.PlayersRequest;
-import brainwine.api.models.ServerConnectInfo;
-import brainwine.api.models.SessionsRequest;
-import brainwine.api.util.ContextUtils;
-import brainwine.gameserver.GameServer;
-import brainwine.gameserver.entity.player.PlayerManager;
+import brainwine.api.handlers.NewsRequestHandler;
+import brainwine.api.handlers.PasswordResetHandler;
+import brainwine.api.handlers.PasswordForgotHandler;
+import brainwine.api.handlers.PlayerLoginHandler;
+import brainwine.api.handlers.PlayerRegistrationHandler;
+import brainwine.api.handlers.RwcPurchaseHandler;
+import brainwine.api.handlers.SimpleExceptionHandler;
 import io.javalin.Javalin;
 
 public class GatewayService {
@@ -21,75 +19,16 @@ public class GatewayService {
     
     public GatewayService(Api api, int port) {
         logger.info("Starting GatewayService @ port {} ...", port);
-        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
+        DataFetcher dataFetcher = api.getDataFetcher();
+        String gameServerHost = api.getGameServerHost();
         gateway = Javalin.create().start(port);
-        gateway.exception(Exception.class, (e, ctx) -> {
-            ContextUtils.error(ctx, "%s", e);
-            logger.error("Exception caught", e);
-        });
-        
-        // News
-        gateway.get("/clients", ctx ->{
-            Map<String, Object> json = new HashMap<>();
-            json.put("posts", api.getNews());
-            ctx.json(json);
-        });
-        
-        // Registration
-        gateway.post("/players", ctx -> {
-            PlayersRequest request = ctx.bodyValidator(PlayersRequest.class).get();
-            String name = request.getName();
-            
-            if(playerManager.getPlayer(name) != null) {
-                ContextUtils.error(ctx, "Sorry, this username has already been taken.");
-                return;
-            }
-            
-            String token = playerManager.register(name);
-            ctx.json(new ServerConnectInfo(api.getGameServerHost(), name, token));
-        });
-        
-        // Login
-        gateway.post("/sessions", ctx -> {
-            SessionsRequest request = ctx.bodyValidator(SessionsRequest.class).get();
-            String name = request.getName();
-            String password = request.getPassword();
-            String token = request.getToken();
-            
-            if(password != null) {
-                token = playerManager.login(name, password);
-                
-                if(token == null) {
-                    ContextUtils.error(ctx, "Username or password is incorrect. Please check your credentials.");
-                    return;
-                }
-            } else if(token != null) {
-                if(!playerManager.verifyAuthToken(name, token)) {
-                    ContextUtils.error(ctx, "The provided session token is invalid or has expired. Please try relogging.");
-                    return;
-                }
-            } else {
-                ContextUtils.error(ctx, "No credentials provided.");
-                return;
-            }
-            
-            ctx.json(new ServerConnectInfo(api.getGameServerHost(), name, token));
-        });
-        
-        // Password reset request
-        gateway.post("/passwords/request", ctx -> {
-            ContextUtils.error(ctx, "Sorry, this feature is not implemented yet.");
-        });
-        
-        // Password reset token entry
-        gateway.post("/passwords/reset", ctx -> {
-            ContextUtils.error(ctx, "Sorry, this feature is not implemented yet.");
-        });
-        
-        // RWC purchases
-        gateway.post("/purchases", ctx -> {
-            ContextUtils.error(ctx, "Sorry, purchases with RWC are disabled.");
-        });
+        gateway.exception(Exception.class, new SimpleExceptionHandler());
+        gateway.get("/clients", new NewsRequestHandler(api.getNews()));
+        gateway.post("/players", new PlayerRegistrationHandler(dataFetcher, gameServerHost));
+        gateway.post("/sessions", new PlayerLoginHandler(dataFetcher, gameServerHost));
+        gateway.post("/passwords/request", new PasswordForgotHandler());
+        gateway.post("/passwords/reset", new PasswordResetHandler());
+        gateway.post("/purchases", new RwcPurchaseHandler());
     }
     
     public void stop() {

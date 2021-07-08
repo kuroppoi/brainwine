@@ -1,42 +1,36 @@
 package brainwine.api;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import brainwine.api.models.NewsEntry;
+import brainwine.api.config.ApiConfig;
+import brainwine.api.config.NewsEntry;
+import brainwine.shared.JsonHelper;
 
 public class Api {
     
     private static final Logger logger = LogManager.getLogger();
-    private final List<NewsEntry> news = new ArrayList<>();
-    private final PropertyFile properties;
-    private final int gatewayPort;
-    private final int portalPort;
-    private final String hostAddress;
-    private final int hostPort;
+    private final ApiConfig config;
+    private final DataFetcher dataFetcher;
     private final GatewayService gatewayService;
     private final PortalService portalService;
     
     public Api() {
+        this(new DefaultDataFetcher());
+    }
+    
+    public Api(DataFetcher dataFetcher) {
         long startTime = System.currentTimeMillis();
         logger.info("Starting API ...");
-        loadNews();
-        logger.info("Loading properties ...");
-        properties = new PropertyFile(new File("api.properties"));
-        gatewayPort = properties.getInt("gateway_port", 5001);
-        portalPort = properties.getInt("portal_port", 5003);
-        hostAddress = properties.getString("gameserver_address", "127.0.0.1");
-        hostPort = properties.getInt("gameserver_port", 5002);
-        gatewayService = new GatewayService(this, gatewayPort);
-        portalService = new PortalService(portalPort);
+        this.dataFetcher = dataFetcher;
+        logger.info("Using data fetcher {}", dataFetcher.getClass().getName());
+        logger.info("Loading configuration ...");
+        config = loadConfig();
+        gatewayService = new GatewayService(this, config.getGatewayPort());
+        portalService = new PortalService(this, config.getPortalPort());
         logger.info("All done! API startup took {} milliseconds", System.currentTimeMillis() - startTime);
     }
     
@@ -46,32 +40,34 @@ public class Api {
         portalService.stop();
     }
     
-    private void loadNews() {
-        logger.info("Loading news data ...");
-        news.clear();
-        File newsFile = new File("news.json");
-        
+    private ApiConfig loadConfig() {
         try {
-            ObjectMapper mapper = new ObjectMapper();
+            File file = new File("api.json");
             
-            if(!newsFile.exists()) {
-                logger.info("Generating default news file ...");
-                NewsEntry defaultNews = new NewsEntry("Default News", "This news entry was automatically generated.\nEdit 'news.json' to make your own!", "A more civilised age...");
-                mapper.writerWithDefaultPrettyPrinter().writeValue(newsFile, Arrays.asList(defaultNews));
+            if(!file.exists()) {
+                file.createNewFile();
+                JsonHelper.writeValue(file, ApiConfig.DEFAULT_CONFIG);
+                return ApiConfig.DEFAULT_CONFIG;
             }
             
-            news.addAll(mapper.readerForListOf(NewsEntry.class).readValue(newsFile));
-            Collections.reverse(news); // Reverse the list so that the last article in the file gets shown first.
+            return JsonHelper.readValue(file, ApiConfig.class);
         } catch (Exception e) {
-            logger.error("Failed to load news data", e);
+            logger.fatal("Failed to load configuration", e);
+            System.exit(-1);
         }
+        
+        return ApiConfig.DEFAULT_CONFIG;
     }
     
     public List<NewsEntry> getNews() {
-        return news;
+        return config.getNews();
     }
     
     public String getGameServerHost() {
-        return hostAddress + ":" + hostPort;
+        return config.getGameServerIp() + ":" + config.getGameServerPort();
+    }
+    
+    public DataFetcher getDataFetcher() {
+        return dataFetcher;
     }
 }

@@ -1,11 +1,16 @@
-package brainwine.api.models;
+package brainwine.api.config;
 
 import java.beans.ConstructorProperties;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class NewsEntry {
     
+    public static final NewsEntry DEFAULT_NEWS = new NewsEntry("Default News", 
+            "This news entry was automatically generated.\nEdit 'api.json' to make your own!", 
+            "A long time ago...");
     private final String title;
     private final String content;
     private final String date;
