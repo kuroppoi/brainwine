@@ -1,0 +1,54 @@
+plugins {
+    id 'application'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'org.apache.logging.log4j:log4j-api:2.14.0'
+    implementation project(':api')
+    implementation project(':gameserver')
+}
+
+application {
+    mainClass = 'brainwine.Bootstrap'
+}
+
+run {
+    workingDir = file('run')
+}
+
+jar {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveBaseName = 'brainwine'
+
+    manifest {
+        attributes 'Main-Class': application.mainClass,
+                   'Multi-Release': 'true'
+    }
+}
+
+startScripts {
+    doLast {
+        windowsScript.text = windowsScript.text.replace('..', '')
+        unixScript.text = unixScript.text.replace('..', '')
+    }
+}
+
+distZip {
+    eachFile { file ->
+        if(file.path.contains('/bin/')) {
+            file.setPath(file.path.replace('bin/', ''))
+        }
+    }
+}
+
+distTar {
+    eachFile { file ->
+        if(file.path.contains('/bin/')) {
+            file.setPath(file.path.replace('bin/', ''))
+        }
+    }
+}

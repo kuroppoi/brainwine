@@ -1,4 +1,4 @@
-package brainwine.bootstrap;
+package brainwine;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +30,7 @@ public class Bootstrap {
         
         logger.info("Bootstrapping ...");
         gameServer = new GameServer();
-        api = new Api();
+        api = new Api(new DirectDataFetcher(gameServer.getPlayerManager(), gameServer.getZoneManager()));
         Runtime.getRuntime().addShutdownHook(new ShutdownThread(this));
         logger.info("Bootstrap complete. Type 'stop' in the console to shutdown the server.");
         runTickLoop();

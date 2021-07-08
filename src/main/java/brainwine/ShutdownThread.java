@@ -1,4 +1,4 @@
-package brainwine.bootstrap;
+package brainwine;
 
 public class ShutdownThread extends Thread {
     

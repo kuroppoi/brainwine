@@ -2,22 +2,35 @@
 
 Brainwine is a Deepworld private server written in Java, made with user-friendliness and portability in mind.
 Due to the time it will take for this project to be complete (and my inconsistent working on it), brainwine has been prematurely open-sourced
-and is free for all to use. Keep in mind, though, that this server is nowhere near finished. Expect to encounter bad code, bugs and missing features!
-Brainwine is currently compatible with the latest Steam and iOS versions of Deepworld.
+and is free for all to use. Keep in mind, though, that this server is nowhere near finished. Expect to encounter bad code, bugs and missing features!\
+Brainwine is currently compatible with the latest Steam and iOS versions of Deepworld:
+- Steam: `v3.13.1`
+- iOS: `v2.11.0.1`
 
 ## Setup
 
-### Setting up your client
+### Setting up the client
 
-Before you can connect to your (or someone else's) server, you must first let Deepworld know to where it should connect.
-The exact process differs per platform. You may download an installation package for your desired platform [here.](https://github.com/kuroppoi/brainwine/releases)
+Before you can connect to a server, a few modifications need to be made to the Deepworld game client.\
+The exact process of this differs per platform.\
+You may download an installation package for your desired platform [here.](https://github.com/kuroppoi/brainwine/releases)
 
 ### Setting up the server
 
-Setting up your own server is as easy as downloading this repository and running `gradlew build` in a command prompt.
-Alternatively, you can run the provided `build.bat` file. After the build task has finished, the output jar will be located in the `build` directory.
-To start the server, simply run the jar file with a simple command line such as `java -jar brainwine.jar -Xms128m -Xmx512m`.
-Be aware that Java 8 or newer is required to run Brainwine.
+#### Prerequisites
+
+- Java 8 or newer
+
+To set up the server, clone or download this repository and run `gradlew build`.
+After the build process has finished, a distribution archive should have generated in `build/distributions`.
+To start the server, simply extract this archive wherever you want and run the startup script for your OS.
+
+#### Configurations
+
+On first-time startup, configuration files will be generated which you may modify however you like:
+- `api.json` Configuration file for news & API connectivity information.
+- `generators.json` Configuration file for world generation rules per biome.
+- `loottables.json` Configuration file for which loot may be obtained from containers.
 
 ## Contributions
 

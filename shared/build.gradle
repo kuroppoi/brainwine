@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
+}
+
+jar {
+    archiveBaseName = 'brainwine-shared'
+}
