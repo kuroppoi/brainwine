@@ -127,6 +127,10 @@ public class PlayerManager {
     public boolean verifyAuthToken(String name, String authToken) {
         Player player = getPlayer(name);
         
+        if(player == null) {
+            return false;
+        }
+        
         // Might not be very efficient...
         for(String hashedToken : player.getAuthTokens()) {
             if(BCrypt.checkpw(authToken, hashedToken)) {
