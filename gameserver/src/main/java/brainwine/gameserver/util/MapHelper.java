@@ -10,17 +10,17 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
+import brainwine.shared.JsonHelper;
 
 @SuppressWarnings("unchecked")
 public class MapHelper {
     
     private static final Logger logger = LogManager.getLogger();
-    private static final ObjectMapper mapper = new ObjectMapper();
     
     public static <K, V> Map<K, V> copy(Map<K, V> map) {
         try {
-            return mapper.readValue(mapper.writeValueAsString(map), new TypeReference<Map<K, V>>(){});
+            return JsonHelper.readValue(map, new TypeReference<Map<K, V>>(){});
         } catch (JsonProcessingException e) {
             logger.error("Map copy failed", e);
         }

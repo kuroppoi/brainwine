@@ -13,15 +13,13 @@ import org.msgpack.unpacker.BufferUnpacker;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import brainwine.gameserver.msgpack.MessagePackHelper;
+import brainwine.shared.JsonHelper;
 
 public class PrefabManager {
     
     private static final Logger logger = LogManager.getLogger();
     private final File dataDir = new File("prefabs");
-    private final ObjectMapper mapper = new ObjectMapper();
     private final Map<String, Prefab> prefabs = new HashMap<>();
     
     public PrefabManager() {
@@ -65,7 +63,7 @@ public class PrefabManager {
         File configFile = new File(file, "config.json");
         
         try {
-            Prefab prefab = mapper.readValue(configFile, Prefab.class);
+            Prefab prefab = JsonHelper.readValue(configFile, Prefab.class);
             BufferUnpacker unpacker = MessagePackHelper.readFile(new File(file, "blocks.cmp"));
             unpacker.read(prefab);
             unpacker.close();
@@ -89,7 +87,7 @@ public class PrefabManager {
         File outputDir = new File(dataDir, name);
         outputDir.mkdirs();
         MessagePackHelper.writeToFile(new File(outputDir, "blocks.cmp"), structure);
-        mapper.writerWithDefaultPrettyPrinter().writeValue(new File(outputDir, "config.json"), structure);
+        JsonHelper.writeValue(new File(outputDir, "config.json"), structure);
     }
     
     public Prefab getPrefab(String name) {

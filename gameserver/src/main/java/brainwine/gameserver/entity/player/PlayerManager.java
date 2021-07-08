@@ -13,11 +13,11 @@ import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
 import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.zone.Zone;
+import brainwine.shared.JsonHelper;
 
 public class PlayerManager {
     
@@ -51,13 +51,9 @@ public class PlayerManager {
     
     private void loadPlayer(File file) {
         String id = file.getName().replace(".json", "");
-        ObjectMapper mapper = new ObjectMapper();
-        InjectableValues.Std injectableValues = new InjectableValues.Std();
-        injectableValues.addValue("documentId", id);
-        mapper.setInjectableValues(injectableValues);
         
         try {
-            Player player = mapper.readValue(file, Player.class);
+            Player player = JsonHelper.readValue(file, Player.class, new InjectableValues.Std().addValue("documentId", id));
             
             if(player.getZone() == null) {
                 player.setZone(GameServer.getInstance().getZoneManager().getRandomZone());
@@ -85,10 +81,9 @@ public class PlayerManager {
     
     public void savePlayer(Player player) {
         File file = new File("players", player.getDocumentId() + ".json");
-        ObjectMapper mapper = new ObjectMapper();
         
         try {
-            mapper.writerWithDefaultPrettyPrinter().writeValue(file, player);
+            JsonHelper.writeValue(file, player);
         } catch(Exception e) {
             logger.error("Could not save player id {}", player.getDocumentId(), e);
         }

@@ -16,10 +16,7 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.Player;
@@ -27,12 +24,12 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.VersionUtils;
+import brainwine.shared.JsonHelper;
 
 @SuppressWarnings("unchecked")
 public class GameConfiguration {
     
     private static final Logger logger = LogManager.getLogger();
-    private static final ObjectMapper mapper = new ObjectMapper();
     private static final Map<String, Object> baseConfig = new HashMap<String, Object>();
     private static final Map<String, Map<String, Object>> configUpdates = new HashMap<>();
     private static final Map<String, Map<String, Object>> versionedConfigs = new HashMap<>();
@@ -41,9 +38,6 @@ public class GameConfiguration {
     public static void init() {
         long startTime = System.currentTimeMillis();
         logger.info("Loading game configuration ...");
-        mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true);
-        mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
         LoaderOptions options = new LoaderOptions();
         options.setMaxAliasesForCollections(Short.MAX_VALUE);
         yaml = new Yaml(options);
@@ -157,12 +151,8 @@ public class GameConfiguration {
                 
                 // Register item
                 if(config.containsKey("code")) {
-                    InjectableValues.Std injectableValues = new InjectableValues.Std();
-                    injectableValues.addValue("name", name);
-                    mapper.setInjectableValues(injectableValues);
-                    
                     try {
-                        Item item = mapper.readValue(mapper.writer().writeValueAsString(config), Item.class);
+                        Item item = JsonHelper.readValue(config, Item.class, new InjectableValues.Std().addValue("name", name));
                         ItemRegistry.registerItem(item);
                     } catch (JsonProcessingException e) {
                         logger.fatal("Failed to register item {}", name, e);

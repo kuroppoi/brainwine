@@ -15,10 +15,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.databind.InjectableValues;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.zone.gen.AsyncZoneGenerator;
 import brainwine.gameserver.zone.gen.StaticZoneGenerator;
+import brainwine.shared.JsonHelper;
 
 public class ZoneManager {
     
@@ -78,14 +78,10 @@ public class ZoneManager {
     
     private void loadZone(File file) {
         String id = file.getName();
-        ObjectMapper mapper = new ObjectMapper();
-        InjectableValues.Std injectableValues = new InjectableValues.Std();
-        injectableValues.addValue("documentId", id);
-        mapper.setInjectableValues(injectableValues);
         
         try {
             File configFile = new File(file, "config.json");
-            Zone zone = mapper.readValue(configFile, Zone.class);
+            Zone zone = JsonHelper.readValue(configFile, Zone.class, new InjectableValues.Std().addValue("documentId", id));
             zone.load();
             putZone(zone);
         } catch (Exception e) {

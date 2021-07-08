@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
@@ -53,6 +52,7 @@ import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.shared.JsonHelper;
 
 @JsonIncludeProperties({"name", "biome", "width", "height"})
 public class Zone {
@@ -142,7 +142,6 @@ public class Zone {
     }
     
     public void load() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
         pendingSunlight.clear();
         File dataDir = new File("zones", documentId);
         File shapeFile = new File(dataDir, "shape.cmp");
@@ -151,19 +150,17 @@ public class Zone {
         unpacker.read(sunlight);
         pendingSunlight.addAll(Arrays.asList(unpacker.read(Integer[].class)));
         unpacker.read(chunksExplored);
-        setMetaBlocks(mapper.readerForListOf(MetaBlock.class).readValue(new File(dataDir, "metablocks.json")));
+        setMetaBlocks(JsonHelper.readList(new File(dataDir, "metablocks.json"), MetaBlock.class));
         indexDungeons();
     }
     
     public void save() throws Exception {
         File dataDir = new File("zones", documentId);
         dataDir.mkdirs();
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writerWithDefaultPrettyPrinter().writeValue(new File(dataDir, "config.json"), this);
         chunkManager.saveModifiedChunks();
         removeInactiveChunks();
         MessagePackHelper.writeToFile(new File(dataDir, "shape.cmp"), surface, sunlight, pendingSunlight, chunksExplored);
-        mapper.writerWithDefaultPrettyPrinter().writeValue(new File(dataDir, "metablocks.json"), metaBlocks.values());
+        JsonHelper.writeValue(new File(dataDir, "metablocks.json"), metaBlocks.values());
     }
     
     /**

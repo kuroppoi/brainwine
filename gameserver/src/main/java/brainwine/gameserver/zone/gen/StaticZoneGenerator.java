@@ -12,12 +12,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
+import brainwine.shared.JsonHelper;
 
 public class StaticZoneGenerator {
     
@@ -56,16 +54,13 @@ public class StaticZoneGenerator {
     public static void init() {
         logger.info("Loading zone generator configurations ...");
         File file = new File("generators.json");
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true);
-        mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true);
         
         try {
             if(!file.exists()) {
                 Files.copy(StaticZoneGenerator.class.getResourceAsStream("/generators.json"), file.toPath());
             }
             
-            Map<Biome, GeneratorConfig> configs = mapper.readValue(new File("generators.json"), new TypeReference<Map<Biome, GeneratorConfig>>(){});
+            Map<Biome, GeneratorConfig> configs = JsonHelper.readValue(new File("generators.json"), new TypeReference<Map<Biome, GeneratorConfig>>(){});
             
             for(Entry<Biome, GeneratorConfig> entry : configs.entrySet()) {
                 generators.put(entry.getKey(), new ZoneGenerator(entry.getValue()));

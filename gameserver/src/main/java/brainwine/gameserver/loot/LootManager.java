@@ -13,10 +13,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.util.WeightedList;
 import brainwine.gameserver.zone.Biome;
+import brainwine.shared.JsonHelper;
 
 public class LootManager {
     
@@ -29,7 +29,6 @@ public class LootManager {
     
     private void loadLootTables() {
         logger.info("Loading loot tables ...");
-        ObjectMapper mapper = new ObjectMapper();
         File file = new File("loottables.json");
         
         try {
@@ -37,7 +36,7 @@ public class LootManager {
                 Files.copy(LootManager.class.getResourceAsStream("/loottables.json"), file.toPath());
             }
             
-            Map<String, List<Loot>> loot = mapper.readValue(file, new TypeReference<Map<String, List<Loot>>>(){});
+            Map<String, List<Loot>> loot = JsonHelper.readValue(file, new TypeReference<Map<String, List<Loot>>>(){});
             lootTables.putAll(loot);
         } catch (IOException e) {
             logger.error("Failed to load loot tables", e);
