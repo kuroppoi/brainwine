@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
@@ -16,7 +17,6 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import brainwine.gameserver.zone.gen.AsyncZoneGeneratedHandler;
 import brainwine.gameserver.zone.gen.AsyncZoneGenerator;
 import brainwine.gameserver.zone.gen.StaticZoneGenerator;
 
@@ -106,13 +106,13 @@ public class ZoneManager {
         zonesByName.put(name.toLowerCase(), zone);
     }
     
-    public void generateZoneAsync(Biome biome, int width, int height, int seed, AsyncZoneGeneratedHandler callback) {
+    public void generateZoneAsync(Biome biome, int width, int height, int seed, Consumer<Zone> callback) {
         asyncGenerator.generateZone(biome, width, height, seed, zone -> {
             if(zone != null) {
                 putZone(zone);
             }
             
-            callback.handle(zone);
+            callback.accept(zone);
         });
     }
     

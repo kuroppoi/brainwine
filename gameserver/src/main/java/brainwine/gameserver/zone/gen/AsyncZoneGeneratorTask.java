@@ -1,6 +1,9 @@
 package brainwine.gameserver.zone.gen;
 
+import java.util.function.Consumer;
+
 import brainwine.gameserver.zone.Biome;
+import brainwine.gameserver.zone.Zone;
 
 public class AsyncZoneGeneratorTask {
     
@@ -8,9 +11,9 @@ public class AsyncZoneGeneratorTask {
     private final int width;
     private final int height;
     private final int seed;
-    private final AsyncZoneGeneratedHandler callback;
+    private final Consumer<Zone> callback;
     
-    public AsyncZoneGeneratorTask(Biome biome, int width, int height, int seed, AsyncZoneGeneratedHandler callback) {
+    public AsyncZoneGeneratorTask(Biome biome, int width, int height, int seed, Consumer<Zone> callback) {
         this.biome = biome;
         this.width = width;
         this.height = height;
@@ -34,7 +37,7 @@ public class AsyncZoneGeneratorTask {
         return seed;
     }
     
-    public AsyncZoneGeneratedHandler getCallback() {
+    public Consumer<Zone> getCallback() {
         return callback;
     }
 }

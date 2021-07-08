@@ -2,6 +2,7 @@ package brainwine.gameserver.zone.gen;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.function.Consumer;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,13 +45,13 @@ public class AsyncZoneGenerator extends Thread {
                 
                 System.gc();
                 Zone generated = zone;
-                AsyncZoneGeneratedHandler callback = task.getCallback();
+                Consumer<Zone> callback = task.getCallback();
                 
                 if(callback != null) {
                     GameServer.getInstance().queueSynchronousTask(new Runnable() {
                         @Override
                         public void run() {
-                            callback.handle(generated);
+                            callback.accept(generated);
                         }
                     });
                 }
@@ -64,7 +65,7 @@ public class AsyncZoneGenerator extends Thread {
         }
     }
     
-    public void generateZone(Biome biome, int width, int height, int seed, AsyncZoneGeneratedHandler callback) {
+    public void generateZone(Biome biome, int width, int height, int seed, Consumer<Zone> callback) {
         tasks.add(new AsyncZoneGeneratorTask(biome, width, height, seed, callback));
     }
 }
