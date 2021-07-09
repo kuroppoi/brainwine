@@ -157,6 +157,7 @@ public class Zone {
     public void save() throws Exception {
         File dataDir = new File("zones", documentId);
         dataDir.mkdirs();
+        JsonHelper.writeValue(new File(dataDir, "config.json"), this);
         chunkManager.saveModifiedChunks();
         removeInactiveChunks();
         MessagePackHelper.writeToFile(new File(dataDir, "shape.cmp"), surface, sunlight, pendingSunlight, chunksExplored);
