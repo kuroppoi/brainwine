@@ -21,9 +21,10 @@ You may download an installation package for your desired platform [here.](https
 
 - Java 8 or newer
 
-To set up the server, clone or download this repository and run `gradlew build`.
-After the build process has finished, a distribution archive should have generated in `build/distributions`.
-To start the server, simply extract this archive wherever you want and run the startup script for your OS.
+To set up the server, clone or download this repository and run `gradlew build`.\
+After the build process has finished, a distribution archive should have generated in `build/distributions`.\
+To start the server, simply extract this archive wherever you want and run the startup script for your OS.\
+If for whatever reason you can not create a build yourself, you may download one [here.](https://github.com/kuroppoi/brainwine/releases)
 
 #### Configurations
 
