@@ -21,6 +21,10 @@ public class Block {
         this(0, 0, 0, 0, 0, 0, 0);
     }
     
+    public Block(int base, int back, int front) {
+    	this(base & 15, back & 65535, back >> 16 & 31, front & 65535, front >> 16 & 31, base >> 8 & 255, base >> 16 & 31);
+    }
+    
     public Block(int baseItem, int backItem, int backMod, int frontItem, int frontMod, int liquidItem, int liquidMod) {
         this(ItemRegistry.getItem(baseItem), ItemRegistry.getItem(backItem), backMod, ItemRegistry.getItem(frontItem), frontMod, ItemRegistry.getItem(liquidItem), liquidMod);
     }
@@ -140,6 +144,10 @@ public class Block {
         return baseItem;
     }
     
+    public int getBase() {
+        return baseItem.getId() | (((liquidItem.getId() & 255) << 8) | ((liquidMod) & 31) << 16);
+    }
+    
     public Item getBackItem() {
         return backItem;
     }
@@ -148,12 +156,20 @@ public class Block {
         return backMod;
     }
     
+    public int getBack() {
+        return backItem.getId() | ((backMod & 31) << 16);
+    }
+    
     public Item getFrontItem() {
         return frontItem;
     }
     
     public int getFrontMod() {
         return frontMod;
+    }
+    
+    public int getFront() {
+        return frontItem.getId() | ((frontMod & 31) << 16);
     }
     
     public Item getLiquidItem() {
