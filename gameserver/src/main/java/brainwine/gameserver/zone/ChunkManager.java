@@ -37,6 +37,7 @@ public class ChunkManager {
                 File legacyBlocksFile = new File(zone.getDirectory(), "blocks");
                 
                 if(!blocksFile.exists()) {
+                    blocksFile.getParentFile().mkdirs();
                     blocksFile.createNewFile();
                 }
                 
