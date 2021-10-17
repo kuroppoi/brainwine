@@ -22,7 +22,7 @@ public class Block {
     }
     
     public Block(int base, int back, int front) {
-    	this(base & 15, back & 65535, back >> 16 & 31, front & 65535, front >> 16 & 31, base >> 8 & 255, base >> 16 & 31);
+        this(base & 15, back & 65535, back >> 16 & 31, front & 65535, front >> 16 & 31, base >> 8 & 255, base >> 16 & 31);
     }
     
     public Block(int baseItem, int backItem, int backMod, int frontItem, int frontMod, int liquidItem, int liquidMod) {
