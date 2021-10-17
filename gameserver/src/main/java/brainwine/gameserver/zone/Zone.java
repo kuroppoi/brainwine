@@ -77,7 +77,7 @@ public class Zone {
     private float cloudiness = 5000;
     private float precipitation = 0;
     private float acidity = 0;
-    private final ChunkIOManager chunkManager;
+    private final ChunkManager chunkManager;
     private final Queue<DugBlock> digQueue = new ArrayDeque<>(); // TODO should be saved
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<Integer, Entity> entities = new HashMap<>();
@@ -105,12 +105,12 @@ public class Zone {
         this.height = height;
         this.chunkWidth = chunkWidth;
         this.chunkHeight = chunkHeight;
-        chunkManager = new ChunkIOManager(this);
         numChunksWidth = width / chunkWidth;
         numChunksHeight = height / chunkHeight;
         surface = new int[width];
         sunlight = new int[width];
         chunksExplored = new boolean[numChunksWidth * numChunksHeight];
+        chunkManager = new ChunkManager(this);
         Arrays.fill(surface, height);
         Arrays.fill(sunlight, height);
     }
@@ -837,6 +837,10 @@ public class Zone {
         
         sendMessage(new ZoneExploredMessage(chunkIndex));
         return chunksExplored[chunkIndex] = true;
+    }
+    
+    public File getDirectory() {
+    	return new File("zones", documentId);
     }
     
     /**
