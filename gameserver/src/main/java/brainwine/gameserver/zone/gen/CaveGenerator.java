@@ -7,14 +7,14 @@ import java.util.Queue;
 
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.util.MathUtils;
-import brainwine.gameserver.util.WeightedList;
+import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
 import brainwine.gameserver.zone.gen.models.Cave;
 import brainwine.gameserver.zone.gen.models.StoneVariant;
 
 public class CaveGenerator implements GeneratorTask {
     
-    private final WeightedList<StoneVariant> stoneVariants;
+    private final WeightedMap<StoneVariant> stoneVariants;
     private final List<CaveDecorator> decorators;
     
     public CaveGenerator(GeneratorConfig config) {
@@ -182,7 +182,7 @@ public class CaveGenerator implements GeneratorTask {
     }
     
     private CaveDecorator getRandomEligibleDecorator(GeneratorContext ctx, int size, double depth) {
-        WeightedList<CaveDecorator> list = new WeightedList<>();
+        WeightedMap<CaveDecorator> list = new WeightedMap<>();
         
         for(CaveDecorator decorator : decorators) {
             if(size >= decorator.getMinSize() && size <= decorator.getMaxSize() && depth >= decorator.getMinDepth() && depth <= decorator.getMaxDepth()) {

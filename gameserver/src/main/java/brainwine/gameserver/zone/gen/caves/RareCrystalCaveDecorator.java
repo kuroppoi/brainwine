@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.util.WeightedList;
+import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.gen.CaveDecorator;
 import brainwine.gameserver.zone.gen.GeneratorContext;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
@@ -15,7 +15,7 @@ import brainwine.gameserver.zone.gen.models.Cave;
 public class RareCrystalCaveDecorator extends CaveDecorator {
     
     @JsonProperty("crystals")
-    private final WeightedList<Item> crystals = new WeightedList<>();
+    private final WeightedMap<Item> crystals = new WeightedMap<>();
     
     @JsonProperty("crystal_chance")
     private double rate = 0.05;

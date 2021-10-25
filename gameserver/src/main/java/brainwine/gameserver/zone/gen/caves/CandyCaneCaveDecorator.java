@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.util.WeightedList;
+import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.gen.CaveDecorator;
 import brainwine.gameserver.zone.gen.GeneratorContext;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
@@ -16,7 +16,7 @@ import brainwine.gameserver.zone.gen.models.Cave;
 public class CandyCaneCaveDecorator extends CaveDecorator {
     
     @JsonProperty("candy_canes")
-    private final WeightedList<Item> candyCanes = new WeightedList<Item>()
+    private final WeightedMap<Item> candyCanes = new WeightedMap<Item>()
         .addEntry(ItemRegistry.getItem("holiday/candy-cane-small"), 6)
         .addEntry(ItemRegistry.getItem("holiday/candy-cane-large"), 1);
     

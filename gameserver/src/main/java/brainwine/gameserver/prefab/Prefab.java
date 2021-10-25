@@ -10,7 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.item.Item;
-import brainwine.gameserver.util.WeightedList;
+import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.Block;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -32,7 +32,7 @@ public class Prefab {
     private boolean mirrorable;
     
     @JsonProperty("replace")
-    private Map<Item, WeightedList<Item>> replacements = new HashMap<>();
+    private Map<Item, WeightedMap<Item>> replacements = new HashMap<>();
     
     @JsonProperty("corresponding_replace")
     private Map<Item, CorrespondingReplacement> correspondingReplacements = new HashMap<>();
@@ -98,7 +98,7 @@ public class Prefab {
         return metadata;
     }
     
-    public Map<Item, WeightedList<Item>> getReplacements() {
+    public Map<Item, WeightedMap<Item>> getReplacements() {
         return replacements;
     }
     

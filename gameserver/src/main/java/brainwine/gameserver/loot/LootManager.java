@@ -14,7 +14,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import brainwine.gameserver.util.WeightedList;
+import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.Biome;
 import brainwine.shared.JsonHelper;
 
@@ -66,7 +66,7 @@ public class LootManager {
     }
     
     public Loot getRandomLoot(int level, Biome biome, String... categories) {
-        WeightedList<Loot> weightedLoot = new WeightedList<>();
+        WeightedMap<Loot> weightedLoot = new WeightedMap<>();
         List<Loot> eligibleLoot = getEligibleLoot(level, biome, categories);
         
         for(Loot loot : eligibleLoot) {

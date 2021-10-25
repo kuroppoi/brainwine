@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.util.WeightedList;
+import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.gen.CaveDecorator;
 import brainwine.gameserver.zone.gen.GeneratorContext;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
@@ -15,7 +15,7 @@ import brainwine.gameserver.zone.gen.models.MushroomType;
 public class MushroomCaveDecorator extends CaveDecorator {
     
     @JsonProperty("mushrooms")
-    private final WeightedList<MushroomType> mushrooms = new WeightedList<>();
+    private final WeightedMap<MushroomType> mushrooms = new WeightedMap<>();
     
     @JsonProperty("mushroom_chance")
     private double rate = 0.2;

@@ -3,14 +3,14 @@ package brainwine.gameserver.zone.gen;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.util.Vector2i;
-import brainwine.gameserver.util.WeightedList;
+import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.Block;
 
 public class StructureGenerator implements GeneratorTask {
     
     private final Prefab[] uniqueStructures;
-    private final WeightedList<Prefab> dungeons;
-    private final WeightedList<Prefab> spawnTowers;
+    private final WeightedMap<Prefab> dungeons;
+    private final WeightedMap<Prefab> spawnTowers;
     private final Vector2i dungeonRegion;
     private final double dungeonRate;
     

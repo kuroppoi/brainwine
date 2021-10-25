@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.util.Vector2i;
-import brainwine.gameserver.util.WeightedList;
+import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.gen.models.BaseResourceType;
 import brainwine.gameserver.zone.gen.models.Deposit;
 import brainwine.gameserver.zone.gen.models.OreDeposit;
@@ -34,10 +34,10 @@ public class GeneratorConfig {
     private Prefab[] uniqueStructures = {};
     
     @JsonProperty("dungeons")
-    private WeightedList<Prefab> dungeons = new WeightedList<>();
+    private WeightedMap<Prefab> dungeons = new WeightedMap<>();
     
     @JsonProperty("spawn_towers")
-    private WeightedList<Prefab> spawnTowers = new WeightedList<>();
+    private WeightedMap<Prefab> spawnTowers = new WeightedMap<>();
     
     @JsonProperty("dungeon_region")
     private Vector2i dungeonRegion = new Vector2i(80, 64);
@@ -46,7 +46,7 @@ public class GeneratorConfig {
     private double dungeonRate = 0.25;
     
     @JsonProperty("stone_variants")
-    private WeightedList<StoneVariant> stoneVariants = new WeightedList<>();
+    private WeightedMap<StoneVariant> stoneVariants = new WeightedMap<>();
     
     @JsonProperty("cave_types")
     @JsonDeserialize(using = CaveDecoratorListDeserializer.class)
@@ -74,11 +74,11 @@ public class GeneratorConfig {
         return uniqueStructures;
     }
     
-    public WeightedList<Prefab> getDungeons() {
+    public WeightedMap<Prefab> getDungeons() {
         return dungeons;
     }
     
-    public WeightedList<Prefab> getSpawnTowers() {
+    public WeightedMap<Prefab> getSpawnTowers() {
         return spawnTowers;
     }
     
@@ -90,7 +90,7 @@ public class GeneratorConfig {
         return dungeonRate;
     }
     
-    public WeightedList<StoneVariant> getStoneVariants() {
+    public WeightedMap<StoneVariant> getStoneVariants() {
         return stoneVariants;
     }
     
