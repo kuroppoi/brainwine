@@ -93,7 +93,7 @@ public class ZoneManager {
         String id = zone.getDocumentId();
         String name = zone.getName();
         
-        if(zonesByName.containsKey(name)) {
+        if(zonesByName.containsKey(name.toLowerCase())) {
             logger.warn("Duplicate name {} for zone id {}", name, id);
             return;
         }
