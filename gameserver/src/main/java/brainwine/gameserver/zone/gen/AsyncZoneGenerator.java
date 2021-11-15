@@ -43,7 +43,6 @@ public class AsyncZoneGenerator extends Thread {
                     logger.error("An unexpected error occured while generating zone [biome:{}, width:{}, height:{}, seed:{}]", biome, width, height, seed, e);
                 }
                 
-                System.gc();
                 Zone generated = zone;
                 Consumer<Zone> callback = task.getCallback();
                 
