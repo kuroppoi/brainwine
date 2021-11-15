@@ -47,12 +47,7 @@ public class AsyncZoneGenerator extends Thread {
                 Consumer<Zone> callback = task.getCallback();
                 
                 if(callback != null) {
-                    GameServer.getInstance().queueSynchronousTask(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.accept(generated);
-                        }
-                    });
+                    GameServer.getInstance().queueSynchronousTask(() -> callback.accept(generated));
                 }
             }
         });

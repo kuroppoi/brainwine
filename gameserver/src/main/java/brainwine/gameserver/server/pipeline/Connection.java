@@ -41,22 +41,12 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
             return;
         }
         
-        GameServer.getInstance().queueSynchronousTask(new Runnable() {
-            @Override
-            public void run() {
-                player.onDisconnect();
-            }
-        });
+        GameServer.getInstance().queueSynchronousTask(player::onDisconnect);
     }
     
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, Request request) throws Exception {
-        GameServer.getInstance().queueSynchronousTask(new Runnable() {
-            @Override
-            public void run() {
-                request.process(Connection.this);
-            }
-        });
+        GameServer.getInstance().queueSynchronousTask(() -> request.process(this));
     }
     
     @Override
