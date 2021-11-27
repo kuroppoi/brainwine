@@ -16,8 +16,7 @@ public abstract class PlayerRequest extends Request {
         
         if(player == null) {
             connection.kick("No player instance found.");
-        }
-        else {
+        } else {
             process(player);
         }
     }
