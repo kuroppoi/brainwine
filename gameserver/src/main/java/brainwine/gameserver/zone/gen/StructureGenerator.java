@@ -26,6 +26,9 @@ public class StructureGenerator implements GeneratorTask {
     public void generate(GeneratorContext ctx) {
         int width = ctx.getWidth();
         int height = ctx.getHeight();
+        placeRandomSpawnTower(ctx, (int)(width * 0.2));
+        placeRandomSpawnTower(ctx, (int)(width * 0.5));
+        placeRandomSpawnTower(ctx, (int)(width * 0.8));
         
         for(Prefab structure : uniqueStructures) {
             int x = ctx.nextInt(width - 2) + 1;
@@ -53,10 +56,6 @@ public class StructureGenerator implements GeneratorTask {
                 }
             }
         }
-        
-        placeRandomSpawnTower(ctx, (int)(width * 0.2));
-        placeRandomSpawnTower(ctx, (int)(width * 0.5));
-        placeRandomSpawnTower(ctx, (int)(width * 0.8));
     }
     
     private void placeRandomSpawnTower(GeneratorContext ctx, int x) {
