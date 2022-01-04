@@ -12,30 +12,36 @@ public class ImportCommand extends Command {
 
     @Override
     public void execute(CommandExecutor executor, String[] args) {
-        if(args.length < 3) {
+        if(args.length < 1) {
             executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
             return;
         }
         
         int x = 0;
         int y = 0;
+        Player player = (Player)executor;
         
-        try {
-            x = Integer.parseInt(args[1]);
-            y = Integer.parseInt(args[2]);
-        } catch(NumberFormatException e) {
-            executor.notify("X and Y must be valid numbers.", ALERT);
-            return;
+        if(args.length < 3) {
+            x = (int)player.getX();
+            y = (int)player.getY() + 1;
+        } else {
+            try {
+                x = Integer.parseInt(args[1]);
+                y = Integer.parseInt(args[2]);
+            } catch(NumberFormatException e) {
+                player.notify("X and Y must be valid numbers.", ALERT);
+                return;
+            }
         }
         
         Prefab prefab = GameServer.getInstance().getPrefabManager().getPrefab(args[0]);
         
         if(prefab == null) {
-            executor.notify("Sorry, could not find a prefab with that name.", ALERT);
+            player.notify("Sorry, could not find a prefab with that name.", ALERT);
             return;
         }
         
-        ((Player)executor).getZone().placePrefab(prefab, x, y);
+        player.getZone().placePrefab(prefab, x, y);
     }
 
     @Override
@@ -45,12 +51,12 @@ public class ImportCommand extends Command {
     
     @Override
     public String getDescription() {
-        return "Places a prefab at the specified location.";
+        return "Places a prefab at your or a specified location.";
     }
     
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/import <prefab> <x> <y>";
+        return "/import <prefab> [<x> <y>]";
     }
     
     @Override
