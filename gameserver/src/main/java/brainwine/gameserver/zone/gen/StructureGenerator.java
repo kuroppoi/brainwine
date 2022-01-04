@@ -13,6 +13,7 @@ public class StructureGenerator implements GeneratorTask {
     private final WeightedMap<Prefab> spawnTowers;
     private final Vector2i dungeonRegion;
     private final double dungeonRate;
+    private final boolean surface;
     
     public StructureGenerator(GeneratorConfig config) {
         uniqueStructures = config.getUniqueStructures();
@@ -20,6 +21,7 @@ public class StructureGenerator implements GeneratorTask {
         spawnTowers = config.getSpawnTowers();
         dungeonRegion = config.getDungeonRegion();
         dungeonRate = config.getDungeonRate();
+        surface = config.getSurface();
     }
     
     @Override
@@ -59,7 +61,8 @@ public class StructureGenerator implements GeneratorTask {
     }
     
     private void placeRandomSpawnTower(GeneratorContext ctx, int x) {
-        int surface = ctx.getZone().getSurface()[x];
+        int surface = this.surface ? ctx.getZone().getSurface()[x] 
+                : ctx.getHeight() / 8 + ctx.nextInt(Math.max(1, ctx.nextInt(ctx.getHeight() / 8)));
         
         if(!spawnTowers.isEmpty()) {
             Prefab spawnTower = spawnTowers.next(ctx.getRandom());
