@@ -23,7 +23,7 @@ public class JsonHelper {
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
             .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-    private static ObjectWriter writer = mapper.writer(CustomPrettyPrinter.INSTANCE);
+    private static final ObjectWriter writer = mapper.writer(CustomPrettyPrinter.INSTANCE);
     
     public static <T> T readValue(String string, Class<T> type) throws JsonMappingException, JsonProcessingException {
         return mapper.readValue(string, type);

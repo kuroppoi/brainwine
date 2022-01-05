@@ -7,14 +7,20 @@ import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultIndenter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter;
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter.Indenter;
+import com.fasterxml.jackson.core.util.Instantiatable;
 
-public class CustomPrettyPrinter implements PrettyPrinter {
+public class CustomPrettyPrinter implements PrettyPrinter, Instantiatable<CustomPrettyPrinter> {
     
     public static final CustomPrettyPrinter INSTANCE = new CustomPrettyPrinter();
     private static final Indenter indenter = DefaultIndenter.SYSTEM_LINEFEED_INSTANCE;
     private int nesting;
     
     private CustomPrettyPrinter() {}
+    
+    @Override
+    public CustomPrettyPrinter createInstance() {
+        return new CustomPrettyPrinter();
+    }
     
     @Override
     public void writeRootValueSeparator(JsonGenerator gen) throws IOException {
