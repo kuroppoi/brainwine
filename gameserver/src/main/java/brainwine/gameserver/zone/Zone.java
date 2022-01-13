@@ -59,9 +59,9 @@ public class Zone {
     private final int chunkHeight = DEFAULT_CHUNK_HEIGHT;
     private final int numChunksWidth;
     private final int numChunksHeight;
-    private final int[] surface;
-    private final int[] sunlight;
-    private final boolean[] chunksExplored;
+    private int[] surface;
+    private int[] sunlight;
+    private boolean[] chunksExplored;
     private float time = 5000;
     private float temperature = 0;
     private float wind = 0;
