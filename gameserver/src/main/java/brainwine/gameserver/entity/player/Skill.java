@@ -1,9 +1,7 @@
 package brainwine.gameserver.entity.player;
 
-import brainwine.gameserver.msgpack.EnumValue;
-import brainwine.gameserver.msgpack.RegisterEnum;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@RegisterEnum
 public enum Skill {
     
     AGILITY,
@@ -19,7 +17,7 @@ public enum Skill {
     STAMINA,
     SURVIVAL;
     
-    @EnumValue
+    @JsonValue
     public String getId() {
         return toString().toLowerCase();
     }

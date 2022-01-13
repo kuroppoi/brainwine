@@ -68,7 +68,7 @@ public class ExportCommand extends Command {
         executor.notify("Exporting your prefab ...", ALERT);
         
         try {
-            prefabManager.registerPrefab(name, prefab);
+            prefabManager.addPrefab(name, prefab);
             executor.notify(String.format("Your prefab '%s' was successfully exported!", name), ALERT);
         } catch (Exception e) {
             executor.notify(String.format("An error occured while exporting prefab '%s': %s", name, e.getMessage()), ALERT);

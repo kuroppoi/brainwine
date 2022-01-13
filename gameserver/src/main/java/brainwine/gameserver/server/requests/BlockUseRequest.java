@@ -14,7 +14,6 @@ import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.loot.LootManager;
-import brainwine.gameserver.msgpack.models.BlockUseData;
 import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.util.MapHelper;
@@ -30,7 +29,7 @@ public class BlockUseRequest extends PlayerRequest {
     public Layer layer;
     
     @OptionalField
-    public BlockUseData data;
+    public Object[] data;
     
     @Override
     public void process(Player player) {
@@ -40,7 +39,10 @@ public class BlockUseRequest extends PlayerRequest {
             return;
         }
         
-        Object[] data = this.data == null ? null : this.data.getData();
+        if(data != null && data.length == 1 && data[0] instanceof Map) {
+            data = ((Map<?, ?>)data[0]).values().toArray();
+        }
+        
         Block block = zone.getBlock(x, y);
         MetaBlock metaBlock = zone.getMetaBlock(x, y);
         Item item = block.getItem(layer);

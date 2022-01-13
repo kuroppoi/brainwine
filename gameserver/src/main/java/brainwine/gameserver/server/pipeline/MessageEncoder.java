@@ -5,9 +5,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.msgpack.packer.BufferPacker;
+import com.fasterxml.jackson.databind.ObjectWriter;
 
-import brainwine.gameserver.msgpack.MessagePackHelper;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.util.ZipUtils;
@@ -18,9 +17,11 @@ import io.netty.handler.codec.MessageToByteEncoder;
 
 public class MessageEncoder extends MessageToByteEncoder<Message> {
     
+    private final ObjectWriter writer;
     private final Connection connection;
     
-    public MessageEncoder(Connection connection) {
+    public MessageEncoder(ObjectWriter writer, Connection connection) {
+        this.writer = writer;
         this.connection = connection;
     }
     
@@ -45,10 +46,7 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
             
             bytes = JsonHelper.writeValueAsBytes(data);
         } else {
-            BufferPacker packer = MessagePackHelper.createBufferPacker();
-            in.pack(packer);
-            bytes = packer.toByteArray();
-            packer.close();
+            bytes = writer.writeValueAsBytes(in);
         }
         
         if(in.isCompressed()) {

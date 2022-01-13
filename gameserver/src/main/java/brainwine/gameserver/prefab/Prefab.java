@@ -4,60 +4,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.Block;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Prefab {
     
-    @JsonProperty("dungeon")
     private boolean dungeon;
-    
-    @JsonProperty("ruin")
     private boolean ruin;
-    
-    @JsonProperty("loot")
     private boolean loot;
-    
-    @JsonProperty("decay")
     private boolean decay;
-    
-    @JsonProperty("mirrorable")
     private boolean mirrorable;
-    
-    @JsonProperty("replace")
+    private int width;
+    private int height;
+    private Block[] blocks;
     private Map<Item, WeightedMap<Item>> replacements = new HashMap<>();
-    
-    @JsonProperty("corresponding_replace")
     private Map<Item, CorrespondingReplacement> correspondingReplacements = new HashMap<>();
-    
-    @JsonProperty("metadata")
     private Map<Integer, Map<String, Object>> metadata = new HashMap<>();
     
-    @JsonIgnore
-    private int width;
-    
-    @JsonIgnore
-    private int height;
-    
-    @JsonIgnore
-    private Block[] blocks;
-    
-    @JsonCreator
-    private Prefab() {}
-    
-    @JsonIgnore
-    public Prefab(int width, int height, Block[] blocks) {
-        this(width, height, blocks, new HashMap<>());
+    protected Prefab(PrefabConfig config, PrefabBlockData blockData) {
+        this(blockData.getWidth(), blockData.getHeight(), blockData.getBlocks(), config.getMetadata());
+        dungeon = config.isDungeon();
+        ruin = config.isRuin();
+        loot = config.hasLoot();
+        decay = config.hasDecay();
+        mirrorable = config.isMirrorable();
+        replacements = config.getReplacements();
+        correspondingReplacements = config.getCorrespondingReplacements();
     }
     
-    @JsonIgnore
     public Prefab(int width, int height, Block[] blocks, Map<Integer, Map<String, Object>> metadata) {
         this.width = width;
         this.height = height;
@@ -89,6 +66,18 @@ public class Prefab {
     public boolean isMirrorable() {
         return mirrorable;
     }
+        
+    public int getWidth() {
+        return width;
+    }
+    
+    public int getHeight() {
+        return height;
+    }
+    
+    public Block[] getBlocks() {
+        return blocks;
+    }
     
     public Map<String, Object> getMetadata(int index) {
         return metadata.get(index);
@@ -104,29 +93,5 @@ public class Prefab {
     
     public Map<Item, CorrespondingReplacement> getCorrespondingReplacements() {
         return correspondingReplacements;
-    }
-        
-    public void setWidth(int width) {
-        this.width = width;
-    }
-    
-    public int getWidth() {
-        return width;
-    }
-    
-    public void setHeight(int height) {
-        this.height = height;
-    }
-    
-    public int getHeight() {
-        return height;
-    }
-    
-    public void setBlocks(Block[] blocks) {
-        this.blocks = blocks;
-    }
-    
-    public Block[] getBlocks() {
-        return blocks;
     }
 }

@@ -4,10 +4,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import brainwine.gameserver.msgpack.EnumValue;
-import brainwine.gameserver.msgpack.RegisterEnum;
-
-@RegisterEnum
 public enum Biome {
     
     @JsonEnumDefaultValue
@@ -20,7 +16,6 @@ public enum Biome {
     SPACE;
     
     @JsonValue
-    @EnumValue
     public String getId() {
         return toString().toLowerCase();
     }

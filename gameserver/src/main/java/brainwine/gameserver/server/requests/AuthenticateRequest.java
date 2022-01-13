@@ -1,7 +1,5 @@
 package brainwine.gameserver.server.requests;
 
-import org.msgpack.type.Value;
-
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.Request;
@@ -14,7 +12,7 @@ public class AuthenticateRequest extends Request {
     public String authToken;
     
     @OptionalField
-    public Value details;
+    public Object details;
     
     @Override
     public void process(Connection connection) {

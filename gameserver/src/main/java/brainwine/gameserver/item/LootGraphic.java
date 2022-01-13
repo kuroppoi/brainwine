@@ -1,11 +1,8 @@
 package brainwine.gameserver.item;
 
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-import brainwine.gameserver.msgpack.EnumValue;
-import brainwine.gameserver.msgpack.RegisterEnum;
-
-@RegisterEnum
 public enum LootGraphic {
     
     LOOT,
@@ -15,7 +12,7 @@ public enum LootGraphic {
     @JsonEnumDefaultValue
     NONE;
     
-    @EnumValue
+    @JsonValue
     public String getId() {
         return toString().toLowerCase();
     }

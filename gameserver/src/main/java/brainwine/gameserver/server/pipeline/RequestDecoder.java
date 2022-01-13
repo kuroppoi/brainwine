@@ -3,17 +3,22 @@ package brainwine.gameserver.server.pipeline;
 import java.io.IOException;
 import java.util.List;
 
-import org.msgpack.unpacker.Unpacker;
+import com.fasterxml.jackson.databind.ObjectReader;
 
-import brainwine.gameserver.msgpack.MessagePackHelper;
-import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.NetworkRegistry;
+import brainwine.gameserver.server.Request;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 
 public class RequestDecoder extends MessageToMessageDecoder<ByteBuf> {
-
+    
+    private final ObjectReader reader;
+    
+    public RequestDecoder(ObjectReader reader) {
+        this.reader = reader;
+    }
+    
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf buf, List<Object> out) throws Exception {
         int id = buf.readByte() & 0xFF;
@@ -23,17 +28,15 @@ public class RequestDecoder extends MessageToMessageDecoder<ByteBuf> {
             throw new IOException("Request exceeds max length of 1024 bytes");
         }
         
-        Request request = NetworkRegistry.instantiateRequest(id);
+        Class<? extends Request> type = NetworkRegistry.getRequestClass(id);
         
-        if(request == null) {
+        if(type == null) {
             throw new IOException("Client sent invalid request: " + id);
         }
         
         byte[] bytes = new byte[length];
         buf.readBytes(bytes);
-        Unpacker unpacker = MessagePackHelper.createBufferUnpacker(bytes);
-        request.unpack(unpacker);
-        unpacker.close();
+        Request request = reader.readValue(bytes, type);
         out.add(request);
     }
 }

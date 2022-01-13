@@ -2,10 +2,6 @@ package brainwine.gameserver.item;
 
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
-import brainwine.gameserver.msgpack.DefaultEnumValue;
-import brainwine.gameserver.msgpack.RegisterEnum;
-
-@RegisterEnum
 public enum Layer {
     
     BASE,
@@ -13,7 +9,6 @@ public enum Layer {
     FRONT,
     LIQUID,
     
-    @DefaultEnumValue
     @JsonEnumDefaultValue
     NONE;
 }

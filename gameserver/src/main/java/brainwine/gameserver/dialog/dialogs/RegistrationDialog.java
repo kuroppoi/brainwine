@@ -37,14 +37,15 @@ public class RegistrationDialog extends ConfigurableDialog {
     }
     
     @Override
-    public void handleResponse(Player player, String[] input) {
+    public void handleResponse(Player player, Object[] input) {
         if(input.length != 2) {
             player.alert("Incorrect number of parameters.");
             return;
         }
         
-        String email = input[0];
-        String password = input[1];
+        // TODO toString() for now, dialog system will be worked anyway.
+        String email = input[0].toString();
+        String password = input[1].toString();
         
         if(email.length() > maxEmailLength || !emailPattern.matcher(email).matches()) {
             player.alert("Please enter a valid e-mail address.");

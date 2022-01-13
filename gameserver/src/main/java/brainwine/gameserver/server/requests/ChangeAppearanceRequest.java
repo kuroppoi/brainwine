@@ -11,7 +11,6 @@ import brainwine.gameserver.entity.player.ColorSlot;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
-import brainwine.gameserver.msgpack.models.AppearanceData;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.DialogMessage;
 import brainwine.gameserver.util.MapHelper;
@@ -22,7 +21,7 @@ import brainwine.gameserver.util.MapHelper;
  */
 public class ChangeAppearanceRequest extends PlayerRequest {
     
-    public AppearanceData data;
+    public Map<String, Object> data;
     
     @Override
     public void process(Player player) {

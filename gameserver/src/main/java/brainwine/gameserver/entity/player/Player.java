@@ -318,7 +318,7 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new DialogMessage(id, dialog));
     }
     
-    public void handleDialogInput(int id, String[] input) {
+    public void handleDialogInput(int id, Object[] input) {
         ConfigurableDialog dialog = dialogs.remove(id);
         
         if(dialog == null) {

@@ -1,9 +1,7 @@
 package brainwine.gameserver.entity;
 
-import brainwine.gameserver.msgpack.EnumValue;
-import brainwine.gameserver.msgpack.RegisterEnum;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@RegisterEnum
 public enum EntityType {
     
     PLAYER(0),
@@ -17,7 +15,7 @@ public enum EntityType {
         this.id = id;
     }
     
-    @EnumValue
+    @JsonValue
     public int getId() {
         return id;
     }

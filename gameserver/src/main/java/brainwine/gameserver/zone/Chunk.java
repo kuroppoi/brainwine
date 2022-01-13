@@ -1,5 +1,9 @@
 package brainwine.gameserver.zone;
 
+import java.beans.ConstructorProperties;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
  * Simple & convenient class to store block data.
  * Outside of allowing zones to be chopped up unto chunks, it doesn't
@@ -14,12 +18,17 @@ public class Chunk {
     private final Block[] blocks;
     private boolean modified;
     
-    public Chunk(int x, int y, int width, int height) {
+    @ConstructorProperties({"x", "y", "width", "height", "blocks"})
+    public Chunk(int x, int y, int width, int height, Block[] blocks) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.blocks = new Block[width * height];
+        this.blocks = blocks;
+    }
+    
+    public Chunk(int x, int y, int width, int height) {
+        this(x, y, width, height, new Block[width * height]);
         
         for(int i = 0; i < blocks.length; i++) {
             blocks[i] = new Block();
@@ -30,6 +39,7 @@ public class Chunk {
         this.modified = modified;
     }
     
+    @JsonIgnore
     public boolean isModified() {
         return modified;
     }
@@ -48,16 +58,6 @@ public class Chunk {
     
     public int getHeight() {
         return height;
-    }
-    
-    public void setBlock(int x, int y, Block block) {
-        setBlock(getBlockIndex(x % width, y % height), block);
-    }
-    
-    public void setBlock(int index, Block block) {
-        if(isIndexInBounds(index)) {
-            blocks[index] = block;
-        }
     }
     
     public Block getBlock(int x, int y) {

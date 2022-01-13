@@ -1,6 +1,5 @@
 package brainwine.gameserver.zone;
 
-import java.beans.ConstructorProperties;
 import java.io.File;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -19,12 +18,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import org.msgpack.unpacker.BufferUnpacker;
-
-import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
@@ -38,7 +32,6 @@ import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MetaType;
 import brainwine.gameserver.item.ModType;
-import brainwine.gameserver.msgpack.MessagePackHelper;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
@@ -52,9 +45,7 @@ import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
-import brainwine.shared.JsonHelper;
 
-@JsonIncludeProperties({"name", "biome", "width", "height"})
 public class Zone {
     
     public static final int DEFAULT_CHUNK_WIDTH = 20;
@@ -64,8 +55,8 @@ public class Zone {
     private final Biome biome;
     private final int width;
     private final int height;
-    private final int chunkWidth;
-    private final int chunkHeight;
+    private final int chunkWidth = DEFAULT_CHUNK_WIDTH;
+    private final int chunkHeight = DEFAULT_CHUNK_HEIGHT;
     private final int numChunksWidth;
     private final int numChunksHeight;
     private final int[] surface;
@@ -88,23 +79,19 @@ public class Zone {
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
     
-    public Zone(String documentId, String name, Biome biome, SizePreset sizePreset) {
-        this(documentId, name, biome, sizePreset.getWidth(), sizePreset.getHeight());
+    protected Zone(String documentId, ZoneConfig config, ZoneData data) {
+        this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
+        surface = data.getSurface();
+        sunlight = data.getSunlight();
+        chunksExplored = data.getChunksExplored();
     }
     
-    @ConstructorProperties({"documentId", "name", "biome", "width", "height"})
-    public Zone(@JacksonInject("documentId") String documentId, String name, Biome biome, int width, int height) {
-        this(documentId, name, biome, width, height, DEFAULT_CHUNK_WIDTH, DEFAULT_CHUNK_HEIGHT);
-    }
-    
-    private Zone(String documentId, String name, Biome biome, int width, int height, int chunkWidth, int chunkHeight) {
+    public Zone(String documentId, String name, Biome biome, int width, int height) {
         this.documentId = documentId;
         this.name = name;
         this.biome = biome;
         this.width = width;
         this.height = height;
-        this.chunkWidth = chunkWidth;
-        this.chunkHeight = chunkHeight;
         numChunksWidth = width / chunkWidth;
         numChunksHeight = height / chunkHeight;
         surface = new int[width];
@@ -139,29 +126,14 @@ public class Zone {
                 }
             }
         }
+        
+        lastTick = now;
+        ticks++;
     }
     
-    public void load() throws Exception {
-        pendingSunlight.clear();
-        File dataDir = new File("zones", documentId);
-        File shapeFile = new File(dataDir, "shape.cmp");
-        BufferUnpacker unpacker = MessagePackHelper.readFiles(shapeFile);
-        unpacker.read(surface);
-        unpacker.read(sunlight);
-        pendingSunlight.addAll(Arrays.asList(unpacker.read(Integer[].class)));
-        unpacker.read(chunksExplored);
-        setMetaBlocks(JsonHelper.readList(new File(dataDir, "metablocks.json"), MetaBlock.class));
-        indexDungeons();
-    }
-    
-    public void save() throws Exception {
-        File dataDir = new File("zones", documentId);
-        dataDir.mkdirs();
-        JsonHelper.writeValue(new File(dataDir, "config.json"), this);
+    public void saveModifiedChunks() {
         chunkManager.saveModifiedChunks();
         removeInactiveChunks();
-        MessagePackHelper.writeToFile(new File(dataDir, "shape.cmp"), surface, sunlight, pendingSunlight, chunksExplored);
-        JsonHelper.writeValue(new File(dataDir, "metablocks.json"), metaBlocks.values());
     }
     
     /**
@@ -615,6 +587,8 @@ public class Zone {
                 indexMetaBlock(getBlockIndex(x, y), metaBlock);
             }
         }
+        
+        indexDungeons();
     }
     
     private boolean ownsMetaBlock(MetaBlock metaBlock, Player player) {
@@ -912,16 +886,6 @@ public class Zone {
     
     public int getChunkCount() {
         return numChunksWidth * numChunksHeight;
-    }
-    
-    @JsonValue
-    protected Map<String, Object> getJsonConfig() {
-        Map<String, Object> config = new HashMap<>();
-        config.put("name", name);
-        config.put("biome", biome);
-        config.put("width", width);
-        config.put("height", height);
-        return config;
     }
     
     /**

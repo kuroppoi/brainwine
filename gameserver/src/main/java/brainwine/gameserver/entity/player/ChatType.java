@@ -1,9 +1,7 @@
 package brainwine.gameserver.entity.player;
 
-import brainwine.gameserver.msgpack.EnumValue;
-import brainwine.gameserver.msgpack.RegisterEnum;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@RegisterEnum
 public enum ChatType {
     
     CHAT("c"),
@@ -17,7 +15,7 @@ public enum ChatType {
         this.id = id;
     }
     
-    @EnumValue
+    @JsonValue
     public String getId() {
         return id;
     }

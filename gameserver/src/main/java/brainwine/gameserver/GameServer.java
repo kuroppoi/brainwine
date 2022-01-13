@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.PlayerManager;
 import brainwine.gameserver.loot.LootManager;
-import brainwine.gameserver.msgpack.MessagePackHelper;
 import brainwine.gameserver.prefab.PrefabManager;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.server.Server;
@@ -38,7 +37,6 @@ public class GameServer {
         logger.info("Starting GameServer ...");
         CommandManager.init();
         GameConfiguration.init();
-        MessagePackHelper.init();
         lootManager = new LootManager();
         prefabManager = new PrefabManager();
         StaticZoneGenerator.init();

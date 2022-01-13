@@ -1,13 +1,11 @@
 package brainwine.gameserver.entity;
 
-import brainwine.gameserver.msgpack.DefaultEnumValue;
-import brainwine.gameserver.msgpack.EnumValue;
-import brainwine.gameserver.msgpack.RegisterEnum;
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@RegisterEnum
 public enum FacingDirection {
     
-    @DefaultEnumValue
+    @JsonEnumDefaultValue
     WEST(-1),
     EAST(1);
     
@@ -17,7 +15,7 @@ public enum FacingDirection {
         this.id = id;
     }
     
-    @EnumValue
+    @JsonValue
     public int getId() {
         return id;
     }

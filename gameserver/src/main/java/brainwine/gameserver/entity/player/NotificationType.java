@@ -1,9 +1,7 @@
 package brainwine.gameserver.entity.player;
 
-import brainwine.gameserver.msgpack.EnumValue;
-import brainwine.gameserver.msgpack.RegisterEnum;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-@RegisterEnum
 public enum NotificationType {
     
     ALERT(1),
@@ -25,7 +23,7 @@ public enum NotificationType {
         this.id = id;
     }
     
-    @EnumValue
+    @JsonValue
     public int getId() {
         return id;
     }

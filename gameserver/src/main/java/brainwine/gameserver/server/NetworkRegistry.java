@@ -140,12 +140,8 @@ public class NetworkRegistry {
         requests.put(id, type);
     }
     
-    public static Request instantiateRequest(int id) throws InstantiationException, IllegalAccessException {
-        if(!requests.containsKey(id)) {
-            return null;
-        }
-        
-        return requests.get(id).newInstance();
+    public static Class<? extends Request> getRequestClass(int id){
+        return requests.get(id);
     }
     
     public static void registerMessage(Class<? extends Message> type, int id) {

@@ -3,10 +3,6 @@ package brainwine.gameserver.entity.player;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-import brainwine.gameserver.msgpack.EnumValue;
-import brainwine.gameserver.msgpack.RegisterEnum;
-
-@RegisterEnum
 public enum KarmaLevel {
     
     GODLY("Godly", 500),
@@ -28,7 +24,6 @@ public enum KarmaLevel {
     }
     
     @JsonValue
-    @EnumValue
     public String getId() {
         return id;
     }
