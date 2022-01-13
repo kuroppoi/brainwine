@@ -2,6 +2,7 @@ package brainwine.gameserver.server.messages;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import brainwine.gameserver.server.Message;
@@ -25,7 +26,7 @@ public class ZoneSearchMessage extends Message {
             info.add(zone.getName());
             info.add(zone.getPlayers().size());
             info.add(0); // followees count
-            info.add(null); // followees
+            info.add(Collections.EMPTY_LIST); // followees
             info.add(0); // active duration
             info.add((int)(zone.getExplorationProgress() * 100));
             info.add(zone.getBiome());
