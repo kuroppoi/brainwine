@@ -902,7 +902,12 @@ public class Zone {
         List<Object> earth = new ArrayList<>();
         
         if(player.isV3()) {
-            earth.add(Arrays.asList(height * 0.9, "ground/earth-deepest"));
+            // For some reason this layer is completely broken for desert biomes on Unity clients.
+            // TODO should depth be unique per biome? Per zone even, perhaps?
+            if(biome != Biome.DESERT) {
+                earth.add(Arrays.asList(height * 0.9, "ground/earth-deepest"));
+            }
+            
             earth.add(Arrays.asList(height * 0.7, "ground/earth-deeper"));
             earth.add(Arrays.asList(height * 0.45, "ground/earth-deep"));
             depth.put("ground/earth", earth);
