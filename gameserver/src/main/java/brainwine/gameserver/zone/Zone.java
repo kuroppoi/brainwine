@@ -126,9 +126,6 @@ public class Zone {
                 }
             }
         }
-        
-        lastTick = now;
-        ticks++;
     }
     
     public void saveModifiedChunks() {
