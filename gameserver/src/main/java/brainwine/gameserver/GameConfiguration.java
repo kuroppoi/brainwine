@@ -135,16 +135,7 @@ public class GameConfiguration {
                 case "liquid":
                     config.put("layer", category);
                     break;
-                case "ground":
-                case "building":
-                case "furniture":
-                case "lighting":
-                case "industrial":
-                case "vegetation":
-                case "mechanical":
-                case "rubble":
-                case "containers":
-                case "arctic":
+                default: // Big brain or big stupid?
                     config.put("layer", "front");
                     break;
                 }
