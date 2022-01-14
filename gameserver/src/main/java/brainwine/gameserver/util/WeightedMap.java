@@ -38,7 +38,7 @@ public class WeightedMap<T> {
     }
     
     public WeightedMap<T> addEntry(T entry, int weight) {
-        if(weight > 0) {
+        if(weight > 0 && entry != null) {
             map.put(entry, weight);
             totalWeight += weight;
         }
