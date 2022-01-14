@@ -1,10 +1,4 @@
 {
-  "dungeon": false,
-  "ruin": false,
-  "loot": false,
-  "decay": false,
-  "mirrorable": false,
-  "replace": {},
-  "corresponding_replace": {},
-  "metadata": {}
+  "decay": true,
+  "mirrorable": true
 }
