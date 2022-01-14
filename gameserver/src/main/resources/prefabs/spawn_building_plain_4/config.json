@@ -1,6 +1,7 @@
 {
   "decay": true,
   "mirrorable": true,
+  "ruin": true,
   "replace": {
   	"building/fence-iron-2": [
 	  "building/fence-iron-1",

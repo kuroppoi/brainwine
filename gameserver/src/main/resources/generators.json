@@ -38,10 +38,10 @@
 	  "dungeon_small_4"
 	],
 	"spawn_towers": [
-	  "plain_spawn_tower_1",
-	  "plain_spawn_tower_2",
-	  "plain_spawn_tower_3",
-	  "plain_spawn_tower_4"
+	  "spawn_building_plain_1",
+	  "spawn_building_plain_2",
+	  "spawn_building_plain_3",
+	  "spawn_building_plain_4"
 	],
 	"base_resources": {
 	  "clay": {
@@ -247,6 +247,10 @@
 	  "dungeon_small_3",
 	  "dungeon_small_4"
 	],
+	"spawn_towers": [
+	  "spawn_building_arctic_1",
+	  "spawn_building_arctic_2"
+	],
 	"dungeon_chance": 0.333,
 	"base_resources": {
 	  "clay": {
@@ -435,6 +439,9 @@
 	  "dungeon_small_3",
 	  "dungeon_small_4"
 	],
+	"spawn_towers": [
+	  "spawn_building_hell_1"
+	],
 	"dungeon_chance": 0.375,
 	"base_resources": {
 	   "clay": {
@@ -585,6 +592,9 @@
 	  "dungeon_small_3",
 	  "dungeon_small_4"
 	],
+	"spawn_towers": [
+	  "spawn_building_brain_1"
+	],
 	"dungeon_chance": 0.4,
 	"base_resources": {
 	  "rocks": {
@@ -726,6 +736,10 @@
 	  "dungeon_small_2",
 	  "dungeon_small_3",
 	  "dungeon_small_4"
+	],
+	"spawn_towers": [
+	  "spawn_building_desert_1",
+	  "spawn_building_desert_2"
 	],
 	"dungeon_chance": 0.333,
 	"base_resources": {
@@ -890,6 +904,9 @@
 	  "dungeon_small_3",
 	  "dungeon_small_4"
 	],
+	"spawn_towers": [
+	  "spawn_building_deep_1"
+	],
 	"dungeon_region": [81, 85],
 	"dungeon_chance": 0.4,
 	"base_resources": {
@@ -1034,6 +1051,9 @@
 	  "dungeon_small_2",
 	  "dungeon_small_3",
 	  "dungeon_small_4"
+	],
+	"spawn_towers": [
+	  "spawn_building_space_1"
 	],
 	"dungeon_region": [81, 81],
 	"dungeon_chance": 0.333,

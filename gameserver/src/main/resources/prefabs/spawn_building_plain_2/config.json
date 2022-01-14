@@ -1,6 +1,7 @@
 {
   "decay": true,
   "mirrorable": true,
+  "ruin": true,
   "replace": {
     "building/brick-tan": [
 	  "building/brick",
