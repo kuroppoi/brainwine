@@ -193,7 +193,7 @@ public class Player extends Entity implements CommandExecutor {
      */
     public void onZoneChanged() {
         // TODO handle spawns better
-        MetaBlock spawn = zone.getRandomZoneTeleporter();
+        MetaBlock spawn = zone.getRandomSpawnBlock();
         
         if(spawn == null) {
             x = zone.getWidth() / 2;

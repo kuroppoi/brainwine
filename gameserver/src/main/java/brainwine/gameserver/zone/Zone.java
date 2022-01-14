@@ -614,9 +614,9 @@ public class Zone {
         return metaBlocks;
     }
     
-    public MetaBlock getRandomZoneTeleporter() {
-        List<MetaBlock> zoneTeleporters = getMetaBlocksWithUse(ItemUseType.ZONE_TELEPORT);
-        return zoneTeleporters.isEmpty() ? null : zoneTeleporters.get((int)(Math.random() * zoneTeleporters.size()));
+    public MetaBlock getRandomSpawnBlock() {
+        List<MetaBlock> spawnBlocks = getMetaBlocksWhere(block -> block.getItem().getId() == 891 || block.getItem().getId() == 934);
+        return spawnBlocks.isEmpty() ? null : spawnBlocks.get((int)(Math.random() * spawnBlocks.size()));
     }
     
     public Collection<MetaBlock> getMetaBlocks() {
