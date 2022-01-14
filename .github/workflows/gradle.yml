@@ -2,8 +2,20 @@ name: build
 on:
   push:
     branches: [ master ]
+    paths:
+      - api/**
+      - gameserver/**
+      - shared/**
+      - src/**
+      - build.gradle
   pull_request:
     branches: [ master ]
+    paths:
+      - api/**
+      - gameserver/**
+      - shared/**
+      - src/**
+      - build.gradle
 jobs:
   build:
     runs-on: ubuntu-latest
