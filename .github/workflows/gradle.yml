@@ -1,4 +1,4 @@
-name: Java CI with Gradle
+name: build
 on:
   push:
     branches: [ master ]
@@ -14,5 +14,7 @@ jobs:
       with:
         java-version: '8'
         distribution: 'adopt'
+    - name: Make gradlew executable
+      run: chmod +x ./gradlew
     - name: Build with Gradle
       run: ./gradlew build
