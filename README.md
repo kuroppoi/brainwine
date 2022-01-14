@@ -1,4 +1,5 @@
 # Brainwine
+[![build](https://github.com/kuroppoi/brainwine/actions/workflows/gradle.yml/badge.svg)](https://github.com/kuroppoi/brainwine/actions)
 
 Brainwine is a Deepworld private server written in Java, made with user-friendliness and portability in mind.
 Due to the time it will take for this project to be complete (and my inconsistent working on it), brainwine has been prematurely open-sourced
@@ -23,8 +24,7 @@ You may download an installation package for your desired platform [here.](https
 
 To set up the server, clone or download this repository and run `gradlew build`.\
 After the build process has finished, a distribution archive should have generated in `build/distributions`.\
-To start the server, simply extract this archive wherever you want and run the startup script for your OS.\
-If for whatever reason you can not create a build yourself, you may download one [here.](https://github.com/kuroppoi/brainwine/releases)
+To start the server, simply extract this archive wherever you want and run the startup script for your OS.
 
 #### Configurations
 
