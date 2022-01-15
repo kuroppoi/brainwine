@@ -14,7 +14,7 @@ Brainwine is currently compatible with the latest Steam and iOS versions of Deep
 
 Before you can connect to a server, a few modifications need to be made to the Deepworld game client.\
 The exact process of this differs per platform.\
-You may download an installation package for your desired platform [here.](https://github.com/kuroppoi/brainwine/releases)
+You may download an installation package for your desired platform [here.](https://github.com/kuroppoi/brainwine/releases/tag/patching-kits-1.0)
 
 ### Setting up the server
 
@@ -24,7 +24,8 @@ You may download an installation package for your desired platform [here.](https
 
 To set up the server, clone or download this repository and run `gradlew build`.\
 After the build process has finished, a distribution archive should have generated in `build/distributions`.\
-To start the server, simply extract this archive wherever you want and run the startup script for your OS.
+To start the server, simply extract this archive wherever you want and run the startup script for your OS.\
+Alternatively, you may download pre-built binaries [here.](https://github.com/kuroppoi/brainwine/releases/latest)
 
 #### Configurations
 
