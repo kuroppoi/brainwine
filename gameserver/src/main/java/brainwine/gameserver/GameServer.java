@@ -27,7 +27,8 @@ public class GameServer {
     private final ZoneManager zoneManager;
     private final PlayerManager playerManager;
     private final Server server;
-    private long lastSave = System.currentTimeMillis();
+    private long lastTick = System.currentTimeMillis();
+    private long lastSave = lastTick;
     private boolean shutdownRequested;
     
     public GameServer() {
@@ -56,6 +57,10 @@ public class GameServer {
     }
     
     public void tick() {
+        long now = System.currentTimeMillis();
+        float deltaTime = (now - lastTick) / 1000.0F; // in seconds
+        lastTick = now;
+        
         while(!tasks.isEmpty()) {
             tasks.poll().run();
         }
@@ -66,7 +71,7 @@ public class GameServer {
             lastSave = System.currentTimeMillis();
         }
         
-        zoneManager.tick();
+        zoneManager.tick(deltaTime);
         playerManager.tick();
     }
     

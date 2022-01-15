@@ -62,14 +62,12 @@ public class Zone {
     private int[] surface;
     private int[] sunlight;
     private boolean[] chunksExplored;
-    private float time = 5000;
+    private float time = (float)Math.random(); // TODO temporary
     private float temperature = 0;
-    private float wind = 0;
-    private float cloudiness = 5000;
-    private float precipitation = 0;
     private float acidity = 0;
     private final ChunkManager chunkManager;
-    private final Queue<DugBlock> digQueue = new ArrayDeque<>(); // TODO should be saved
+    private final WeatherManager weatherManager = new WeatherManager();
+    private final Queue<DugBlock> digQueue = new ArrayDeque<>();
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<Integer, Entity> entities = new HashMap<>();
     private final List<Player> players = new ArrayList<>();
@@ -78,6 +76,7 @@ public class Zone {
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
+    private long lastStatusUpdate = System.currentTimeMillis();
     
     protected Zone(String documentId, ZoneConfig config, ZoneData data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
@@ -107,15 +106,32 @@ public class Zone {
         return GameServer.getInstance().getZoneManager().getZone(id);
     }
     
-    public void tick() {
+    public void tick(float deltaTime) {
+        long now = System.currentTimeMillis();
+        weatherManager.tick(deltaTime);
+        
         for(Entity entity : getEntities()) {
             entity.tick();
+        }
+        
+        // One full cycle = 1200 seconds = 20 minutes
+        time += deltaTime * (1.0F / 1200.0F);
+        
+        if(time >= 1.0F) {
+            time -= 1.0F;
+        }
+                
+        if(!players.isEmpty()) {
+            if(now >= lastStatusUpdate + 4000) {
+                sendMessage(new ZoneStatusMessage(getStatusConfig()));
+                lastStatusUpdate = now;
+            }
         }
         
         if(!digQueue.isEmpty()) {
             DugBlock dugBlock = digQueue.peek();
             
-            if(System.currentTimeMillis() >= dugBlock.getTime()) {
+            if(now >= dugBlock.getTime()) {
                 digQueue.poll();
                 int x = dugBlock.getX();
                 int y = dugBlock.getY();
@@ -928,7 +944,14 @@ public class Zone {
      */
     public Map<String, Object> getStatusConfig() {
         Map<String, Object> config = new HashMap<>();
-        config.put("w", new float[]{time, temperature, wind, cloudiness, precipitation, acidity});
+        config.put("w", new int[] {
+                (int)(time * 10000), 
+                (int)(temperature * 10000), 
+                (int)(weatherManager.getWind() * 10000), 
+                (int)(weatherManager.getCloudiness() * 10000), 
+                (int)(weatherManager.getPrecipitation() * 10000), 
+                (int)(acidity * 10000)
+        });
         return config;
     }
     

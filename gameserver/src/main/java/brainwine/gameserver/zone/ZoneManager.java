@@ -58,9 +58,9 @@ public class ZoneManager {
         asyncGenerator.start();
     }
     
-    public void tick() {
+    public void tick(float deltaTime) {
         for(Zone zone : getZones()) {
-            zone.tick();
+            zone.tick(deltaTime);
         }
     }
     
