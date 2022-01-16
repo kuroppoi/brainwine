@@ -14,6 +14,8 @@ public enum ItemUseType {
     FIELDABLE,
     FLY,
     MULTI,
+    PROTECTED,
+    PUBLIC,
     SWITCH,
     SWITCHED,
     TELEPORT,

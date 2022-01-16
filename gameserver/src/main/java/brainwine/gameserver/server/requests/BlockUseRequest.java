@@ -48,6 +48,26 @@ public class BlockUseRequest extends PlayerRequest {
         Item item = block.getItem(layer);
         int mod = block.getMod(layer);
         
+        if(metaBlock != null && item.hasUse(ItemUseType.PROTECTED)) {
+            Player owner = GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner());
+            
+            if(player != owner) {
+                if(item.hasUse(ItemUseType.PUBLIC)) {
+                    String publicUse = item.getUse(ItemUseType.PUBLIC).toString();
+                    
+                    switch(publicUse) {
+                        case "owner":
+                            player.alert(String.format("This %s is owned by %s.", 
+                                    item.getTitle().toLowerCase(), owner == null ? "nobody.." : owner.getName()));
+                            break;
+                    }
+                } else {
+                    player.alert("Sorry, that belongs to somebody else.");
+                    return;
+                }
+            }
+        }
+        
         for(Entry<ItemUseType, Object> entry : item.getUses().entrySet()) {
             ItemUseType use = entry.getKey();
             Object value = entry.getValue();
@@ -55,7 +75,7 @@ public class BlockUseRequest extends PlayerRequest {
             switch(use) {
             case DIALOG:
             case CREATE_DIALOG:
-                if(metaBlock != null && player.getDocumentId().equals(metaBlock.getOwner()) && data != null && value instanceof Map) {
+                if(data != null && value instanceof Map) {
                     Map<String, Object> config = (Map<String, Object>)value;
                     String target = MapHelper.getString(config, "target", "none");
                     

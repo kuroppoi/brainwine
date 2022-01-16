@@ -180,7 +180,11 @@ public class PlayerManager {
     public Player getPlayer(String name) {
         return playersByName.get(name.toLowerCase());
     }
-        
+    
+    public Player getPlayerById(String id) {
+        return playersById.get(id);
+    }
+    
     public Player getPlayer(Connection connection) {
         return playersByConnection.get(connection);
     }
