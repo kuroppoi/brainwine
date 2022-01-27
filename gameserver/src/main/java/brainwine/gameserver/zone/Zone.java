@@ -954,17 +954,4 @@ public class Zone {
         });
         return config;
     }
-    
-    /**
-     * @return A {@link Map} containing all the portal-related data.
-     */
-    public Map<String, Object> getPortalConfig() {
-        Map<String, Object> config = new HashMap<>();
-        config.put("name", name);
-        config.put("biome", biome);
-        config.put("players", players.size());
-        config.put("explored", getExplorationProgress());
-        config.put("gen_date", "2021-02-15"); // format = yyyy-mm-dd
-        return config;
-    }
 }
