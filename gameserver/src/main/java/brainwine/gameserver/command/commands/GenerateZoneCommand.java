@@ -19,7 +19,7 @@ public class GenerateZoneCommand extends Command {
     public void execute(CommandExecutor executor, String[] args) {
         Biome biome = Biome.getRandomBiome();
         int width = 2000;
-        int height = 800;
+        int height = 600;
         int seed = (int)(Math.random() * Integer.MAX_VALUE);
         
         if(args.length > 0 && args.length < 2) {

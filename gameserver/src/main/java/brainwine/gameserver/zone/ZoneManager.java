@@ -46,7 +46,7 @@ public class ZoneManager {
         
         if(zones.isEmpty()) {
             logger.info("No zones were loaded. Generating default zone ...");
-            Zone zone = StaticZoneGenerator.generateZone(Biome.PLAIN, 2000, 800);
+            Zone zone = StaticZoneGenerator.generateZone(Biome.PLAIN, 2000, 600);
             saveZone(zone);
             putZone(zone);
         } else {

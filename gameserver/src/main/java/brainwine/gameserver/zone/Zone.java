@@ -924,8 +924,8 @@ public class Zone {
                 earth.add(Arrays.asList(height * 0.9, "ground/earth-deepest"));
             }
             
-            earth.add(Arrays.asList(height * 0.7, "ground/earth-deeper"));
-            earth.add(Arrays.asList(height * 0.45, "ground/earth-deep"));
+            earth.add(Arrays.asList(height * 0.75, "ground/earth-deeper"));
+            earth.add(Arrays.asList(height * 0.6, "ground/earth-deep"));
             depth.put("ground/earth", earth);
         } else {
             String key = biome == Biome.PLAIN ? "temperate" : biome.getId();

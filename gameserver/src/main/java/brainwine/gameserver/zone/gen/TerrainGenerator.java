@@ -22,7 +22,7 @@ public class TerrainGenerator implements GeneratorTask {
         
         if(surface) {
             PerlinNoise noise = new PerlinNoise(ctx.getSeed());
-            int surfaceLevel = height < 800 ? height / 4 : 200;
+            int surfaceLevel = height < 600 ? height / 3 : 200;
             double amplitude = ctx.nextDouble() * 40 + (80 - 40);
             
             for(int x = 0; x < width; x++) {
