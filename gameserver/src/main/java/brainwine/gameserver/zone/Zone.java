@@ -397,8 +397,8 @@ public class Zone {
                     updateBlock(x + i + offset, y + j, Layer.FRONT, frontItem, frontMod, null, metadata);
                 }
                 
-                // Update liquid item if it isn't empty
-                if(!liquidItem.isAir()) {
+                // Update liquid item if any block isn't empty
+                if(!liquidItem.isAir() || !baseItem.isAir() || !backItem.isAir() || !frontItem.isAir()) {
                     updateBlock(x + i, y + j, Layer.LIQUID, liquidItem, liquidMod);
                 }
             }
