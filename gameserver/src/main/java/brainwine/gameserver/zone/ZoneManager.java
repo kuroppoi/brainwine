@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import org.apache.logging.log4j.LogManager;
@@ -21,19 +20,17 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.util.ZipUtils;
-import brainwine.gameserver.zone.gen.AsyncZoneGenerator;
-import brainwine.gameserver.zone.gen.StaticZoneGenerator;
+import brainwine.gameserver.zone.gen.ZoneGenerator;
 import brainwine.shared.JsonHelper;
 
 public class ZoneManager {
     
     private static final Logger logger = LogManager.getLogger();
-    private final AsyncZoneGenerator asyncGenerator = new AsyncZoneGenerator(this);
     private final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
-    
+        
     public ZoneManager() {
         logger.info("Loading zone data ...");
         dataDir.mkdirs();
@@ -46,16 +43,18 @@ public class ZoneManager {
         
         if(zones.isEmpty()) {
             logger.info("No zones were loaded. Generating default zone ...");
-            Zone zone = StaticZoneGenerator.generateZone(Biome.PLAIN, 2000, 600);
-            saveZone(zone);
-            putZone(zone);
+            ZoneGenerator generator = ZoneGenerator.getZoneGenerator(Biome.PLAIN);
+            
+            if(generator == null) {
+                logger.warn("No generator for plain biomes was found! The default generator will be used.");
+                generator = ZoneGenerator.getDefaultZoneGenerator();
+            }
+            
+            Zone zone = generator.generateZone(Biome.PLAIN, 2000, 600);
+            addZone(zone);
         } else {
             logger.info("Successfully loaded {} zone(s)", zonesByName.size());
         }
-        
-        logger.info("Starting zone generator thread ...");
-        asyncGenerator.setDaemon(true);
-        asyncGenerator.start();
     }
     
     public void tick(float deltaTime) {
@@ -108,7 +107,7 @@ public class ZoneManager {
             ZoneConfig config = JsonHelper.readValue(new File(file, "config.json"), ZoneConfig.class);
             Zone zone = new Zone(id, config, data);
             zone.setMetaBlocks(JsonHelper.readList(new File(file, "metablocks.json"), MetaBlock.class));
-            putZone(zone);
+            addZone(zone);
         } catch (Exception e) {
             logger.error("Zone load failure. id: {}", id, e);
         }
@@ -136,7 +135,7 @@ public class ZoneManager {
         }
     }
     
-    private void putZone(Zone zone) {
+    public void addZone(Zone zone) {
         String id = zone.getDocumentId();
         String name = zone.getName();
         
@@ -147,16 +146,6 @@ public class ZoneManager {
         
         zones.put(id, zone);
         zonesByName.put(name.toLowerCase(), zone);
-    }
-    
-    public void generateZoneAsync(Biome biome, int width, int height, int seed, Consumer<Zone> callback) {
-        asyncGenerator.generateZone(biome, width, height, seed, zone -> {
-            if(zone != null) {
-                putZone(zone);
-            }
-            
-            callback.accept(zone);
-        });
     }
     
     public Zone getZone(String id) {

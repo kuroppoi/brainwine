@@ -13,7 +13,7 @@ import brainwine.gameserver.prefab.PrefabManager;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.server.Server;
 import brainwine.gameserver.zone.ZoneManager;
-import brainwine.gameserver.zone.gen.StaticZoneGenerator;
+import brainwine.gameserver.zone.gen.ZoneGenerator;
 
 public class GameServer {
     
@@ -40,7 +40,7 @@ public class GameServer {
         GameConfiguration.init();
         lootManager = new LootManager();
         prefabManager = new PrefabManager();
-        StaticZoneGenerator.init();
+        ZoneGenerator.init();
         zoneManager = new ZoneManager();
         playerManager = new PlayerManager();
         NetworkRegistry.init();

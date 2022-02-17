@@ -1,0 +1,227 @@
+{
+  "surface_fillers": [
+    "rubble/stone-pile-1",
+    "rubble/stone-pile-2",
+    "rubble/stone-pile-3",
+    "rubble/stone-pile-4",
+    "rubble/stone-pile-5",
+    "rubble/stone-pile-6",
+    "rubble/stone-pile-7",
+    "rubble/stone-pile-8",
+    "rubble/scrap-metal-1",
+    "rubble/scrap-metal-2",
+    "rubble/scrap-metal-3",
+    "rubble/scrap-metal-4",
+    "rubble/scrap-metal-5",
+    "rubble/scrap-metal-6",
+    "rubble/scrap-metal-7",
+    "rubble/scrap-metal-8",
+    "rubble/scrap-metal-9",
+    "rubble/scrap-metal-10"
+  ],
+  "speleothems": [
+    "ground/stalagmite-1",
+    "ground/stalagmite-2",
+    "ground/stalagmite-3",
+    "ground/stalagmite-4",
+    "ground/stalagmite-5"
+  ],
+  "unique_structures": [
+    "paint_bunker",
+    "head_bunker"
+  ],
+  "dungeons": [
+    "dungeon_large_1",
+    "dungeon_large_2",
+    "dungeon_medium_1",
+    "dungeon_medium_2",
+    "dungeon_medium_3",
+    "dungeon_medium_4",
+    "dungeon_medium_5",
+    "dungeon_medium_6",
+    "dungeon_medium_7",
+    "dungeon_medium_8",
+    "dungeon_medium_9",
+    "dungeon_medium_10",
+    "dungeon_small_1",
+    "dungeon_small_2",
+    "dungeon_small_3",
+    "dungeon_small_4"
+  ],
+  "spawn_towers": [
+    "spawn_building_hell_1",
+    "spawn_building_hell_2",
+    "spawn_building_hell_3",
+    "spawn_building_hell_4"
+  ],
+  "dungeon_chance": 0.375,
+  "base_resources": {
+    "clay": {
+      "per": 1500
+    },
+    "rocks": {
+      "per": 180
+    }
+  },
+  "ore_deposits": {
+    "ground/iron": {
+      "per": 3100,
+      "min_size": 5,
+      "max_size": 9,
+      "min_depth": 0.35
+    },
+    "ground/lead": {
+      "per": 2600,
+      "min_size": 4,
+      "max_size": 9,
+      "min_depth": 0.2
+    },
+    "ground/sulfur": {
+      "per": 2500,
+      "min_size": 8,
+      "max_size": 12,
+      "min_depth": 0.2
+    },
+    "ground/bloodstone": {
+      "per": 5200,
+      "min_size": 5,
+      "max_size": 10,
+      "min_depth": 0.7
+    }
+  },
+  "cave_types": {
+    "empty": {
+	  "min_size": 150,
+	  "min_depth": 0.25,
+	  "frequency": 9
+	},
+	"mushroom_grove": {
+	  "max_size": 80,
+	  "min_depth": 0.5,
+	  "max_depth": 0.9,
+	  "frequency": 3,
+	  "decorators": [
+	    {
+		  "type": "mushroom",
+		  "mushroom": "hell"
+		}
+	  ]
+	},
+	"magma": {
+	  "max_size": 300,
+	  "frequency": 9,
+	  "decorators": [
+        {
+          "type": "fill",
+          "item": "liquid/magma",
+          "liquid": true
+        },
+        {
+          "type": "floor",
+          "item_spawn_chance": 0.05,
+          "items": {
+            "vegetation/mushroom-lava": 16,
+            "vegetation/mushroom-lava-elder": 1
+          }
+        }
+	  ]
+	},
+	"crystal": {
+      "min_size": 30,
+      "max_size": 100,
+      "min_depth": 0.4,
+      "max_depth": 0.7,
+      "frequency": 2,
+      "decorators": [
+        {
+          "type": "floor",
+          "item_spawn_chance": 0.07,
+          "items": {
+            "ground/crystal-blue-1": 16,
+            "ground/crystal-blue-3": 16,
+            "ground/crystal-blue-2": 4,
+            "ground/crystal-blue-4": 1
+          }
+        }
+      ]
+    },
+    "rare_crystal": {
+      "min_size": 30,
+      "max_size": 80,
+      "min_depth": 0.5,
+      "max_depth": 0.9,
+      "frequency": 1,
+      "decorators": [
+        {
+          "type": "floor",
+          "single_type": true,
+          "item_spawn_chance": 0.07,
+          "items": {
+            "ground/crystal-rainbow": 1,
+			"ground/crystal-red-large": 5,
+            "ground/onyx": 8,
+            "ground/crystal-red-1": 50,
+            "ground/crystal-purple-1": 45
+          }
+        }
+      ]
+    },
+    "ruins": {
+      "max_size": 170,
+      "min_depth": 0.2,
+      "max_depth": 0.7,
+      "frequency": 10,
+      "decorators": [
+        {
+          "type": "structure",
+          "prefabs": {}
+        }
+      ]
+    },
+	"hatchery": {
+      "max_size": 300,
+      "frequency": 2,
+	  "decorators": [
+	    {
+		  "type": "floor",
+		  "item_spawn_chance": 0.175,
+		  "items": ["ground/terrapus-egg"],
+		  "mods": {
+		    "ground/terrapus-egg": {
+			  "0": 1,
+			  "1": 4
+			}
+		  }
+		}
+	  ]
+    },
+	"graveyard": {
+      "min_size": 15,
+      "max_size": 75,
+      "min_depth": 0.1,
+      "max_depth": 0.4,
+      "frequency": 20,
+      "decorators": [
+        {
+          "type": "floor",
+          "item_spawn_chance": 0.175,
+          "items": {
+            "rubble/hell-gravestone": 4,
+            "rubble/bone-pile": 1
+          }
+        }
+      ]
+    },
+	"salt": {
+      "min_depth": 0.2,
+      "frequency": 3,
+      "decorators": [
+        {
+          "type": "floor",
+          "item_spawn_chance": 0.175,
+          "items": ["ground/fire-salt-crystal"]
+        }
+      ]
+    }
+  }
+}

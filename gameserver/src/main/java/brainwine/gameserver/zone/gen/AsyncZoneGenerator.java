@@ -11,18 +11,15 @@ import brainwine.gameserver.GameServer;
 import brainwine.gameserver.TickLoop;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
-import brainwine.gameserver.zone.ZoneManager;
 
 public class AsyncZoneGenerator extends Thread {
     
     private static final Logger logger = LogManager.getLogger();
     private final Queue<AsyncZoneGeneratorTask> tasks = new ConcurrentLinkedQueue<>();
-    private final ZoneManager zoneManager;
     private boolean running;
     
-    public AsyncZoneGenerator(ZoneManager zoneManager) {
-        super("zone-generator");
-        this.zoneManager = zoneManager;
+    public AsyncZoneGenerator() {
+        super("zonegen");
     }
     
     @Override
@@ -30,6 +27,7 @@ public class AsyncZoneGenerator extends Thread {
         TickLoop loop = new TickLoop(1, () -> {
             while(!tasks.isEmpty()) {
                 AsyncZoneGeneratorTask task = tasks.poll();
+                ZoneGenerator generator = task.getGenerator();
                 Biome biome = task.getBiome();
                 int width = task.getWidth();
                 int height = task.getHeight();
@@ -37,10 +35,9 @@ public class AsyncZoneGenerator extends Thread {
                 Zone zone = null;
                 
                 try {
-                    zone = StaticZoneGenerator.generateZone(biome, width, height, seed);
-                    zoneManager.saveZone(zone);
+                    zone = generator.generateZone(biome, width, height, seed);
                 } catch(Exception e) {
-                    logger.error("An unexpected error occured while generating zone [biome:{}, width:{}, height:{}, seed:{}]", biome, width, height, seed, e);
+                    logger.error("An unexpected error occured while generating zone [biome:{}, width:{}, height:{}, seed:{}]", biome, width, height, generator, seed, e);
                 }
                 
                 Zone generated = zone;
@@ -59,7 +56,11 @@ public class AsyncZoneGenerator extends Thread {
         }
     }
     
-    public void generateZone(Biome biome, int width, int height, int seed, Consumer<Zone> callback) {
-        tasks.add(new AsyncZoneGeneratorTask(biome, width, height, seed, callback));
+    public void addTask(AsyncZoneGeneratorTask task) {
+        tasks.add(task);
+    }
+    
+    public void addTask(ZoneGenerator generator, Biome biome, int width, int height, int seed, Consumer<Zone> callback) {
+        addTask(new AsyncZoneGeneratorTask(generator, biome, width, height, seed, callback));
     }
 }

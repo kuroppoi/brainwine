@@ -1,25 +1,22 @@
 package brainwine.gameserver.prefab;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.msgpack.core.MessagePack;
 import org.msgpack.core.MessageUnpacker;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import brainwine.gameserver.serialization.BlockDeserializer;
 import brainwine.gameserver.serialization.BlockSerializer;
+import brainwine.gameserver.util.ResourceUtils;
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.gameserver.zone.Block;
 import brainwine.shared.JsonHelper;
@@ -36,30 +33,13 @@ public class PrefabManager {
     
     public PrefabManager() {
         logger.info("Loading prefabs ...");
+        ResourceUtils.copyDefaults("prefabs");
         
-        if(!dataDir.exists()) {
-            logger.info("Copying default prefabs ...");
-            dataDir.mkdirs();
-            Reflections reflections = new Reflections("prefabs", new ResourcesScanner());
-            Set<String> fileNames = reflections.getResources(x -> true);
-            
-            for(String fileName : fileNames) {
-                File outputFile = new File(fileName);
-                outputFile.getParentFile().mkdirs();
-                
-                try {
-                    Files.copy(PrefabManager.class.getResourceAsStream(String.format("/%s", fileName)), outputFile.toPath());
-                } catch (IOException e) {
-                    logger.error("Could not copy default prefabs", e);
+        if(dataDir.isDirectory()) {
+            for(File file : dataDir.listFiles()) {
+                if(file.isDirectory()) {
+                    loadPrefab(file);
                 }
-            }
-        }
-        
-        File[] files = dataDir.listFiles();
-        
-        for(File file : files) {
-            if(file.isDirectory()) {
-                loadPrefab(file);
             }
         }
         

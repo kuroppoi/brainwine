@@ -2,30 +2,73 @@ package brainwine.gameserver.zone.gen;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.WeightedMap;
+import brainwine.gameserver.zone.gen.caves.Cave;
+import brainwine.gameserver.zone.gen.caves.CaveType;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
-import brainwine.gameserver.zone.gen.models.Cave;
 import brainwine.gameserver.zone.gen.models.StoneVariant;
 
 public class CaveGenerator implements GeneratorTask {
     
     private final WeightedMap<StoneVariant> stoneVariants;
-    private final List<CaveDecorator> decorators;
+    private final Collection<CaveType> caveTypes;
     
     public CaveGenerator(GeneratorConfig config) {
         stoneVariants = config.getStoneVariants();
-        decorators = config.getCaveDecorators();
+        caveTypes = config.getCaveTypes();
     }
     
     @Override
     public void generate(GeneratorContext ctx) {
-        boolean[][] cells = generateCells(ctx, 0.4625, 9);
-        List<Cave> caves = indexCaves(ctx, cells);
+        int width = ctx.getWidth();
+        int height = ctx.getHeight();
+        boolean[][] cells = new boolean[width][height];
+        List<Cave> caves = new ArrayList<>();
+        
+        // Multiple layers to increase cave density.
+        // I'm not sure if there are better ways to do this, but eh whatever.
+        for(int i = 0; i < 10; i++) {
+            boolean[][] currentCells = generateCells(ctx, 0.4625, 5);
+            List<Cave> currentCaves = indexCaves(ctx, currentCells);
+            
+            // Remove caves that overlap with existing ones
+            for(Cave cave : currentCaves) {
+                boolean overlaps = false;
+                
+                if(!caves.isEmpty()) {
+                    for(BlockPosition block : cave.getBlocks()) {
+                        int x = block.getX();
+                        int y = block.getY();
+                        
+                        for(int j = x - 3; j < x + 3; j++) {
+                            for(int k = y - 3; k < y + 3; k++) {
+                                if(ctx.inBounds(j, k) && cells[j][k]) {
+                                    overlaps = true;
+                                }
+                            }
+                        }
+                        
+                        if(overlaps) {
+                            break;
+                        }
+                    }
+                }
+                
+                if(!overlaps) {
+                    caves.add(cave);
+                    
+                    for(BlockPosition block : cave.getBlocks()) {
+                        cells[block.getX()][block.getY()] = true;
+                    }
+                }
+            }
+        }
         
         for(Cave cave : caves) {
             ctx.addCave(cave);
@@ -63,26 +106,34 @@ public class CaveGenerator implements GeneratorTask {
         }
     }
     
-    private boolean[][] generateCells(GeneratorContext ctx, double cellRate, int smoothCount) {
+    public boolean[][] generateCells(GeneratorContext ctx, double cellRate, int smoothCount) {
         int width = ctx.getWidth();
         int height = ctx.getHeight();
         boolean[][] cells = new boolean[width][height];
+        boolean[][] result = new boolean[width][height];
         
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
-                if(ctx.isUnderground(x, y) && ctx.nextDouble() <= cellRate) {
+                if((y >= ctx.getZone().getSurface()[x] + ctx.nextInt(3)) && ctx.nextDouble() <= cellRate) {
                     cells[x][y] = true;
                 }
             }
         }
         
-        for(int i = 0; i < smoothCount; i++) {
+        for(int i = 0; i < smoothCount; i++) {            
             for(int x = 0; x < width; x++) {
                 for(int y = 0; y < height; y++) {
-                    int count = getAdjacentCells(ctx, cells, x, y);
-                    cells[x][y] = count > 4 ? true : count < 4 ? false : cells[x][y];
+                    int neighbours = getAdjacentCells(ctx, cells, x, y);
+                    
+                    if(neighbours > 4) {
+                        result[x][y] = true;
+                    } else if(neighbours < 4) {
+                        result[x][y] = false;
+                    }
                 }
             }
+            
+            cells = result;
         }
         
         return cells;
@@ -137,23 +188,30 @@ public class CaveGenerator implements GeneratorTask {
             int bY = caveBlock.getY();
             
             for(int i = bX - 1; i <= bX + 1; i++) {
-                for(int j = bY - 1; j <= bY + 1; j++) {
-                    if(ctx.inBounds(i, j) && !indexed[i][j] && cells[i][j]) {
-                        BlockPosition newBlock = new BlockPosition(i, j);
-                        blocks.add(newBlock);
-                        queue.add(newBlock);
-                        indexed[i][j] = true;
-                    }
+                if(ctx.inBounds(i, bY) && !indexed[i][bY] && cells[i][bY]) {
+                    BlockPosition newBlock = new BlockPosition(i, bY);
+                    blocks.add(newBlock);
+                    queue.add(newBlock);
+                    indexed[i][bY] = true;
+                }
+            }
+            
+            for(int j = bY - 1; j <= bY + 1; j++) {
+                if(ctx.inBounds(bX, j) && !indexed[bX][j] && cells[bX][j]) {
+                    BlockPosition newBlock = new BlockPosition(bX, j);
+                    blocks.add(newBlock);
+                    queue.add(newBlock);
+                    indexed[bX][j] = true;
                 }
             }
         }
         
         int size = blocks.size();
         
-        if(size >= 20) {
+        if(size > 20 && size < 800) {
             int surface = ctx.getZone().getSurface()[x];
             double depth = (double)(y - surface) / (ctx.getHeight() - surface);
-            Cave cave = new Cave(getRandomEligibleDecorator(ctx, size, depth), stoneVariants.next(ctx.getRandom(), StoneVariant.DEFAULT));
+            Cave cave = new Cave(getRandomEligibleType(ctx, size, depth), stoneVariants.next(ctx.getRandom(), StoneVariant.DEFAULT));
             cave.addBlock(first);
             
             for(BlockPosition block : blocks) {
@@ -181,12 +239,12 @@ public class CaveGenerator implements GeneratorTask {
         return null;
     }
     
-    private CaveDecorator getRandomEligibleDecorator(GeneratorContext ctx, int size, double depth) {
-        WeightedMap<CaveDecorator> list = new WeightedMap<>();
+    private CaveType getRandomEligibleType(GeneratorContext ctx, int size, double depth) {
+        WeightedMap<CaveType> list = new WeightedMap<>();
         
-        for(CaveDecorator decorator : decorators) {
-            if(size >= decorator.getMinSize() && size <= decorator.getMaxSize() && depth >= decorator.getMinDepth() && depth <= decorator.getMaxDepth()) {
-                list.addEntry(decorator, decorator.getFrequency());
+        for(CaveType type : caveTypes) {
+            if(size >= type.getMinSize() && size <= type.getMaxSize() && depth >= type.getMinDepth() && depth <= type.getMaxDepth()) {
+                list.addEntry(type, type.getFrequency());
             }
         }
         

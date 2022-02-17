@@ -1,12 +1,13 @@
-package brainwine.gameserver.zone.gen;
+package brainwine.gameserver.zone.gen.caves;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import brainwine.gameserver.zone.gen.models.Cave;
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class CaveDecorator {
+public class CaveType {
     
     @JsonProperty("min_size")
     private int minSize = 20;
@@ -23,7 +24,8 @@ public abstract class CaveDecorator {
     @JsonProperty("frequency")
     private int frequency = 1;
     
-    public abstract void decorate(GeneratorContext ctx, Cave cave);
+    @JsonProperty("decorators")
+    private List<CaveDecorator> decorators = new ArrayList<>();
     
     public int getMinSize() {
         return minSize;
@@ -43,5 +45,9 @@ public abstract class CaveDecorator {
     
     public int getFrequency() {
         return frequency;
+    }
+    
+    public List<CaveDecorator> getDecorators() {
+        return decorators;
     }
 }

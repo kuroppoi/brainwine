@@ -12,8 +12,8 @@ import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.gen.caves.Cave;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
-import brainwine.gameserver.zone.gen.models.Cave;
 
 public class GeneratorContext {
     
@@ -27,9 +27,7 @@ public class GeneratorContext {
         this.zone = zone;
         this.seed = seed;
         random = new Random(seed);
-    }
-    
-    public void createChunks() {
+        
         for(int i = 0; i < zone.getChunkCount(); i++) {
             int x = i % zone.getNumChunksWidth() * zone.getChunkWidth();
             int y = i / zone.getNumChunksWidth() * zone.getChunkHeight();

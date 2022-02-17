@@ -7,6 +7,7 @@ import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.gen.ZoneGenerator;
 
 public class GenerateZoneCommand extends Command {
 
@@ -49,19 +50,39 @@ public class GenerateZoneCommand extends Command {
             biome = Biome.fromName(args[2]);
         }
         
+        ZoneGenerator generator = null;
+        
         if(args.length >= 4) {
+            String name = args[3];
+            generator = ZoneGenerator.getZoneGenerator(name);
+            
+            if(generator == null) {
+                executor.notify(String.format("The zone generator '%s' does not exist.", name), ALERT);
+                return;
+            }
+        } else {
+            generator = ZoneGenerator.getZoneGenerator(biome);
+            
+            // If no custom generator was specified, use the default one.
+            if(generator == null){
+                generator = ZoneGenerator.getDefaultZoneGenerator();
+            }
+        }
+        
+        if(args.length >= 5) {
             try {
-                seed = Integer.parseInt(args[3]);
+                seed = Integer.parseInt(args[4]);
             } catch(NumberFormatException e) {
-                seed = args[3].hashCode();
+                seed = args[4].hashCode();
             }
         }
         
         executor.notify("Your zone is being generated. It should be ready soon!", ALERT);
-        GameServer.getInstance().getZoneManager().generateZoneAsync(biome, width, height, seed, zone -> {
+        generator.generateZoneAsync(biome, width, height, seed, zone -> {
             if(zone == null) {
                 executor.notify("An unexpected error occured while generating your zone.", ALERT);
             } else {
+                GameServer.getInstance().getZoneManager().addZone(zone);
                 executor.notify(String.format("Your zone '%s' is ready for exploration!", zone.getName()), ALERT);
             }
         });
@@ -84,7 +105,7 @@ public class GenerateZoneCommand extends Command {
     
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/genzone [<width> <height>] [biome] [seed]";
+        return "/genzone [<width> <height>] [biome] [generator] [seed]";
     }
     
     @Override

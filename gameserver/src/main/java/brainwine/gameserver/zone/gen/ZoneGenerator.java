@@ -1,9 +1,56 @@
 package brainwine.gameserver.zone.gen;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+import java.util.function.Consumer;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.util.ResourceUtils;
+import brainwine.gameserver.zone.Biome;
+import brainwine.gameserver.zone.Zone;
+import brainwine.shared.JsonHelper;
 
 public class ZoneGenerator {
     
+    // TODO Collect more names and create a name generator that's actually proper lmao
+    private static final String[] FIRST_NAMES = {
+        "Malvern", "Tralee", "Horncastle", "Old", "Westwood",
+        "Citta", "Tadley", "Mossley", "West", "East",
+        "North", "South", "Wadpen", "Githam", "Soatnust",
+        "Highworth", "Creakynip", "Upper", "Lower", "Cannock",
+        "Dovercourt", "Limerick", "Pickering", "Glumshed", "Crusthack",
+        "Osyltyr", "Aberstaple", "New", "Stroud", "Crumclum",
+        "Crumsidle", "Bankswund", "Fiddletrast", "Bournpan", "St.",
+        "Funderbost", "Bexwoddly", "Pilkingheld", "Wittlepen", "Rabbitbleaker",
+        "Griffingumby", "Guilthead", "Bigglelund", "Bunnymold", "Rosesidle",
+        "Crushthorn", "Tanlyward", "Ahncrace", "Pilkingking", "Dingstrath",
+        "Axebury", "Ginglingtap", "Ballybibby", "Shadehoven"
+    };
+    
+    private static final String[] LAST_NAMES = {
+        "Falls", "Alloa", "Glen", "Way", "Dolente",
+        "Peak", "Heights", "Creek", "Banffshire", "Chagford",
+        "Gorge", "Valley", "Catacombs", "Depths", "Mines",
+        "Crickbridge", "Guildbost", "Pits", "Vaults", "Ruins",
+        "Dell", "Keep", "Chatterdin", "Scrimmance", "Gitwick",
+        "Ridge", "Alresford", "Place", "Bridge", "Glade",
+        "Mill", "Court", "Dooftory", "Hills", "Specklewint",
+        "Grove", "Aylesbury", "Wagwouth", "Russetcumby", "Point",
+        "Canyon", "Cranwarry", "Bluff", "Passage", "Crantippy",
+        "Kerbodome", "Dale", "Cemetery"
+    };
+    
+    private static final Logger logger = LogManager.getLogger();
+    private static final Map<String, ZoneGenerator> generators = new HashMap<>();
+    private static final ZoneGenerator defaultGenerator = new ZoneGenerator();
+    private static final AsyncZoneGenerator asyncGenerator = new AsyncZoneGenerator();
+    private static boolean initialized;
     private final GeneratorTask terrainGenerator;
     private final GeneratorTask caveGenerator;
     private final GeneratorTask decorGenerator;
@@ -20,17 +67,107 @@ public class ZoneGenerator {
         structureGenerator = new StructureGenerator(config);
     }
     
-    public void generate(GeneratorContext ctx) {
-        int width = ctx.getWidth();
-        int height = ctx.getHeight();
-        ctx.createChunks();
+    public static void init() {
+        if(initialized) {
+            logger.warn("ZoneGenerator is already initialized!");
+            return;
+        }
+        
+        logger.info("Loading zone generator configurations ...");
+        ResourceUtils.copyDefaults("generators");
+        File dataDir = new File("generators");
+        
+        if(dataDir.isDirectory()) {
+            for(File file : dataDir.listFiles()) {
+                try {
+                    String name = ResourceUtils.removeFileSuffix(file.getName()).toLowerCase();
+                    
+                    if(generators.containsKey(name)) {
+                        logger.warn("Duplicate generator config name '{}'", name);
+                        continue;
+                    }
+                    
+                    GeneratorConfig config = JsonHelper.readValue(file, GeneratorConfig.class);
+                    generators.put(name, new ZoneGenerator(config));
+                } catch(Exception e) {
+                    logger.error("Failed to load generator config '{}'", file.getName(), e);
+                }
+            }
+        }
+        
+        logger.info("Starting async zone generator thread ...");
+        asyncGenerator.setDaemon(true);
+        asyncGenerator.start();
+        initialized = true;
+    }
+    
+    public static ZoneGenerator getZoneGenerator(String name) {
+        return generators.get(name.toLowerCase());
+    }
+    
+    public static ZoneGenerator getZoneGenerator(Biome biome) {
+        return getZoneGenerator(biome.toString());
+    }
+    
+    public static ZoneGenerator getDefaultZoneGenerator() {
+        return defaultGenerator;
+    }
+    
+    public Zone generateZone() {
+        return generateZone(Biome.getRandomBiome());
+    }
+    
+    public Zone generateZone(Biome biome) {
+        return generateZone(biome, 2000, 600);
+    }
+    
+    public Zone generateZone(Biome biome, int width, int height) {
+        return generateZone(biome, width, height, getRandomSeed());
+    }
+    
+    public Zone generateZone(Biome biome, int width, int height, int seed) {
+        String firstName = FIRST_NAMES[(int)(Math.random() * FIRST_NAMES.length)];
+        String lastName = LAST_NAMES[(int)(Math.random() * LAST_NAMES.length)];
+        String name = firstName + " " + lastName;
+        Zone zone = new Zone(generateDocumentId(seed), name, biome, width, height);
+        GeneratorContext ctx = new GeneratorContext(zone, seed);
         terrainGenerator.generate(ctx);
         caveGenerator.generate(ctx);
         decorGenerator.generate(ctx);
         structureGenerator.generate(ctx);
         
+        // Bedrock
         for(int x = 0; x < width; x++) {
             ctx.updateBlock(x, height - 1, Layer.FRONT, 666, 0);
         }
+        
+        return zone;
+    }
+    
+    public void generateZoneAsync(Consumer<Zone> callback) {
+        generateZoneAsync(Biome.getRandomBiome(), callback);
+    }
+    
+    public void generateZoneAsync(Biome biome, Consumer<Zone> callback) {
+        generateZoneAsync(biome, 2000, 600, callback);
+    }
+    
+    public void generateZoneAsync(Biome biome, int width, int height, Consumer<Zone> callback) {
+        generateZoneAsync(biome, width, height, getRandomSeed(), callback);
+    }
+    
+    public void generateZoneAsync(Biome biome, int width, int height, int seed, Consumer<Zone> callback) {
+        asyncGenerator.addTask(this, biome, width, height, seed, callback);
+    }
+    
+    private static String generateDocumentId(int seed) {
+        Random random = new Random();
+        long mostSigBits = (((long)seed) << 32) | (random.nextInt() & 0xFFFFFFFFL);
+        long leastSigBits = random.nextLong();
+        return new UUID(mostSigBits, leastSigBits).toString();
+    }
+    
+    private static int getRandomSeed() {
+        return (int)(Math.random() * Integer.MAX_VALUE);
     }
 }

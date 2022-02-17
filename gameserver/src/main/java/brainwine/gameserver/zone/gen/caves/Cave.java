@@ -1,20 +1,21 @@
-package brainwine.gameserver.zone.gen.models;
+package brainwine.gameserver.zone.gen.caves;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import brainwine.gameserver.zone.gen.CaveDecorator;
+import brainwine.gameserver.zone.gen.models.BlockPosition;
+import brainwine.gameserver.zone.gen.models.StoneVariant;
 
 public class Cave {
 
     private final List<BlockPosition> blocks = new ArrayList<>();
     private final List<BlockPosition> ceilingBlocks = new ArrayList<>();
     private final List<BlockPosition> floorBlocks = new ArrayList<>();
-    private final CaveDecorator decorator;
+    private final CaveType type;
     private final StoneVariant variant;
     
-    public Cave(CaveDecorator decorator, StoneVariant variant) {
-        this.decorator = decorator;
+    public Cave(CaveType type, StoneVariant variant) {
+        this.type = type;
         this.variant = variant;
     }
     
@@ -62,8 +63,8 @@ public class Cave {
         return floorBlocks;
     }
     
-    public CaveDecorator getDecorator() {
-        return decorator;
+    public CaveType getType() {
+        return type;
     }
     
     public StoneVariant getVariant() {

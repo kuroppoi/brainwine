@@ -1,18 +1,17 @@
 package brainwine.gameserver.zone.gen;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
+import brainwine.gameserver.zone.gen.caves.CaveType;
 import brainwine.gameserver.zone.gen.models.BaseResourceType;
 import brainwine.gameserver.zone.gen.models.Deposit;
 import brainwine.gameserver.zone.gen.models.OreDeposit;
@@ -49,8 +48,7 @@ public class GeneratorConfig {
     private WeightedMap<StoneVariant> stoneVariants = new WeightedMap<>();
     
     @JsonProperty("cave_types")
-    @JsonDeserialize(using = CaveDecoratorListDeserializer.class)
-    private List<CaveDecorator> decorators = new ArrayList<>();
+    private Map<String, CaveType> caveTypes = new HashMap<>();
     
     @JsonProperty("base_resources")
     private Map<BaseResourceType, Deposit> baseResources = new HashMap<>();
@@ -94,8 +92,8 @@ public class GeneratorConfig {
         return stoneVariants;
     }
     
-    public List<CaveDecorator> getCaveDecorators() {
-        return decorators;
+    public Collection<CaveType> getCaveTypes() {
+        return caveTypes.values();
     }
     
     public Map<BaseResourceType, Deposit> getBaseResources() {

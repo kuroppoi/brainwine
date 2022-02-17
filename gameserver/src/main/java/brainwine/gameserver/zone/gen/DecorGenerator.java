@@ -4,9 +4,11 @@ import java.util.Map;
 
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.zone.gen.caves.Cave;
+import brainwine.gameserver.zone.gen.caves.CaveDecorator;
+import brainwine.gameserver.zone.gen.caves.CaveType;
 import brainwine.gameserver.zone.gen.models.BaseResourceType;
 import brainwine.gameserver.zone.gen.models.BlockPosition;
-import brainwine.gameserver.zone.gen.models.Cave;
 import brainwine.gameserver.zone.gen.models.Deposit;
 import brainwine.gameserver.zone.gen.models.ModTileBlock;
 import brainwine.gameserver.zone.gen.models.OreDeposit;
@@ -57,10 +59,16 @@ public class DecorGenerator implements GeneratorTask {
                 }
             }
             
-            CaveDecorator decorator = cave.getDecorator();
+            CaveType type = cave.getType();
             
-            if(decorator != null) {
-                decorator.decorate(ctx, cave);
+            if(type != null) {
+                // TODO structure caves should probably be moved to StructureGenerators, or they
+                // will take up dungeon space.
+                for(CaveDecorator decorator : type.getDecorators()) {
+                    if(ctx.nextDouble() <= decorator.getChance()) {
+                        decorator.decorate(ctx, cave);
+                    }
+                }
             }
         }
         

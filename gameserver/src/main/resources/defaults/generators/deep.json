@@ -1,0 +1,215 @@
+{
+  "surface": false,
+  "speleothems": [
+    "ground/stalagmite-1",
+    "ground/stalagmite-2",
+    "ground/stalagmite-3",
+    "ground/stalagmite-4",
+    "ground/stalagmite-5"
+  ],
+  "stone_variants": {
+    "default": 17,
+    "limestone": 4
+  },
+  "unique_structures": [
+    "paint_bunker",
+    "head_bunker"
+  ],
+  "dungeons": [
+    "dungeon_large_1",
+    "dungeon_large_2",
+    "dungeon_medium_1",
+    "dungeon_medium_2",
+    "dungeon_medium_3",
+    "dungeon_medium_4",
+    "dungeon_medium_5",
+    "dungeon_medium_6",
+    "dungeon_medium_7",
+    "dungeon_medium_8",
+    "dungeon_medium_9",
+    "dungeon_medium_10",
+    "dungeon_small_1",
+    "dungeon_small_2",
+    "dungeon_small_3",
+    "dungeon_small_4"
+  ],
+  "spawn_towers": ["spawn_building_deep_1"],
+  "dungeon_region": [81, 85],
+  "dungeon_chance": 0.4,
+  "base_resources": {
+    "clay": {
+      "per": 1200
+    },
+    "rocks": {
+      "per": 300
+    }
+  },
+  "ore_deposits": {
+    "ground/iron": {
+      "per": 2200,
+      "min_size": 6,
+      "max_size": 13
+    },
+    "ground/quartz": {
+      "per": 6000,
+      "min_size": 3,
+      "max_size": 9
+    },
+    "ground/lead": {
+      "per": 4000,
+      "min_size": 4,
+      "max_size": 9
+    },
+    "ground/marble": {
+      "per": 20000,
+      "min_size": 3,
+      "max_size": 8,
+      "max_depth": 0.5
+    }
+  },
+  "cave_types": {
+    "empty": {
+	  "min_size": 150,
+	  "frequency": 24
+	},
+	"mushroom_grove": {
+	  "frequency": 23,
+	  "decorators": [
+	    {
+		  "type": "mushroom",
+		  "mushrooms": {
+		    "portabella": 80,
+			"shade": 75,
+			"oyster": 45,
+			"porcini": 35,
+			"apostate": 15,
+			"chanterelle": 9,
+			"devils_cigar": 3
+		  }
+		}
+	  ]
+	},
+	"acid": {
+	  "max_size": 300,
+	  "frequency": 18,
+	  "decorators": [
+	    {
+		  "type": "fill",
+		  "item": "liquid/acid",
+		  "liquid": true
+		},
+		{
+		  "type": "floor",
+		  "item_spawn_chance": 0.05,
+		  "items": {
+		    "vegetation/mushroom-acid": 16,
+			"vegetation/mushroom-acid-tall": 1
+		  }
+		}
+	  ]
+	},
+	"magma": {
+	  "max_size": 300,
+	  "frequency": 12,
+	  "decorators": [
+	    {
+		  "type": "fill",
+		  "item": "liquid/magma",
+		  "liquid": true
+		},
+		{
+		  "type": "floor",
+		  "item_spawn_chance": 0.1,
+		  "items": {
+		    "vegetation/mushroom-lava": 16,
+			"vegetation/mushroom-lava-elder": 1
+		  }
+		}
+	  ]
+	},
+	"hatchery": {
+	  "max_size": 400,
+	  "frequency": 25,
+	  "decorators": [
+	    {
+		  "type": "floor",
+		  "item_spawn_chance": 0.175,
+		  "items": ["ground/terrapus-egg"],
+		  "mods": {
+		    "ground/terrapus-egg": {
+			  "0": 1,
+			  "1": 4
+			}
+		  }
+		}
+	  ]
+	},
+	"crystal": {
+      "min_size": 30,
+      "max_size": 100,
+      "frequency": 3,
+      "decorators": [
+        {
+          "type": "floor",
+          "item_spawn_chance": 0.07,
+          "items": {
+            "ground/crystal-blue-1": 16,
+            "ground/crystal-blue-3": 16,
+            "ground/crystal-blue-2": 4,
+            "ground/crystal-blue-4": 1
+          }
+        }
+      ]
+    },
+    "rare_crystal": {
+      "min_size": 30,
+      "max_size": 80,
+      "frequency": 2,
+      "decorators": [
+        {
+          "type": "floor",
+          "single_type": true,
+          "item_spawn_chance": 0.07,
+          "items": {
+            "ground/crystal-rainbow": 1,
+			"ground/crystal-red-large": 5,
+			"ground/crystal-purple-large": 5,
+			"ground/crystal-orange": 8,
+			"ground/crystal-purple-1": 45,
+            "ground/crystal-red-1": 50
+          }
+        }
+      ]
+    },
+	"ruins": {
+      "max_size": 170,
+      "frequency": 22,
+      "decorators": [
+        {
+          "type": "structure",
+          "prefabs": {}
+        }
+      ]
+    },
+    "bat_cave": {
+      "frequency": 12,
+      "decorators": [
+        {
+          "type": "floor",
+          "item_spawn_chance": 0.175,
+          "items": ["ground/guano"]
+        }
+      ]
+    },
+    "salt": {
+      "frequency": 10,
+      "decorators": [
+        {
+          "type": "floor",
+          "item_spawn_chance": 0.175,
+          "items": ["ground/salt-crystal"]
+        }
+      ]
+    }
+  }
+}
