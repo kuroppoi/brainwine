@@ -3,6 +3,9 @@ package brainwine.gameserver.command.commands;
 import static brainwine.gameserver.entity.player.NotificationType.ALERT;
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
@@ -26,17 +29,33 @@ public class GiveCommand extends Command {
             return;
         }
         
-        Item item = Item.AIR;
+        List<Item> items = new ArrayList<>();
+        String title = null;
         
-        try {
-            item = ItemRegistry.getItem(Integer.parseInt(args[1]));
-        } catch(NumberFormatException e) {
-            item = ItemRegistry.getItem(args[1]);
-        }
-        
-        if(item.isAir()) {
-            executor.notify("This item does not exist.", ALERT);
-            return;
+        if(args[1].equalsIgnoreCase("all")) {
+            title = "of every item";
+            
+            for(Item item : ItemRegistry.getItems()) {
+                if(!item.isClothing() && !item.isAir()) {
+                    items.add(item);
+                }
+            }
+        } else {
+            Item item = Item.AIR;
+            
+            try {
+                item = ItemRegistry.getItem(Integer.parseInt(args[1]));
+            } catch(NumberFormatException e) {
+                item = ItemRegistry.getItem(args[1]);
+            }
+            
+            if(item.isAir()) {
+                executor.notify("This item does not exist.", ALERT);
+                return;
+            }
+            
+            title = item.getTitle();
+            items.add(item);
         }
         
         int quantity = 1;
@@ -51,13 +70,19 @@ public class GiveCommand extends Command {
         }
         
         if(quantity > 0) {
-            target.getInventory().addItem(item, quantity);
-            target.alert(String.format("You received %s %s from an administrator.", quantity, item.getTitle()));
-            executor.notify(String.format("Gave %s %s to %s", quantity, item.getTitle(), target.getName()), SYSTEM);
+            for(Item item : items) {
+                target.getInventory().addItem(item, quantity);
+            }
+            
+            target.alert(String.format("You received %s %s from an administrator.", quantity, title));
+            executor.notify(String.format("Gave %s %s to %s", quantity, title, target.getName()), SYSTEM);
         } else {
-            target.getInventory().removeItem(item, -quantity);
-            target.alert(String.format("%s %s was taken from your inventory.", -quantity, item.getTitle()));
-            executor.notify(String.format("Took %s %s from %s", quantity, item.getTitle(), target.getName()), SYSTEM);
+            for(Item item : items) {
+                target.getInventory().removeItem(item, -quantity);
+            }
+            
+            target.alert(String.format("%s %s was taken from your inventory.", -quantity, title));
+            executor.notify(String.format("Took %s %s from %s", -quantity, title, target.getName()), SYSTEM);
         }
     }
 
@@ -73,7 +98,7 @@ public class GiveCommand extends Command {
     
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/give <player> <item> [quantity]";
+        return "/give <player> <item|all> [quantity]";
     }
     
     @Override
