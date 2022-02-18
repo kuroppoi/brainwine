@@ -31,8 +31,8 @@ Alternatively, you may download pre-built binaries [here.](https://github.com/ku
 
 On first-time startup, configuration files will be generated which you may modify however you like:
 - `api.json` Configuration file for news & API connectivity information.
-- `generators.json` Configuration file for world generation rules per biome.
 - `loottables.json` Configuration file for which loot may be obtained from containers.
+- `generators` Folder containing configuration files for zone generators.
 
 ## Contributions
 
