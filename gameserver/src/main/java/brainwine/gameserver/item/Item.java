@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.util.Vector2i;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -45,7 +46,7 @@ public class Item {
     private Fieldability fieldability = Fieldability.TRUE;
     
     @JsonProperty("loot_graphic")
-    private LootGraphic lootGraphic = LootGraphic.NONE;
+    private DialogType lootGraphic = DialogType.STANDARD;
     
     @JsonProperty("action")
     private Action action = Action.NONE;
@@ -153,7 +154,7 @@ public class Item {
         return fieldability;
     }
     
-    public LootGraphic getLootGraphic() {
+    public DialogType getLootGraphic() {
         return lootGraphic;
     }
     

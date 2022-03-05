@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
@@ -20,7 +21,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.command.CommandExecutor;
-import brainwine.gameserver.dialog.ConfigurableDialog;
+import brainwine.gameserver.dialog.Dialog;
+import brainwine.gameserver.dialog.DialogListItem;
+import brainwine.gameserver.dialog.DialogSection;
+import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.EntityType;
@@ -29,7 +33,6 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.item.LootGraphic;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
@@ -106,7 +109,7 @@ public class Player extends Entity implements CommandExecutor {
     private final Map<String, Object> settings = new HashMap<>();
     private final Map<Skill, Integer> skills = new HashMap<>();
     private final Map<Integer, Long> activeChunks = new HashMap<>();
-    private final Map<Integer, ConfigurableDialog> dialogs = new HashMap<>();
+    private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
     private String clientVersion;
     private Placement lastPlacement;
     private Item heldItem = Item.AIR;
@@ -311,22 +314,33 @@ public class Player extends Entity implements CommandExecutor {
         kick("Teleporting...", true);
     }
     
-    public void showDialog(ConfigurableDialog dialog) {
-        dialog.init();
-        int id = ++dialogDiscriminator;
-        dialogs.put(id, dialog);
+    public void showDialog(Dialog dialog) {
+        showDialog(dialog, null);
+    }
+    
+    public void showDialog(Dialog dialog, Consumer<Object[]> handler) {
+        int id = handler == null ? 0 : ++dialogDiscriminator;
+        
+        if(id != 0) {
+            dialogs.put(id, handler);
+        }
+        
         sendMessage(new DialogMessage(id, dialog));
     }
     
     public void handleDialogInput(int id, Object[] input) {
-        ConfigurableDialog dialog = dialogs.remove(id);
-        
-        if(dialog == null) {
-            alert("Sorry, we couldn't find out what to do with this.");
+        if(id == 0 || (input.length == 1 && input[0].equals("cancel"))) {
             return;
         }
         
-        dialog.handleResponse(this, input);
+        Consumer<Object[]> handler = dialogs.remove(id);
+        
+        if(handler == null) {
+            alert("Sorry, the request has expired.");
+        } else {
+            // TODO since we're dealing with user input, should we just try-catch this?
+            handler.accept(input);
+        }
     }
     
     public void checkRegistration() {
@@ -604,38 +618,38 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void awardLoot(Loot loot) {
-        awardLoot(loot, LootGraphic.LOOT);
+        awardLoot(loot, DialogType.LOOT);
     }
     
-    public void awardLoot(Loot loot, LootGraphic graphic) {
-        List<Map<String, Object>> notifications = new ArrayList<>();
+    public void awardLoot(Loot loot, DialogType dialogType) {
+        Dialog dialog = new Dialog().setTitle("You found:");
+        DialogSection section = new DialogSection();
+        dialog.addSection(section);
         
         loot.getItems().forEach((item, quantity) -> {
             inventory.addItem(item, quantity);
-            Map<String, Object> notification = new HashMap<>();
-            notification.put("item", item.getId());
-            notification.put("text", String.format("%s x %s", item.getTitle(), quantity));
-            notifications.add(notification);
+            section.addItem(new DialogListItem()
+                    .setItem(item.getId())
+                    .setText(String.format("%s x %s", item.getTitle(), quantity)));
         });
         
-        Map<String, Object> dialog = new HashMap<>();
-        Map<String, Object> section = new HashMap<>();
-        section.put("list", notifications);
-        dialog.put("sections", Arrays.asList(section));
         int crowns = loot.getCrowns();
+        boolean v3 = isV3();
         
         if(crowns > 0) {
             addCrowns(crowns);
-            section.put("text", isV3() ? String.format("<color=#ffd95f>%s shiny crowns!</color>", crowns) : String.format("%s shiny crowns!", crowns));
+            
+            if(v3) {
+                section.setText(String.format("<color=#ffd95f>%s shiny crowns!</color>", crowns));
+            } else {
+                section.setText(String.format("%s shiny crowns!", crowns));
+                section.setTextColor("ffd95f");
+            }
         }
         
-        if(isV3()) {
-            dialog.put("title", "You found:");
-            dialog.put("type", graphic);
-            sendMessage(new DialogMessage(0, dialog));
+        if(v3) {
+            showDialog(dialog.setType(dialogType));
         } else {
-            section.put("title", "You found:");
-            section.put("text-color", "ffd95f");
             notify(dialog, NotificationType.REWARD);
             sendMessage(new EffectMessage(x, y, "chime", 1));
         }

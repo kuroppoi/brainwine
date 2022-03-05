@@ -2,21 +2,22 @@ package brainwine.gameserver.server.messages;
 
 import java.util.Map;
 
-import brainwine.gameserver.dialog.ConfigurableDialog;
+import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.server.Message;
 
 public class DialogMessage extends Message {
     
     public int id;
-    public Map<String, Object> config;
+    public Object dialog;
     
-    public DialogMessage(int id, ConfigurableDialog dialog) {
-        this(id, dialog.getClientConfig());
+    public DialogMessage(int id, Dialog dialog) {
+        this.id = id;
+        this.dialog = dialog;
     }
     
-    public DialogMessage(int id, Map<String, Object> config) {
+    public DialogMessage(int id, Map<String, Object> dialog) {
         this.id = id;
-        this.config = config;
+        this.dialog = dialog;
     }
     
     @Override

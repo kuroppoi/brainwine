@@ -75,6 +75,7 @@ dialogs:
           key: email
           max: 128
       - title: Password
+        text: Your password must be between 8 and 64 characters and should contain at least one number, uppercase and lowercase letter.
         input:
           type: text
           key: password

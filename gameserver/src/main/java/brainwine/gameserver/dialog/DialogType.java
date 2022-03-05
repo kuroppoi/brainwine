@@ -1,16 +1,14 @@
-package brainwine.gameserver.item;
+package brainwine.gameserver.dialog;
 
-import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum LootGraphic {
+public enum DialogType {
     
+    STANDARD,
+    ANDROID,
     LOOT,
     LOOT_RED,
-    LOOT_MECH,
-
-    @JsonEnumDefaultValue
-    NONE;
+    LOOT_MECH;
     
     @JsonValue
     public String getId() {

@@ -1,19 +1,15 @@
 package brainwine.gameserver.server.requests;
 
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import brainwine.gameserver.GameConfiguration;
+import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.entity.player.ClothingSlot;
 import brainwine.gameserver.entity.player.ColorSlot;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.server.PlayerRequest;
-import brainwine.gameserver.server.messages.DialogMessage;
-import brainwine.gameserver.util.MapHelper;
 
 /**
  * TODO we should actually check if the sent value is even compatible with the slot.
@@ -31,19 +27,7 @@ public class ChangeAppearanceRequest extends PlayerRequest {
             if(meta.equals("randomize")) {
                 player.alert("Sorry, you can't randomize your appearance yet.");
             } else {
-                Map<String, Object> panel = MapHelper.getMap(GameConfiguration.getBaseConfig(), String.format("wardrobe_panel.dialogs.%s", meta));
-                
-                if(panel != null) {
-                    Map<String, Object> dialog = new HashMap<>();
-                    Map<String, Object> section = new HashMap<>();
-                    section.put("input", panel);
-                    dialog.put("sections", Arrays.asList(section));
-                    dialog.put("alignment", "left");
-                    dialog.put("target", "appearance");
-                    
-                    // No input, just send the message directly.
-                    player.sendMessage(new DialogMessage(-1, dialog));
-                }
+                player.showDialog(DialogHelper.getWardrobeDialog(meta));
             }
             
             return;
