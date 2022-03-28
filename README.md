@@ -5,9 +5,10 @@ Brainwine is a Deepworld private server written in Java, made with user-friendli
 Due to the time it will take for this project to be complete (and my inconsistent working on it), brainwine has been prematurely open-sourced
 and is free for all to use.\
 Keep in mind, though, that this server is not finished yet. Expect to encounter bad code, bugs and missing features!\
-Brainwine is currently compatible with the latest Steam and iOS versions of Deepworld:
+Brainwine is currently compatible with the following versions of Deepworld:
 - Steam: `v3.13.1`
 - iOS: `v2.11.0.1`
+- MacOS: `v2.11.1`
 
 ## Features
 A list of all planned, in-progress and finished features can be found [here.](https://github.com/kuroppoi/brainwine/projects/1)
