@@ -622,7 +622,7 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void awardLoot(Loot loot, DialogType dialogType) {
-        Dialog dialog = new Dialog().setTitle("You found:");
+        Dialog dialog = new Dialog();
         DialogSection section = new DialogSection();
         dialog.addSection(section);
         
@@ -648,9 +648,17 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         if(v3) {
+            dialog.setTitle("You found:");
             showDialog(dialog.setType(dialogType));
         } else {
+            section.setTitle("You found:");
             notify(dialog, NotificationType.REWARD);
+            
+            // TODO Oh great, apparently the original loot sound (sfx-flourish-2) was downloaded from an external
+            // source (defined by the API) on game startup along with a *lot* of other sound effects that are 
+            // currently not working on v2 clients.
+            // What do we do; rip all missing sound effects from the Unity version and put them in v2 game files,
+            // or add a resource streaming feature to the API? Maybe both?
             sendMessage(new EffectMessage(x, y, "chime", 1));
         }
     }
