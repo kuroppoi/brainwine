@@ -19,8 +19,15 @@ public class DecorGenerator implements GeneratorTask {
     private final Item[] speleothems;
     private final Map<BaseResourceType, Deposit> baseResources;
     private final Map<Item, OreDeposit> oreDeposits;
+    
+    // TODO make configurable
     private final double surfaceFillerRate = 0.3;
     private final double speleothemRate = 0.2;
+    private final double accentRate = 0.033;
+    private final double drawingRate = 0.001;
+    private final int[] drawings = {
+        12, 13, 14
+    };
     
     public DecorGenerator(GeneratorConfig config) {
         surfaceFillers = config.getSurfaceFillers();
@@ -31,13 +38,25 @@ public class DecorGenerator implements GeneratorTask {
     
     @Override
     public void generate(GeneratorContext ctx) {
-        if(surfaceFillers.length > 0) {
-            for(int x = 0; x < ctx.getWidth(); x++) {
+        for(int x = 0; x < ctx.getWidth(); x++) {
+            if(surfaceFillers.length > 0) {
                 int y = ctx.getZone().getSurface()[x];
                 
                 // ha ez
                 if(ctx.isEarth(x, y) && ctx.isEarth(x + 1, y) && ctx.nextDouble() <= surfaceFillerRate) {
                     ctx.updateBlock(x, y - 1, Layer.FRONT, surfaceFillers[ctx.nextInt(surfaceFillers.length)]);
+                }
+            }
+            
+            for(int y = 0; y < ctx.getHeight(); y++) {
+                if(ctx.getZone().getBlock(x, y).getBaseItem().getId() == 2) {
+                    double d = ctx.nextDouble();
+                    
+                    if(d <= drawingRate) {
+                        ctx.updateBlock(x, y, Layer.BASE, drawings[ctx.nextInt(drawings.length)]);
+                    } else if(d <= accentRate) {
+                        ctx.updateBlock(x, y, Layer.BASE, 15);
+                    }
                 }
             }
         }

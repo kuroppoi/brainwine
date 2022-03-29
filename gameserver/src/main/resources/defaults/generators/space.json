@@ -1,4 +1,5 @@
 {
+  "terrain_type": "asteroids",
   "surface_fillers": [
     "rubble/stone-pile-1",
     "rubble/stone-pile-2",

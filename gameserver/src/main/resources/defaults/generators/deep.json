@@ -1,5 +1,5 @@
 {
-  "surface": false,
+  "terrain_type": "filled",
   "speleothems": [
     "ground/stalagmite-1",
     "ground/stalagmite-2",

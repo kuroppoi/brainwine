@@ -20,9 +20,6 @@ import brainwine.gameserver.zone.gen.models.StoneVariant;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GeneratorConfig {
     
-    @JsonProperty("surface")
-    private boolean surface = true;
-    
     @JsonProperty("surface_fillers")
     private Item[] surfaceFillers = {};
     
@@ -56,9 +53,8 @@ public class GeneratorConfig {
     @JsonProperty("ore_deposits")
     private Map<Item, OreDeposit> oreDeposits = new HashMap<>();
     
-    public boolean getSurface() {
-        return surface;
-    }
+    @JsonProperty("terrain_type")
+    private TerrainType terrainType = TerrainType.NORMAL;
     
     public Item[] getSurfaceFillers() {
         return surfaceFillers;
@@ -102,5 +98,9 @@ public class GeneratorConfig {
     
     public Map<Item, OreDeposit> getOreDeposits() {
         return oreDeposits;
+    }
+    
+    public TerrainType getTerrainType() {
+        return terrainType;
     }
 }

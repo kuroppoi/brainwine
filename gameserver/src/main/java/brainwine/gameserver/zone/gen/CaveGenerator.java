@@ -16,10 +16,12 @@ import brainwine.gameserver.zone.gen.models.StoneVariant;
 
 public class CaveGenerator implements GeneratorTask {
     
+    private final boolean asteroids;
     private final WeightedMap<StoneVariant> stoneVariants;
     private final Collection<CaveType> caveTypes;
     
     public CaveGenerator(GeneratorConfig config) {
+        asteroids = config.getTerrainType() == TerrainType.ASTEROIDS;
         stoneVariants = config.getStoneVariants();
         caveTypes = config.getCaveTypes();
     }
@@ -28,12 +30,13 @@ public class CaveGenerator implements GeneratorTask {
     public void generate(GeneratorContext ctx) {
         int width = ctx.getWidth();
         int height = ctx.getHeight();
+        int iterationCount = asteroids ? 6 : 10; // Less asteroid density
         boolean[][] cells = new boolean[width][height];
         List<Cave> caves = new ArrayList<>();
         
         // Multiple layers to increase cave density.
         // I'm not sure if there are better ways to do this, but eh whatever.
-        for(int i = 0; i < 10; i++) {
+        for(int i = 0; i < iterationCount; i++) {
             boolean[][] currentCells = generateCells(ctx, 0.4625, 5);
             List<Cave> currentCaves = indexCaves(ctx, currentCells);
             
@@ -85,13 +88,15 @@ public class CaveGenerator implements GeneratorTask {
                 
                 ctx.updateBlock(x, y, Layer.FRONT, 0);
                 
-                if(variant != StoneVariant.DEFAULT) {
+                if(asteroids || variant != StoneVariant.DEFAULT) {
                     ctx.updateBlock(x, y, Layer.BASE, variant.getBaseItem());
+                    int checkDistance = asteroids? 5 : 3;
                     
-                    for(int i = x - 3; i <= x + 3; i++) {
-                        for(int j = y - 3; j <= y + 3; j++) {
-                            if(ctx.isEarth(i, j) && !cells[i][j]) {
-                                double maxDistance = MathUtils.clamp(cave.getSize() / 16.0, 1.8, 3) + (ctx.nextDouble() - 0.5);
+                    for(int i = x - checkDistance; i <= x + checkDistance; i++) {
+                        for(int j = y - checkDistance; j <= y + checkDistance; j++) {
+                            if(ctx.inBounds(i, j) && !cells[i][j]) {
+                                double maxDistance = asteroids ? 4.5 + ctx.nextDouble() - 1 :
+                                        MathUtils.clamp(cave.getSize() / 16.0, 1.8, checkDistance) + (ctx.nextDouble() - 0.5);
                                 double distance = Math.hypot(i - x, j - y);
                                 
                                 if(distance <= maxDistance) {
