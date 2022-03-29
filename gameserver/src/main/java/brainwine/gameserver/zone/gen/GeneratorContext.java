@@ -119,7 +119,7 @@ public class GeneratorContext {
     }
     
     public int nextInt(int bound) {
-        return random.nextInt(bound);
+        return random.nextInt(Math.max(bound, 1));
     }
     
     public double nextDouble() {
