@@ -124,7 +124,7 @@ public class ZoneManager {
         file.mkdirs();
         
         try {
-            zone.saveModifiedChunks();
+            zone.saveChunks();
             ZoneConfig config = JsonHelper.readValue(zone, ZoneConfig.class);
             ZoneData data = JsonHelper.readValue(zone, ZoneData.class);
             JsonHelper.writeValue(new File(file, "metablocks.json"), zone.getMetaBlocks());
