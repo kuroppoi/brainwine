@@ -7,6 +7,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -17,6 +23,7 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
+import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.serialization.BlockDeserializer;
 import brainwine.gameserver.serialization.BlockSerializer;
 import brainwine.gameserver.util.ZipUtils;
@@ -29,6 +36,7 @@ public class ChunkManager {
             .registerModule(new SimpleModule()
                     .addDeserializer(Block.class, BlockDeserializer.INSTANCE)
                     .addSerializer(BlockSerializer.INSTANCE));
+    private final Map<Integer, Chunk> chunks = new HashMap<>();
     private final Zone zone;
     private final File blocksFile;
     private RandomAccessFile file;
@@ -84,32 +92,35 @@ public class ChunkManager {
         }
     }
     
-    public Chunk loadChunk(int index) {
-        try {
-            if(file == null) {
-                file = new RandomAccessFile(blocksFile, "rw");
-            }
-            
-            file.seek(dataOffset + index * allocSize);
-            byte[] bytes = new byte[file.readShort()];
-            file.read(bytes);
-            return mapper.readValue(ZipUtils.inflateBytes(bytes), Chunk.class);
-        } catch(Exception e) {
-            logger.error("Could not load chunk {} of zone {}", index, zone.getDocumentId(), e);
-        }
+    public void saveChunks() {
+        List<Chunk> inactiveChunks = new ArrayList<>();
         
-        return null;
-    }
-    
-    public void saveModifiedChunks() {
         for(Chunk chunk : zone.getChunks()) {
             if(chunk.isModified()) {
                 saveChunk(chunk);
             }
+            
+            boolean active = false;
+            
+            for(Player player : zone.getPlayers()) {
+                if(player.isChunkActive(chunk)) {
+                    active = true;
+                    break;
+                }
+            }
+            
+            if(!active) {
+                inactiveChunks.add(chunk);
+            }
+        }
+        
+        for(Chunk chunk : inactiveChunks) {
+            chunks.remove(getChunkIndex(chunk.getX(), chunk.getY()));
+            zone.onChunkUnloaded(chunk);
         }
     }
     
-    public void saveChunk(Chunk chunk) {
+    private void saveChunk(Chunk chunk) {
         int index = zone.getChunkIndex(chunk.getX(), chunk.getY());
         
         try {
@@ -130,5 +141,69 @@ public class ChunkManager {
         } catch (IOException e) {
             logger.error("Could not save chunk {} of zone {}", index, zone.getDocumentId(), e);
         }
+    }
+    
+    private Chunk loadChunk(int index) {
+        try {
+            if(file == null) {
+                file = new RandomAccessFile(blocksFile, "rw");
+            }
+            
+            file.seek(dataOffset + index * allocSize);
+            byte[] bytes = new byte[file.readShort()];
+            file.read(bytes);
+            return mapper.readValue(ZipUtils.inflateBytes(bytes), Chunk.class);
+        } catch(Exception e) {
+            logger.error("Could not load chunk {} of zone {}", index, zone.getDocumentId(), e);
+        }
+        
+        return null;
+    }
+    
+    public void putChunk(int index, Chunk chunk) {
+        if(!chunks.containsKey(index) && isChunkIndexInBounds(index)) {
+            chunk.setModified(true);
+            chunks.put(index, chunk);
+        }
+    }
+    
+    public boolean isChunkLoaded(int x, int y) {
+        return isChunkLoaded(getChunkIndex(x, y));
+    }
+    
+    public boolean isChunkLoaded(int index) {
+        return chunks.containsKey(index);
+    }
+    
+    public boolean isChunkIndexInBounds(int index) {
+        return index >= 0 && index < zone.getNumChunksWidth() * zone.getNumChunksHeight();
+    }
+    
+    public int getChunkIndex(int x, int y) {
+        return y / zone.getChunkHeight() * zone.getNumChunksWidth() + x / zone.getChunkWidth();
+    }
+    
+    public Chunk getChunk(int x, int y) {
+        return getChunk(getChunkIndex(x, y));
+    }
+    
+    public Chunk getChunk(int index) {
+        if(!isChunkIndexInBounds(index)) {
+            return null;
+        }
+        
+        Chunk chunk = chunks.get(index);
+        
+        if(chunk == null) {
+            chunk = loadChunk(index);
+            chunks.put(index, chunk);
+            zone.onChunkLoaded(chunk);
+        }
+        
+        return chunk;
+    }
+    
+    public Collection<Chunk> getChunks() {
+        return Collections.unmodifiableCollection(chunks.values());
     }
 }

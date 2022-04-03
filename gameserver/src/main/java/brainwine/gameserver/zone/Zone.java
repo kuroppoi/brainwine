@@ -8,10 +8,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
@@ -71,7 +69,6 @@ public class Zone {
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<Integer, Entity> entities = new HashMap<>();
     private final List<Player> players = new ArrayList<>();
-    private final Map<Integer, Chunk> chunks = new HashMap<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
@@ -142,11 +139,6 @@ public class Zone {
                 }
             }
         }
-    }
-    
-    public void saveModifiedChunks() {
-        chunkManager.saveModifiedChunks();
-        removeInactiveChunks();
     }
     
     /**
@@ -678,75 +670,8 @@ public class Zone {
         return x >= 0 && y >= 0 && x < width && y < height;
     }
     
-    private void removeInactiveChunks() {
-        Iterator<Entry<Integer, Chunk>> iterator = chunks.entrySet().iterator();
-        
-        while(iterator.hasNext()) {
-            Entry<Integer, Chunk> entry = iterator.next();
-            Chunk chunk = entry.getValue();
-            boolean active = false;
-            
-            for(Player player : players) {
-                if(player.isChunkActive(chunk)) {
-                    active = true;
-                    break;
-                }
-            }
-            
-            if(!active) {
-                iterator.remove();
-            }
-        }
-    }
-    
-    public boolean isChunkIndexInBounds(int index) {
-        return index >= 0 && index < numChunksWidth * numChunksHeight;
-    }
-    
-    public boolean isChunkLoaded(int x, int y) {
-        return isChunkLoaded(getChunkIndex(x, y));
-    }
-    
-    public boolean isChunkLoaded(int index) {
-        return chunks.containsKey(index);
-    }
-    
-    public void putChunk(int index, Chunk chunk) {
-        if(!chunks.containsKey(index) && isChunkIndexInBounds(index)) {
-            chunk.setModified(true);
-            chunks.put(index, chunk);
-        }
-    }
-    
-    public int getChunkIndex(int x, int y) {
-        return y / chunkHeight * numChunksWidth + x / chunkWidth;
-    }
-    
-    public Chunk getChunk(int x, int y) {
-        return getChunk(getChunkIndex(x, y));
-    }
-    
-    public Chunk getChunk(int index) {
-        if(!isChunkIndexInBounds(index)) {
-            return null;
-        }
-        
-        Chunk chunk = chunks.get(index);
-        
-        if(chunk == null) {
-            chunk = chunkManager.loadChunk(index);
-            tryRecalculatePendingSunlight(chunk);
-            chunks.put(index, chunk);
-        }
-        
-        return chunk;
-    }
-    
-    public Collection<Chunk> getChunks() {
-        return chunks.values();
-    }
-    
-    private void tryRecalculatePendingSunlight(Chunk chunk) {
+    protected void onChunkLoaded(Chunk chunk) {
+        // Update sunlight
         if(!pendingSunlight.isEmpty()) {
             int chunkX = chunk.getX();
             
@@ -757,6 +682,52 @@ public class Zone {
                 }
             }
         }
+        
+        // TODO more chunk related thingies, such as surface calculations,
+        // entity spawning and block indexing
+    }
+    
+    protected void onChunkUnloaded(Chunk chunk) {
+        // TODO
+    }
+    
+    public void saveChunks() {
+        chunkManager.saveChunks();
+    }
+        
+    /**
+     * Should only be called by zone gen.
+     */
+    public void putChunk(int index, Chunk chunk) {
+        chunkManager.putChunk(index, chunk);
+    }
+    
+    public boolean isChunkLoaded(int x, int y) {
+        return chunkManager.isChunkLoaded(x, y);
+    }
+    
+    public boolean isChunkLoaded(int index) {
+        return chunkManager.isChunkLoaded(index);
+    }
+    
+    public boolean isChunkIndexInBounds(int index) {
+        return chunkManager.isChunkIndexInBounds(index);
+    }
+    
+    public int getChunkIndex(int x, int y) {
+        return chunkManager.getChunkIndex(x, y);
+    }
+    
+    public Chunk getChunk(int x, int y) {
+        return chunkManager.getChunk(x, y);
+    }
+    
+    public Chunk getChunk(int index) {
+        return chunkManager.getChunk(index);
+    }
+    
+    public Collection<Chunk> getChunks() {
+        return chunkManager.getChunks();
     }
     
     public void setSurface(int x, int surface) {
