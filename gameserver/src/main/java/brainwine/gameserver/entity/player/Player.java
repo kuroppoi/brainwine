@@ -256,6 +256,7 @@ public class Player extends Entity implements CommandExecutor {
     public void onDisconnect() {
         lastHeartbeat = 0;
         lastPlacement = null;
+        clientVersion = null;
         
         if(zone != null) {
             zone.removePlayer(this);

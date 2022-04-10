@@ -150,8 +150,8 @@ public class PlayerManager {
             return;
         }
         
-        player.setClientVersion(version);
         player.setConnection(connection);
+        player.setClientVersion(version);
         playersByConnection.put(connection, player);
         Zone zone = player.getZone();
         
