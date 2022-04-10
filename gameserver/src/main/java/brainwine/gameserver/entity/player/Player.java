@@ -723,6 +723,10 @@ public class Player extends Entity implements CommandExecutor {
         this.connection = connection;
     }
     
+    public Connection getConnection() {
+        return connection;
+    }
+    
     public boolean isOnline() {
         return connection != null && connection.isOpen();
     }
