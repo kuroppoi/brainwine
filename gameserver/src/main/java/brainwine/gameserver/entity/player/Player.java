@@ -261,10 +261,10 @@ public class Player extends Entity implements CommandExecutor {
         
         if(zone != null) {
             zone.removePlayer(this);
-            activeChunks.clear();
         }
         
         dialogs.clear();
+        activeChunks.clear();
         GameServer.getInstance().getPlayerManager().onPlayerDisconnect(this);
         connection.setPlayer(null);
         connection = null;
