@@ -264,6 +264,7 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         dialogs.clear();
+        GameServer.getInstance().getPlayerManager().onPlayerDisconnect(this);
         connection.setPlayer(null);
         connection = null;
     }
