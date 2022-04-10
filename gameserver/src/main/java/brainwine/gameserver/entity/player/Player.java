@@ -20,6 +20,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameConfiguration;
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogListItem;
