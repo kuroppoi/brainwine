@@ -168,6 +168,10 @@ public class PlayerManager {
         zone.addPlayer(player);
     }
     
+    public void onPlayerDisconnect(Player player) {
+        playersByConnection.remove(player.getConnection());
+    }
+    
     public boolean isEmailTaken(String email) {
         for(Player player : getPlayers()) {
             if(email.equalsIgnoreCase(player.getEmail())) {
