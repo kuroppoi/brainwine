@@ -263,6 +263,7 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         dialogs.clear();
+        connection.setPlayer(null);
         connection = null;
     }
     
@@ -710,10 +711,14 @@ public class Player extends Entity implements CommandExecutor {
     public void setConnection(Connection connection) {
         if(isOnline()) {
             kick("You logged in from another location.");
+            onDisconnect();
+        }
+                
+        if(connection != null) {
+            connection.setPlayer(this);
         }
         
         this.connection = connection;
-        connection.setPlayer(this);
     }
     
     public boolean isOnline() {
