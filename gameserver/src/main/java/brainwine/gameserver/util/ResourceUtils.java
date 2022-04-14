@@ -7,7 +7,9 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.Scanners;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
 
 public class ResourceUtils {
     
@@ -22,8 +24,11 @@ public class ResourceUtils {
             File file = new File(path);
             
             if(!file.exists() || force) {
-                Reflections reflections = new Reflections(String.format("defaults/%s", path), new ResourcesScanner());
-                Set<String> fileNames = reflections.getResources(x -> true);
+                Reflections reflections = new Reflections(new ConfigurationBuilder()
+                        .setUrls(ClasspathHelper.forResource("defaults"))
+                        .setInputsFilter(x -> x.matches(String.format("defaults/%s.*", path)))
+                        .setScanners(Scanners.Resources));
+                Set<String> fileNames = reflections.getResources(".*");
                 
                 for(String fileName : fileNames) {
                     File output = new File(fileName.substring(9));

@@ -74,7 +74,7 @@ public class ZoneGenerator {
         }
         
         logger.info("Loading zone generator configurations ...");
-        ResourceUtils.copyDefaults("generators");
+        ResourceUtils.copyDefaults("generators/");
         File dataDir = new File("generators");
         
         if(dataDir.isDirectory()) {

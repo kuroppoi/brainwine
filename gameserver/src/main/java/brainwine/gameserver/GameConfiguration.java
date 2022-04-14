@@ -11,7 +11,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.Scanners;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
@@ -164,8 +164,8 @@ public class GameConfiguration {
     
     private static void loadConfigFiles() {
         try {
-            Reflections reflections = new Reflections("config", new ResourcesScanner());
-            Set<String> fileNames = reflections.getResources(x -> x.endsWith(".yml"));
+            Reflections reflections = new Reflections("config", Scanners.Resources);
+            Set<String> fileNames = reflections.getResources(".*\\.yml");
             
             for(String fileName : fileNames) {
                 Map<String, Object> config = yaml.load(GameConfiguration.class.getResourceAsStream(String.format("/%s", fileName)));

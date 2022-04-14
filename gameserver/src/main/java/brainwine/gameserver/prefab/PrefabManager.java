@@ -33,7 +33,7 @@ public class PrefabManager {
     
     public PrefabManager() {
         logger.info("Loading prefabs ...");
-        ResourceUtils.copyDefaults("prefabs");
+        ResourceUtils.copyDefaults("prefabs/");
         
         if(dataDir.isDirectory()) {
             for(File file : dataDir.listFiles()) {
