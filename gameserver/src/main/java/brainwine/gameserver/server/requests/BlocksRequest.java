@@ -19,6 +19,12 @@ public class BlocksRequest extends PlayerRequest {
     @Override
     public void process(Player player) {
         Zone zone = player.getZone();
+        
+        // TODO threshold should probably be based on chunk size & perception level
+        if(player.getActiveChunkCount() > 64) {
+            return;
+        }
+        
         List<Chunk> chunks = new ArrayList<>();
         List<MetaBlock> metaBlocks = new ArrayList<>();
         int minX = -1;
@@ -52,7 +58,6 @@ public class BlocksRequest extends PlayerRequest {
             }
         }
         
-        player.removeOutOfRangeChunks();
         player.sendMessage(new BlocksMessage(chunks));
         
         for(MetaBlock metaBlock : metaBlocks) {

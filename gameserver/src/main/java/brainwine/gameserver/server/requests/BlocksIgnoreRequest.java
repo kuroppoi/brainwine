@@ -3,19 +3,14 @@ package brainwine.gameserver.server.requests;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 
-/**
- * No longer used. See {@link Player#removeOutOfRangeChunks()}
- */
 public class BlocksIgnoreRequest extends PlayerRequest {
 
-    public int[] chunkIndexes;
+    public int[] chunkIndices;
     
     @Override
     public void process(Player player) {
-        /**
-        for(int index : chunkIndexes) {
+        for(int index : chunkIndices) {
             player.removeActiveChunk(index);
         }
-        **/
     }
 }

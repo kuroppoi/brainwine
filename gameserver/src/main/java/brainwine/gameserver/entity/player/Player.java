@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -56,8 +55,6 @@ import brainwine.gameserver.server.messages.TeleportMessage;
 import brainwine.gameserver.server.messages.WardrobeMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.server.pipeline.Connection;
-import brainwine.gameserver.server.requests.BlocksIgnoreRequest;
-import brainwine.gameserver.server.requests.BlocksRequest;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.Vector2i;
@@ -109,7 +106,7 @@ public class Player extends Entity implements CommandExecutor {
     private final Set<Item> wardrobe = new HashSet<>();
     private final Map<String, Object> settings = new HashMap<>();
     private final Map<Skill, Integer> skills = new HashMap<>();
-    private final Map<Integer, Long> activeChunks = new HashMap<>();
+    private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
     private String clientVersion;
     private Placement lastPlacement;
@@ -672,31 +669,11 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void addActiveChunk(int index) {
-        activeChunks.put(index, System.currentTimeMillis());
+        activeChunks.add(index);
     }
     
-    /**
-     * Iterates through all active chunks of this player and removes chunks that have been
-     * active for 5 or more seconds, and are out of range of the player.
-     * Its behavior is (mostly) the same as the clients, but instead of relying on {@link BlocksIgnoreRequest},
-     * this function gets called each time {@link BlocksRequest} is received.
-     */
-    public void removeOutOfRangeChunks() {
-        Iterator<Entry<Integer, Long>> iterator = activeChunks.entrySet().iterator();
-        
-        while(iterator.hasNext()) {
-            Entry<Integer, Long> entry = iterator.next();
-            long activeSince = entry.getValue();
-            
-            // If chunk has been active for more than 5 seconds
-            if(System.currentTimeMillis() >= activeSince + 5000) {
-                Chunk chunk = zone.getChunk(entry.getKey());
-                
-                if(!MathUtils.inRange(x, y, chunk.getX(), chunk.getY(), chunk.getWidth() * 5)) {
-                    iterator.remove();
-                }
-            }
-        }
+    public void removeActiveChunk(int index) {
+        activeChunks.remove(index);
     }
     
     public boolean isChunkActive(Chunk chunk) {
@@ -708,7 +685,11 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public boolean isChunkActive(int index) {
-        return activeChunks.containsKey(index);
+        return activeChunks.contains(index);
+    }
+    
+    public int getActiveChunkCount() {
+        return activeChunks.size();
     }
     
     public void setConnection(Connection connection) {
