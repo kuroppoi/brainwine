@@ -484,6 +484,10 @@ public class Zone {
         sendMessageToChunk(new BlockChangeMessage(x, y, layer, item, mod), chunk);
         
         if(layer == Layer.FRONT) {
+            if(item.isWhole()) {
+                updateBlock(x, y, Layer.LIQUID, Item.AIR, 0);
+            }
+            
             if(metadata != null && item.hasMeta()) {
                 setMetaBlock(x, y, item, owner, metadata);
             } else if(!item.hasMeta() && metaBlocks.containsKey(getBlockIndex(x, y))) {
