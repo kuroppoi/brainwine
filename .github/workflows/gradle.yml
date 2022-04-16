@@ -3,6 +3,7 @@ on:
   push:
     branches: [ master ]
     paths:
+      - .github/workflows/gradle.yml
       - api/**
       - gameserver/**
       - shared/**
