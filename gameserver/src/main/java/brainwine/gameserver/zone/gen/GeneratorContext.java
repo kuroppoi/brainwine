@@ -44,6 +44,9 @@ public class GeneratorContext {
     }
     
     public void placePrefab(Prefab prefab, int x, int y) {
+        x = Math.max(1, Math.min(x, getWidth() - prefab.getWidth() - 1));
+        y = Math.max(1, Math.min(y, getHeight() - prefab.getHeight() - 3));
+        
         if(!willPrefabOverlap(prefab, x, y)) {
             zone.placePrefab(prefab, x, y, random);
             prefabs.put(new BlockPosition(x, y), prefab);

@@ -33,9 +33,9 @@ public class StructureGenerator implements GeneratorTask {
         placeRandomSpawnTower(ctx, (int)(width * 0.8));
         
         for(Prefab structure : uniqueStructures) {
-            int x = ctx.nextInt(width - 2) + 1;
+            int x = ctx.nextInt(width);
             int minY = ctx.getZone().getSurface()[x];
-            int y = ctx.nextInt(height - minY - 2) + minY;
+            int y = ctx.nextInt(height - minY) + minY;
             ctx.placePrefab(structure, x, y);
         }
         
@@ -49,9 +49,7 @@ public class StructureGenerator implements GeneratorTask {
                         
                         if(ctx.isUnderground(x, y) && ctx.isUnderground(x + prefabWidth, y)) {
                             int placeX = x + (prefabWidth >= dungeonRegion.getX() ? x : ctx.nextInt(dungeonRegion.getX() - prefabWidth));
-                            placeX = Math.max(1, Math.min(placeX, width - prefabWidth - 1));
                             int placeY = y + (prefabHeight >= dungeonRegion.getY() ? y : ctx.nextInt(dungeonRegion.getY() - prefabHeight));
-                            placeY = Math.max(1, Math.min(placeY, height - prefabHeight - 2));
                             ctx.placePrefab(dungeon, placeX, placeY);
                         }
                     }
