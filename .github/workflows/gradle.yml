@@ -4,6 +4,7 @@ on:
     branches: [ master ]
     paths:
       - .github/workflows/gradle.yml
+      - deepworld-config
       - api/**
       - gameserver/**
       - shared/**
