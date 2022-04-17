@@ -1,3 +1,4 @@
 [submodule "deepworld-config"]
 	path = deepworld-config
 	url = https://github.com/kuroppoi/deepworld-config
+	branch = master
