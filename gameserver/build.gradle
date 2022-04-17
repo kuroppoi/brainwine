@@ -10,7 +10,11 @@ repositories {
 sourceSets {
     main {
         resources {
-            srcDirs += "../deepworld-config"
+            srcDir '../deepworld-config'
+            exclude 'quests'
+            exclude 'biomes.yml'
+            exclude 'daily_challenges.yml'
+            exclude 'README.md'
         }
     }
 }
@@ -31,3 +35,5 @@ dependencies {
 jar {
     archiveBaseName = 'brainwine-gameserver'
 }
+
+processResources.includeEmptyDirs = false
