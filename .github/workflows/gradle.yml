@@ -31,3 +31,4 @@ jobs:
       with:
         name: brainwine
         path: build/distributions/**
+        retention-days: 7
