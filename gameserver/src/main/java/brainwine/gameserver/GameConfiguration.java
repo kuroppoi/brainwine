@@ -35,9 +35,15 @@ public class GameConfiguration {
     private static final Map<String, Object> baseConfig = new HashMap<String, Object>();
     private static final Map<String, Map<String, Object>> configUpdates = new HashMap<>();
     private static final Map<String, Map<String, Object>> versionedConfigs = new HashMap<>();
+    private static boolean initialized;
     private static Yaml yaml;
     
     public static void init() {
+        if(initialized) {
+            logger.warn("Already initialized!");
+            return;
+        }
+        
         long startTime = System.currentTimeMillis();
         logger.info("Loading game configuration ...");
         LoaderOptions options = new LoaderOptions();
@@ -49,6 +55,7 @@ public class GameConfiguration {
         logger.info("Caching versioned configurations ...");
         cacheVersionedConfigs();
         logger.info("Load complete! Took {} milliseconds", System.currentTimeMillis() - startTime);
+        initialized = true;
     }
     
     private static void cacheVersionedConfigs() {
