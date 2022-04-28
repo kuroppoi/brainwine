@@ -70,6 +70,7 @@ public class Player extends Entity implements CommandExecutor {
     public static final int MAX_SPEED_X = 12;
     public static final int MAX_SPEED_Y = 25;
     public static final int HEARTBEAT_TIMEOUT = 30000;
+    public static final int MAX_AUTH_TOKENS = 3;
     private static int dialogDiscriminator;
     
     @JacksonInject("documentId")
@@ -529,6 +530,12 @@ public class Player extends Entity implements CommandExecutor {
     
     protected void clearAuthTokens() {
         authTokens.clear();
+    }
+    
+    protected void clearOldestAuthTokens() {
+        while(authTokens.size() > MAX_AUTH_TOKENS) {
+            authTokens.remove(0);
+        }
     }
     
     protected void addAuthToken(String authToken) {

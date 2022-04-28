@@ -127,6 +127,8 @@ public class PlayerManager {
             return false;
         }
         
+        player.clearOldestAuthTokens();
+        
         // Might not be very efficient...
         for(String hashedToken : player.getAuthTokens()) {
             if(BCrypt.checkpw(authToken, hashedToken)) {
