@@ -16,7 +16,6 @@ import com.fasterxml.jackson.databind.InjectableValues;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.server.pipeline.Connection;
-import brainwine.gameserver.zone.Zone;
 import brainwine.shared.JsonHelper;
 
 public class PlayerManager {
@@ -139,35 +138,8 @@ public class PlayerManager {
         return false;
     }
     
-    public void onPlayerAuthenticate(Connection connection, String version, String name, String authToken) {
-        if(!SUPPORTED_VERSIONS.contains(version)) {
-            connection.kick("Sorry, this version of Deepworld is not supported.", false);
-            return;
-        }
-        
-        Player player = getPlayer(name);
-        
-        if(!verifyAuthToken(name, authToken)) {
-            connection.kick("The session token is either invalid or has expired. Please try relogging.");
-            return;
-        }
-        
-        player.setConnection(connection);
-        player.setClientVersion(version);
-        playersByConnection.put(connection, player);
-        Zone zone = player.getZone();
-        
-        if(zone == null) {
-            // TODO default zone 'n stuff.
-            zone = GameServer.getInstance().getZoneManager().getRandomZone();
-        }
-        
-        if(zone == null) {
-            player.kick("No default zone could be found.");
-            return;
-        }
-        
-        zone.addPlayer(player);
+    public void onPlayerConnect(Player player) {
+        playersByConnection.put(player.getConnection(), player);
     }
     
     public void onPlayerDisconnect(Player player) {

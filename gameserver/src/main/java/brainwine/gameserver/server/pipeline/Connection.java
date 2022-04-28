@@ -2,6 +2,7 @@ package brainwine.gameserver.server.pipeline;
 
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
+import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,8 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.util.concurrent.Future;
+import io.netty.util.concurrent.FutureListener;
 
 public class Connection extends SimpleChannelInboundHandler<Request> {
 
@@ -58,6 +61,14 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
         String error = cause.getMessage();
         logger.warn(error);
         //kick(error);
+    }
+    
+    public Future<?> submitTask(Runnable task) {
+        return channel.eventLoop().submit(task);
+    }
+    
+    public <T> Future<T> submitTask(Callable<T> task) {
+        return channel.eventLoop().submit(task);
     }
     
     public ChannelFuture sendMessage(Message message) {
