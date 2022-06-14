@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
 
 public class MessageSerializer extends StdSerializer<Message> {
@@ -24,10 +25,11 @@ public class MessageSerializer extends StdSerializer<Message> {
 
     @Override
     public void serialize(Message message, JsonGenerator generator, SerializerProvider serializers) throws IOException {
+        MessageInfo info = message.getClass().getAnnotation(MessageInfo.class);
         Field[] fields = message.getClass().getFields();
         
         try {
-            if(message.isPrepacked()) {
+            if(info.prepacked()) {
                 if(fields.length != 1 || !Collection.class.isAssignableFrom(fields[0].getType())) {
                     throw new IOException("Invalid prepacked message.");
                 }
@@ -40,7 +42,7 @@ public class MessageSerializer extends StdSerializer<Message> {
                     fieldValues.add(field.get(message));
                 }
                 
-                if(message.isCollection()) {
+                if(info.collection()) {
                     generator.writeObject(Arrays.asList(fieldValues));
                 } else {
                     generator.writeObject(fieldValues);

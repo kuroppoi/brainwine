@@ -2,11 +2,13 @@ package brainwine.gameserver.server.messages;
 
 import java.util.Map;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.EntityType;
 import brainwine.gameserver.server.Message;
 
+@MessageInfo(id = 7, collection = true)
 public class EntityStatusMessage extends Message {
     
     public int id;
@@ -25,10 +27,5 @@ public class EntityStatusMessage extends Message {
         this.name = name;
         this.status = status;
         this.details = details;
-    }
-    
-    @Override
-    public boolean isCollection() {
-        return true;
     }
 }

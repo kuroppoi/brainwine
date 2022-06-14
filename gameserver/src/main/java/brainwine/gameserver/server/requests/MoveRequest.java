@@ -1,5 +1,6 @@
 package brainwine.gameserver.server.requests;
 
+import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.player.Player;
@@ -7,6 +8,7 @@ import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.zone.Zone;
 
+@RequestInfo(id = 5)
 public class MoveRequest extends PlayerRequest {
     
     public int x;

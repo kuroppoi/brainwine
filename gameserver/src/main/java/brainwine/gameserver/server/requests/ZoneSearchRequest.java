@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.ZoneSearchMessage;
@@ -14,6 +15,7 @@ import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
 
+@RequestInfo(id = 23)
 public class ZoneSearchRequest extends PlayerRequest {
     
     public String type;

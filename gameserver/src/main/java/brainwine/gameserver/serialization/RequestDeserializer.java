@@ -9,7 +9,7 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
-import brainwine.gameserver.server.OptionalField;
+import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.server.Request;
 
 public class RequestDeserializer extends StdDeserializer<Request> {

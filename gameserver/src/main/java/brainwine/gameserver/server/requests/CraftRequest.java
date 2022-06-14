@@ -2,16 +2,18 @@ package brainwine.gameserver.server.requests;
 
 import java.util.List;
 
+import brainwine.gameserver.annotations.OptionalField;
+import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Inventory;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.CraftingIngredient;
 import brainwine.gameserver.item.Item;
-import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
 
 /**
  * TODO Account for skills, bonuses etc..
  */
+@RequestInfo(id = 19)
 public class CraftRequest extends PlayerRequest {
     
     public Item item;

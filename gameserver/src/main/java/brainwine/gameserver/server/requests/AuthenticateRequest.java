@@ -1,13 +1,15 @@
 package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.server.OptionalField;
+import brainwine.gameserver.annotations.OptionalField;
+import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.PlayerManager;
 import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.zone.Zone;
 
+@RequestInfo(id = 1)
 public class AuthenticateRequest extends Request {
     
     public String version;

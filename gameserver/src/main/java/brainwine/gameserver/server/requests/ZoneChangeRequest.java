@@ -1,10 +1,12 @@
 package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.zone.Zone;
 
+@RequestInfo(id = 24)
 public class ZoneChangeRequest extends PlayerRequest {
     
     public String zoneName;

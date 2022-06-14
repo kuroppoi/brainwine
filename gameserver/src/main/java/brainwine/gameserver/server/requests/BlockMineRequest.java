@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Fieldability;
@@ -20,6 +21,7 @@ import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
+@RequestInfo(id = 11)
 public class BlockMineRequest extends PlayerRequest {
 
     public int x;

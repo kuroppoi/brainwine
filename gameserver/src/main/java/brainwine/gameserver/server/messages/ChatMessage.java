@@ -1,8 +1,10 @@
 package brainwine.gameserver.server.messages;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.entity.player.ChatType;
 import brainwine.gameserver.server.Message;
 
+@MessageInfo(id = 13, collection = true)
 public class ChatMessage extends Message {
     
     public int entityId;
@@ -13,10 +15,5 @@ public class ChatMessage extends Message {
         this.entityId = entityId;
         this.message = message;
         this.type = type;
-    }
-    
-    @Override
-    public boolean isCollection() {
-        return true;
     }
 }

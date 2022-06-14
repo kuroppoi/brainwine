@@ -2,8 +2,10 @@ package brainwine.gameserver.server.messages;
 
 import java.util.Map;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
 
+@MessageInfo(id = 2, json = true, compressed = true)
 public class ConfigurationMessage extends Message {
     
     public String entityId;
@@ -16,15 +18,5 @@ public class ConfigurationMessage extends Message {
         this.playerHash = playerHash;
         this.configHash = configHash;
         this.zoneHash = zoneHash;
-    }
-    
-    @Override
-    public boolean isJson() {
-        return true;
-    }
-    
-    @Override
-    public boolean isCompressed() {
-        return true;
     }
 }

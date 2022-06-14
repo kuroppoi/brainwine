@@ -1,10 +1,12 @@
 package brainwine.gameserver.server.requests;
 
+import brainwine.gameserver.annotations.OptionalField;
+import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
 
+@RequestInfo(id = 13)
 public class ChatRequest extends PlayerRequest {
     
     @OptionalField

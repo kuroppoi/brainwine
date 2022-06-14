@@ -5,9 +5,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.zone.Zone;
 
+@MessageInfo(id = 23)
 public class ZoneSearchMessage extends Message {
     
     public String type;

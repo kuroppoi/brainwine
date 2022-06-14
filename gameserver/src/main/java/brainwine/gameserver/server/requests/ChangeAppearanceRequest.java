@@ -3,6 +3,7 @@ package brainwine.gameserver.server.requests;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.entity.player.ClothingSlot;
 import brainwine.gameserver.entity.player.ColorSlot;
@@ -15,6 +16,7 @@ import brainwine.gameserver.server.PlayerRequest;
  * TODO we should actually check if the sent value is even compatible with the slot.
  * We wouldn't want to allow players to equip pants for hats!
  */
+@RequestInfo(id = 22)
 public class ChangeAppearanceRequest extends PlayerRequest {
     
     public Map<String, Object> data;

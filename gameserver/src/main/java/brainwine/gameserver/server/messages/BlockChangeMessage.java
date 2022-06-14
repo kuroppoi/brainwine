@@ -1,9 +1,11 @@
 package brainwine.gameserver.server.messages;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.server.Message;
 
+@MessageInfo(id = 9, collection = true)
 public class BlockChangeMessage extends Message {
 
     public int x;
@@ -19,10 +21,5 @@ public class BlockChangeMessage extends Message {
         this.layer = layer;
         this.item = item;
         this.mod = mod;
-    }
-    
-    @Override
-    public boolean isCollection() {
-        return true;
     }
 }

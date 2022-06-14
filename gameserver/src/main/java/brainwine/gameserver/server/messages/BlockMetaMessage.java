@@ -2,10 +2,12 @@ package brainwine.gameserver.server.messages;
 
 import java.util.Map;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.zone.MetaBlock;
 
+@MessageInfo(id = 20, collection = true)
 public class BlockMetaMessage extends Message {
     
     public int x;
@@ -27,10 +29,5 @@ public class BlockMetaMessage extends Message {
         this.x = x;
         this.y = y;
         this.metadata = metadata;
-    }
-    
-    @Override
-    public boolean isCollection() {
-        return true;
     }
 }

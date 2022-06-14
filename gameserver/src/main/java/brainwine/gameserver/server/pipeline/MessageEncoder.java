@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.util.ZipUtils;
@@ -33,11 +34,12 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
             throw new IOException("Attempted to encode unregistered message " + in.getClass());
         }
         
+        MessageInfo info = in.getClass().getAnnotation(MessageInfo.class);
         out.writeByte(id);
         out.writeIntLE(0); // Length field is set at the end.
         byte[] bytes = null;
         
-        if(in.isJson() && connection.isV3()) {
+        if(info.json() && connection.isV3()) {
             List<Object> data = new ArrayList<>();
             
             for(Field field : in.getClass().getFields()) {
@@ -49,7 +51,7 @@ public class MessageEncoder extends MessageToByteEncoder<Message> {
             bytes = writer.writeValueAsBytes(in);
         }
         
-        if(in.isCompressed()) {
+        if(info.compressed()) {
             bytes = ZipUtils.deflateBytes(bytes);
         }
         

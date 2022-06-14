@@ -5,19 +5,4 @@ package brainwine.gameserver.server;
  */
 public abstract class Message {
     
-    public boolean isJson() {
-        return false;
-    }
-    
-    public boolean isCompressed() {
-        return false;
-    }
-    
-    public boolean isCollection() {
-        return false;
-    }
-    
-    public boolean isPrepacked() {
-        return false;
-    }
 }

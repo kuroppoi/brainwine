@@ -1,7 +1,9 @@
 package brainwine.gameserver.server.messages;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
 
+@MessageInfo(id = 57)
 public class EventMessage extends Message {
     
     public String name;

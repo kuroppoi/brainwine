@@ -1,9 +1,11 @@
 package brainwine.gameserver.server.messages;
 
+import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.server.Message;
 
+@MessageInfo(id = 6, collection = true)
 public class EntityPositionMessage extends Message {
     
     public int id;
@@ -30,10 +32,5 @@ public class EntityPositionMessage extends Message {
         this.targetX = targetX * Entity.VELOCITY_MODIFIER;
         this.targetY = targetY * Entity.VELOCITY_MODIFIER;
         this.animation = animation;
-    }
-    
-    @Override
-    public boolean isCollection() {
-        return true;
     }
 }

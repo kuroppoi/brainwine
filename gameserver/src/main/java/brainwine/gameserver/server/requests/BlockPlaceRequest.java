@@ -1,5 +1,6 @@
 package brainwine.gameserver.server.requests;
 
+import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
@@ -10,6 +11,7 @@ import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Zone;
 
+@RequestInfo(id = 12)
 public class BlockPlaceRequest extends PlayerRequest {
 
     public int x;
