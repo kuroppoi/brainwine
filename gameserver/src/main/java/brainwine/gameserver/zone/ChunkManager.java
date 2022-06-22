@@ -203,7 +203,7 @@ public class ChunkManager {
         return chunk;
     }
     
-    public Collection<Chunk> getChunks() {
+    public Collection<Chunk> getLoadedChunks() {
         return Collections.unmodifiableCollection(chunks.values());
     }
 }

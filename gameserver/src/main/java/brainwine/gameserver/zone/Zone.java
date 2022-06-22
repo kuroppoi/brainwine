@@ -730,8 +730,8 @@ public class Zone {
         return chunkManager.getChunk(index);
     }
     
-    public Collection<Chunk> getChunks() {
-        return chunkManager.getChunks();
+    public Collection<Chunk> getLoadedChunks() {
+        return chunkManager.getLoadedChunks();
     }
     
     public void setSurface(int x, int surface) {
