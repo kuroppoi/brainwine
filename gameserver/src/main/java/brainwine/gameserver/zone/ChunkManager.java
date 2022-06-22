@@ -95,7 +95,7 @@ public class ChunkManager {
     public void saveChunks() {
         List<Chunk> inactiveChunks = new ArrayList<>();
         
-        for(Chunk chunk : zone.getChunks()) {
+        for(Chunk chunk : chunks.values()) {
             if(chunk.isModified()) {
                 saveChunk(chunk);
             }
