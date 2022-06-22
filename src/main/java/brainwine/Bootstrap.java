@@ -37,8 +37,8 @@ public class Bootstrap {
     }
     
     private void runTickLoop() {
-        TickLoop loop = new TickLoop(20, () -> {
-           gameServer.tick(); 
+        TickLoop loop = new TickLoop(8, () -> {
+            gameServer.tick(); 
         });
         
         while(!gameServer.shouldShutdown()) {
