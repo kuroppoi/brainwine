@@ -14,8 +14,8 @@ import io.netty.util.internal.ThreadLocalRandom;
 public class WeightedMap<T> {
     
     @JsonValue
-    private final Map<T, Integer> map = new HashMap<>();
-    private int totalWeight;
+    private final Map<T, Double> map = new HashMap<>();
+    private double totalWeight;
     
     public WeightedMap() {}
     
@@ -27,7 +27,7 @@ public class WeightedMap<T> {
     }
     
     @JsonCreator
-    public WeightedMap(Map<T, Integer> map) {
+    public WeightedMap(Map<T, Double> map) {
         map.forEach((entry, weight) -> {
             addEntry(entry, weight);
         });
@@ -37,7 +37,7 @@ public class WeightedMap<T> {
         return addEntry(entry, 1);
     }
     
-    public WeightedMap<T> addEntry(T entry, int weight) {
+    public WeightedMap<T> addEntry(T entry, double weight) {
         if(weight > 0 && entry != null) {
             map.put(entry, weight);
             totalWeight += weight;
@@ -64,10 +64,10 @@ public class WeightedMap<T> {
     
     public T next(Random random, T def) {
         if(!map.isEmpty()) {
-            int rolled = random.nextInt(totalWeight);
+            double rolled = random.nextDouble() * totalWeight;
             
-            for(Entry<T, Integer> entry : map.entrySet()) {
-                int weight = entry.getValue();
+            for(Entry<T, Double> entry : map.entrySet()) {
+                double weight = entry.getValue();
                 
                 if(rolled < weight) {
                     return entry.getKey();
