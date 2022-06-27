@@ -76,6 +76,7 @@ public class CaveGenerator implements GeneratorTask {
         for(Cave cave : caves) {
             ctx.addCave(cave);
             StoneVariant variant = cave.getVariant();
+            int spawnerCount = 0;
             
             for(BlockPosition block : cave.getBlocks()) {
                 int x = block.getX();
@@ -105,6 +106,35 @@ public class CaveGenerator implements GeneratorTask {
                                 }
                             }
                         }
+                    }
+                }
+                
+                double spawnerChance = Math.log(cave.getSize()) / 40 / (spawnerCount + 1);
+                boolean spawnerEligible = ctx.nextDouble() <= spawnerChance;
+                
+                if(spawnerEligible) {
+                    for(int i = x - 2; i <= x + 2; i++) {
+                        for(int j = y - 2; j <= y + 2; j++) {
+                            if(ctx.inBounds(i, j)) {
+                                int baseItem = ctx.getZone().getBlock(i, j).getBaseItem().getId();
+                                double distance = Math.hypot(i - x, j - y);
+                                
+                                // Prevent spawners from generating near each other
+                                if((!cells[i][j] || baseItem == 5 || baseItem == 6) && distance < 2.5) {
+                                    spawnerEligible = false;
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                if(spawnerEligible) {
+                    int type = ctx.nextDouble() < 0.2 ? 6 : 5;
+                    
+                    // Only pipes can spawn in sandstone/limestone
+                    if(type == 6 || ctx.getZone().getBlock(x, y).getBaseItem().getId() == 2) {
+                        ctx.updateBlock(x, y, Layer.BASE, type);
+                        spawnerCount++;
                     }
                 }
             }
