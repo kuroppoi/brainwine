@@ -12,6 +12,10 @@ public class ZoneConfig {
     private final int width;
     private final int height;
     
+    public ZoneConfig(Zone zone) {
+        this(zone.getName(), zone.getBiome(), zone.getWidth(), zone.getHeight());
+    }
+    
     @ConstructorProperties({"name", "biome", "width", "height"})
     public ZoneConfig(String name, Biome biome, int width, int height) {
         this.name = name;

@@ -1,6 +1,7 @@
 package brainwine.gameserver.zone;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.zip.DataFormatException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -66,40 +68,14 @@ public class ZoneManager {
     private void loadZone(File file) {
         String id = file.getName();
         File dataFile = new File(file, "zone.dat");
-        File shapeFile = new File(file, "shape.cmp");
+        File legacyDataFile = new File(file, "shape.cmp");
         
         try {
             ZoneData data = null;
             
-            if(shapeFile.exists() && !dataFile.exists()) {
-                MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(ZipUtils.inflateBytes(Files.readAllBytes(shapeFile.toPath())));
-                int[] surface = new int[unpacker.unpackArrayHeader()];
-                
-                for(int i = 0; i < surface.length; i++) {
-                    surface[i] = unpacker.unpackInt();
-                }
-                
-                int[] sunlight = new int[unpacker.unpackArrayHeader()];
-                
-                for(int i = 0; i < sunlight.length; i++) {
-                    sunlight[i] = unpacker.unpackInt();
-                }
-                
-                int[] pendingSunlight = new int[unpacker.unpackArrayHeader()];
-                
-                for(int i = 0; i < pendingSunlight.length; i++) {
-                    pendingSunlight[i] = unpacker.unpackInt();
-                }
-                
-                boolean[] chunksExplored = new boolean[unpacker.unpackArrayHeader()];
-                
-                for(int i = 0; i < pendingSunlight.length; i++) {
-                    chunksExplored[i] = unpacker.unpackBoolean();
-                }
-                
-                data = new ZoneData(surface, sunlight, pendingSunlight, chunksExplored);
-                mapper.writeValue(dataFile, data);
-                shapeFile.delete();
+            if(legacyDataFile.exists() && !dataFile.exists()) {
+                data = convertLegacyDataFile(legacyDataFile, dataFile);
+                legacyDataFile.delete();
             } else {
                 data = mapper.readValue(ZipUtils.inflateBytes(Files.readAllBytes(dataFile.toPath())), ZoneData.class);
             }
@@ -111,6 +87,38 @@ public class ZoneManager {
         } catch (Exception e) {
             logger.error("Zone load failure. id: {}", id, e);
         }
+    }
+    
+    private ZoneData convertLegacyDataFile(File legacyFile, File outputFile) throws IOException, DataFormatException {
+        MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(ZipUtils.inflateBytes(Files.readAllBytes(legacyFile.toPath())));
+        int[] surface = new int[unpacker.unpackArrayHeader()];
+        
+        for(int i = 0; i < surface.length; i++) {
+            surface[i] = unpacker.unpackInt();
+        }
+        
+        int[] sunlight = new int[unpacker.unpackArrayHeader()];
+        
+        for(int i = 0; i < sunlight.length; i++) {
+            sunlight[i] = unpacker.unpackInt();
+        }
+        
+        List<Integer> pendingSunlight = new ArrayList<>();
+        int pendingSunlightSize = unpacker.unpackArrayHeader();
+        
+        for(int i = 0; i < pendingSunlightSize; i++) {
+            pendingSunlight.add(unpacker.unpackInt());
+        }
+        
+        boolean[] chunksExplored = new boolean[unpacker.unpackArrayHeader()];
+        
+        for(int i = 0; i < chunksExplored.length; i++) {
+            chunksExplored[i] = unpacker.unpackBoolean();
+        }
+        
+        ZoneData data = new ZoneData(surface, sunlight, pendingSunlight, chunksExplored);
+        mapper.writeValue(outputFile, data);
+        return data;
     }
     
     public void saveZones() {
@@ -125,11 +133,9 @@ public class ZoneManager {
         
         try {
             zone.saveChunks();
-            ZoneConfig config = JsonHelper.readValue(zone, ZoneConfig.class);
-            ZoneData data = JsonHelper.readValue(zone, ZoneData.class);
             JsonHelper.writeValue(new File(file, "metablocks.json"), zone.getMetaBlocks());
-            JsonHelper.writeValue(new File(file, "config.json"), config);
-            Files.write(new File(file, "zone.dat").toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(data)));
+            JsonHelper.writeValue(new File(file, "config.json"), new ZoneConfig(zone));
+            Files.write(new File(file, "zone.dat").toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(new ZoneData(zone))));
         } catch(Exception e) {
             logger.error("Zone save failure. id: {}", zone.getDocumentId(), e);
         }

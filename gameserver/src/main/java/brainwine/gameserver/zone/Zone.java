@@ -79,6 +79,7 @@ public class Zone {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
         surface = data.getSurface();
         sunlight = data.getSunlight();
+        pendingSunlight.addAll(data.getPendingSunlight());
         chunksExplored = data.getChunksExplored();
     }
     
@@ -762,6 +763,10 @@ public class Zone {
                 return;
             }
         }
+    }
+    
+    public Set<Integer> getPendingSunlight() {
+        return Collections.unmodifiableSet(pendingSunlight);
     }
     
     public void setSunlight(int x, int sunlight) {
