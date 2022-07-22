@@ -30,6 +30,7 @@ import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
@@ -664,6 +665,21 @@ public class Player extends Entity implements CommandExecutor {
     
     public int getSkillLevel(Skill skill) {
         return MathUtils.clamp(skills.getOrDefault(skill, 1), 1, MAX_NATURAL_SKILL_LEVEL);
+    }
+    
+    public void consume(Item item) {
+        Action action = item.getAction();
+        
+        // TODO some kind of abstraction for things like this would be pretty cool
+        switch(action) {
+            case HEAL: heal(item.getPower()); break;
+            default: break;
+        }
+        
+        // (Temporary?) measure to prevent consuming unimplemented consumables
+        if(action != Action.NONE) {
+            inventory.removeItem(item);
+        }
     }
     
     public void awardLoot(Loot loot) {

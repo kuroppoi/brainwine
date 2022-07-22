@@ -36,22 +36,29 @@ public class InventoryUseRequest extends PlayerRequest {
                 player.setHeldItem(item);
             }
             
-            // Lovely type ambiguity. Always nice.
-            if(details instanceof Collection) {
-                Collection<?> entityIds = (Collection<?>)details;
-                int maxEntityAttackCount = 1; // TODO agility skill
+            // Use item
+            if(status == 1) {
+                if(item.isConsumable()) {
+                    player.consume(item);
+                }
                 
-                for(Object id : entityIds) {
-                    if(id instanceof Integer) {
-                        Npc npc = player.getZone().getNpc((int)id);
-                        
-                        if(npc != null && player.canSee(npc)) {
-                            npc.attack(player, item);
-                        }
-                    }
+                // Lovely type ambiguity. Always nice.
+                if(item.isWeapon() && details instanceof Collection) {
+                    Collection<?> entityIds = (Collection<?>)details;
+                    int maxEntityAttackCount = 1; // TODO agility skill
                     
-                    if(--maxEntityAttackCount <= 0) {
-                        break;
+                    for(Object id : entityIds) {
+                        if(id instanceof Integer) {
+                            Npc npc = player.getZone().getNpc((int)id);
+                            
+                            if(npc != null && player.canSee(npc)) {
+                                npc.attack(player, item);
+                            }
+                        }
+                        
+                        if(--maxEntityAttackCount <= 0) {
+                            break;
+                        }
                     }
                 }
             }
