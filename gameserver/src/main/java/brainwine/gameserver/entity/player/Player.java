@@ -73,7 +73,9 @@ public class Player extends Entity implements CommandExecutor {
     public static final int HEARTBEAT_TIMEOUT = 30000;
     public static final int MAX_AUTH_TOKENS = 3;
     public static final int TRACKED_ENTITY_UPDATE_INTERVAL = 100;
+    public static final int REGEN_NO_DAMAGE_TIME = 3000;
     public static final float ENTITY_VISIBILITY_RANGE = 40;
+    public static final float BASE_REGEN_AMOUNT = 0.1F;
     private static int dialogDiscriminator;
     
     @JacksonInject("documentId")
@@ -151,12 +153,19 @@ public class Player extends Entity implements CommandExecutor {
     public void tick(float deltaTime) {
         long now = System.currentTimeMillis();
         
+        // Check timeout
         if(lastHeartbeat != 0) {
             if(System.currentTimeMillis() - lastHeartbeat >= HEARTBEAT_TIMEOUT) {
                 kick("Connection timed out.");
             }
         }
         
+        // Regenerate health out of combat
+        if(!isDead() && now >= lastDamagedAt + REGEN_NO_DAMAGE_TIME) {
+            heal(BASE_REGEN_AMOUNT * deltaTime);
+        }
+        
+        // Update tracked entities
         if(now - lastTrackedEntityUpdate >= TRACKED_ENTITY_UPDATE_INTERVAL) {
             updateTrackedEntities();
             
@@ -186,6 +195,11 @@ public class Player extends Entity implements CommandExecutor {
     @Override
     public boolean isAdmin() {
         return admin;
+    }
+    
+    @Override
+    public float getMaxHealth() {
+        return 10; // TODO
     }
     
     @Override
@@ -411,13 +425,12 @@ public class Player extends Entity implements CommandExecutor {
     
     public void respawn() {
         if(isDead()) {
-            health = 10; // TODO max health
+            setHealth(getMaxHealth());
         }
         
         int x = spawnPoint.getX();
         int y = spawnPoint.getY();
         sendMessage(new PlayerPositionMessage(x, y));
-        sendMessage(new HealthMessage(health));
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.REVIVED));
         zone.sendMessage(new EffectMessage(x, y, "spawn", 20));
     }

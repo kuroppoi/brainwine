@@ -12,12 +12,13 @@ import brainwine.gameserver.zone.Zone;
 
 public abstract class Entity {
     
+    public static final float DEFAULT_HEALTH = 5;
     public static final float POSITION_MODIFIER = 100F;
     public static final int VELOCITY_MODIFIER = (int)POSITION_MODIFIER;
     protected final List<Player> trackers = new ArrayList<>();
     protected int type;
     protected String name;
-    protected float health;
+    protected float health = getMaxHealth();
     protected int id;
     protected Zone zone;
     protected float x;
@@ -28,10 +29,10 @@ public abstract class Entity {
     protected int targetY;
     protected FacingDirection direction = FacingDirection.WEST;
     protected int animation;
+    protected long lastDamagedAt;
     
     public Entity(Zone zone) {
         this.zone = zone;
-        health = 10; // TODO
     }
     
     public void tick(float deltaTime) {
@@ -40,6 +41,12 @@ public abstract class Entity {
     
     public void die(Player killer) {
         // Override
+    }
+    
+    public void heal(float amount) {
+        if(health > 0) {
+            setHealth(health + amount);
+        }
     }
     
     public void damage(float amount) {
@@ -52,6 +59,8 @@ public abstract class Entity {
         if(health <= 0) {
             die(attacker);
         }
+        
+        lastDamagedAt = System.currentTimeMillis();
     }
     
     public boolean canSee(Entity other) {
@@ -103,12 +112,17 @@ public abstract class Entity {
         return name;
     }
     
+    public float getMaxHealth() {
+        return DEFAULT_HEALTH;
+    }
+    
     public boolean isDead() {
         return health <= 0;
     }
     
     public void setHealth(float health) {
-        this.health = health < 0 ? 0 : health;
+        float maxHealth = getMaxHealth();
+        this.health = health < 0 ? 0 : health > maxHealth ? maxHealth : health;
     }
     
     public float getHealth() {

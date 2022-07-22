@@ -42,6 +42,7 @@ public class Npc extends Entity {
     private final SequenceBehavior behaviorTree;
     private final Vector2i size;
     private final String typeName;
+    private final float maxHealth;
     private final float baseSpeed;
     private float speed;
     private int moveX;
@@ -98,7 +99,8 @@ public class Npc extends Entity {
         
         type = config.getType();
         typeName = config.getName();
-        health = config.getMaxHealth();
+        maxHealth = config.getMaxHealth();
+        health = maxHealth;
         baseSpeed = config.getBaseSpeed();
         speed = baseSpeed;
         size = config.getSize();
@@ -168,6 +170,11 @@ public class Npc extends Entity {
                 MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList()).remove(typeName);
             }
         }
+    }
+    
+    @Override
+    public float getMaxHealth() {
+        return maxHealth;
     }
     
     @Override
