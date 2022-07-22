@@ -70,11 +70,17 @@ public class Item {
     @JsonProperty("guard")
     private int guardLevel;
     
+    @JsonProperty("power")
+    private float power;
+    
     @JsonProperty("diggable")
     private boolean diggable;
     
     @JsonProperty("wardrobe")
     private boolean clothing;
+    
+    @JsonProperty("consumable")
+    private boolean consumable;
     
     @JsonProperty("placeover")
     private boolean placeover;
@@ -223,12 +229,20 @@ public class Item {
         return guardLevel;
     }
     
+    public float getPower() {
+        return power;
+    }
+    
     public boolean isDiggable() {
         return diggable;
     }
     
     public boolean isClothing() {
         return clothing;
+    }
+    
+    public boolean isConsumable() {
+        return consumable;
     }
     
     public boolean isBase() {
