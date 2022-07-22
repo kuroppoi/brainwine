@@ -27,7 +27,7 @@ public class InventoryUseRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
-        if(!player.getInventory().hasItem(item)) {
+        if(player.isDead() || !player.getInventory().hasItem(item)) {
             return;
         }
         

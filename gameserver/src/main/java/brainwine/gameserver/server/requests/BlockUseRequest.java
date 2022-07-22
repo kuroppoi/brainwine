@@ -37,7 +37,7 @@ public class BlockUseRequest extends PlayerRequest {
     public void process(Player player) {
         Zone zone = player.getZone();
         
-        if(!player.isChunkActive(x, y)) {
+        if(player.isDead() || !player.isChunkActive(x, y)) {
             return;
         }
         

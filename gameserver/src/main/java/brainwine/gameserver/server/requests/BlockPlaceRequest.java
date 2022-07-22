@@ -24,6 +24,10 @@ public class BlockPlaceRequest extends PlayerRequest {
     public void process(Player player) {
         Zone zone = player.getZone();
         
+        if(player.isDead()) {
+            return;
+        }
+        
         if(!player.isChunkActive(x, y)) {
             player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
             return;

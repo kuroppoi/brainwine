@@ -35,6 +35,10 @@ public class BlockMineRequest extends PlayerRequest {
         Zone zone = player.getZone();
         boolean digging = item.isDiggable() && player.getHeldItem().getAction() == Action.DIG;
         
+        if(player.isDead()) {
+            return;
+        }
+        
         if(!player.isChunkActive(x, y)) {
             player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
             return;
