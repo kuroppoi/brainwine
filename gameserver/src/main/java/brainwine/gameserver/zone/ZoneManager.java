@@ -20,6 +20,7 @@ import org.msgpack.core.MessageUnpacker;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
@@ -28,7 +29,8 @@ import brainwine.shared.JsonHelper;
 public class ZoneManager {
     
     private static final Logger logger = LogManager.getLogger();
-    private final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory());
+    private final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory())
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();

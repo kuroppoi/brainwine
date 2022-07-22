@@ -79,8 +79,15 @@ public class Zone {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
         surface = data.getSurface();
         sunlight = data.getSunlight();
-        pendingSunlight.addAll(data.getPendingSunlight());
-        chunksExplored = data.getChunksExplored();
+        
+        // Ha ha silly me!
+        if(data.getPendingSunlight() != null) {
+            pendingSunlight.addAll(data.getPendingSunlight());
+        }
+        
+        if(data.getChunksExplored() != null) {
+            chunksExplored = data.getChunksExplored();
+        }
     }
     
     public Zone(String documentId, String name, Biome biome, int width, int height) {
