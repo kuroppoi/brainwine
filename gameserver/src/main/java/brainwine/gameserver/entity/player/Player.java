@@ -74,7 +74,7 @@ public class Player extends Entity implements CommandExecutor {
     public static final int HEARTBEAT_TIMEOUT = 30000;
     public static final int MAX_AUTH_TOKENS = 3;
     public static final int TRACKED_ENTITY_UPDATE_INTERVAL = 100;
-    public static final int REGEN_NO_DAMAGE_TIME = 3000;
+    public static final int REGEN_NO_DAMAGE_TIME = 10000;
     public static final float ENTITY_VISIBILITY_RANGE = 40;
     public static final float BASE_REGEN_AMOUNT = 0.1F;
     private static int dialogDiscriminator;
