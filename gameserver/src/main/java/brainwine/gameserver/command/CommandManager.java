@@ -17,6 +17,7 @@ import brainwine.gameserver.command.commands.EntityCommand;
 import brainwine.gameserver.command.commands.ExportCommand;
 import brainwine.gameserver.command.commands.GenerateZoneCommand;
 import brainwine.gameserver.command.commands.GiveCommand;
+import brainwine.gameserver.command.commands.HealthCommand;
 import brainwine.gameserver.command.commands.HelpCommand;
 import brainwine.gameserver.command.commands.ImportCommand;
 import brainwine.gameserver.command.commands.KickCommand;
@@ -71,6 +72,7 @@ public class CommandManager {
         registerCommand(new PositionCommand());
         registerCommand(new RickrollCommand());
         registerCommand(new EntityCommand());
+        registerCommand(new HealthCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {
