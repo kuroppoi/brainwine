@@ -15,7 +15,7 @@ import brainwine.gameserver.util.Vector2i;
 public class IdleBehavior extends Behavior {
     
     protected int delay = 60;
-    protected int duration = 60;
+    protected int duration = -1;
     protected double random = 0.5;
     protected Vector2i groundOffset = new Vector2i(0, 1);
     protected String[] animations = new String[] {"idle"};
@@ -64,7 +64,7 @@ public class IdleBehavior extends Behavior {
     }
     
     protected long getNextUntil() {
-        int currentDuration = (idle ? duration : delay) * 1000;
+        int currentDuration = (idle && duration > 0 ? duration : delay) * 1000;
         return (long)(System.currentTimeMillis() + currentDuration + currentDuration * (Math.random() * random));
     }
     
