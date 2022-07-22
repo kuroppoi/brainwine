@@ -10,12 +10,14 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import brainwine.gameserver.behavior.Behavior;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.util.Vector2i;
 
 public class IdleBehavior extends Behavior {
     
     protected int delay = 60;
     protected int duration = 60;
     protected double random = 0.5;
+    protected Vector2i groundOffset = new Vector2i(0, 1);
     protected String[] animations = new String[] {"idle"};
     protected long until;
     protected boolean idle;
@@ -33,7 +35,7 @@ public class IdleBehavior extends Behavior {
         Random random = ThreadLocalRandom.current();
         long now = System.currentTimeMillis();
         
-        if(entity.isOnGround()) {
+        if(entity.isBlocked(groundOffset.getX(), groundOffset.getY())) {
             if(now > until) {
                 idle = !idle;
                 until = getNextUntil();
@@ -76,6 +78,11 @@ public class IdleBehavior extends Behavior {
     
     public void setRandom(double random) {
         this.random = random;
+    }
+    
+    @JsonSetter("grounded")
+    public void setGroundOffset(Vector2i groundOffset) {
+        this.groundOffset = groundOffset;
     }
     
     @JsonSetter("animation")
