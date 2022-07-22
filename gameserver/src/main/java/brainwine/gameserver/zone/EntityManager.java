@@ -140,16 +140,12 @@ public class EntityManager {
     }
     
     private boolean tryBustOrifice(int x, int y, Layer layer) {
-        if(zone.isBlockProtected(x, y, null)) {
-            return true;
-        }
-        
         Block block = zone.getBlock(x, y);
         Item item = block.getItem(layer);
         int mod = block.getMod(layer);
         
         if(!item.isAir()) {
-            if(random.nextBoolean()) {
+            if(!zone.isBlockProtected(x, y, null) && random.nextBoolean()) {
                 item = item.getMod() == ModType.DECAY && mod < 5 ? item : Item.AIR;
                 mod = item.isAir() ? 0 : Math.min(5, mod + random.nextInt(1, 3));
                 zone.updateBlock(x, y, layer, item, mod);
