@@ -1,7 +1,10 @@
 package brainwine.gameserver.server.requests;
 
+import java.util.Collection;
+
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.server.PlayerRequest;
@@ -10,6 +13,7 @@ import brainwine.gameserver.server.messages.EntityItemUseMessage;
 /**
  * TODO This request may be sent *before* a {@link CraftRequest} is sent.
  * So basically, we can't really perform any "has item" checks...
+ * ... Let's do it anyway lol!
  */
 @RequestInfo(id = 10)
 public class InventoryUseRequest extends PlayerRequest {
@@ -23,9 +27,33 @@ public class InventoryUseRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
+        if(!player.getInventory().hasItem(item)) {
+            return;
+        }
+        
         if(type == 0) {
             if(status != 2) {
                 player.setHeldItem(item);
+            }
+            
+            // Lovely type ambiguity. Always nice.
+            if(details instanceof Collection) {
+                Collection<?> entityIds = (Collection<?>)details;
+                int maxEntityAttackCount = 1; // TODO agility skill
+                
+                for(Object id : entityIds) {
+                    if(id instanceof Integer) {
+                        Npc npc = player.getZone().getNpc((int)id);
+                        
+                        if(npc != null && player.canSee(npc)) {
+                            npc.attack(player, item);
+                        }
+                    }
+                    
+                    if(--maxEntityAttackCount <= 0) {
+                        break;
+                    }
+                }
             }
         }
         

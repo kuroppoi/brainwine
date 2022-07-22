@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
@@ -27,8 +28,8 @@ import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
-import brainwine.gameserver.entity.EntityType;
 import brainwine.gameserver.entity.FacingDirection;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
@@ -71,6 +72,8 @@ public class Player extends Entity implements CommandExecutor {
     public static final int MAX_SPEED_Y = 25;
     public static final int HEARTBEAT_TIMEOUT = 30000;
     public static final int MAX_AUTH_TOKENS = 3;
+    public static final int TRACKED_ENTITY_UPDATE_INTERVAL = 100;
+    public static final float ENTITY_VISIBILITY_RANGE = 40;
     private static int dialogDiscriminator;
     
     @JacksonInject("documentId")
@@ -109,6 +112,7 @@ public class Player extends Entity implements CommandExecutor {
     private final Map<Skill, Integer> skills = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
+    private final List<Entity> trackedEntities = new ArrayList<>();
     private String clientVersion;
     private Placement lastPlacement;
     private Item heldItem = Item.AIR;
@@ -116,6 +120,7 @@ public class Player extends Entity implements CommandExecutor {
     private int teleportX;
     private int teleportY;
     private long lastHeartbeat;
+    private long lastTrackedEntityUpdate;
     private Connection connection;
     
     @ConstructorProperties({"documentId", "name", "current_zone"})
@@ -143,19 +148,29 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     @Override
-    public EntityType getType() {
-        return EntityType.PLAYER;
-    }
-    
-    @Override
-    public void tick() {
-        super.tick();
+    public void tick(float deltaTime) {
+        long now = System.currentTimeMillis();
         
         if(lastHeartbeat != 0) {
             if(System.currentTimeMillis() - lastHeartbeat >= HEARTBEAT_TIMEOUT) {
                 kick("Connection timed out.");
             }
         }
+        
+        if(now - lastTrackedEntityUpdate >= TRACKED_ENTITY_UPDATE_INTERVAL) {
+            updateTrackedEntities();
+            
+            for(Entity entity : trackedEntities) {
+                sendMessage(new EntityPositionMessage(entity));
+            }
+            
+            lastTrackedEntityUpdate = now;
+        }
+    }
+    
+    @Override
+    public void die(Player killer) {        
+        sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.DEAD)); // TODO killer id
     }
     
     @Override
@@ -258,11 +273,17 @@ public class Player extends Entity implements CommandExecutor {
         clientVersion = null;
         
         if(zone != null) {
-            zone.removePlayer(this);
+            zone.removeEntity(this);
         }
         
         dialogs.clear();
         activeChunks.clear();
+        
+        for(Entity entity : trackedEntities) {
+            entity.removeTracker(this);
+        }
+        
+        trackedEntities.clear();
         GameServer.getInstance().getPlayerManager().onPlayerDisconnect(this);
         connection.setPlayer(null);
         connection = null;
@@ -310,7 +331,7 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void changeZone(Zone zone) {
-        this.zone.removePlayer(this);
+        this.zone.removeEntity(this);
         this.zone = zone;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
@@ -386,6 +407,10 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void respawn() {
+        if(isDead()) {
+            health = 10; // TODO max health
+        }
+        
         int x = spawnPoint.getX();
         int y = spawnPoint.getY();
         sendMessage(new PlayerPositionMessage(x, y));
@@ -697,6 +722,42 @@ public class Player extends Entity implements CommandExecutor {
     
     public int getActiveChunkCount() {
         return activeChunks.size();
+    }
+    
+    private void updateTrackedEntities() {
+        List<Entity> entitiesInRange = zone.getEntitiesInRange(x, y, ENTITY_VISIBILITY_RANGE);
+        entitiesInRange.remove(this);
+        List<Entity> enteredEntities = entitiesInRange.stream().filter(entity -> !trackedEntities.contains(entity))
+                .collect(Collectors.toList());
+        List<Entity> departedEntities = trackedEntities.stream().filter(entity -> !entitiesInRange.contains(entity))
+                .collect(Collectors.toList());
+        
+        for(Entity entity : enteredEntities) {            
+            if(entity instanceof Npc) {
+                sendMessage(new EntityStatusMessage(entity, EntityStatus.ENTERING));
+            }
+            
+            entity.addTracker(this);
+        }
+        
+        for(Entity entity : departedEntities) {
+            if(entity instanceof Npc) {
+                sendMessage(new EntityStatusMessage(entity, EntityStatus.EXITING));
+            }
+            
+            entity.removeTracker(this);
+        }
+        
+        trackedEntities.clear();
+        trackedEntities.addAll(entitiesInRange);
+    }
+    
+    public boolean isTrackingEntity(Entity entity) {
+        return trackedEntities.contains(entity);
+    }
+    
+    public List<Entity> getTrackedEntities() {
+        return trackedEntities;
     }
     
     public void setConnection(Connection connection) {

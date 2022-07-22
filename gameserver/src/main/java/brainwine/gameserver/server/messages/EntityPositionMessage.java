@@ -22,12 +22,12 @@ public class EntityPositionMessage extends Message {
         this(entity.getId(), entity.getX(), entity.getY(), entity.getVelocityX(), entity.getVelocityY(), entity.getDirection(), entity.getTargetX(), entity.getTargetY(), entity.getAnimation());
     }
     
-    public EntityPositionMessage(int id, float x, float y, int velocityX, int velocityY, FacingDirection direction, int targetX, int targetY, int animation) {
+    public EntityPositionMessage(int id, float x, float y, float velocityX, float velocityY, FacingDirection direction, int targetX, int targetY, int animation) {
         this.id = id;
         this.x = (int)(x * Entity.POSITION_MODIFIER);
         this.y = (int)(y * Entity.POSITION_MODIFIER);
-        this.velocityX = velocityX * Entity.VELOCITY_MODIFIER;
-        this.velocityY = velocityY * Entity.VELOCITY_MODIFIER;
+        this.velocityX = (int)(velocityX * Entity.VELOCITY_MODIFIER);
+        this.velocityY = (int)(velocityY * Entity.VELOCITY_MODIFIER);
         this.direction = direction;
         this.targetX = targetX * Entity.VELOCITY_MODIFIER;
         this.targetY = targetY * Entity.VELOCITY_MODIFIER;

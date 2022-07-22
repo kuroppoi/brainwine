@@ -22,6 +22,7 @@ public class JsonHelper {
             .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true)
             .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
             .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
+            .configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true)
             .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     private static final ObjectWriter writer = mapper.writer(CustomPrettyPrinter.INSTANCE);
     

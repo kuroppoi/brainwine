@@ -28,6 +28,12 @@ public class MapHelper {
         return new HashMap<>();
     }
     
+    public static <K, V> Map<K, V> map(K key, V value) {
+        Map<K, V> map = new HashMap<>();
+        map.put(key, value);
+        return map;
+    }
+    
     public static void put(Map<?, ?> map, String path, Object value) {
         String[] segments = path.split("\\.");
         Map<Object, Object> current = (Map<Object, Object>)map;

@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.command.commands.AdminCommand;
 import brainwine.gameserver.command.commands.BroadcastCommand;
+import brainwine.gameserver.command.commands.EntityCommand;
 import brainwine.gameserver.command.commands.ExportCommand;
 import brainwine.gameserver.command.commands.GenerateZoneCommand;
 import brainwine.gameserver.command.commands.GiveCommand;
@@ -69,6 +70,7 @@ public class CommandManager {
         registerCommand(new ImportCommand());
         registerCommand(new PositionCommand());
         registerCommand(new RickrollCommand());
+        registerCommand(new EntityCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {

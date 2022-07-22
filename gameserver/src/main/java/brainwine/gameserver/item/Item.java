@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.dialog.DialogType;
+import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -66,6 +67,9 @@ public class Item {
     @JsonProperty("field")
     private int field;
     
+    @JsonProperty("guard")
+    private int guardLevel;
+    
     @JsonProperty("diggable")
     private boolean diggable;
     
@@ -84,6 +88,12 @@ public class Item {
     @JsonProperty("invulnerable")
     private boolean invulnerable;
     
+    @JsonProperty("solid")
+    private boolean solid;
+    
+    @JsonProperty("door")
+    private boolean door;
+    
     @JsonProperty("inventory")
     private LazyItemGetter inventoryItem;
     
@@ -95,6 +105,9 @@ public class Item {
     
     @JsonProperty("loot")
     private String[] lootCategories = {};
+    
+    @JsonProperty("damage")
+    private Pair<DamageType, Float> damageInfo;
     
     @JsonProperty("ingredients")
     private List<CraftingIngredient> ingredients = new ArrayList<>();
@@ -206,6 +219,10 @@ public class Item {
         return field;
     }
     
+    public int getGuardLevel() {
+        return guardLevel;
+    }
+    
     public boolean isDiggable() {
         return diggable;
     }
@@ -230,6 +247,18 @@ public class Item {
         return invulnerable || !isPlacable();
     }
     
+    public boolean isDoor() {
+        return door;
+    }
+    
+    public boolean isSolid() {
+        return solid;
+    }
+    
+    public boolean isWeapon() {
+        return damageInfo != null;
+    }
+    
     public Item getInventoryItem() {
         return inventoryItem == null ? this : inventoryItem.get();
     }
@@ -244,6 +273,14 @@ public class Item {
     
     public int getCraftingQuantity() {
         return craftingQuantity;
+    }
+    
+    public DamageType getDamageType() {
+        return isWeapon() ? damageInfo.getFirst() : DamageType.NONE;
+    }
+    
+    public float getDamage() {
+        return isWeapon() ? damageInfo.getLast() : 0;
     }
     
     public boolean isCraftable() {

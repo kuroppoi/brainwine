@@ -11,8 +11,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -158,6 +160,33 @@ public class ChunkManager {
         }
         
         return null;
+    }
+    
+    public List<Chunk> getVisibleChunks() {
+        List<Chunk> visibleChunks = new ArrayList<>();
+        Set<Integer> chunkIndices = new HashSet<>();
+        int chunkWidth = zone.getChunkWidth();
+        int chunkHeight = zone.getChunkHeight();
+        
+        for(Player player : zone.getPlayers()) {
+            int x = (int)player.getX();
+            int y = (int)player.getY();
+            
+            // TODO take screen size & perception skill into account
+            for(int i = -40; i <= 40; i += chunkWidth) {
+                for(int j = -20; j <= 20; j += chunkHeight) {
+                    chunkIndices.add(getChunkIndex(x + i, y + j));
+                }
+            }
+        }
+        
+        for(int chunkIndex : chunkIndices) {
+            if(isChunkLoaded(chunkIndex)) {
+                visibleChunks.add(chunks.get(chunkIndex));
+            }
+        }
+        
+        return visibleChunks;
     }
     
     public void putChunk(int index, Chunk chunk) {

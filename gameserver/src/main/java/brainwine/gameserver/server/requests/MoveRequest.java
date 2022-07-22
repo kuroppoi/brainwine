@@ -46,7 +46,7 @@ public class MoveRequest extends PlayerRequest {
         player.setVelocity(velocityX, velocityY);
         player.setDirection(direction);
         player.setTarget(targetX, targetY);
-        player.setAnimation(animation);
+        player.setAnimation(player.isDead() ? 55 : animation); // TODO why doesn't death animation sync normally?
         player.sendMessageToPeers(new EntityPositionMessage(player));
         zone.exploreArea((int)fX, (int)fY); // TODO xp reward
     }

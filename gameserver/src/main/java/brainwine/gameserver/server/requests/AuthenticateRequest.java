@@ -53,7 +53,7 @@ public class AuthenticateRequest extends Request {
                     return;
                 }
                 
-                zone.addPlayer(player);
+                zone.addEntity(player);
             });
         });
     }

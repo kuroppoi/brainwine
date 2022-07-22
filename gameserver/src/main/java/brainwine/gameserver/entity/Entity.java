@@ -1,43 +1,98 @@
 package brainwine.gameserver.entity;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
+import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.zone.Zone;
 
 public abstract class Entity {
     
     public static final float POSITION_MODIFIER = 100F;
     public static final int VELOCITY_MODIFIER = (int)POSITION_MODIFIER;
-    private static int discriminator;
+    protected final List<Player> trackers = new ArrayList<>();
+    protected int type;
     protected String name;
     protected float health;
-    protected final int id;
+    protected int id;
     protected Zone zone;
     protected float x;
     protected float y;
-    protected int velocityX;
-    protected int velocityY;
+    protected float velocityX;
+    protected float velocityY;
     protected int targetX;
     protected int targetY;
     protected FacingDirection direction = FacingDirection.WEST;
     protected int animation;
     
     public Entity(Zone zone) {
-        this.id = ++discriminator;
         this.zone = zone;
         health = 10; // TODO
     }
     
-    public abstract EntityType getType();
+    public void tick(float deltaTime) {
+        // Override
+    }
     
-    public void tick() {
+    public void die(Player killer) {
+        // Override
+    }
+    
+    public void damage(float amount) {
+        damage(amount, null);
+    }
+    
+    public void damage(float amount, Player attacker) {
+        setHealth(health - amount);
         
+        if(health <= 0) {
+            die(attacker);
+        }
+    }
+    
+    public boolean canSee(Entity other) {
+        return canSee((int)other.getX(), (int)other.getY());
+    }
+    
+    public boolean canSee(int x, int y) {
+        return zone.isPointVisibleFrom((int)this.x, (int)this.y, x, y) ||
+                (y > 0 && zone.isPointVisibleFrom((int)this.x, (int)this.y, x, y - 1));
+    }
+    
+    public boolean inRange(Entity other, float range) {
+        return inRange(other.getX(), other.getY(), range);
+    }
+    
+    public boolean inRange(float x, float y, float range) {
+        return MathUtils.inRange(this.x, this.y, x, y, range);
+    }
+    
+    public void addTracker(Player tracker) {
+        trackers.add(tracker);
+    }
+    
+    public void removeTracker(Player tracker) {
+        trackers.remove(tracker);
+    }
+    
+    public List<Player> getTrackers() {
+        return trackers;
+    }
+    
+    public void setId(int id) {
+        this.id = id;
     }
     
     public int getId() {
         return id;
+    }
+    
+    public int getType() {
+        return type;
     }
     
     public void setName(String name) {
@@ -53,7 +108,7 @@ public abstract class Entity {
     }
     
     public void setHealth(float health) {
-        this.health = health;
+        this.health = health < 0 ? 0 : health;
     }
     
     public float getHealth() {
@@ -73,16 +128,16 @@ public abstract class Entity {
         return y;
     }
     
-    public void setVelocity(int velocityX, int velocityY) {
+    public void setVelocity(float velocityX, float velocityY) {
         this.velocityX = velocityX;
         this.velocityY = velocityY;
     }
     
-    public int getVelocityX() {
+    public float getVelocityX() {
         return velocityX;
     }
     
-    public int getVelocityY() {
+    public float getVelocityY() {
         return velocityY;
     }
     

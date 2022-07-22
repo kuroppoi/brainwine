@@ -22,7 +22,6 @@ public class HealthRequest extends PlayerRequest {
             return;
         }
         
-        // TODO
-        player.setHealth(10);
+        player.damage(player.getHealth() - health, null);
     }
 }

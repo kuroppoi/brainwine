@@ -20,7 +20,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.EntityStatus;
+import brainwine.gameserver.entity.EntityConfig;
+import brainwine.gameserver.entity.EntityRegistry;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.ChatType;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
@@ -36,13 +38,12 @@ import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.ChatMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
-import brainwine.gameserver.server.messages.EntityPositionMessage;
-import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.server.messages.LightMessage;
 import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.Vector2i;
 
 public class Zone {
     
@@ -65,10 +66,9 @@ public class Zone {
     private float acidity = 0;
     private final ChunkManager chunkManager;
     private final WeatherManager weatherManager = new WeatherManager();
+    private final EntityManager entityManager = new EntityManager(this);
     private final Queue<DugBlock> digQueue = new ArrayDeque<>();
     private final Set<Integer> pendingSunlight = new HashSet<>();
-    private final Map<Integer, Entity> entities = new HashMap<>();
-    private final List<Player> players = new ArrayList<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
@@ -107,10 +107,7 @@ public class Zone {
     public void tick(float deltaTime) {
         long now = System.currentTimeMillis();
         weatherManager.tick(deltaTime);
-        
-        for(Entity entity : getEntities()) {
-            entity.tick();
-        }
+        entityManager.tick(deltaTime);
         
         // One full cycle = 1200 seconds = 20 minutes
         time += deltaTime * (1.0F / 1200.0F);
@@ -119,7 +116,7 @@ public class Zone {
             time -= 1.0F;
         }
                 
-        if(!players.isEmpty()) {
+        if(!getPlayers().isEmpty()) {
             if(now >= lastStatusUpdate + 4000) {
                 sendMessage(new ZoneStatusMessage(getStatusConfig()));
                 lastStatusUpdate = now;
@@ -148,7 +145,7 @@ public class Zone {
      * @param message The message to send.
      */
     public void sendMessage(Message message) {
-        for(Player player : players) {
+        for(Player player : getPlayers()) {
             player.sendMessage(message);
         }
     }
@@ -160,7 +157,7 @@ public class Zone {
      * @param chunk The chunk near which players must be.
      */
     public void sendMessageToChunk(Message message, Chunk chunk) {
-        for(Player player : players) {
+        for(Player player : getPlayers()) {
             if(player.isChunkActive(chunk)) {
                 player.sendMessage(message);
             }
@@ -182,6 +179,132 @@ public class Zone {
         sendMessage(new ChatMessage(sender.getId(), text, type));
     }
     
+    public boolean isPointVisibleFrom(int x1, int y1, int x2, int y2) {
+        return raycast(x1, y1, x2, y2) == null;
+    }
+    
+    public Vector2i raycast(int x1, int y1, int x2, int y2) {
+        List<Vector2i> path = raycast(x1, y1, x2, y2, false, false, false);
+        
+        if(path != null && !path.isEmpty()) {
+            return path.get(0);
+        }
+        
+        return null;
+    }
+    
+    public Vector2i raynext(int x1, int y1, int x2, int y2) {
+        List<Vector2i> path = raycast(x1, y1, x2, y2, true, true, true);
+        
+        if(path != null && path.size() > 1) {
+            return path.get(1);
+        }
+        
+        return null;
+    }
+    
+    // Shamelessly ported from the zone kernel (https://github.com/bytebin/deepworld-gameserver/blob/master/ext/lib/zone.c#L798)
+    private List<Vector2i> raycast(int x1, int y1, int x2, int y2, boolean path, boolean all, boolean next) {
+        List<Vector2i> coords = new ArrayList<>();
+        int x = x1;
+        int y = y1;
+        int diffX = Math.abs(x2 - x1);
+        int diffY = Math.abs(y2 - y1);
+        int signX = (int)Math.signum(x2 - x1);
+        int signY = (int)Math.signum(y2 - y1);
+        boolean swap = false;
+        
+        if(diffY > diffX) {
+            int temp = diffX;
+            diffX = diffY;
+            diffY = temp;
+            swap = true;
+        }
+        
+        int d = 2 * diffY - diffX;
+        
+        for(int i = 0; i < diffX; i++) {
+            if(!all && isBlockSolid(x, y)) {
+                if(path) {
+                    return coords;
+                }
+                
+                coords.add(new Vector2i(x, y));
+                return coords;
+            }
+            
+            if(path) {
+                coords.add(new Vector2i(x, y));
+                
+                if(next && i == 1) {
+                    return coords;
+                }
+            }
+            
+            while(d >= 0) {
+                d = d - 2 * diffX;
+                
+                if(swap) {
+                    x += signX;
+                } else {
+                    y += signY;
+                }
+            }
+            
+            d = d + 2 * diffY;
+            
+            if(swap) {
+                y += signY;
+            } else {
+                x += signX;
+            }
+        }
+        
+        return all ? coords : null;
+    }
+    
+    public boolean isBlockSolid(int x, int y) {
+        return isBlockSolid(x, y, true);
+    }
+    
+    public boolean isBlockSolid(int x, int y, boolean checkAdjacents) {
+        if(!areCoordinatesInBounds(x, y) || !isChunkLoaded(x, y)) {
+            return true;
+        }
+        
+        Block block = getBlock(x, y);
+        Item item = block.getItem(Layer.FRONT);
+        
+        if(item.isDoor() && block.getFrontMod() % 2 == 0) {
+            return true;
+        } else if(!item.isDoor() && item.isSolid()) {
+            return true;
+        }
+        
+        if(checkAdjacents) {
+            for(int i = -3; i <= 0; i++) {
+                for(int j = 0; j <= 2; j++) {
+                    int x1 = x + i;
+                    int y1 = y + j;
+                    
+                    if(!areCoordinatesInBounds(x1, y1) || !isChunkLoaded(x1, y1)) {
+                        continue;
+                    }
+                    
+                    block = getBlock(x1, y1);
+                    item = block.getFrontItem();
+                    
+                    if(item.getBlockWidth() > Math.abs(i) && item.getBlockHeight() > Math.abs(j)
+                            && isBlockSolid(x1, y1, false)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
+    
     public boolean isBlockOccupied(int x, int y, Layer layer) {
         if(!areCoordinatesInBounds(x, y)) {
             return false;
@@ -193,6 +316,10 @@ public class Zone {
         return !item.isAir() && !item.canPlaceOver();
     }
     
+    public boolean isBlockProtected(int x, int y) {
+        return isBlockProtected(x, y, null);
+    }
+    
     public boolean isBlockProtected(int x, int y, Player from) {
         for(MetaBlock fieldBlock : fieldBlocks.values()) {
             Item item = fieldBlock.getItem();
@@ -200,13 +327,15 @@ public class Zone {
             int fY = fieldBlock.getY();
             int field = fieldBlock.getItem().getField();
             
-            if(item.isDish() && !ownsMetaBlock(fieldBlock, from)) {
-                if(MathUtils.inRange(x, y, fX, fY, field)) {
-                    return true;
-                }
-            } else if(item.hasField() && !ownsMetaBlock(fieldBlock, from)) {
-                if(x == fX && y == fY) {
-                    return true;
+            if(from == null || !ownsMetaBlock(fieldBlock, from)) {
+                if(item.isDish()) {
+                    if(MathUtils.inRange(x, y, fX, fY, field)) {
+                        return true;
+                    }
+                } else if(item.hasField()) {
+                    if(x == fX && y == fY) {
+                        return true;
+                    }
                 }
             }
         }
@@ -351,6 +480,7 @@ public class Zone {
                         metadata.put("@", dungeonId);
                         
                         if(frontItem.hasUse(ItemUseType.GUARD)) {
+                            addGuardianEntities(metadata, frontItem.getGuardLevel());
                             guardBlocks++;
                         }
                     }
@@ -406,13 +536,33 @@ public class Zone {
         List<MetaBlock> guardBlocks = getMetaBlocksWithUse(ItemUseType.GUARD);
         
         for(MetaBlock metaBlock : guardBlocks) {
-            String dungeonId = MapHelper.getString(metaBlock.getMetadata(), "@");
+            Map<String, Object> metadata = metaBlock.getMetadata();
+            String dungeonId = MapHelper.getString(metadata, "@");
             
             if(dungeonId != null) {
+                addGuardianEntities(metadata, metaBlock.getItem().getGuardLevel());
                 int numGuardBlocks = dungeons.getOrDefault(dungeonId, 0);
                 numGuardBlocks++;
                 dungeons.put(dungeonId, numGuardBlocks);
             }
+        }
+    }
+    
+    private void addGuardianEntities(Map<String, Object> metadata, int guardLevel) {
+        List<String> guardians = MapHelper.getList(metadata, "!");
+        
+        if(guardians == null) {
+            guardians = new ArrayList<>();
+            
+            if(guardLevel >= 5) {
+                guardians.add("brains/large");
+            } else if(guardLevel >= 3) {
+                guardians.add("brains/medium");
+            } else {
+                guardians.add("brains/small");
+            }
+            
+            metadata.put("!", guardians);
         }
     }
     
@@ -613,6 +763,10 @@ public class Zone {
         return metaBlocks.get(getBlockIndex(x, y));
     }
     
+    public MetaBlock getMetaBlock(int index) {
+        return metaBlocks.get(index);
+    }
+    
     public List<MetaBlock> getMetaBlocksWithUse(ItemUseType useType){
         return getMetaBlocksWhere(block -> block.getItem().hasUse(useType));
     }
@@ -640,35 +794,72 @@ public class Zone {
         return globalMetaBlocks.values();
     }
     
-    public void addPlayer(Player player) {
-        addEntity(player);
-        player.onZoneChanged();
-        player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.ENTERING));
-        player.sendMessageToPeers(new EntityPositionMessage(player));
-        players.add(player);
+    public List<Entity> getEntitiesInRange(float x, float y, float range) {
+        return entityManager.getEntitiesInRange(x, y, range);
     }
     
-    public void removePlayer(Player player) {
-        players.remove(player);
-        player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.EXITING));
-        removeEntity(player);
+    public Player getRandomPlayerInRange(float x, float y, float range) {
+        return entityManager.getRandomPlayerInRange(x, y, range);
     }
     
-    private void addEntity(Entity entity) {
-        entity.setZone(this);
-        entities.put(entity.getId(), entity);
+    public List<Player> getPlayersInRange(float x, float y, float range) {
+        return entityManager.getPlayersInRange(x, y, range);
     }
     
-    private void removeEntity(Entity entity) {
-        entities.remove(entity.getId());
+    public void spawnEntity(Entity entity, int x, int y) {
+        entityManager.spawnEntity(entity, x, y);
+    }
+    
+    public void spawnEntity(Entity entity, int x, int y, boolean effect) {
+        entityManager.spawnEntity(entity, x, y, effect);
+    }
+    
+    public void addEntity(Entity entity) {
+        entityManager.addEntity(entity);
+    }
+    
+    public void removeEntity(Entity entity) {
+        entityManager.removeEntity(entity);
+    }
+    
+    public Entity getEntity(int entityId) {
+        return entityManager.getEntity(entityId);
+    }
+    
+    public int getEntityCount() {
+        return entityManager.getEntityCount();
     }
     
     public Collection<Entity> getEntities() {
-        return entities.values();
+        return entityManager.getEntities();
     }
     
-    public List<Player> getPlayers() {
-        return players;
+    public Npc getNpc(int entityId) {
+        return entityManager.getNpc(entityId);
+    }
+    
+    public int getNpcCount() {
+        return entityManager.getNpcCount();
+    }
+    
+    public Collection<Npc> getNpcs() {
+        return entityManager.getNpcs();
+    }
+    
+    public Player getPlayer(int entityId) {
+        return entityManager.getPlayer(entityId);
+    }
+    
+    public Player getPlayer(String name) {
+        return entityManager.getPlayer(name);
+    }
+    
+    public int getPlayerCount() {
+        return entityManager.getPlayerCount();
+    }
+    
+    public Collection<Player> getPlayers() {
+        return entityManager.getPlayers();
     }
     
     public boolean areCoordinatesInBounds(int x, int y) {
@@ -688,8 +879,30 @@ public class Zone {
             }
         }
         
-        // TODO more chunk related thingies, such as surface calculations,
-        // entity spawning and block indexing
+        // Spawn guardian entities
+        for(int x = 0; x < chunk.getWidth(); x++) {
+            for(int y = 0; y < chunk.getHeight(); y++) {
+                int x1 = chunk.getX() + x;
+                int y1 = chunk.getY() + y;
+                int index = getBlockIndex(x1, y1);
+                MetaBlock metaBlock = getMetaBlock(index);
+                
+                if(metaBlock != null) {
+                    List<String> guardians = MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList());
+                    
+                    for(String guardian : guardians) {
+                        EntityConfig config = EntityRegistry.getEntityConfig(guardian);
+                        
+                        if(config != null) {
+                            Npc entity = new Npc(this, config);
+                            entity.setPosition(x1, y1);
+                            entity.setGuardBlock(index);
+                            addEntity(entity);
+                        }
+                    }
+                }
+            }
+        }
     }
     
     protected void onChunkUnloaded(Chunk chunk) {
@@ -698,6 +911,10 @@ public class Zone {
     
     public void saveChunks() {
         chunkManager.saveChunks();
+    }
+    
+    public List<Chunk> getVisibleChunks() {
+        return chunkManager.getVisibleChunks();
     }
         
     /**

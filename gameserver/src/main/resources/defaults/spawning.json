@@ -1,0 +1,609 @@
+{
+  "plain": [
+    {
+      "entity": "creatures/rat",
+      "locale": "cave",
+      "frequency": 10
+    },
+    {
+      "entity": "creatures/skunk",
+      "locale": "cave",
+      "max_depth": 0.3,
+      "frequency": 2
+    },
+    {
+      "entity": "creatures/crow",
+      "locale": "sky",
+      "frequency": 12
+    },
+    {
+      "entity": "creatures/vulture",
+      "locale": "sky",
+      "frequency": 1
+    },
+    {
+      "entity": "creatures/crow-auto",
+      "locale": "sky",
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/bluejay",
+      "locale": "sky",
+      "purification": 1.0,
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/cardinal",
+      "locale": "sky",
+      "purification": 1.0,
+      "frequency": 1
+    },
+    {
+      "entity": "creatures/seagull",
+      "locale": "sky",
+      "purification": 1.0,
+      "frequency": 2
+    },
+    {
+      "entity": "creatures/butterfly-monarch",
+      "locale": "sky",
+      "purification": 1.0,
+      "frequency":23
+    },
+    {
+      "entity": "creatures/papilio-ulysses",
+      "locale": "sky",
+      "purification": 1.0,
+      "frequency": 0.5
+    },
+    {
+      "entity": "creatures/butterfly-swallowtail",
+      "locale": "sky",
+      "purification": 1.0,
+      "frequency": 1
+    },
+    {
+      "entity": "creatures/butterfly-moth",
+      "locale": "sky",
+      "purification": 1.0,
+      "frequency": 5
+    },
+    {
+      "entity": "creatures/butterfly-owl",
+      "locale": "sky",
+      "purification": 1.0,
+      "frequency": 0.1
+    },
+    {
+      "entity": "creatures/butterfly-paper-kite",
+      "locale": "sky",
+      "purification": 1.0,
+      "frequency": 0.01
+    },
+    {
+      "entity": "creatures/bat",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 9
+    },
+    {
+      "entity": "creatures/bat-auto",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/scorpion",
+      "locale": "cave",
+      "frequency": 1
+    },
+    {
+      "entity": "creatures/roach",
+      "locale": "cave",
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/roach-large",
+      "locale": "cave",
+      "frequency": 2
+    },
+    {
+      "entity": "terrapus/child",
+      "locale": "cave",
+      "max_depth": 0.4,
+      "orifice": "base/maw",
+      "frequency": 20
+    },
+    {
+      "entity": "terrapus/adult",
+      "locale": "cave",
+      "max_depth": 0.7,
+      "orifice": "base/maw",
+      "frequency": 20
+    },
+    {
+      "entity": "terrapus/acid",
+      "locale": "cave",
+      "min_depth": 0.4,
+      "orifice": "base/maw",
+      "frequency": 13
+    },
+    {
+      "entity": "terrapus/fire",
+      "locale": "cave",
+      "min_depth": 0.6,
+      "orifice": "base/maw",
+      "frequency": 8
+    },
+    {
+      "entity": "automata/tiny",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 12
+    },
+    {
+      "entity": "automata/small",
+      "locale": "cave",
+      "min_depth": 0.35,
+      "orifice": "base/pipe",
+      "frequency": 8
+    },
+    {
+      "entity": "automata/medium",
+      "locale": "cave",
+      "min_depth": 0.65,
+      "orifice": "base/pipe",
+      "frequency": 6
+    },
+    {
+      "entity": "brains/small",
+      "locale": "cave",
+      "min_depth": 0.8,
+      "orifice": "base/pipe",
+      "frequency": 1
+    },
+    {
+      "entity": "brains/medium",
+      "locale": "cave",
+      "min_depth": 0.9,
+      "frequency": 1
+    }
+  ],
+  "arctic": [
+    {
+      "entity": "terrapus/adult",
+      "locale": "cave",
+      "max_depth": 0.7,
+      "orifice": "base/maw",
+      "frequency": 8
+    },
+    {
+      "entity": "terrapus/frost",
+      "locale": "cave",
+      "min_depth": 0.4,
+      "orifice": "base/maw",
+      "frequency": 9
+    },
+    {
+      "entity": "creatures/bunny-ice",
+      "locale": "cave",
+      "max_depth": 0.5,
+      "orifice": "base/maw",
+      "frequency": 6
+    },
+    {
+      "entity": "creatures/roach",
+      "locale": "cave",
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/roach-large",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 2
+    },
+    {
+      "entity": "automata/tiny",
+      "locale": "cave",
+      "min_depth": 0.5,
+      "orifice": "base/pipe",
+      "frequency": 5
+    },
+    {
+      "entity": "automata/small",
+      "locale": "cave",
+      "min_depth": 0.45,
+      "orifice": "base/pipe",
+      "frequency": 4
+    },
+    {
+      "entity": "automata/medium",
+      "locale": "cave",
+      "min_depth": 0.7,
+      "orifice": "base/pipe",
+      "frequency": 3
+    },
+    {
+      "entity": "brains/small",
+      "locale": "cave",
+      "min_depth": 0.6,
+      "orifice": "base/maw",
+      "frequency": 2
+    },
+    {
+      "entity": "brains/medium",
+      "locale": "cave",
+      "min_depth": 0.7,
+      "frequency": 2
+    }
+  ],
+  "hell": [
+    {
+      "entity": "creatures/butterfly-rumanzovia",
+      "locale": "sky",
+      "frequency": 0.05
+    },
+    {
+      "entity": "terrapus/adult",
+      "locale": "cave",
+      "max_depth": 0.7,
+      "orifice": "base/maw",
+      "frequency": 4
+    },
+    {
+      "entity": "terrapus/skeleton",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 8
+    },
+    {
+      "entity": "terrapus/fire",
+      "locale": "cave",
+      "min_depth": 0.35,
+      "orifice": "base/maw",
+      "frequency": 5
+    },
+    {
+      "entity": "ghost",
+      "locale": "cave",
+      "frequency": 3
+    },
+    {
+      "entity": "revenant",
+      "locale": "cave",
+      "frequency": 5
+    },
+    {
+      "entity": "dire-revenant",
+      "locale": "cave",
+      "frequency": 2
+    },
+    {
+      "entity": "brains/small",
+      "locale": "cave",
+      "min_depth": 0.5,
+      "orifice": "base/pipe",
+      "frequency": 1
+    },
+    {
+      "entity": "brains/medium",
+      "locale": "cave",
+      "min_depth": 0.7,
+      "frequency": 1
+    }
+  ],
+  "desert": [
+    {
+      "entity": "creatures/rat",
+      "locale": "cave",
+      "frequency": 4
+    },
+    {
+      "entity": "creatures/armadillo",
+      "locale": "cave",
+      "frequency": 2
+    },
+    {
+      "entity": "creatures/crow",
+      "locale": "sky",
+      "frequency": 2
+    },
+    {
+      "entity": "creatures/vulture",
+      "locale": "sky",
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/bat",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 6
+    },
+    {
+      "entity": "creatures/bat-auto",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/scorpion",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 8
+    },
+    {
+      "entity": "creatures/scorpion-large",
+      "locale": "cave",
+      "frequency": 5
+    },
+    {
+      "entity": "creatures/roach",
+      "locale": "cave",
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/roach-large",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 2
+    },
+    {
+      "entity": "terrapus/adult",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "max_depth": 0.7,
+      "frequency": 8
+    },
+    {
+      "entity": "terrapus/fire",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "min_depth": 0.4,
+      "frequency": 6
+    },
+    {
+      "entity": "automata/tiny",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 3
+    },
+    {
+      "entity": "automata/small",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "min_depth": 0.55,
+      "frequency": 5
+    },
+    {
+      "entity": "automata/medium",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "min_depth": 0.8,
+      "frequency": 3
+    },
+    {
+      "entity": "brains/small",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "min_depth": 0.5,
+      "frequency": 1
+    },
+    {
+      "entity": "brains/medium",
+      "locale": "cave",
+      "min_depth": 0.7,
+      "frequency": 1
+    }
+  ],
+  "brain": [
+    {
+      "entity": "creatures/butterfly-green",
+      "locale": "sky",
+      "frequency": 0.25
+    },
+    {
+      "entity": "terrapus/adult",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "max_depth": 0.7,
+      "frequency": 1
+    },
+    {
+      "entity": "terrapus/acid",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 9
+    },
+{
+      "entity": "automata/tiny",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 2
+    },
+    {
+      "entity": "automata/small",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 3
+    },
+    {
+      "entity": "automata/medium",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 2
+    },
+    {
+      "entity": "automata/large",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 2
+    },
+{
+      "entity": "brains/tiny-flyer",
+      "locale": "sky",
+      "frequency": 5
+    },
+    {
+      "entity": "brains/small",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 2
+    },
+    {
+      "entity": "brains/medium",
+      "locale": "cave",
+      "min_depth": 0.4,
+      "frequency": 1
+    },
+    {
+      "entity": "brains/large",
+      "locale": "cave",
+      "min_depth": 0.85,
+      "frequency": 1
+    }
+  ],
+  "deep": [
+    {
+      "entity": "creatures/bat",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 9
+    },
+    {
+      "entity": "creatures/bat-auto",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/roach-large",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 2
+    },
+    {
+      "entity": "terrapus/adult",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "max_depth": 0.4,
+      "frequency": 14
+    },
+    {
+      "entity": "terrapus/acid",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 12
+    },
+    {
+      "entity": "terrapus/fire",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "min_depth": 0.2,
+      "frequency": 8
+    },
+    {
+      "entity": "terrapus/queen",
+      "locale": "cave",
+      "min_depth": 0.333,
+      "frequency": 3
+    },
+    {
+      "entity": "automata/tiny",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 8
+    },
+    {
+      "entity": "automata/small",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 10
+    },
+    {
+      "entity": "automata/medium",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 7
+    },
+    {
+      "entity": "automata/large",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "min_depth": 0.5,
+      "frequency": 5
+    },
+    {
+      "entity": "brains/small",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "min_depth": 0.4,
+      "frequency": 2
+    },
+    {
+      "entity": "brains/medium",
+      "locale": "cave",
+      "min_depth": 0.6,
+      "frequency": 1
+    }
+  ],
+  "space": [
+    {
+      "entity": "automata/tiny",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 2
+    },
+    {
+      "entity": "automata/small",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 3
+    },
+    {
+      "entity": "automata/medium",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 2
+    },
+    {
+      "entity": "automata/large",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 2
+    },
+    {
+      "entity": "brains/tiny-flyer",
+      "locale": "sky",
+      "frequency": 5
+    },
+    {
+      "entity": "brains/small",
+      "locale": "cave",
+      "orifice": "base/pipe",
+      "frequency": 2
+    },
+    {
+      "entity": "brains/medium",
+      "locale": "cave",
+      "min_depth": 0.4,
+      "frequency": 1
+    },
+    {
+      "entity": "brains/large",
+      "locale": "cave",
+      "min_depth": 0.85,
+      "frequency": 1
+    },
+    {
+      "entity": "creatures/bat-auto",
+      "locale": "cave",
+      "orifice": "base/maw",
+      "frequency": 3
+    },
+    {
+      "entity": "creatures/crow-auto",
+      "locale": "sky",
+      "frequency": 3
+    }
+  ]
+}
