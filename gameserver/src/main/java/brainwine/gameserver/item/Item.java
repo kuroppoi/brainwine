@@ -73,6 +73,9 @@ public class Item {
     @JsonProperty("power")
     private float power;
     
+    @JsonProperty("earthy")
+    private boolean earthy;
+    
     @JsonProperty("diggable")
     private boolean diggable;
     
@@ -231,6 +234,10 @@ public class Item {
     
     public float getPower() {
         return power;
+    }
+    
+    public boolean isEarthy() {
+        return earthy;
     }
     
     public boolean isDiggable() {

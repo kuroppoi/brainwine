@@ -118,7 +118,7 @@ public class ZoneManager {
             chunksExplored[i] = unpacker.unpackBoolean();
         }
         
-        ZoneData data = new ZoneData(surface, sunlight, pendingSunlight, chunksExplored);
+        ZoneData data = new ZoneData(surface, sunlight, null, pendingSunlight, chunksExplored);
         mapper.writeValue(outputFile, data);
         return data;
     }

@@ -102,7 +102,12 @@ public class CaveGenerator implements GeneratorTask {
                                 
                                 if(distance <= maxDistance) {
                                     ctx.updateBlock(i, j, Layer.BASE, variant.getBaseItem());
-                                    ctx.updateBlock(i, j, Layer.FRONT, variant.getFrontItem());
+                                    
+                                    if(variant == StoneVariant.DEFAULT) {
+                                        ctx.updateBlock(i, j, Layer.FRONT, ctx.getEarthLayer(j));
+                                    } else {
+                                        ctx.updateBlock(i, j, Layer.FRONT, variant.getFrontItem());
+                                    }
                                 }
                             }
                         }

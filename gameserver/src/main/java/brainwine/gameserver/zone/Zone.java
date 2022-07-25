@@ -60,6 +60,7 @@ public class Zone {
     private final int numChunksHeight;
     private int[] surface;
     private int[] sunlight;
+    private int[] depths;
     private boolean[] chunksExplored;
     private float time = (float)Math.random(); // TODO temporary
     private float temperature = 0;
@@ -79,8 +80,10 @@ public class Zone {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
         surface = data.getSurface();
         sunlight = data.getSunlight();
+        setDepths(data.getDepths());
         
         // Ha ha silly me!
+        // TODO make nifty setters for these too, perhaps?
         if(data.getPendingSunlight() != null) {
             pendingSunlight.addAll(data.getPendingSunlight());
         }
@@ -98,6 +101,7 @@ public class Zone {
         this.height = height;
         numChunksWidth = width / chunkWidth;
         numChunksHeight = height / chunkHeight;
+        depths = new int[] {(int)(height * 0.6), (int)(height * 0.75), (int)(height * 0.9)};
         surface = new int[width];
         sunlight = new int[width];
         chunksExplored = new boolean[numChunksWidth * numChunksHeight];
@@ -1015,6 +1019,22 @@ public class Zone {
         return sunlight;
     }
     
+    public void setDepths(int deep, int deeper, int deepest) {        
+        depths[0] = deep;
+        depths[1] = deeper;
+        depths[2] = deepest;
+    }
+    
+    public void setDepths(int[] depths) {
+        if(depths != null && depths.length == 3) {
+            setDepths(depths[0], depths[1], depths[2]);
+        }
+    }
+    
+    public int[] getDepths() {
+        return depths;
+    }
+    
     public boolean exploreArea(int x, int y) {
         if(!areCoordinatesInBounds(x, y)) {
             return false;
@@ -1122,20 +1142,15 @@ public class Zone {
         List<Object> earth = new ArrayList<>();
         
         if(player.isV3()) {
-            // For some reason this layer is completely broken for desert biomes on Unity clients.
-            // TODO should depth be unique per biome? Per zone even, perhaps?
-            if(biome != Biome.DESERT) {
-                earth.add(Arrays.asList(height * 0.9, "ground/earth-deepest"));
-            }
-            
-            earth.add(Arrays.asList(height * 0.75, "ground/earth-deeper"));
-            earth.add(Arrays.asList(height * 0.6, "ground/earth-deep"));
+            earth.add(Arrays.asList(depths[2], "ground/earth-deepest"));
+            earth.add(Arrays.asList(depths[1], "ground/earth-deeper"));
+            earth.add(Arrays.asList(depths[0], "ground/earth-deep"));
             depth.put("ground/earth", earth);
         } else {
             String key = biome == Biome.PLAIN ? "temperate" : biome.getId();
-            earth.add(Arrays.asList(height * 0.45, String.format("%s/earth-front-deep", key)));
-            earth.add(Arrays.asList(height * 0.7, String.format("%s/earth-front-deeper", key)));
-            earth.add(Arrays.asList(height * 0.9, String.format("%s/earth-front-deepest", key)));
+            earth.add(Arrays.asList(depths[0], String.format("%s/earth-front-deep", key)));
+            earth.add(Arrays.asList(depths[1], String.format("%s/earth-front-deeper", key)));
+            earth.add(Arrays.asList(depths[2], String.format("%s/earth-front-deepest", key)));
             depth.put(String.format("%s/earth-front", key), earth);
         }
         

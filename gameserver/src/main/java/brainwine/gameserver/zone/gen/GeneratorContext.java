@@ -10,6 +10,7 @@ import java.util.Random;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.prefab.Prefab;
+import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.gen.caves.Cave;
@@ -96,13 +97,19 @@ public class GeneratorContext {
         return zone.areCoordinatesInBounds(x, y) && y >= zone.getSurface()[x];
     }
     
-    public boolean isEarth(int x, int y) {
+    public boolean isEarthy(int x, int y) {
         if(!zone.areCoordinatesInBounds(x, y)) {
             return false;
         }
         
-        int item = zone.getBlock(x, y).getFrontItem().getId();
-        return item == 512;
+        return zone.getBlock(x, y).getFrontItem().isEarthy();
+    }
+    
+    public int getEarthLayer(int y) {
+        int[] depths = zone.getDepths();
+        return zone.getBiome() == Biome.DEEP 
+                ? y >= depths[2] ? 598 : y >= depths[1] ? 597 : y >= depths[0] ? 596 : 595
+                : y >= depths[2] ? 518 : y >= depths[1] ? 517 : y >= depths[0] ? 516 : 512;
     }
     
     public int getWidth() {

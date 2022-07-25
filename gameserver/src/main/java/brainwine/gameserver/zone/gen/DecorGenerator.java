@@ -43,7 +43,7 @@ public class DecorGenerator implements GeneratorTask {
                 int y = ctx.getZone().getSurface()[x];
                 
                 // ha ez
-                if(ctx.isEarth(x, y) && ctx.isEarth(x + 1, y) && ctx.nextDouble() <= surfaceFillerRate) {
+                if(ctx.isEarthy(x, y) && ctx.isEarthy(x + 1, y) && ctx.nextDouble() <= surfaceFillerRate) {
                     ctx.updateBlock(x, y - 1, Layer.FRONT, surfaceFillers[ctx.nextInt(surfaceFillers.length)]);
                 }
             }
@@ -125,7 +125,7 @@ public class DecorGenerator implements GeneratorTask {
         
         for(int i = x; i < x + width; i++) {
             for(int j = y; j < y + height; j++) {
-                if(!ctx.isEarth(i, j)) {
+                if(!ctx.isEarthy(i, j)) {
                     return;
                 }
             }
@@ -151,7 +151,7 @@ public class DecorGenerator implements GeneratorTask {
             int y = ctx.nextInt(maxY - minY + 1) + minY;
             BlockPosition current = new BlockPosition(x, y);
             
-            if(ctx.isEarth(x, y)) {
+            if(ctx.isEarthy(x, y)) {
                 ctx.updateBlock(x, y, Layer.FRONT, item, 0);
             }
             
@@ -162,7 +162,7 @@ public class DecorGenerator implements GeneratorTask {
                 int nY = current.getY() + ctx.nextInt(3) - 1;
                 current = new BlockPosition(nX, nY);
                 
-                if(ctx.isEarth(nX, nY)) {
+                if(ctx.isEarthy(nX, nY)) {
                     ctx.updateBlock(nX, nY, Layer.FRONT, item, 1);
                 }
             }
