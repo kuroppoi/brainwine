@@ -119,7 +119,10 @@ public class Item {
     private Pair<DamageType, Float> damageInfo;
     
     @JsonProperty("ingredients")
-    private List<CraftingIngredient> ingredients = new ArrayList<>();
+    private List<CraftingRequirement> craftingIngredients = new ArrayList<>();
+    
+    @JsonProperty("crafting_helpers")
+    private List<CraftingRequirement> craftingHelpers = new ArrayList<>();
     
     @JsonProperty("use")
     private Map<ItemUseType, Object> useConfigs = new HashMap<>();
@@ -305,11 +308,19 @@ public class Item {
     }
     
     public boolean isCraftable() {
-        return !ingredients.isEmpty();
+        return !craftingIngredients.isEmpty();
     }
     
-    public List<CraftingIngredient> getIngredients() {
-        return ingredients;
+    public List<CraftingRequirement> getCraftingIngredients() {
+        return craftingIngredients;
+    }
+    
+    public boolean requiresWorkshop() {
+        return !craftingHelpers.isEmpty();
+    }
+    
+    public List<CraftingRequirement> getCraftingHelpers() {
+        return craftingHelpers;
     }
     
     public boolean hasUse(ItemUseType... types) {

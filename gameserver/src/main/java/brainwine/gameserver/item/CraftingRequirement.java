@@ -2,23 +2,23 @@ package brainwine.gameserver.item;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public class CraftingIngredient {
+public class CraftingRequirement {
     
     private final LazyItemGetter item;
     private final int quantity;
     
-    private CraftingIngredient(LazyItemGetter item, int quantity) {
+    private CraftingRequirement(LazyItemGetter item, int quantity) {
         this.item = item;
         this.quantity = quantity;
     }
     
     @JsonCreator
-    private CraftingIngredient(String item) {
+    private CraftingRequirement(String item) {
         this(new LazyItemGetter(item), 1);
     }
     
     @JsonCreator
-    private CraftingIngredient(Object[] data) {
+    private CraftingRequirement(Object[] data) {
         this(new LazyItemGetter((String)data[0]), (int)data[1]);
     }
     

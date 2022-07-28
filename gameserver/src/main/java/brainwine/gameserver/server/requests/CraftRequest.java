@@ -6,9 +6,12 @@ import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Inventory;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.item.CraftingIngredient;
+import brainwine.gameserver.item.CraftingRequirement;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.Pair;
+import brainwine.gameserver.zone.MetaBlock;
 
 /**
  * TODO Account for skills, bonuses etc..
@@ -28,10 +31,11 @@ public class CraftRequest extends PlayerRequest {
             return;
         }
         
-        List<CraftingIngredient> ingredients = item.getIngredients();
+        // Check if player has necessary ingredients
+        List<CraftingRequirement> ingredients = item.getCraftingIngredients();
         Inventory inventory = player.getInventory();
         
-        for(CraftingIngredient ingredient : ingredients) {
+        for(CraftingRequirement ingredient : ingredients) {
             Item item = ingredient.getItem();
             
             if(!inventory.hasItem(item, ingredient.getQuantity() * quantity)) {
@@ -40,7 +44,24 @@ public class CraftRequest extends PlayerRequest {
             }
         }
         
-        for(CraftingIngredient ingredient : ingredients) {
+        // Check if required crafting helpers are nearby
+        if(item.requiresWorkshop()) {
+            List<MetaBlock> workshop = player.getZone().getMetaBlocksWhere(metaBlock
+                    -> MathUtils.inRange(player.getX(), player.getY(), metaBlock.getX(), metaBlock.getY(), 10));
+            
+            for(CraftingRequirement craftingHelper : item.getCraftingHelpers()) {
+                int quantityMissing = craftingHelper.getQuantity() - (int)workshop.stream().filter(metaBlock
+                        -> metaBlock.getItem() == craftingHelper.getItem()).count();
+                
+                if(quantityMissing > 0) {
+                    player.alert(String.format("You can't craft this item because your workshop is lacking %sx %s.",
+                            quantityMissing, craftingHelper.getItem().getTitle()));
+                    return;
+                }
+            }
+        }
+        
+        for(CraftingRequirement ingredient : ingredients) {
             inventory.removeItem(ingredient.getItem(), ingredient.getQuantity() * quantity);
         }
         
