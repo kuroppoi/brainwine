@@ -786,7 +786,7 @@ public class Zone {
         return getMetaBlocksWhere(block -> block.getItem().getMeta() == MetaType.LOCAL && chunkIndex == getChunkIndex(block.getX(), block.getY()));
     }
     
-    private List<MetaBlock> getMetaBlocksWhere(Predicate<MetaBlock> predicate){
+    public List<MetaBlock> getMetaBlocksWhere(Predicate<MetaBlock> predicate) {
         List<MetaBlock> metaBlocks = new ArrayList<>(this.metaBlocks.values());
         metaBlocks.removeIf(predicate.negate());
         return metaBlocks;
