@@ -38,6 +38,7 @@ After the build has finished, the output will be located in `build/distributions
 On first-time startup, configuration files will be generated which you may modify however you like:
 - `api.json` Configuration file for news & API connectivity information.
 - `loottables.json` Configuration file for which loot may be obtained from containers.
+- `spawning.json` Configuration file for entity spawns per biome.
 - `generators` Folder containing configuration files for zone generators.
 
 ## Contributions
