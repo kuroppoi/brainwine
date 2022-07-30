@@ -7,6 +7,7 @@ import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.ZoneManager;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
 
 public class GenerateZoneCommand extends Command {
@@ -82,7 +83,9 @@ public class GenerateZoneCommand extends Command {
             if(zone == null) {
                 executor.notify("An unexpected error occured while generating your zone.", ALERT);
             } else {
-                GameServer.getInstance().getZoneManager().addZone(zone);
+                ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
+                zoneManager.addZone(zone);
+                zoneManager.saveZone(zone);
                 executor.notify(String.format("Your zone '%s' is ready for exploration!", zone.getName()), ALERT);
             }
         });
