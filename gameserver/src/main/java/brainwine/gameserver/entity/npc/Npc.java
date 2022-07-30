@@ -250,7 +250,7 @@ public class Npc extends Entity {
         return (includeBaseDefense ? getBaseDefense(type) : 0) + activeDefenses.getOrDefault(type, 0F);
     }
     
-    public boolean isClearable() {
+    public boolean isTransient() {
         return !isGuard();
     }
     

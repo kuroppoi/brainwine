@@ -162,7 +162,7 @@ public class EntityManager {
         
         for(Npc npc : npcs.values()) {
             if(npc.isDead() || !zone.isChunkLoaded((int)npc.getX(), (int)npc.getY()) || 
-                    (!npc.isGuard() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME)) {
+                    (!npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME)) {
                 clearableEntities.add(npc);
             }
         }
@@ -258,7 +258,7 @@ public class EntityManager {
     }
     
     public int getTransientNpcCount() {
-        return (int)(getNpcCount() - getNpcs().stream().filter(npc -> npc.isGuard()).count());
+        return (int)npcs.values().stream().filter(npc -> npc.isTransient()).count();
     }
     
     public Collection<Npc> getNpcs() {
