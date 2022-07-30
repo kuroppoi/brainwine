@@ -17,10 +17,10 @@ public class EntityRegistry {
     
     private static final Logger logger = LogManager.getLogger();
     private static final Map<String, EntityConfig> entities = new HashMap<>();
-    private static boolean initalized;
+    private static boolean initialized;
     
     public static void init() {
-        if(initalized) {
+        if(initialized) {
             logger.warn("Already initialized!");
             return;
         }
@@ -41,7 +41,7 @@ public class EntityRegistry {
             }
             
             try {
-                registerEntityConfig(name, JsonHelper.readValue(entry.getValue(), EntityConfig.class, 
+                registerEntityConfig(name, JsonHelper.readValue(config, EntityConfig.class, 
                         new InjectableValues.Std().addValue("name", name)));
             } catch(Exception e) {
                 logger.error("Could not deserialize entity config for entity '{}'", name, e);
@@ -50,7 +50,7 @@ public class EntityRegistry {
         
         int entityCount = entities.size();
         logger.info("Successfully loaded {} entit{}", entityCount, entityCount == 1 ? "y" : "ies");
-        initalized = true;
+        initialized = true;
     }
     
     public static void registerEntityConfig(String name, EntityConfig config) {
