@@ -162,7 +162,7 @@ public class EntityManager {
         
         for(Npc npc : npcs.values()) {
             if(npc.isDead() || !zone.isChunkLoaded((int)npc.getX(), (int)npc.getY()) || 
-                    (!npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME)) {
+                    (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME)) {
                 clearableEntities.add(npc);
             }
         }
