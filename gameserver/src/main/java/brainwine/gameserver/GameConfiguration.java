@@ -108,17 +108,8 @@ public class GameConfiguration {
                 
                 // Create an item title if it's missing
                 if(!config.containsKey("title")) {
-                    String title = (segments.length > 1 ? segments[1] : segments[0]);
-                    String[] words = title.split("-");
-                    
-                    for(int i = 0; i < words.length; i++) {
-                        String word = words[i];
-                        char[] chars = word.toCharArray();
-                        chars[0] = Character.toUpperCase(chars[0]);
-                        words[i] = new String(chars);
-                    }
-                    
-                    config.put("title", String.join(" ", words));
+                    String title = WordUtils.capitalize(segments.length > 1 ? segments[1] : segments[0]);
+                    config.put("title", title);
                 }
                 
                 config.putIfAbsent("category", category);
