@@ -70,23 +70,27 @@ public class GeneratorContext {
     }
     
     public void updateBlock(int x, int y, Layer layer, int item) {
-        updateBlock(x, y, layer, item, 0);
+        zone.updateBlock(x, y, layer, item);
     }
     
     public void updateBlock(int x, int y, Layer layer, int item, int mod) {
-        if(inBounds(x, y)) {
-            zone.updateBlock(x, y, layer, item, mod);
-        }
+        zone.updateBlock(x, y, layer, item, mod);
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, int item, int mod, Map<String, Object> metadata) {
+        zone.updateBlock(x, y, layer, item, mod, null, metadata);
     }
     
     public void updateBlock(int x, int y, Layer layer, Item item) {
-        updateBlock(x, y, layer, item, 0);
+        zone.updateBlock(x, y, layer, item);
     }
     
     public void updateBlock(int x, int y, Layer layer, Item item, int mod) {
-        if(inBounds(x, y)) {
-            zone.updateBlock(x, y, layer, item, mod);
-        }
+        zone.updateBlock(x, y, layer, item, mod);
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, Item item, int mod, Map<String, Object> metadata) {
+        zone.updateBlock(x, y, layer, item, mod, null, metadata);
     }
     
     public boolean inBounds(int x, int y) {
