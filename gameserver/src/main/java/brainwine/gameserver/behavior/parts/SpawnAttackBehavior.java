@@ -17,7 +17,7 @@ public class SpawnAttackBehavior extends Behavior {
     protected float frequency = 1;
     protected float range = 15;
     protected Object burst;
-    protected long lastAttackAt;;
+    protected long lastAttackAt;
     
     @JsonCreator
     public SpawnAttackBehavior(@JacksonInject Npc entity) {

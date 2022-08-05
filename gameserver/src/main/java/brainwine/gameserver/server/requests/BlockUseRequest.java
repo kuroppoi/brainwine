@@ -171,10 +171,9 @@ public class BlockUseRequest extends PlayerRequest {
                 if(data == null) {
                     if(metaBlock != null) {
                         // TODO timed switches
-                        
-                        zone.updateBlock(x, y, layer, item, mod % 2 == 0 ? mod + 1 : mod - 1, player, null);
                         Map<String, Object> metadata = metaBlock.getMetadata();
                         List<List<Integer>> positions = MapHelper.getList(metadata, ">", Collections.emptyList());
+                        zone.updateBlock(x, y, layer, item, mod % 2 == 0 ? mod + 1 : mod - 1, player, metadata);
                         
                         for(List<Integer> position : positions) {
                             int sX = position.get(0);

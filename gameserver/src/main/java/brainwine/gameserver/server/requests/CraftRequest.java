@@ -46,7 +46,7 @@ public class CraftRequest extends PlayerRequest {
         
         // Check if required crafting helpers are nearby
         if(item.requiresWorkshop()) {
-            List<MetaBlock> workshop = player.getZone().getMetaBlocksWhere(metaBlock
+            List<MetaBlock> workshop = player.getZone().getMetaBlocks(metaBlock
                     -> MathUtils.inRange(player.getX(), player.getY(), metaBlock.getX(), metaBlock.getY(), 10));
             
             for(CraftingRequirement craftingHelper : item.getCraftingHelpers()) {

@@ -15,6 +15,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
@@ -616,7 +617,7 @@ public class Zone {
     }
     
     public void updateBlock(int x, int y, Layer layer, int item, int mod, Player owner) {
-        updateBlock(x, y, layer, ItemRegistry.getItem(item), mod, owner, new HashMap<>());
+        updateBlock(x, y, layer, item, mod, owner, null);
     }
     
     public void updateBlock(int x, int y, Layer layer, int item, int mod, Player owner, Map<String, Object> metadata) {
@@ -632,7 +633,7 @@ public class Zone {
     }
     
     public void updateBlock(int x, int y, Layer layer, Item item, int mod, Player owner) {
-        updateBlock(x, y, layer, item, mod, owner, new HashMap<>());
+        updateBlock(x, y, layer, item, mod, owner, null);
     }
     
     public void updateBlock(int x, int y, Layer layer, Item item, int mod, Player owner, Map<String, Object> metadata) {
@@ -650,9 +651,13 @@ public class Zone {
                 updateBlock(x, y, Layer.LIQUID, Item.AIR, 0);
             }
             
-            if(metadata != null && item.hasMeta()) {
-                setMetaBlock(x, y, item, owner, metadata);
-            } else if(!item.hasMeta() && metaBlocks.containsKey(getBlockIndex(x, y))) {
+            if(item.hasMeta()) {
+                if(metadata == null) {
+                    setMetaBlock(x, y, item, owner, new HashMap<>());
+                } else {
+                    setMetaBlock(x, y, item, owner, metadata);
+                }
+            } else if(metaBlocks.containsKey(getBlockIndex(x, y))) {
                 setMetaBlock(x, y, 0);
             }
             
@@ -778,31 +783,38 @@ public class Zone {
         return metaBlocks.get(index);
     }
     
-    public List<MetaBlock> getMetaBlocksWithUse(ItemUseType useType){
-        return getMetaBlocksWhere(block -> block.getItem().hasUse(useType));
-    }
-    
-    public List<MetaBlock> getLocalMetaBlocksInChunk(int chunkIndex) {
-        return getMetaBlocksWhere(block -> block.getItem().getMeta() == MetaType.LOCAL && chunkIndex == getChunkIndex(block.getX(), block.getY()));
-    }
-    
-    public List<MetaBlock> getMetaBlocksWhere(Predicate<MetaBlock> predicate) {
-        List<MetaBlock> metaBlocks = new ArrayList<>(this.metaBlocks.values());
-        metaBlocks.removeIf(predicate.negate());
-        return metaBlocks;
-    }
-    
     public MetaBlock getRandomSpawnBlock() {
-        List<MetaBlock> spawnBlocks = getMetaBlocksWhere(block -> block.getItem().getId() == 891 || block.getItem().getId() == 934);
+        List<MetaBlock> spawnBlocks = getMetaBlocks(block -> block.getItem().getId() == 891 || block.getItem().getId() == 934);
         return spawnBlocks.isEmpty() ? null : spawnBlocks.get((int)(Math.random() * spawnBlocks.size()));
     }
     
+    public List<MetaBlock> getMetaBlocksWithUse(ItemUseType useType) {
+        return getMetaBlocks(metaBlock -> metaBlock.getItem().hasUse(useType));
+    }
+    
+    public List<MetaBlock> getMetaBlocksWithItem(Item item) {
+        return getMetaBlocksWithItem(item.getId());
+    }
+        
+    public List<MetaBlock> getMetaBlocksWithItem(int item) {
+        return getMetaBlocks(metaBlock -> metaBlock.getItem().getId() == item);
+    }
+    
+    public List<MetaBlock> getMetaBlocks(Predicate<MetaBlock> predicate) {
+        return metaBlocks.values().stream().filter(predicate).collect(Collectors.toList());
+    }
+    
     public Collection<MetaBlock> getMetaBlocks() {
-        return metaBlocks.values();
+        return Collections.unmodifiableCollection(metaBlocks.values());
+    }
+    
+    public List<MetaBlock> getLocalMetaBlocksInChunk(int chunkIndex) {
+        return getMetaBlocks(block -> block.getItem().getMeta() == MetaType.LOCAL
+                && chunkIndex == getChunkIndex(block.getX(), block.getY()));
     }
     
     public Collection<MetaBlock> getGlobalMetaBlocks() {
-        return globalMetaBlocks.values();
+        return Collections.unmodifiableCollection(globalMetaBlocks.values());
     }
     
     public List<Entity> getEntitiesInRange(float x, float y, float range) {

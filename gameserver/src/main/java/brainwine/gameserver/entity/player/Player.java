@@ -528,7 +528,7 @@ public class Player extends Entity implements CommandExecutor {
                 
                 if(!(item.getUse(ItemUseType.SWITCHED) instanceof String)) {
                     int mod = zone.getBlock(pX, pY).getFrontMod();
-                    zone.updateBlock(x, y, Layer.FRONT, item, mod, null, null);
+                    zone.updateBlock(x, y, Layer.FRONT, item, mod, null, metadata);
                 }
                 
                 linked = true;
