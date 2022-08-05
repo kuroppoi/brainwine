@@ -1,10 +1,14 @@
 package brainwine.gameserver.zone.gen;
 
+import java.util.Collections;
+import java.util.List;
+
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.Block;
+import brainwine.gameserver.zone.MetaBlock;
 
 public class StructureGenerator implements GeneratorTask {
     
@@ -28,10 +32,13 @@ public class StructureGenerator implements GeneratorTask {
     public void generate(GeneratorContext ctx) {
         int width = ctx.getWidth();
         int height = ctx.getHeight();
+        
+        // Generate spawn buildings
         placeRandomSpawnTower(ctx, (int)(width * 0.2));
         placeRandomSpawnTower(ctx, (int)(width * 0.5));
         placeRandomSpawnTower(ctx, (int)(width * 0.8));
         
+        // Generate guaranteed structures (Such as the painting bunker)
         for(Prefab structure : uniqueStructures) {
             int x = ctx.nextInt(width);
             int minY = ctx.getZone().getSurface()[x];
@@ -39,6 +46,7 @@ public class StructureGenerator implements GeneratorTask {
             ctx.placePrefab(structure, x, y);
         }
         
+        // Generate dungeons
         if(!dungeons.isEmpty()) {
             for(int x = 0; x < width; x += dungeonRegion.getX()) {
                 for(int y = 0; y < height; y += dungeonRegion.getY()) {
@@ -55,6 +63,21 @@ public class StructureGenerator implements GeneratorTask {
                     }
                 }
             }
+        }
+        
+        // Populate world with broken teleporters and (soon) world machines & component chests.
+        // TODO magic numbers kinda bad
+        List<MetaBlock> replaceableContainers = ctx.getZone().getMetaBlocks(metaBlock
+                -> metaBlock.getItem().getId() == 824 || (metaBlock.getItem().getId() == 801 && !metaBlock.getMetadata().containsKey("@")));
+        Collections.shuffle(replaceableContainers, ctx.getRandom());
+        int brokenTeleporterCount = Math.min(replaceableContainers.size(), Math.max(1, width * height / (ctx.nextInt(80000) + 120000)));
+        
+        for(int i = 0; i < brokenTeleporterCount; i++) {
+            MetaBlock container = replaceableContainers.remove(0);
+            int x = container.getX();
+            int y = container.getY();
+            ctx.updateBlock(x, y, Layer.FRONT, 890);
+            ctx.getZone().setMetaBlock(x, y, 0);
         }
     }
     
