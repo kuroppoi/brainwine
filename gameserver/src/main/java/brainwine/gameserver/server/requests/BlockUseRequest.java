@@ -133,13 +133,13 @@ public class BlockUseRequest extends PlayerRequest {
                         }
                                                 
                         if(specialItem.equals("?")) {
-                            metadata.remove("$");
                             LootManager lootManager = GameServer.getInstance().getLootManager();
                             Loot loot = lootManager.getRandomLoot(15, zone.getBiome(), item.getLootCategories()); // TODO level
                             
                             if(loot == null) {
-                                player.alert("How quaint, this container is empty!");
+                                player.alert("No eligible loot could be found for this container.");
                             } else {
+                                metadata.remove("$");
                                 player.awardLoot(loot, item.getLootGraphic());
                             }
                         } else {
