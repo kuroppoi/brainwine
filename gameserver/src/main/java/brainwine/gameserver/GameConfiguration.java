@@ -103,6 +103,12 @@ public class GameConfiguration {
             List<String> ignoredItems = new ArrayList<>();
             items.forEach((name, v) -> {
                 Map<String, Object> config = (Map<String, Object>)v;
+                
+                if(!config.containsKey("code")) {
+                    ignoredItems.add(name);
+                    return;
+                }
+                
                 String[] segments = name.split("/", 2);
                 String category = segments.length == 2 ? segments[0] : "unknown";
                 config.put("id", name);
@@ -142,16 +148,12 @@ public class GameConfiguration {
                 }
                 
                 // Register item
-                if(config.containsKey("code")) {
-                    try {
-                        Item item = JsonHelper.readValue(config, Item.class, new InjectableValues.Std().addValue("name", name));
-                        ItemRegistry.registerItem(item);
-                    } catch (JsonProcessingException e) {
-                        logger.fatal("Failed to register item {}", name, e);
-                        System.exit(0);
-                    }
-                } else {
-                    ignoredItems.add(name);
+                try {
+                    Item item = JsonHelper.readValue(config, Item.class, new InjectableValues.Std().addValue("name", name));
+                    ItemRegistry.registerItem(item);
+                } catch (JsonProcessingException e) {
+                    logger.fatal("Failed to register item {}", name, e);
+                    System.exit(0);
                 }
             });
             
