@@ -61,7 +61,7 @@ public class ExperienceCommand extends Command {
     
     @Override
     public String[] getAliases() {
-        return new String[] { "xp" };
+        return new String[] { "xp", "exp" };
     }
     
     @Override
