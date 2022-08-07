@@ -116,7 +116,7 @@ public class GameConfiguration {
                 
                 // Create an item title if it's missing
                 if(!config.containsKey("title")) {
-                    String title = WordUtils.capitalize(segments.length > 1 ? segments[1] : segments[0]);
+                    String title = WordUtils.capitalize((segments.length > 1 ? segments[1] : segments[0]).replace("-", " "));
                     config.put("title", title);
                 }
                 
