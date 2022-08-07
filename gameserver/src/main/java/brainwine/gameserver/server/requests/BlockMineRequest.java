@@ -6,6 +6,7 @@ import java.util.Map;
 
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Fieldability;
 import brainwine.gameserver.item.Item;
@@ -17,6 +18,7 @@ import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
@@ -68,6 +70,15 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
+        if(item.requiresMiningSkill()) {
+            Pair<Skill, Integer> miningSkill = item.getMiningSkill();
+            
+            if(player.getTotalSkillLevel(miningSkill.getFirst()) < miningSkill.getLast()) {
+                fail(player, "You are not skilled enough to mine this block.");
+                return;
+            }
+        }
+        
         if(digging) {
             zone.digBlock(x, y);
             return;
@@ -106,6 +117,7 @@ public class BlockMineRequest extends PlayerRequest {
         
         Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
         zone.updateBlock(x, y, layer, 0, 0, player);
+        player.getStatistics().trackItemMined(item);
         
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem);

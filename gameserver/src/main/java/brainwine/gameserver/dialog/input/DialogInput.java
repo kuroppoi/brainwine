@@ -12,7 +12,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 @JsonSubTypes({
     @Type(name = "text", value = DialogTextInput.class),
     @Type(name = "item", value = DialogItemInput.class),
-    @Type(name = "color", value = DialogColorInput.class)
+    @Type(name = "color", value = DialogColorInput.class),
+    @Type(names = {"text select", "select"}, value = DialogSelectInput.class)
 })
 @JsonInclude(Include.NON_DEFAULT)
 @JsonIgnoreProperties(ignoreUnknown = true)

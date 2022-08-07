@@ -31,7 +31,9 @@ import brainwine.gameserver.zone.Zone;
 
 public class Npc extends Entity {
     
-    public static final int ATTACK_RETENTION_TIME = 333;
+    public static final int ATTACK_RETENTION_TIME = 2000;
+    public static final int ATTACK_INVINCIBLE_TIME = 333;
+    private final EntityConfig config;
     private final Map<String, Object> properties = new HashMap<>();
     private final Map<DamageType, Float> baseDefenses = new HashMap<>();
     private final Map<DamageType, Float> activeDefenses = new HashMap<>();
@@ -54,6 +56,7 @@ public class Npc extends Entity {
         
     public Npc(Zone zone, EntityConfig config) {
         super(zone);
+        this.config = config;
         
         // Add components & merge relevant configurations if applicable
         List<Map<String, Object>> behavior = new ArrayList<>(config.getBehavior());
@@ -149,8 +152,16 @@ public class Npc extends Entity {
     
     @Override
     public void die(Player killer) {
-        // Grant loot to killer
+        // Grant loot & track kill
         if(killer != null) {
+            // Track assists
+            for(Player attacker : recentAttacks.keySet()) {
+                if(attacker != killer) {
+                    attacker.getStatistics().trackAssist(config);
+                }
+            }
+            
+            killer.getStatistics().trackKill(config);
             EntityLoot loot = getRandomLoot(killer);
             
             if(loot != null) {
@@ -212,12 +223,16 @@ public class Npc extends Entity {
         }
     }
     
+    public EntityConfig getConfig() {
+        return config;
+    }
+    
     public void attack(Player attacker, Item weapon) {
         Pair<Item, Long> recentAttack = recentAttacks.get(attacker);
         long now = System.currentTimeMillis();
-
+        
         // Reject the attack if the player already attacked this entity recently
-        if(recentAttack != null && now < recentAttack.getLast() + ATTACK_RETENTION_TIME) {
+        if(recentAttack != null && now < recentAttack.getLast() + ATTACK_INVINCIBLE_TIME) {
             return;
         }
         

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.databind.InjectableValues;
 
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.util.MapHelper;
@@ -132,6 +133,21 @@ public class GameConfiguration {
                     if(useConfig.containsKey("change")) {
                         MapHelper.put(configV3, String.format("items.%s.change", name), Arrays.asList(useConfig.get("change")));
                     }
+                }
+                
+                // Map skill bonuses
+                Map<String, Object> bonuses = MapHelper.getMap(config, "bonus");
+                
+                if(bonuses != null) {
+                    Map<String, Integer> skillBonuses = new HashMap<>();
+                    
+                    bonuses.forEach((type, amount) -> {
+                        if(amount instanceof Integer && Skill.fromId(type) != null) {
+                            skillBonuses.put(type, (int)amount);
+                        }
+                    });
+                    
+                    config.put("skill_bonuses", skillBonuses);
                 }
                 
                 // Assign layers based on category. TODO this is not accurate.

@@ -6,6 +6,7 @@ import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Inventory;
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.CraftingRequirement;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.server.PlayerRequest;
@@ -29,6 +30,16 @@ public class CraftRequest extends PlayerRequest {
         if(item.isAir() || !item.isCraftable()) {
             player.alert("Sorry, you can't craft this item.");
             return;
+        }
+        
+        // Check crafting skill
+        if(item.requiresCraftingSkill()) {
+            Pair<Skill, Integer> craftingSkill = item.getCraftingSkill();
+            
+            if(player.getTotalSkillLevel(craftingSkill.getFirst()) < craftingSkill.getLast()) {
+                player.alert("You are not skilled enough to craft this item.");
+                return;
+            }
         }
         
         // Check if player has necessary ingredients
@@ -65,6 +76,8 @@ public class CraftRequest extends PlayerRequest {
             inventory.removeItem(ingredient.getItem(), ingredient.getQuantity() * quantity);
         }
         
-        inventory.addItem(item, item.getCraftingQuantity() * quantity);
+        int totalQuantity = item.getCraftingQuantity() * quantity;
+        inventory.addItem(item, totalQuantity);
+        player.getStatistics().trackItemCrafted(item, totalQuantity);
     }
 }

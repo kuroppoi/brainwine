@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.dialog.DialogType;
+import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
 
@@ -61,11 +62,20 @@ public class Item {
     @JsonProperty("meta")
     private MetaType meta = MetaType.NONE;
     
+    @JsonProperty("group")
+    private ItemGroup group = ItemGroup.NONE;
+    
     @JsonProperty("size")
     private Vector2i size = new Vector2i(1, 1);
     
     @JsonProperty("field")
     private int field;
+    
+    @JsonProperty("xp")
+    private int experienceYield;
+    
+    @JsonProperty("loot_xp")
+    private int lootExperienceYield;
     
     @JsonProperty("guard")
     private int guardLevel;
@@ -114,6 +124,18 @@ public class Item {
     
     @JsonProperty("loot")
     private String[] lootCategories = {};
+    
+    @JsonProperty("skill_bonuses")
+    private Map<Skill, Integer> skillBonuses = new HashMap<>();
+    
+    @JsonProperty("mining skill")
+    private Pair<Skill, Integer> miningSkill;
+    
+    @JsonProperty("placing skill")
+    private Pair<Skill, Integer> placingSkill;
+    
+    @JsonProperty("crafting skill")
+    private Pair<Skill, Integer> craftingSkill;
     
     @JsonProperty("damage")
     private Pair<DamageType, Float> damageInfo;
@@ -211,6 +233,14 @@ public class Item {
         return meta;
     }
     
+    public boolean hasGroup() {
+        return group != ItemGroup.NONE;
+    }
+    
+    public ItemGroup getGroup() {
+        return group;
+    }
+    
     public int getBlockWidth() {
         return size.getX();
     }
@@ -229,6 +259,14 @@ public class Item {
     
     public int getField() {
         return field;
+    }
+    
+    public int getExperienceYield() {
+        return experienceYield;
+    }
+    
+    public int getLootExperienceYield() {
+        return lootExperienceYield;
     }
     
     public int getGuardLevel() {
@@ -277,6 +315,34 @@ public class Item {
     
     public boolean isSolid() {
         return solid;
+    }
+    
+    public Map<Skill, Integer> getSkillBonuses() {
+        return skillBonuses;
+    }
+    
+    public boolean requiresMiningSkill() {
+        return miningSkill != null;
+    }
+    
+    public Pair<Skill, Integer> getMiningSkill() {
+        return miningSkill;
+    }
+    
+    public boolean requiresPlacingSkill() {
+        return placingSkill != null;
+    }
+    
+    public Pair<Skill, Integer> getPlacingSkill() {
+        return placingSkill;
+    }
+    
+    public boolean requiresCraftingSkill() {
+        return craftingSkill != null;
+    }
+    
+    public Pair<Skill, Integer> getCraftingSkill() {
+        return craftingSkill;
     }
     
     public boolean isWeapon() {

@@ -2,12 +2,14 @@ package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Zone;
 
@@ -63,6 +65,15 @@ public class BlockPlaceRequest extends PlayerRequest {
             return;
         }
         
+        if(item.requiresPlacingSkill()) {
+            Pair<Skill, Integer> placingSkill = item.getPlacingSkill();
+            
+            if(player.getTotalSkillLevel(placingSkill.getFirst()) < placingSkill.getLast()) {
+                fail(player, "You are not skilled enough to place this block.");
+                return;
+            }
+        }
+        
         if(item.isDish() && zone.willDishOverlap(x, y, item.getField(), player)) {
             fail(player, "Dish will overlap another protector.");
             return;
@@ -74,6 +85,7 @@ public class BlockPlaceRequest extends PlayerRequest {
         
         zone.updateBlock(x, y, layer, item, mod, player);
         player.getInventory().removeItem(item);
+        player.getStatistics().trackItemPlaced();
         player.trackPlacement(x, y, item);
     }
     

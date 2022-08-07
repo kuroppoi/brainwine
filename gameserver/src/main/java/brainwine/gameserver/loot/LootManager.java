@@ -20,6 +20,7 @@ import brainwine.shared.JsonHelper;
 
 public class LootManager {
     
+    public static final int[] MIN_FREQUENCIES_BY_LUCK = {18, 15, 12, 9, 7, 5, 4, 3, 2};
     private static final Logger logger = LogManager.getLogger();
     private final Map<String, List<Loot>> lootTables = new HashMap<>();
     
@@ -46,7 +47,7 @@ public class LootManager {
         return lootTables.getOrDefault(category, Collections.emptyList());
     }
     
-    public List<Loot> getEligibleLoot(int level, Biome biome, String... categories) {
+    public List<Loot> getEligibleLoot(int luck, Biome biome, String... categories) {
         List<Loot> eligibleLoot = new ArrayList<>();
         
         for(String category : categories) {
@@ -55,9 +56,8 @@ public class LootManager {
         
         eligibleLoot.removeIf(loot -> loot.getBiome() != null && loot.getBiome() != biome);
         
-        if(Math.random() > level * 0.015) {
-            int[] frequencies = {18, 15, 12, 9, 7, 5, 4, 3, 2};
-            int minFrequency = level > frequencies.length ? 1 : frequencies[level - 1];
+        if(Math.random() > luck * 0.015) {
+            int minFrequency = luck > MIN_FREQUENCIES_BY_LUCK.length ? 1 : MIN_FREQUENCIES_BY_LUCK[luck - 1];
             eligibleLoot.removeIf(loot -> loot.getFrequency() < minFrequency);
         }
         

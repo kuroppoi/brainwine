@@ -14,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import brainwine.gameserver.command.commands.AdminCommand;
 import brainwine.gameserver.command.commands.BroadcastCommand;
 import brainwine.gameserver.command.commands.EntityCommand;
+import brainwine.gameserver.command.commands.ExperienceCommand;
 import brainwine.gameserver.command.commands.ExportCommand;
 import brainwine.gameserver.command.commands.GenerateZoneCommand;
 import brainwine.gameserver.command.commands.GiveCommand;
@@ -21,12 +22,14 @@ import brainwine.gameserver.command.commands.HealthCommand;
 import brainwine.gameserver.command.commands.HelpCommand;
 import brainwine.gameserver.command.commands.ImportCommand;
 import brainwine.gameserver.command.commands.KickCommand;
+import brainwine.gameserver.command.commands.LevelCommand;
 import brainwine.gameserver.command.commands.PlayerIdCommand;
 import brainwine.gameserver.command.commands.PositionCommand;
 import brainwine.gameserver.command.commands.RegisterCommand;
 import brainwine.gameserver.command.commands.RickrollCommand;
 import brainwine.gameserver.command.commands.SayCommand;
 import brainwine.gameserver.command.commands.SeedCommand;
+import brainwine.gameserver.command.commands.SkillPointsCommand;
 import brainwine.gameserver.command.commands.StopCommand;
 import brainwine.gameserver.command.commands.TeleportCommand;
 import brainwine.gameserver.command.commands.ThinkCommand;
@@ -73,6 +76,9 @@ public class CommandManager {
         registerCommand(new RickrollCommand());
         registerCommand(new EntityCommand());
         registerCommand(new HealthCommand());
+        registerCommand(new ExperienceCommand());
+        registerCommand(new LevelCommand());
+        registerCommand(new SkillPointsCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {

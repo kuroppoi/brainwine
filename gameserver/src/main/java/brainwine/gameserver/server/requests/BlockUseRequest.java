@@ -7,10 +7,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
+import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
@@ -134,13 +135,15 @@ public class BlockUseRequest extends PlayerRequest {
                                                 
                         if(specialItem.equals("?")) {
                             LootManager lootManager = GameServer.getInstance().getLootManager();
-                            Loot loot = lootManager.getRandomLoot(15, zone.getBiome(), item.getLootCategories()); // TODO level
+                            Loot loot = lootManager.getRandomLoot(
+                                    player.getTotalSkillLevel(Skill.LUCK), zone.getBiome(), item.getLootCategories());
                             
                             if(loot == null) {
                                 player.alert("No eligible loot could be found for this container.");
                             } else {
                                 metadata.remove("$");
                                 player.awardLoot(loot, item.getLootGraphic());
+                                player.getStatistics().trackContainerLooted(item);
                             }
                         } else {
                             player.alert("Sorry, this container can't be looted right now.");
@@ -163,6 +166,7 @@ public class BlockUseRequest extends PlayerRequest {
                     }
                 } else if(mod == 0) {
                     zone.updateBlock(x, y, layer, item, 1);
+                    player.getStatistics().trackDiscovery(item);
                     player.notify("You repaired a teleporter!", NotificationType.ACCOMPLISHMENT);
                     player.notifyPeers(String.format("%s repaired a teleporter.", player.getName()), NotificationType.SYSTEM);
                 }

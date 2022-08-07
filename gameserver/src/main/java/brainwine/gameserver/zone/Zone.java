@@ -585,9 +585,9 @@ public class Zone {
             
             if(guardBlocks <= 0) {
                 dungeons.remove(dungeonId);
+                destroyer.getStatistics().trackDungeonRaided();
                 destroyer.notify("You raided a dungeon!", NotificationType.ACCOMPLISHMENT);
                 destroyer.notifyPeers(String.format("%s raided a dungeon.", destroyer.getName()), NotificationType.SYSTEM);
-                // TODO xp 'n stuff
             } else {
                 dungeons.put(dungeonId, guardBlocks);
             }
@@ -1048,6 +1048,10 @@ public class Zone {
     }
     
     public boolean exploreArea(int x, int y) {
+        return exploreArea(x, y, null);
+    }
+    
+    public boolean exploreArea(int x, int y, Player explorer) {
         if(!areCoordinatesInBounds(x, y)) {
             return false;
         }
@@ -1056,6 +1060,10 @@ public class Zone {
         
         if(chunksExplored[chunkIndex]) {
             return false;
+        }
+        
+        if(explorer != null && y - y % chunkHeight >= surface[x - x % chunkWidth]) {
+            explorer.getStatistics().trackAreaExplored();
         }
         
         sendMessage(new ZoneExploredMessage(chunkIndex));

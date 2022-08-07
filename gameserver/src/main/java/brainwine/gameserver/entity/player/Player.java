@@ -21,6 +21,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.achievements.Achievement;
+import brainwine.gameserver.achievements.AchievementManager;
+import brainwine.gameserver.achievements.JourneymanAchievement;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogListItem;
@@ -37,6 +40,8 @@ import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.messages.AchievementMessage;
+import brainwine.gameserver.server.messages.AchievementProgressMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
 import brainwine.gameserver.server.messages.DialogMessage;
@@ -49,12 +54,14 @@ import brainwine.gameserver.server.messages.EventMessage;
 import brainwine.gameserver.server.messages.HealthMessage;
 import brainwine.gameserver.server.messages.HeartbeatMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
+import brainwine.gameserver.server.messages.LevelMessage;
 import brainwine.gameserver.server.messages.NotificationMessage;
 import brainwine.gameserver.server.messages.PlayerPositionMessage;
 import brainwine.gameserver.server.messages.SkillMessage;
 import brainwine.gameserver.server.messages.StatMessage;
 import brainwine.gameserver.server.messages.TeleportMessage;
 import brainwine.gameserver.server.messages.WardrobeMessage;
+import brainwine.gameserver.server.messages.XpMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.util.MapHelper;
@@ -64,7 +71,9 @@ import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
-@JsonIncludeProperties({"name", "email", "password_hash", "auth_tokens", "admin", "karma", "crowns", "inventory", "equipped_clothing", "equipped_colors", "current_zone"})
+// TODO re-evaluate how we handle saving/loading this thing..
+@JsonIncludeProperties({"name", "email", "password_hash", "auth_tokens", "admin", "experience", "skill_points", "karma", 
+    "crowns", "inventory", "statistics", "ignored_hints", "achievements", "skills", "equipped_clothing", "equipped_colors", "current_zone"})
 public class Player extends Entity implements CommandExecutor {
     
     public static final int MAX_SKILL_LEVEL = 15;
@@ -94,6 +103,12 @@ public class Player extends Entity implements CommandExecutor {
     @JsonProperty("admin")
     private boolean admin;
     
+    @JsonProperty("experience")
+    private int experience;
+    
+    @JsonProperty("skill_points")
+    private int skillPoints;
+    
     @JsonProperty("karma")
     private int karma;
     
@@ -104,6 +119,19 @@ public class Player extends Entity implements CommandExecutor {
     @JsonProperty("inventory")
     private final Inventory inventory = new Inventory(this);
     
+    @JsonManagedReference
+    @JsonProperty("statistics")
+    private final PlayerStatistics statistics = new PlayerStatistics(this);
+    
+    @JsonProperty("ignored_hints")
+    private final Map<String, Float> ignoredHints = new HashMap<String, Float>();
+    
+    @JsonProperty("achievements")
+    private final Set<Achievement> achievements = new HashSet<>();
+    
+    @JsonProperty("skills")
+    private final Map<Skill, Integer> skills = new HashMap<>();
+    
     @JsonProperty("equipped_clothing")
     private final Map<ClothingSlot, Item> clothing = new HashMap<>();
     
@@ -112,7 +140,6 @@ public class Player extends Entity implements CommandExecutor {
     
     private final Set<Item> wardrobe = new HashSet<>();
     private final Map<String, Object> settings = new HashMap<>();
-    private final Map<Skill, Integer> skills = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
     private final List<Entity> trackedEntities = new ArrayList<>();
@@ -129,10 +156,6 @@ public class Player extends Entity implements CommandExecutor {
     @ConstructorProperties({"documentId", "name", "current_zone"})
     public Player(@JacksonInject("documentId") String documentId, String name, Zone zone) {
         super(zone);
-        
-        for(Skill skill : Skill.values()) {
-            skills.put(skill, 15);
-        }
         
         for(Item item : ItemRegistry.getItems()) {
             if(item.isClothing()) {
@@ -153,6 +176,7 @@ public class Player extends Entity implements CommandExecutor {
     @Override
     public void tick(float deltaTime) {
         long now = System.currentTimeMillis();
+        statistics.trackPlayTime(deltaTime);
         
         // Check timeout
         if(lastHeartbeat != 0) {
@@ -179,7 +203,8 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     @Override
-    public void die(Player killer) {        
+    public void die(Player killer) {
+        statistics.trackDeath();
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.DEAD)); // TODO killer id
     }
     
@@ -235,14 +260,14 @@ public class Player extends Entity implements CommandExecutor {
             y = spawn.getY();
         }
         
-        spawnPoint.setX((int)x);
-        spawnPoint.setY((int)y);
-        sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
-        sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
-        sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
-        sendMessage(new PlayerPositionMessage((int)x, (int)y));
-        sendMessage(new HealthMessage(health));
+        // Set skills for new players
+        for(Skill skill : Skill.values()) {
+            if(!skills.containsKey(skill)) {
+                skills.put(skill, 1);
+            }
+        }
         
+        // Add some default items if the player has none
         if(inventory.isEmpty()) {
             Item pickaxe = ItemRegistry.getItem("tools/pickaxe");
             Item pistol = ItemRegistry.getItem("tools/pistol");
@@ -255,6 +280,13 @@ public class Player extends Entity implements CommandExecutor {
             inventory.moveItemToContainer(jetpack, ContainerType.ACCESSORIES, 0);
         }
         
+        spawnPoint.setX((int)x);
+        spawnPoint.setY((int)y);
+        sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
+        sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
+        sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
+        sendMessage(new PlayerPositionMessage((int)x, (int)y));
+        sendMessage(new HealthMessage(health));
         sendMessage(new InventoryMessage(inventory));
         sendMessage(new WardrobeMessage(wardrobe));
         
@@ -272,6 +304,18 @@ public class Player extends Entity implements CommandExecutor {
             sendMessage(new EntityItemUseMessage(peer.getId(), 0, peer.getHeldItem(), 0));
         }
         
+        for(Achievement achievement : AchievementManager.getAchievements()) {
+            if(hasAchievement(achievement)) {
+                sendMessage(new AchievementMessage(achievement.getTitle(), 0));
+            } else {
+                int progress = achievement.getProgressPercent(this);
+                
+                if(progress > 0) {
+                    sendMessage(new AchievementProgressMessage(achievement.getTitle(), progress));
+                }
+            }
+        }
+        
         if(isV3()) {
             sendMessage(new EventMessage("zoneEntered", null));
             notify("Welcome to " + zone.getName(), NotificationType.LARGE);
@@ -279,6 +323,7 @@ public class Player extends Entity implements CommandExecutor {
             notify("Welcome to " + zone.getName(), NotificationType.WELCOME);
         }
         
+        updateAchievementProgress(JourneymanAchievement.class);
         checkRegistration();
     }
     
@@ -543,11 +588,15 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public double getMiningRange() {
-        return MathUtils.lerp(3.0, 5.0, (double)getSkillLevel(Skill.MINING) / MAX_SKILL_LEVEL);
+        return 5 + getTotalSkillLevel(Skill.MINING) / 3.0;
     }
     
     public double getPlacementRange() {
-        return Math.ceil(MathUtils.lerp(5.0, 13.0, (double)getSkillLevel(Skill.BUILDING) / MAX_SKILL_LEVEL));
+        return Math.ceil(MathUtils.lerp(5.0, 13.0, (double)getTotalSkillLevel(Skill.BUILDING) / MAX_SKILL_LEVEL));
+    }
+    
+    public int getMaxTargetableEntities() {
+        return 1 + getTotalSkillLevel(Skill.AGILITY) / 2;
     }
     
     public String getDocumentId() {
@@ -592,6 +641,76 @@ public class Player extends Entity implements CommandExecutor {
         this.admin = admin;
     }
     
+    public void addExperience(int amount) {
+        addExperience(amount, null);
+    }
+    
+    public void addExperience(int amount, String message) {
+        if(amount > 0) {
+            setExperience(experience + amount, message);
+        }
+    }
+    
+    public void setExperience(int experience) {
+        setExperience(experience, null);
+    }
+    
+    public void setExperience(int experience, String message) {
+        int amount = experience - this.experience;
+        int oldLevel = getLevel();
+        this.experience = experience;
+        sendMessage(new XpMessage(amount, experience, message));
+        int newLevel = getLevel();
+        
+        if(newLevel != oldLevel) {
+            skillPoints += Math.max(0, newLevel - oldLevel);
+            sendDelayedMessage(new LevelMessage(newLevel), 5000);
+            sendDelayedMessage(new EffectMessage(0, 0, "levelup", 1), 5000);
+            sendDelayedMessage(new StatMessage("points", skillPoints), 5000);
+            notifyPeers(String.format("%s leveled up to level %s!", name, newLevel), NotificationType.SYSTEM);
+        }
+    }
+    
+    public int getExperienceForLevel(int level) {
+        return (level * level * 250) + (level * 1750) - 2000; // I regret nothing!
+    }
+    
+    public int getExperience() {
+        return experience;
+    }
+    
+    public void setLevel(int level) {
+        setExperience(getExperienceForLevel(level));
+    }
+    
+    // I regret everything!
+    public int getLevelFromExperience(int experience) {
+        int level = 1;
+        
+        while(level < getMaxLevel() && experience >= getExperienceForLevel(level + 1)) {
+            level++;
+        }
+        
+        return level;
+    }
+    
+    public int getMaxLevel() {
+        return 1 + Skill.values().length * 7;
+    }
+    
+    public int getLevel() {
+        return getLevelFromExperience(experience);
+    }
+    
+    public void setSkillPoints(int skillPoints) {
+        this.skillPoints = skillPoints;
+        sendMessage(new StatMessage("points", skillPoints));
+    }
+    
+    public int getSkillPoints() {
+        return skillPoints;
+    }
+    
     public void setKarma(int karma) {
         this.karma = karma;
     }
@@ -631,18 +750,94 @@ public class Player extends Entity implements CommandExecutor {
         return crowns;
     }
     
+    public void ignoreHint(String hint) {
+        ignoredHints.put(hint, statistics.getPlayTime());
+    }
+    
+    public boolean ignoresHint(String hint) {
+        return ignoredHints.containsKey(hint);
+    }
+    
+    public Map<String, Float> getIgnoredHints() {
+        return Collections.unmodifiableMap(ignoredHints);
+    }
+    
+    public <T extends Achievement> void updateAchievementProgress(Class<T> achievementType) {
+        List<Achievement> achievementsToCheck = AchievementManager.getAchievements().stream()
+                .filter(achievement -> !hasAchievement(achievement) 
+                && achievementType.isAssignableFrom(achievement.getClass())
+                && (achievement.getPrevious() == null || hasAchievement(achievement.getPrevious())))
+                .collect(Collectors.toList());
+        
+        for(Achievement achievement : achievementsToCheck) {
+            if(achievement.isCompleted(this)) {
+                addAchievement(achievement);
+            } else {
+                int progress = achievement.getProgress(this);
+                int percentage = achievement.getProgressPercent(progress);
+                sendMessage(new AchievementProgressMessage(achievement.getTitle(), percentage));
+                
+                if(percentage >= 75) {
+                    notifyAchievementProgress(achievement, progress, "75%", "almost");
+                } else if(percentage >= 50) {
+                    notifyAchievementProgress(achievement, progress, "50%", "halfway");
+                } else if(percentage >= 25) {
+                    notifyAchievementProgress(achievement, progress, "25%", "a quarter of the way");
+                }
+            }
+        }
+    }
+    
+    public void notifyAchievementProgress(Achievement achievement, int progress, String percentage, String description) {
+        String title = achievement.getTitle();
+        String hint = String.format("%s %s", title, percentage);
+        
+        if(!ignoresHint(hint)) {
+            String notification = achievement.getNotification();
+            
+            if(notification == null) {
+                alert(String.format("You're %s to the %s achievement!", description, title));
+            } else {
+                alert(String.format("You've %s - %s to the %s achievement!",
+                        notification.replace("*", String.valueOf(progress)), description, title));
+            }
+            
+            ignoreHint(hint);
+        }
+    }
+    
+    public void addAchievement(Achievement achievement) {
+        if(achievements.add(achievement)) {
+            int experience = achievement.getExperience();
+            String title = achievement.getTitle();
+            addExperience(experience);
+            sendMessage(new AchievementMessage(title, experience)); 
+            notifyPeers(String.format("%s has earned the %s achievement.", name, title), NotificationType.SYSTEM);
+            
+            if(isV3()) {
+                notify(title, NotificationType.ACHIEVEMENT);
+            }
+        }
+    }
+    
+    public void removeAchievement(Achievement achievement) {
+        achievements.remove(achievement);
+    }
+    
+    public boolean hasAchievement(Achievement achievement) {
+        return achievements.contains(achievement);
+    }
+    
+    public Set<Achievement> getAchievements() {
+        return Collections.unmodifiableSet(achievements);
+    }
+    
     public void setClothing(ClothingSlot slot, Item item) {
         if(!item.isClothing()) {
             return;
         }
         
         clothing.put(slot, item);
-        zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
-    }
-    
-    public void setColor(ColorSlot slot, String hex) {
-        // TODO check if the string is actually a valid hex color
-        colors.put(slot, hex);
         zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
     }
     
@@ -654,8 +849,18 @@ public class Player extends Entity implements CommandExecutor {
         return item.isBase() || wardrobe.contains(item);
     }
     
-    public void increaseSkillLevel(Skill skill) {
-        setSkillLevel(skill, getSkillLevel(skill) + 1);
+    public Map<ClothingSlot, Item> getEquippedClothing() {
+        return Collections.unmodifiableMap(clothing);
+    }
+    
+    public void setColor(ColorSlot slot, String hex) {
+        // TODO check if the string is actually a valid hex color
+        colors.put(slot, hex);
+        zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
+    }
+    
+    public Map<ColorSlot, String> getEquippedColors(){
+        return Collections.unmodifiableMap(colors);
     }
     
     public void setSkillLevel(Skill skill, int level) {
@@ -663,8 +868,40 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new SkillMessage(skill, level));
     }
     
+    public int getTotalSkillLevel(Skill skill) {
+        int accessorySkillLevel = 0;
+        
+        // Get the highest skill bonus accessory
+        for(Item accessory : inventory.getAccessories().getItems()) {
+            int skillBonus = accessory.getSkillBonuses().getOrDefault(skill, 0);
+            
+            if(skillBonus > accessorySkillLevel) {
+                accessorySkillLevel = skillBonus;
+            }
+        }
+        
+        // TODO account for exoskeleton bonuses
+        return getSkillLevel(skill) + accessorySkillLevel;
+    }
+    
     public int getSkillLevel(Skill skill) {
-        return MathUtils.clamp(skills.getOrDefault(skill, 1), 1, MAX_NATURAL_SKILL_LEVEL);
+        return skills.getOrDefault(skill, 1);
+    }
+    
+    public Set<Skill> getUpgradeableSkills() {
+        Set<Skill> upgradeableSkills = skills.keySet().stream()
+                .filter(skill -> getSkillLevel(skill) < MAX_NATURAL_SKILL_LEVEL)
+                .collect(Collectors.toSet());
+        
+        if(getLevel() < 10) {
+            upgradeableSkills.removeAll(Arrays.asList(Skill.getAdvancedSkills()));
+        }
+        
+        return upgradeableSkills;
+    }
+    
+    public Map<Skill, Integer> getSkills() {
+        return Collections.unmodifiableMap(skills);
     }
     
     public void consume(Item item) {
@@ -730,6 +967,10 @@ public class Player extends Entity implements CommandExecutor {
     
     public Inventory getInventory() {
         return inventory;
+    }
+    
+    public PlayerStatistics getStatistics() {
+        return statistics;
     }
     
     public void addActiveChunk(int index) {
@@ -821,12 +1062,18 @@ public class Player extends Entity implements CommandExecutor {
         map.put("auth_tokens", authTokens);
         map.put("name", name);
         map.put("admin", admin);
+        map.put("experience", experience);
+        map.put("skill_points", skillPoints);
         map.put("karma", karma);
         map.put("crowns", crowns);
         map.put("current_zone", zone.getDocumentId());
+        map.put("ignored_hints", ignoredHints);
+        map.put("achievements", achievements);
+        map.put("skills", skills);
         map.put("equipped_colors", colors);
         map.put("equipped_clothing", clothing);
         map.put("inventory", inventory);
+        map.put("statistics", statistics);
         return map;
     }
     
@@ -852,8 +1099,18 @@ public class Player extends Entity implements CommandExecutor {
         config.put("id", documentId);
         config.put("name", name);
         config.put("admin", admin);
+        config.put("level", getLevel());
+        config.put("xp", experience);
+        config.put("points", skillPoints);
         config.put("karma", getKarmaLevel());
         config.put("crowns", crowns);
+        config.put("hints", ignoredHints);
+        config.put("show_hints", true);
+        config.put("items_mined", statistics.getTotalItemsMined());
+        config.put("items_placed", statistics.getItemsPlaced());
+        config.put("items_crafted", statistics.getTotalItemsCrafted());
+        config.put("play_time", (int)(statistics.getPlayTime()));
+        config.put("deaths", statistics.getDeaths());
         config.put("appearance", getAppearanceConfig());
         config.put("settings", settings);
         return config;

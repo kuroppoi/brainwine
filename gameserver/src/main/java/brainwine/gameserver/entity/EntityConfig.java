@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
@@ -29,6 +30,12 @@ public class EntityConfig {
     
     @JsonProperty("speed")
     private float baseSpeed = 3;
+    
+    @JsonProperty("xp")
+    private int experienceYield;
+    
+    @JsonProperty("group")
+    private EntityGroup group = EntityGroup.NONE;
     
     @JsonProperty("size")
     private Vector2i size = new Vector2i(1, 1);
@@ -75,6 +82,7 @@ public class EntityConfig {
         return type;
     }
     
+    @JsonValue
     public String getName() {
         return name;
     }
@@ -85,6 +93,14 @@ public class EntityConfig {
     
     public float getBaseSpeed() {
         return baseSpeed;
+    }
+    
+    public int getExperienceYield() {
+        return experienceYield;
+    }
+    
+    public EntityGroup getGroup() {
+        return group;
     }
     
     public Vector2i getSize() {

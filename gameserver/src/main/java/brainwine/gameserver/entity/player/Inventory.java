@@ -133,6 +133,14 @@ public class Inventory {
         return Item.AIR;
     }
     
+    public ItemContainer getHotbar() {
+        return hotbar;
+    }
+    
+    public ItemContainer getAccessories() {
+        return accessories;
+    }
+    
     @JsonValue
     public Map<String, Object> getJsonValue() {
         Map<String, Object> map = new HashMap<>();

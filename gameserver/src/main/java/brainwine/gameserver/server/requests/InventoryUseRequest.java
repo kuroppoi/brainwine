@@ -45,7 +45,7 @@ public class InventoryUseRequest extends PlayerRequest {
                 // Lovely type ambiguity. Always nice.
                 if(item.isWeapon() && details instanceof Collection) {
                     Collection<?> entityIds = (Collection<?>)details;
-                    int maxEntityAttackCount = 1; // TODO agility skill
+                    int maxTargetableEntities = player.getMaxTargetableEntities();
                     
                     for(Object id : entityIds) {
                         if(id instanceof Integer) {
@@ -56,7 +56,7 @@ public class InventoryUseRequest extends PlayerRequest {
                             }
                         }
                         
-                        if(--maxEntityAttackCount <= 0) {
+                        if(--maxTargetableEntities <= 0) {
                             break;
                         }
                     }
