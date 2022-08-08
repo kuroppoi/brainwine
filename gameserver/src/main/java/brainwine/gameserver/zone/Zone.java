@@ -65,7 +65,7 @@ public class Zone {
     private boolean[] chunksExplored;
     private float time = (float)Math.random(); // TODO temporary
     private float temperature = 0;
-    private float acidity = 0;
+    private float acidity = 1;
     private final ChunkManager chunkManager;
     private final WeatherManager weatherManager = new WeatherManager();
     private final EntityManager entityManager = new EntityManager(this);
