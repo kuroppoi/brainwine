@@ -226,6 +226,10 @@ public class EntityManager {
     public void removeEntity(Entity entity) {
         int entityId = entity.getId();
         
+        if(!entities.remove(entityId, entity)) {
+            return;
+        }
+        
         if(entity instanceof Player) {
             players.remove(entityId);
             playersByName.remove(entity.getName());
@@ -233,8 +237,6 @@ public class EntityManager {
         } else {
             npcs.remove(entityId);
         }
-        
-        entities.remove(entityId);
     }
     
     public Entity getEntity(int entityId) {

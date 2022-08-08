@@ -151,6 +151,7 @@ public class Player extends Entity implements CommandExecutor {
     private int teleportY;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
+    private Zone nextZone;
     private Connection connection;
     
     @ConstructorProperties({"documentId", "name", "current_zone"})
@@ -339,6 +340,12 @@ public class Player extends Entity implements CommandExecutor {
             zone.removeEntity(this);
         }
         
+        // Are we switching zones? Then set the new zone.
+        if(nextZone != null) {
+            zone = nextZone;
+            nextZone = null;
+        }
+        
         dialogs.clear();
         activeChunks.clear();
         
@@ -394,8 +401,7 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void changeZone(Zone zone) {
-        this.zone.removeEntity(this);
-        this.zone = zone;
+        nextZone = zone;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
     }
