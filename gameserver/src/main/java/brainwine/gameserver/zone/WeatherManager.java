@@ -13,8 +13,6 @@ public class WeatherManager {
     private long rainDuration;
     private float rainPower;
     private float precipitation;
-    private float wind;
-    private float cloudiness;
     
     public WeatherManager() {
         createRandomRain(random.nextBoolean());
@@ -28,10 +26,7 @@ public class WeatherManager {
         }
         
         float lerp = (float)(deltaTime * MathUtils.lerp(0.02F, 0.1F, (now - rainStart) / (float)rainDuration));
-        // Why are these separate, again?
         precipitation = (float)MathUtils.lerp(precipitation, rainPower, lerp);
-        wind = precipitation;
-        cloudiness = precipitation;
     }
     
     public void setRain(float power, long duration) {
@@ -54,13 +49,5 @@ public class WeatherManager {
     
     public float getPrecipitation() {
         return precipitation;
-    }
-    
-    public float getWind() {
-        return wind;
-    }
-    
-    public float getCloudiness() {
-        return cloudiness;
     }
 }

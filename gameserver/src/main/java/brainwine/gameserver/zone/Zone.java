@@ -1186,8 +1186,8 @@ public class Zone {
         config.put("w", new int[] {
                 (int)(time * 10000), 
                 (int)(temperature * 10000), 
-                (int)(weatherManager.getWind() * 10000), 
-                (int)(weatherManager.getCloudiness() * 10000), 
+                (int)(weatherManager.getPrecipitation() * 10000), 
+                (int)(weatherManager.getPrecipitation() * 10000), 
                 (int)(weatherManager.getPrecipitation() * 10000), 
                 (int)(acidity * 10000)
         });
