@@ -14,6 +14,7 @@ import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,7 @@ public class Zone {
     
     public static final int DEFAULT_CHUNK_WIDTH = 20;
     public static final int DEFAULT_CHUNK_HEIGHT = 20;
+    private static final ThreadLocalRandom random = ThreadLocalRandom.current();
     private final String documentId;
     private String name;
     private final Biome biome;
@@ -403,7 +405,7 @@ public class Zone {
     }
     
     public void placePrefab(Prefab prefab, int x, int y) {
-        placePrefab(prefab, x, y, new Random());
+        placePrefab(prefab, x, y, random);
     }
     
     public void placePrefab(Prefab prefab, int x, int y, Random random) {
@@ -490,7 +492,7 @@ public class Zone {
                         metadata.put("@", dungeonId);
                         
                         if(frontItem.hasUse(ItemUseType.GUARD)) {
-                            addGuardianEntities(metadata, frontItem.getGuardLevel());
+                            addGuardianEntities(metadata, frontItem.getGuardLevel(), y + j, random);
                             guardBlocks++;
                         }
                     }
@@ -550,7 +552,7 @@ public class Zone {
             String dungeonId = MapHelper.getString(metadata, "@");
             
             if(dungeonId != null) {
-                addGuardianEntities(metadata, metaBlock.getItem().getGuardLevel());
+                addGuardianEntities(metadata, metaBlock.getItem().getGuardLevel(), metaBlock.getY());
                 int numGuardBlocks = dungeons.getOrDefault(dungeonId, 0);
                 numGuardBlocks++;
                 dungeons.put(dungeonId, numGuardBlocks);
@@ -558,7 +560,11 @@ public class Zone {
         }
     }
     
-    private void addGuardianEntities(Map<String, Object> metadata, int guardLevel) {
+    private void addGuardianEntities(Map<String, Object> metadata, int guardLevel, int depth) {
+        addGuardianEntities(metadata, guardLevel, depth, random);
+    }
+    
+    private void addGuardianEntities(Map<String, Object> metadata, int guardLevel, int depth, Random random) {
         List<String> guardians = MapHelper.getList(metadata, "!");
         
         if(guardians == null) {
@@ -566,10 +572,29 @@ public class Zone {
             
             if(guardLevel >= 5) {
                 guardians.add("brains/large");
-            } else if(guardLevel >= 3) {
-                guardians.add("brains/medium");
             } else {
-                guardians.add("brains/small");
+                int effectiveGuardLevel = guardLevel + depth / 200;
+                String[][] groups = {
+                    {"creatures/bat-auto", "creatures/bat-auto"},
+                    {"brains/small"},
+                    {"brains/small", "creatures/bat-auto"},
+                    {"brains/small", "creatures/bat-auto"},
+                    {"brains/small", "creatures/bat-auto"},
+                    {"brains/medium"},
+                    {"brains/medium"},
+                    {"brains/medium", "brains/small"},
+                    {"brains/medium-dire"},
+                    {"brains/medium-dire", "brains/small"},
+                    {"brains/medium-dire", "brains/small"},
+                };
+                
+                int max = Math.max(1, groups.length - 6);
+                String[] group = Stream.of(groups)
+                        .skip(Math.min(effectiveGuardLevel, groups.length - max))
+                        .limit(max)
+                        .collect(Collectors.toList())
+                        .get(random.nextInt(max));
+                guardians.addAll(Arrays.asList(group));
             }
             
             metadata.put("!", guardians);
