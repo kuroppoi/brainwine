@@ -113,6 +113,9 @@ public class Item {
     @JsonProperty("door")
     private boolean door;
     
+    @JsonProperty("entity")
+    private boolean entity;
+    
     @JsonProperty("inventory")
     private LazyItemGetter inventoryItem;
     
@@ -315,6 +318,10 @@ public class Item {
     
     public boolean isSolid() {
         return solid;
+    }
+    
+    public boolean isEntity() {
+        return entity;
     }
     
     public Map<Skill, Integer> getSkillBonuses() {

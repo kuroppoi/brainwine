@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.behavior.Behavior;
-import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.player.Player;
 
 public class RandomlyTargetBehavior extends Behavior {
     
@@ -29,9 +29,9 @@ public class RandomlyTargetBehavior extends Behavior {
         }
         
         if(!entity.hasTarget()) {
-            Entity target = entity.getZone().getRandomPlayerInRange(entity.getX(), entity.getY(), range);
+            Player target = entity.getZone().getRandomPlayerInRange(entity.getX(), entity.getY(), range);
             
-            if(target != null && !target.isDead() && entity.canSee(target)) {
+            if(target != null && !target.isDead() && !entity.isOwnedBy(target) && entity.canSee(target)) {
                 entity.setTarget(target);
                 targetLockedAt = now;
             }

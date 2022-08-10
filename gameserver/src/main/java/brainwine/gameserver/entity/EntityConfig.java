@@ -43,6 +43,9 @@ public class EntityConfig {
     @JsonProperty("loot")
     private List<EntityLoot> loot = new ArrayList<>();
     
+    @JsonProperty("placed_loot")
+    private List<EntityLoot> placedLoot = new ArrayList<>();
+    
     @JsonProperty("loot_by_weapon")
     private Map<Item, List<EntityLoot>> lootByWeapon = new HashMap<>();
     
@@ -109,6 +112,10 @@ public class EntityConfig {
     
     public List<EntityLoot> getLoot() {
         return loot;
+    }
+    
+    public List<EntityLoot> getPlacedLoot() {
+        return placedLoot;
     }
     
     public Map<Item, List<EntityLoot>> getLootByWeapon() {

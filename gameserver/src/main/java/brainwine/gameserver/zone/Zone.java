@@ -21,8 +21,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.EntityConfig;
-import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.ChatType;
 import brainwine.gameserver.entity.player.NotificationType;
@@ -661,6 +659,8 @@ public class Zone {
                 setMetaBlock(x, y, 0);
             }
             
+            entityManager.trySpawnBlockEntity(x, y);
+            
             if(item.isWhole() && y < sunlight[x]) {
                 sunlight[x] = y;
             } else if(!item.isWhole() && y == sunlight[x]) {
@@ -902,28 +902,10 @@ public class Zone {
             }
         }
         
-        // Spawn guardian entities
+        // Spawn block-related entities
         for(int x = 0; x < chunk.getWidth(); x++) {
             for(int y = 0; y < chunk.getHeight(); y++) {
-                int x1 = chunk.getX() + x;
-                int y1 = chunk.getY() + y;
-                int index = getBlockIndex(x1, y1);
-                MetaBlock metaBlock = getMetaBlock(index);
-                
-                if(metaBlock != null) {
-                    List<String> guardians = MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList());
-                    
-                    for(String guardian : guardians) {
-                        EntityConfig config = EntityRegistry.getEntityConfig(guardian);
-                        
-                        if(config != null) {
-                            Npc entity = new Npc(this, config);
-                            entity.setPosition(x1, y1);
-                            entity.setGuardBlock(index);
-                            addEntity(entity);
-                        }
-                    }
-                }
+                entityManager.trySpawnBlockEntity(chunk.getX() + x, chunk.getY() + y);
             }
         }
     }

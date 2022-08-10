@@ -70,6 +70,11 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
+        if(item.isEntity() && !player.isAdmin()) {
+            fail(player, "You must destroy the entity instead of its mount.");
+            return;
+        }
+        
         if(item.requiresMiningSkill()) {
             Pair<Skill, Integer> miningSkill = item.getMiningSkill();
             

@@ -18,6 +18,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityConfig;
+import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.Player;
@@ -27,6 +28,7 @@ import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
+import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.ResourceUtils;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
@@ -183,6 +185,44 @@ public class EntityManager {
     
     public List<Player> getPlayersInRange(float x, float y, float range) {
         return getPlayers().stream().filter(player -> player.inRange(x, y, range)).collect(Collectors.toList());
+    }
+    
+    public void trySpawnBlockEntity(int x, int y) {
+        if(!zone.areCoordinatesInBounds(x, y)) {
+            return;
+        }
+        
+        Item item = zone.getBlock(x, y).getFrontItem();
+        
+        // Check for guardian entity
+        if(item.getGuardLevel() > 0) {
+            MetaBlock metaBlock = zone.getMetaBlock(x, y);
+            
+            if(metaBlock != null) {
+                List<String> guardians = MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList());
+                
+                for(String guardian : guardians) {
+                    EntityConfig config = EntityRegistry.getEntityConfig(guardian);
+                    
+                    if(config != null) {
+                        Npc entity = new Npc(zone, config);
+                        entity.setGuardBlock(x, y);
+                        spawnEntity(entity, x, y);
+                    }
+                }
+            }
+        }
+        
+        // Check for mounted entity (turrets & geysers)
+        if(item.isEntity()) {
+            EntityConfig config = EntityRegistry.getEntityConfig(item.getName());
+            
+            if(config != null) {
+                Npc entity = new Npc(zone, config);
+                entity.setMountBlock(x, y);
+                spawnEntity(entity, x, y);
+            }
+        }
     }
     
     public void spawnEntity(Entity entity, int x, int y) {

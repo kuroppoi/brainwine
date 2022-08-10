@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.behavior.SequenceBehavior;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityConfig;
@@ -21,6 +22,7 @@ import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.Pair;
@@ -39,6 +41,7 @@ public class Npc extends Entity {
     private final Map<DamageType, Float> activeDefenses = new HashMap<>();
     private final Map<Player, Pair<Item, Long>> recentAttacks = new HashMap<>();
     private final WeightedMap<EntityLoot> loot = new WeightedMap<>();
+    private final WeightedMap<EntityLoot> placedLoot = new WeightedMap<>();
     private final Map<Item, WeightedMap<EntityLoot>> lootByWeapon = new HashMap<>();
     private final List<String> animations;
     private final SequenceBehavior behaviorTree;
@@ -49,7 +52,8 @@ public class Npc extends Entity {
     private float speed;
     private int moveX;
     private int moveY;
-    private int guardBlock = -1;
+    private Vector2i guardBlock;
+    private Vector2i mountBlock;
     private Entity target;
     private long lastBehavedAt = System.currentTimeMillis();
     private long lastTrackedAt = System.currentTimeMillis();
@@ -116,6 +120,7 @@ public class Npc extends Entity {
         });
         
         config.getLoot().forEach(loot -> this.loot.addEntry(loot, loot.getFrequency()));
+        config.getPlacedLoot().forEach(loot -> placedLoot.addEntry(loot, loot.getFrequency()));
         config.getLootByWeapon().forEach((weapon, loot) -> {
             WeightedMap<EntityLoot> lootMap = new WeightedMap<>();
             loot.forEach(entry -> lootMap.addEntry(entry, entry.getFrequency()));
@@ -154,14 +159,17 @@ public class Npc extends Entity {
     public void die(Player killer) {
         // Grant loot & track kill
         if(killer != null) {
-            // Track assists
-            for(Player attacker : recentAttacks.keySet()) {
-                if(attacker != killer) {
-                    attacker.getStatistics().trackAssist(config);
+            if(!isPlayerPlaced()) {
+                // Track assists
+                for(Player attacker : recentAttacks.keySet()) {
+                    if(attacker != killer) {
+                        attacker.getStatistics().trackAssist(config);
+                    }
                 }
+                
+                killer.getStatistics().trackKill(config);
             }
             
-            killer.getStatistics().trackKill(config);
             EntityLoot loot = getRandomLoot(killer);
             
             if(loot != null) {
@@ -175,11 +183,16 @@ public class Npc extends Entity {
         
         // Remove itself from the guard block metadata if it was guarding one
         if(isGuard()) {
-            MetaBlock metaBlock = zone.getMetaBlock(guardBlock);
+            MetaBlock metaBlock = zone.getMetaBlock(guardBlock.getX(), guardBlock.getY());
             
             if(metaBlock != null) {
                 MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList()).remove(typeName);
             }
+        }
+        
+        // Destroy mount block if it has one
+        if(isMounted()) {
+            zone.updateBlock(mountBlock.getX(), mountBlock.getY(), Layer.FRONT, 0);
         }
     }
     
@@ -228,6 +241,11 @@ public class Npc extends Entity {
     }
     
     public void attack(Player attacker, Item weapon) {
+        // Prevent damage if this entity is mounted and its mount is protected
+        if(isMounted() && zone.isBlockProtected(mountBlock.getX(), mountBlock.getY(), attacker)) {
+            return;
+        }
+        
         Pair<Item, Long> recentAttack = recentAttacks.get(attacker);
         long now = System.currentTimeMillis();
         
@@ -266,7 +284,7 @@ public class Npc extends Entity {
     }
     
     public boolean isTransient() {
-        return !isGuard();
+        return !isGuard() && !isMounted();
     }
     
     public void setProperty(String key, Object value) {
@@ -284,7 +302,9 @@ public class Npc extends Entity {
     public EntityLoot getRandomLoot(Player awardee) {
         Item weapon = awardee.getHeldItem();
         
-        if(lootByWeapon.containsKey(weapon)) {
+        if(isOwnedBy(awardee)) {
+            return placedLoot.next();
+        } else if(lootByWeapon.containsKey(weapon)) {
             return lootByWeapon.get(weapon).next();
         } else {
             return loot.next();
@@ -295,16 +315,58 @@ public class Npc extends Entity {
         return baseDefenses.getOrDefault(type, 0F);
     }
     
-    public void setGuardBlock(int guardBlock) {
+    public void setGuardBlock(int x, int y) {
+        setGuardBlock(new Vector2i(x, y));
+    }
+    
+    public void setGuardBlock(Vector2i guardBlock) {
         this.guardBlock = guardBlock;
     }
     
     public boolean isGuard() {
-        return guardBlock >= 0;
+        return guardBlock != null;
     }
     
-    public int getGuardBlock() {
+    public Vector2i getGuardBlock() {
         return guardBlock;
+    }
+    
+    public void setMountBlock(int x, int y) {
+        setMountBlock(new Vector2i(x, y));
+    }
+    
+    public void setMountBlock(Vector2i mountBlock) {
+        this.mountBlock = mountBlock;
+    }
+    
+    public boolean isMounted() {
+        return mountBlock != null;
+    }
+    
+    public Vector2i getMountBlock() {
+        return mountBlock;
+    }
+    
+    public boolean isPlayerPlaced() {
+        return getOwner() != null;
+    }
+    
+    public boolean isOwnedBy(Player player) {
+        return player == getOwner();
+    }
+    
+    public Player getOwner() {
+        return GameServer.getInstance().getPlayerManager().getPlayerById(getOwnerId());
+    }
+    
+    private String getOwnerId() {
+        MetaBlock metaBlock = isMounted() ? zone.getMetaBlock(mountBlock.getX(), mountBlock.getY()) : null;
+        
+        if(metaBlock != null) {
+            return metaBlock.getOwner();
+        }
+        
+        return null;
     }
     
     public void setTarget(Entity target) {
