@@ -59,7 +59,7 @@ public class DirectDataFetcher implements DataFetcher {
                     false,
                     zone.getPlayers().size(), 
                     zone.getExplorationProgress(), 
-                    "2021-02-15"));
+                    zone.getCreationDate()));
         }
         
         return zoneInfo;

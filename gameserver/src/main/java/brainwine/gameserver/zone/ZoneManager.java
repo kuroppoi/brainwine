@@ -73,16 +73,16 @@ public class ZoneManager {
         File legacyDataFile = new File(file, "shape.cmp");
         
         try {
-            ZoneData data = null;
+            ZoneDataFile data = null;
             
             if(legacyDataFile.exists() && !dataFile.exists()) {
                 data = convertLegacyDataFile(legacyDataFile, dataFile);
                 legacyDataFile.delete();
             } else {
-                data = mapper.readValue(ZipUtils.inflateBytes(Files.readAllBytes(dataFile.toPath())), ZoneData.class);
+                data = mapper.readValue(ZipUtils.inflateBytes(Files.readAllBytes(dataFile.toPath())), ZoneDataFile.class);
             }
             
-            ZoneConfig config = JsonHelper.readValue(new File(file, "config.json"), ZoneConfig.class);
+            ZoneConfigFile config = JsonHelper.readValue(new File(file, "config.json"), ZoneConfigFile.class);
             Zone zone = new Zone(id, config, data);
             zone.setMetaBlocks(JsonHelper.readList(new File(file, "metablocks.json"), MetaBlock.class));
             addZone(zone);
@@ -91,7 +91,7 @@ public class ZoneManager {
         }
     }
     
-    private ZoneData convertLegacyDataFile(File legacyFile, File outputFile) throws IOException, DataFormatException {
+    private ZoneDataFile convertLegacyDataFile(File legacyFile, File outputFile) throws IOException, DataFormatException {
         MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(ZipUtils.inflateBytes(Files.readAllBytes(legacyFile.toPath())));
         int[] surface = new int[unpacker.unpackArrayHeader()];
         
@@ -118,7 +118,7 @@ public class ZoneManager {
             chunksExplored[i] = unpacker.unpackBoolean();
         }
         
-        ZoneData data = new ZoneData(surface, sunlight, null, pendingSunlight, chunksExplored);
+        ZoneDataFile data = new ZoneDataFile(surface, sunlight, null, pendingSunlight, chunksExplored);
         mapper.writeValue(outputFile, data);
         return data;
     }
@@ -136,8 +136,8 @@ public class ZoneManager {
         try {
             zone.saveChunks();
             JsonHelper.writeValue(new File(file, "metablocks.json"), zone.getMetaBlocks());
-            JsonHelper.writeValue(new File(file, "config.json"), new ZoneConfig(zone));
-            Files.write(new File(file, "zone.dat").toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(new ZoneData(zone))));
+            JsonHelper.writeValue(new File(file, "config.json"), new ZoneConfigFile(zone));
+            Files.write(new File(file, "zone.dat").toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(new ZoneDataFile(zone))));
         } catch(Exception e) {
             logger.error("Zone save failure. id: {}", zone.getDocumentId(), e);
         }

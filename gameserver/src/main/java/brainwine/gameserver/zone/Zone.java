@@ -1,6 +1,7 @@
 package brainwine.gameserver.zone;
 
 import java.io.File;
+import java.time.OffsetDateTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +65,7 @@ public class Zone {
     private int[] sunlight;
     private int[] depths;
     private boolean[] chunksExplored;
+    private OffsetDateTime creationDate = OffsetDateTime.now();
     private float time = (float)Math.random(); // TODO temporary
     private float temperature = 0;
     private float acidity = 1;
@@ -78,21 +80,31 @@ public class Zone {
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
     
-    protected Zone(String documentId, ZoneConfig config, ZoneData data) {
+    protected Zone(String documentId, ZoneConfigFile config, ZoneDataFile data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
-        surface = data.getSurface();
-        sunlight = data.getSunlight();
-        setDepths(data.getDepths());
+        int[] surface = data.getSurface();
+        int[] sunlight = data.getSunlight();
+        int[] depths = data.getDepths();
+        boolean[] chunksExplored = data.getChunksExplored();
         
-        // Ha ha silly me!
-        // TODO make nifty setters for these too, perhaps?
-        if(data.getPendingSunlight() != null) {
-            pendingSunlight.addAll(data.getPendingSunlight());
+        if(surface.length == width) {
+            this.surface = surface;
         }
         
-        if(data.getChunksExplored() != null) {
-            chunksExplored = data.getChunksExplored();
+        if(sunlight.length == width) {
+            this.sunlight = sunlight;
         }
+        
+        if(depths.length == 3) {
+            this.depths = depths;
+        }
+        
+        if(chunksExplored.length == getChunkCount()) {
+            this.chunksExplored = chunksExplored;
+        }
+        
+        pendingSunlight.addAll(data.getPendingSunlight());
+        creationDate = config.getCreationDate();
     }
     
     public Zone(String documentId, String name, Biome biome, int width, int height) {
@@ -1151,6 +1163,10 @@ public class Zone {
     
     public int getChunkCount() {
         return numChunksWidth * numChunksHeight;
+    }
+    
+    public OffsetDateTime getCreationDate() {
+        return creationDate;
     }
     
     /**

@@ -1,5 +1,7 @@
 package brainwine.api.models;
 
+import java.time.OffsetDateTime;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ZoneInfo {
@@ -12,9 +14,10 @@ public class ZoneInfo {
     private final boolean locked;
     private final int playerCount;
     private final double explorationProgress;
-    private final String generationDate;
+    private final OffsetDateTime creationDate;
     
-    public ZoneInfo(String name, String biome, String activity, boolean pvp, boolean premium, boolean locked, int playerCount, double explorationProgress, String generationDate) {
+    public ZoneInfo(String name, String biome, String activity, boolean pvp, boolean premium, boolean locked, 
+            int playerCount, double explorationProgress, OffsetDateTime creationDate) {
         this.name = name;
         this.biome = biome;
         this.activity = activity;
@@ -23,7 +26,7 @@ public class ZoneInfo {
         this.locked = locked;
         this.playerCount = playerCount;
         this.explorationProgress = explorationProgress;
-        this.generationDate = generationDate;
+        this.creationDate = creationDate;
     }
     
     public String getName() {
@@ -62,7 +65,7 @@ public class ZoneInfo {
     }
     
     @JsonProperty("gen_date")
-    public String getGenerationDate() {
-        return generationDate;
+    public OffsetDateTime getCreationDate() {
+        return creationDate;
     }
 }
