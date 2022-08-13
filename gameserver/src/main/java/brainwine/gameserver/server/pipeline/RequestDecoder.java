@@ -3,7 +3,7 @@ package brainwine.gameserver.server.pipeline;
 import java.io.IOException;
 import java.util.List;
 
-import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.server.Request;
@@ -13,10 +13,10 @@ import io.netty.handler.codec.MessageToMessageDecoder;
 
 public class RequestDecoder extends MessageToMessageDecoder<ByteBuf> {
     
-    private final ObjectReader reader;
+    private final ObjectMapper mapper;
     
-    public RequestDecoder(ObjectReader reader) {
-        this.reader = reader;
+    public RequestDecoder(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
     
     @Override
@@ -36,7 +36,7 @@ public class RequestDecoder extends MessageToMessageDecoder<ByteBuf> {
         
         byte[] bytes = new byte[length];
         buf.readBytes(bytes);
-        Request request = reader.readValue(bytes, type);
+        Request request = mapper.readValue(bytes, type);
         out.add(request);
     }
 }

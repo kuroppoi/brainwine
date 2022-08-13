@@ -13,9 +13,9 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import brainwine.gameserver.serialization.BlockSerializer;
@@ -47,20 +47,19 @@ public class Server {
     
     private static final Logger logger = LogManager.getLogger();
     private static final ThreadFactory threadFactory = new DefaultThreadFactory("netty");
-    private static final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory(
-            MessagePack.DEFAULT_PACKER_CONFIG.withStr8FormatSupport(false)))
-            .configure(SerializationFeature.WRITE_ENUMS_USING_INDEX, true)
-            .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true)
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-            .registerModule(new SimpleModule()
+    private static final ObjectMapper mapper = JsonMapper.builder(
+            new MessagePackFactory(MessagePack.DEFAULT_PACKER_CONFIG.withStr8FormatSupport(false)))
+            .enable(SerializationFeature.WRITE_ENUMS_USING_INDEX)
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE,DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+            .addModule(new SimpleModule()
                     .setDeserializerModifier(RequestDeserializerModifier.INSTANCE)
                     .addSerializer(MessageSerializer.INSTANCE)
                     .addSerializer(BlockSerializer.INSTANCE)
                     .addSerializer(NetworkChunkSerializer.INSTANCE)
-                    .addSerializer(ItemCodeSerializer.INSTANCE));
+                    .addSerializer(ItemCodeSerializer.INSTANCE))
+            .build();
     private static final ObjectWriter writer = mapper.writer();
-    private static final ObjectReader reader = mapper.reader();
     private final List<ChannelFuture> endpoints = new ArrayList<>();
     private final Class<? extends ServerChannel> channelType;
     private final EventLoopGroup eventLoopGroup;
@@ -85,7 +84,7 @@ public class Server {
                 Connection connection = new Connection();
                 channel.pipeline().addLast("framer", new LengthFieldBasedFrameDecoder(ByteOrder.LITTLE_ENDIAN, 1024, 1, 4, 0, 0, true));
                 channel.pipeline().addLast("encoder", new MessageEncoder(writer, connection));
-                channel.pipeline().addLast("decoder", new RequestDecoder(reader));
+                channel.pipeline().addLast("decoder", new RequestDecoder(mapper));
                 channel.pipeline().addLast("handler", connection);
             }
         }).bind(port).syncUninterruptibly());

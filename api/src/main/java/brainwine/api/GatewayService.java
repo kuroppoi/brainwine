@@ -4,13 +4,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.api.handlers.NewsRequestHandler;
-import brainwine.api.handlers.PasswordResetHandler;
 import brainwine.api.handlers.PasswordForgotHandler;
+import brainwine.api.handlers.PasswordResetHandler;
 import brainwine.api.handlers.PlayerLoginHandler;
 import brainwine.api.handlers.PlayerRegistrationHandler;
 import brainwine.api.handlers.RwcPurchaseHandler;
 import brainwine.api.handlers.SimpleExceptionHandler;
+import brainwine.shared.JsonHelper;
 import io.javalin.Javalin;
+import io.javalin.plugin.json.JavalinJackson;
 
 public class GatewayService {
     
@@ -21,7 +23,7 @@ public class GatewayService {
         logger.info("Starting GatewayService @ port {} ...", port);
         DataFetcher dataFetcher = api.getDataFetcher();
         String gameServerHost = api.getGameServerHost();
-        gateway = Javalin.create().start(port);
+        gateway = Javalin.create(config -> config.jsonMapper(new JavalinJackson(JsonHelper.MAPPER))).start(port);
         gateway.exception(Exception.class, new SimpleExceptionHandler());
         gateway.get("/clients", new NewsRequestHandler(api.getNews()));
         gateway.post("/players", new PlayerRegistrationHandler(dataFetcher, gameServerHost));

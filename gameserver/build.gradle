@@ -19,16 +19,11 @@ sourceSets {
 }
 
 dependencies {
-    implementation 'org.apache.logging.log4j:log4j-api:2.15.0'
-    implementation 'org.apache.logging.log4j:log4j-core:2.15.0'
-    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.4'
-    implementation 'org.msgpack:jackson-dataformat-msgpack:0.9.0'
-    implementation 'org.yaml:snakeyaml:1.27'
+    implementation 'org.msgpack:jackson-dataformat-msgpack:0.9.3'
+    implementation 'org.yaml:snakeyaml:1.30'
     implementation 'org.reflections:reflections:0.10.2'
-    implementation 'io.netty:netty-all:4.1.58.Final'
+    implementation 'io.netty:netty-all:4.1.79.Final'
     implementation 'org.mindrot:jbcrypt:0.4'
-    implementation 'commons-validator:commons-validator:1.7'
-    implementation 'org.apache.commons:commons-text:1.9'
     implementation project(':shared')
 }
 

@@ -15,23 +15,26 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 
 public class JsonHelper {
     
-    private static final ObjectMapper mapper = new ObjectMapper()
-            .configure(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, true)
-            .configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true)
-            .configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, true)
-            .configure(MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL, true)
-            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
-    private static final ObjectWriter writer = mapper.writer(CustomPrettyPrinter.INSTANCE);
+    public static final ObjectMapper MAPPER = JsonMapper.builder()
+            .findAndAddModules()
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+            .enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS, MapperFeature.USE_BASE_TYPE_AS_DEFAULT_IMPL)
+            .propertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+            .build();
+    private static final ObjectWriter writer = MAPPER.writer(CustomPrettyPrinter.INSTANCE);
     
     public static <T> T readValue(String string, Class<T> type) throws JsonMappingException, JsonProcessingException {
-        return mapper.readValue(string, type);
+        return MAPPER.readValue(string, type);
     }
     
     public static <T> T readValue(File file, Class<T> type) throws JsonParseException, JsonMappingException, IOException {
-        return mapper.readValue(file, type);
+        return MAPPER.readValue(file, type);
     }
     
     public static <T> T readValue(Object object, Class<T> type) throws JsonProcessingException {
@@ -39,11 +42,11 @@ public class JsonHelper {
     }
     
     public static <T> T readValue(String string, TypeReference<T> type) throws JsonMappingException, JsonProcessingException {
-        return mapper.readValue(string, type);
+        return MAPPER.readValue(string, type);
     }
     
     public static <T> T readValue(File file, TypeReference<T> type) throws IOException {
-        return mapper.readValue(file, type);
+        return MAPPER.readValue(file, type);
     }
     
     public static <T> T readValue(Object object, TypeReference<T> type) throws JsonProcessingException {
@@ -51,11 +54,11 @@ public class JsonHelper {
     }
     
     public static <T> T readValue(String string, Class<T> type, InjectableValues injectableValues) throws JsonMappingException, JsonProcessingException {
-        return mapper.readerFor(type).with(injectableValues).readValue(string);
+        return MAPPER.readerFor(type).with(injectableValues).readValue(string);
     }
     
     public static <T> T readValue(File file, Class<T> type, InjectableValues injectableValues) throws JsonParseException, JsonMappingException, IOException {
-        return mapper.readerFor(type).with(injectableValues).readValue(file);
+        return MAPPER.readerFor(type).with(injectableValues).readValue(file);
     }
     
     public static <T> T readValue(Object object, Class<T> type, InjectableValues injectableValues) throws JsonProcessingException {
@@ -63,7 +66,7 @@ public class JsonHelper {
     }
     
     public static <T> List<T> readList(File file, Class<T> type) throws IOException {
-        return mapper.readerForListOf(type).readValue(file);
+        return MAPPER.readerForListOf(type).readValue(file);
     }
     
     public static void writeValue(File file, Object value) throws JsonGenerationException, JsonMappingException, IOException {

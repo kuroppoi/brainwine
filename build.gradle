@@ -7,9 +7,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.apache.logging.log4j:log4j-api:2.15.0'
     implementation project(':api')
     implementation project(':gameserver')
+    implementation project(':shared')
 }
 
 application {
@@ -31,6 +31,8 @@ jar {
 }
 
 startScripts {
+    classpath = files('$APP_HOME/lib/*')
+    
     doLast {
         windowsScript.text = windowsScript.text.replace('..', '')
         unixScript.text = unixScript.text.replace('..', '')

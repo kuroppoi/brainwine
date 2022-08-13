@@ -16,8 +16,8 @@ public class ContextUtils {
     }
     
     public static <T> void handleQueryParam(Context ctx, String key, Class<T> type, Consumer<T> handler) {
-        Validator<T> param = ctx.queryParam(key, type);
-        T value = param.getOrNull();
+        Validator<T> param = ctx.queryParamAsClass(key, type);
+        T value = param.getOrDefault(null);
         
         if(value != null) {
             handler.accept(value);

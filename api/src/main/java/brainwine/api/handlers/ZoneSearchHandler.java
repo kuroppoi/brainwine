@@ -1,6 +1,7 @@
 package brainwine.api.handlers;
 
-import static brainwine.api.util.ContextUtils.*;
+import static brainwine.api.util.ContextUtils.error;
+import static brainwine.api.util.ContextUtils.handleQueryParam;
 
 import java.util.List;
 
@@ -68,7 +69,7 @@ public class ZoneSearchHandler implements Handler {
         });
         
         // Page
-        int page = ctx.queryParam("page", Integer.class, "1").get();
+        int page = ctx.queryParamAsClass("page", Integer.class).getOrDefault(1);
         int fromIndex = (page - 1) * PAGE_SIZE;
         int toIndex = page * PAGE_SIZE;
         ctx.json(zones.subList(fromIndex < 0 ? 0 : fromIndex > zones.size() ? zones.size() : fromIndex, toIndex > zones.size() ? zones.size() : toIndex));
