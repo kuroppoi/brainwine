@@ -12,6 +12,8 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.achievements.Achievement;
@@ -144,6 +146,11 @@ public class Player extends Entity implements CommandExecutor {
         this.skills = new HashMap<>();
         this.equippedClothing = new HashMap<>();
         this.equippedColors = new HashMap<>();
+    }
+    
+    @JsonCreator
+    private static Player fromId(String id) {
+        return GameServer.getInstance().getPlayerManager().getPlayerById(id);
     }
     
     @Override
