@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
@@ -1117,6 +1118,7 @@ public class Zone {
         return count;
     }
     
+    @JsonValue
     public String getDocumentId() {
         return documentId;
     }
