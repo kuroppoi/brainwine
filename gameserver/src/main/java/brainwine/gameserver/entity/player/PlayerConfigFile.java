@@ -1,0 +1,139 @@
+package brainwine.gameserver.entity.player;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
+
+import brainwine.gameserver.achievements.Achievement;
+import brainwine.gameserver.item.Item;
+import brainwine.gameserver.zone.Zone;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class PlayerConfigFile {
+    
+    private String name;
+    private String email;
+    private String passwordHash;
+    private Zone currentZone;
+    private boolean admin;
+    private int experience;
+    private int skillPoints;
+    private int karma;
+    private int crowns;
+    private Inventory inventory = new Inventory();
+    private PlayerStatistics statistics = new PlayerStatistics();
+    private List<String> authTokens = new ArrayList<>();
+    private Set<Achievement> achievements = new HashSet<>();
+    private Map<String, Float> ignoredHints = new HashMap<>();
+    private Map<Skill, Integer> skills = new HashMap<>();
+    private Map<ClothingSlot, Item> equippedClothing = new HashMap<>();
+    private Map<ColorSlot, String> equippedColors  = new HashMap<>();
+    
+    public PlayerConfigFile(Player player) {
+        this.name = player.getName();
+        this.email = player.getEmail();
+        this.passwordHash = player.getPassword();
+        this.currentZone = player.getZone();
+        this.admin = player.isAdmin();
+        this.experience = player.getExperience();
+        this.skillPoints = player.getSkillPoints();
+        this.karma = player.getKarma();
+        this.crowns = player.getCrowns();
+        this.inventory = player.getInventory();
+        this.statistics = player.getStatistics();
+        this.authTokens = player.getAuthTokens();
+        this.achievements = player.getAchievements();
+        this.ignoredHints = player.getIgnoredHints();
+        this.skills = player.getSkills();
+        this.equippedClothing = player.getEquippedClothing();
+        this.equippedColors = player.getEquippedColors();
+    }
+    
+    @JsonCreator
+    private PlayerConfigFile() {}
+    
+    @JsonSetter(nulls = Nulls.FAIL)
+    public String getName() {
+        return name;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getPasswordHash() {
+        return passwordHash;
+    }
+    
+    public Zone getCurrentZone() {
+        return currentZone;
+    }
+    
+    public boolean isAdmin() {
+        return admin;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<String> getAuthTokens() {
+        return authTokens;
+    }
+    
+    public int getExperience() {
+        return experience;
+    } 
+    
+    public int getSkillPoints() {
+        return skillPoints;
+    }
+    
+    public int getKarma() {
+        return karma;
+    }
+    
+    public int getCrowns() {
+        return crowns;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP)
+    public Inventory getInventory() {
+        return inventory;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP)
+    public PlayerStatistics getStatistics() {
+        return statistics;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Set<Achievement> getAchievements() {
+        return achievements;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<String, Float> getIgnoredHints() {
+        return ignoredHints;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<Skill, Integer> getSkills() {
+        return skills;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<ClothingSlot, Item> getEquippedClothing() {
+        return equippedClothing;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<ColorSlot, String> getEquippedColors() {
+        return equippedColors;
+    }
+}

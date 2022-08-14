@@ -1,6 +1,5 @@
 package brainwine.gameserver.entity.player;
 
-import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -12,12 +11,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.annotation.JacksonInject;
-import com.fasterxml.jackson.annotation.JsonIncludeProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
@@ -71,9 +64,6 @@ import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
-// TODO re-evaluate how we handle saving/loading this thing..
-@JsonIncludeProperties({"name", "email", "password_hash", "auth_tokens", "admin", "experience", "skill_points", "karma", 
-    "crowns", "inventory", "statistics", "ignored_hints", "achievements", "skills", "equipped_clothing", "equipped_colors", "current_zone"})
 public class Player extends Entity implements CommandExecutor {
     
     public static final int MAX_SKILL_LEVEL = 15;
@@ -87,57 +77,22 @@ public class Player extends Entity implements CommandExecutor {
     public static final float ENTITY_VISIBILITY_RANGE = 40;
     public static final float BASE_REGEN_AMOUNT = 0.1F;
     private static int dialogDiscriminator;
-    
-    @JacksonInject("documentId")
     private final String documentId;
-    
-    @JsonProperty("email")
     private String email;
-    
-    @JsonProperty("password_hash")
     private String password;
-    
-    @JsonProperty("auth_tokens")
-    private final List<String> authTokens = new ArrayList<>();
-    
-    @JsonProperty("admin")
     private boolean admin;
-    
-    @JsonProperty("experience")
     private int experience;
-    
-    @JsonProperty("skill_points")
     private int skillPoints;
-    
-    @JsonProperty("karma")
     private int karma;
-    
-    @JsonProperty("crowns")
     private int crowns;
-    
-    @JsonManagedReference
-    @JsonProperty("inventory")
-    private final Inventory inventory = new Inventory(this);
-    
-    @JsonManagedReference
-    @JsonProperty("statistics")
-    private final PlayerStatistics statistics = new PlayerStatistics(this);
-    
-    @JsonProperty("ignored_hints")
-    private final Map<String, Float> ignoredHints = new HashMap<String, Float>();
-    
-    @JsonProperty("achievements")
-    private final Set<Achievement> achievements = new HashSet<>();
-    
-    @JsonProperty("skills")
-    private final Map<Skill, Integer> skills = new HashMap<>();
-    
-    @JsonProperty("equipped_clothing")
-    private final Map<ClothingSlot, Item> clothing = new HashMap<>();
-    
-    @JsonProperty("equipped_colors")
-    private final Map<ColorSlot, String> colors = new HashMap<>();
-    
+    private Inventory inventory;
+    private PlayerStatistics statistics;
+    private List<String> authTokens;
+    private Set<Achievement> achievements;
+    private Map<String, Float> ignoredHints;
+    private Map<Skill, Integer> skills;
+    private Map<ClothingSlot, Item> equippedClothing;
+    private Map<ColorSlot, String> equippedColors;
     private final Set<Item> wardrobe = new HashSet<>();
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
@@ -154,24 +109,41 @@ public class Player extends Entity implements CommandExecutor {
     private Zone nextZone;
     private Connection connection;
     
-    @ConstructorProperties({"documentId", "name", "current_zone"})
-    public Player(@JacksonInject("documentId") String documentId, String name, Zone zone) {
+    protected Player(String documentId, PlayerConfigFile config) {
+        super(config.getCurrentZone());
+        this.documentId = documentId;
+        this.name = config.getName();
+        this.email = config.getEmail();
+        this.password = config.getPasswordHash();
+        this.admin = config.isAdmin();
+        this.experience = config.getExperience();
+        this.skillPoints = config.getSkillPoints();
+        this.karma = config.getKarma();
+        this.crowns = config.getCrowns();
+        this.inventory = config.getInventory();
+        this.statistics = config.getStatistics();
+        this.authTokens = config.getAuthTokens();
+        this.achievements = config.getAchievements();
+        this.ignoredHints = config.getIgnoredHints();
+        this.skills = config.getSkills();
+        this.equippedClothing = config.getEquippedClothing();
+        this.equippedColors = config.getEquippedColors();
+        inventory.setPlayer(this);
+        statistics.setPlayer(this);
+    }
+    
+    public Player(String documentId, String name, Zone zone) {
         super(zone);
-        
-        for(Item item : ItemRegistry.getItems()) {
-            if(item.isClothing()) {
-                wardrobe.add(item);
-            }
-        }
-        
         this.documentId = documentId;
         this.name = name;
-        settings.put("hotbar_presets", new ArrayList<>());
-        Map<String, Object> test = new HashMap<>();
-        test.put("fg", true);
-        test.put("to", true);
-        test.put("lo", true);
-        settings.put("appearance", test);
+        this.inventory = new Inventory(this);
+        this.statistics = new PlayerStatistics(this);
+        this.authTokens = new ArrayList<>();
+        this.achievements = new HashSet<>();
+        this.ignoredHints = new HashMap<>();
+        this.skills = new HashMap<>();
+        this.equippedClothing = new HashMap<>();
+        this.equippedColors = new HashMap<>();
     }
     
     @Override
@@ -843,7 +815,7 @@ public class Player extends Entity implements CommandExecutor {
             return;
         }
         
-        clothing.put(slot, item);
+        equippedClothing.put(slot, item);
         zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
     }
     
@@ -856,17 +828,17 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public Map<ClothingSlot, Item> getEquippedClothing() {
-        return Collections.unmodifiableMap(clothing);
+        return Collections.unmodifiableMap(equippedClothing);
     }
     
     public void setColor(ColorSlot slot, String hex) {
         // TODO check if the string is actually a valid hex color
-        colors.put(slot, hex);
+        equippedColors.put(slot, hex);
         zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
     }
     
-    public Map<ColorSlot, String> getEquippedColors(){
-        return Collections.unmodifiableMap(colors);
+    public Map<ColorSlot, String> getEquippedColors() {
+        return Collections.unmodifiableMap(equippedColors);
     }
     
     public void setSkillLevel(Skill skill, int level) {
@@ -1060,36 +1032,14 @@ public class Player extends Entity implements CommandExecutor {
         return connection != null && connection.isOpen();
     }
     
-    @JsonValue
-    public Map<String, Object> getJsonValue() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("email", email);
-        map.put("password_hash", password);
-        map.put("auth_tokens", authTokens);
-        map.put("name", name);
-        map.put("admin", admin);
-        map.put("experience", experience);
-        map.put("skill_points", skillPoints);
-        map.put("karma", karma);
-        map.put("crowns", crowns);
-        map.put("current_zone", zone.getDocumentId());
-        map.put("ignored_hints", ignoredHints);
-        map.put("achievements", achievements);
-        map.put("skills", skills);
-        map.put("equipped_colors", colors);
-        map.put("equipped_clothing", clothing);
-        map.put("inventory", inventory);
-        map.put("statistics", statistics);
-        return map;
-    }
-    
     private Map<String, Object> getAppearanceConfig() {
         Map<String, Object> appearance = new HashMap<>();
-        for(Entry<ClothingSlot, Item> entry : clothing.entrySet()) {
+        
+        for(Entry<ClothingSlot, Item> entry : equippedClothing.entrySet()) {
             appearance.put(entry.getKey().getId(), entry.getValue().getId());
         }
         
-        for(Entry<ColorSlot, String> entry : colors.entrySet()) {
+        for(Entry<ColorSlot, String> entry : equippedColors.entrySet()) {
             appearance.put(entry.getKey().getId(), entry.getValue());
         }
         

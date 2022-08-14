@@ -10,8 +10,10 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.serialization.AchievementSerializer;
 import brainwine.gameserver.util.MathUtils;
 
 @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type", defaultImpl = Achievement.class)
@@ -27,6 +29,7 @@ import brainwine.gameserver.util.MathUtils;
     @Type(name = "DiscoveryAchievement", value = DiscoveryAchievement.class),
     @Type(name = "Journeyman", value = JourneymanAchievement.class)
 })
+@JsonSerialize(using = AchievementSerializer.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Achievement {
     

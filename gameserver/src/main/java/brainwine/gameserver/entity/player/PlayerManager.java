@@ -12,8 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
-import com.fasterxml.jackson.databind.InjectableValues;
-
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.shared.JsonHelper;
@@ -53,7 +51,8 @@ public class PlayerManager {
         String id = file.getName().replace(".json", "");
         
         try {
-            Player player = JsonHelper.readValue(file, Player.class, new InjectableValues.Std().addValue("documentId", id));
+            PlayerConfigFile configFile = JsonHelper.readValue(file, PlayerConfigFile.class);
+            Player player = new Player(id, configFile);
             
             if(player.getZone() == null) {
                 player.setZone(GameServer.getInstance().getZoneManager().getRandomZone());
@@ -83,7 +82,7 @@ public class PlayerManager {
         File file = new File("players", player.getDocumentId() + ".json");
         
         try {
-            JsonHelper.writeValue(file, player);
+            JsonHelper.writeValue(file, new PlayerConfigFile(player));
         } catch(Exception e) {
             logger.error("Could not save player id {}", player.getDocumentId(), e);
         }

@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -26,11 +25,11 @@ public class Inventory {
     // TODO clean up, perhaps just merge with inventory somehow.
     private final ItemContainer hotbar = new ItemContainer(10);
     private final ItemContainer accessories = new ItemContainer(20);
-    
-    @JsonBackReference
     private Player player;  
     
-    public Inventory(Player player) {
+    protected Inventory() {}
+    
+    protected Inventory(Player player) {
         this.player = player;
     }
     
@@ -47,6 +46,10 @@ public class Inventory {
                 this.accessories.moveItem(accessories[i], i);
             }
         }
+    }
+    
+    protected void setPlayer(Player player) {
+        this.player = player;
     }
     
     public void moveItemToContainer(Item item, ContainerType type, int slot) {

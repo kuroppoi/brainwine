@@ -7,8 +7,8 @@ import java.util.Map.Entry;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import brainwine.gameserver.achievements.CraftingAchievement;
@@ -39,13 +39,17 @@ public class PlayerStatistics {
     private int dungeonsRaided;
     private int deaths;
     
-    @JsonBackReference
+    @JsonIgnore
     private Player player;
         
     @JsonCreator
-    private PlayerStatistics() {}
+    protected PlayerStatistics() {}
     
-    public PlayerStatistics(Player player) {
+    protected PlayerStatistics(Player player) {
+        this.player = player;
+    }
+    
+    protected void setPlayer(Player player) {
         this.player = player;
     }
     
