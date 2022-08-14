@@ -1,33 +1,27 @@
 package brainwine.gameserver.server.messages;
 
-import java.util.Map;
+import java.util.Arrays;
+import java.util.Collection;
 
 import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
-import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.zone.MetaBlock;
 
-@MessageInfo(id = 20, collection = true)
+@MessageInfo(id = 20, prepacked = true)
 public class BlockMetaMessage extends Message {
     
-    public int x;
-    public int y;
-    public Map<String, Object> metadata;
+    public Collection<MetaBlock> metaBlocks;
     
-    public BlockMetaMessage(MetaBlock block) {
-        this.x = block.getX();
-        this.y = block.getY();
-        this.metadata = MapHelper.copy(block.getMetadata());
-        this.metadata.put("i", block.getItem().getId());
-        
-        if(block.hasOwner()) {
-            this.metadata.put("p", block.getOwner());
-        }
+    public BlockMetaMessage(Collection<MetaBlock> metaBlocks) {
+        this.metaBlocks = metaBlocks;
     }
     
-    public BlockMetaMessage(int x, int y, Map<String, Object> metadata) {
-        this.x = x;
-        this.y = y;
-        this.metadata = metadata;
+    public BlockMetaMessage(MetaBlock metaBlock) {
+        this(Arrays.asList(metaBlock));
+    }
+    
+    // TODO Kind of evil...
+    public BlockMetaMessage(int x, int y) {
+        this(new MetaBlock(x, y));
     }
 }

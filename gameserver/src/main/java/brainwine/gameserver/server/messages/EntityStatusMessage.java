@@ -1,30 +1,34 @@
 package brainwine.gameserver.server.messages;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.models.EntityStatusData;
 
-@MessageInfo(id = 7, collection = true)
+@MessageInfo(id = 7, prepacked = true)
 public class EntityStatusMessage extends Message {
     
-    public int id;
-    public int type;
-    public String name;
-    public EntityStatus status;
-    public Map<String, Object> details;
+    public Collection<EntityStatusData> statuses;
+    
+    public EntityStatusMessage(Collection<EntityStatusData> statuses) {
+        this.statuses = statuses;
+    }
+    
+    public EntityStatusMessage(Collection<? extends Entity> entities, EntityStatus status) {
+        this(entities.stream().map(entity -> new EntityStatusData(entity, status)).collect(Collectors.toList()));
+    }
     
     public EntityStatusMessage(Entity entity, EntityStatus status) {
-        this(entity.getId(), entity.getType(), entity.getName(), status, entity.getStatusConfig());
+        this(Arrays.asList(new EntityStatusData(entity, status)));
     }
     
     public EntityStatusMessage(int id, int type, String name, EntityStatus status, Map<String, Object> details) {
-        this.id = id;
-        this.type = type;
-        this.name = name;
-        this.status = status;
-        this.details = details;
+        this(Arrays.asList(new EntityStatusData(id, type, name, status, details)));
     }
 }

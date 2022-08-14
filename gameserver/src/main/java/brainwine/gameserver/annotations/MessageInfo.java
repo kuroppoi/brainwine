@@ -29,7 +29,8 @@ public @interface MessageInfo {
     /**
      * Defines whether or not the values of this message should be part of a collection,
      * allowing for multiple messages to be sent in a single packet.
-     * This feature is currently not supported and this option only exists for client compatibility.
+     * This feature is not supported and this option only exists for client compatibility,
+     * but you can use the {@code prepacked} option to achieve the same result.
      * 
      * The default value is false.
      */

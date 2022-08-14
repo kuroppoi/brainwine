@@ -44,6 +44,7 @@ import brainwine.gameserver.server.messages.ConfigurationMessage;
 import brainwine.gameserver.server.messages.LightMessage;
 import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
+import brainwine.gameserver.server.models.BlockChangeData;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.Vector2i;
@@ -74,6 +75,7 @@ public class Zone {
     private final WeatherManager weatherManager = new WeatherManager();
     private final EntityManager entityManager = new EntityManager(this);
     private final Queue<DugBlock> digQueue = new ArrayDeque<>();
+    private final List<BlockChangeData> blockChanges = new ArrayList<>();
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
@@ -162,6 +164,21 @@ public class Zone {
                     updateBlock(x, y, Layer.FRONT, dugBlock.getItem(), dugBlock.getMod());
                 }
             }
+        }
+        
+        // Send block changes to players who they are relevant to
+        if(!blockChanges.isEmpty()) {
+            for(Player player : getPlayers()) {
+                List<BlockChangeData> blockChangesNearPlayer = blockChanges.stream()
+                        .filter(blockChange -> player.isChunkActive(blockChange.getX(), blockChange.getY()))
+                        .collect(Collectors.toList());
+                
+                if(!blockChangesNearPlayer.isEmpty()) {
+                    player.sendMessage(new BlockChangeMessage(blockChangesNearPlayer));
+                }
+            }
+            
+            blockChanges.clear();
         }
     }
     
@@ -681,7 +698,12 @@ public class Zone {
         Chunk chunk = getChunk(x, y);        
         chunk.getBlock(x, y).updateLayer(layer, item, mod);
         chunk.setModified(true);
-        sendMessageToChunk(new BlockChangeMessage(x, y, layer, item, mod), chunk);
+        
+        // Queue block update if there are players in this zone.
+        // TODO maybe check if the block update was in an active chunk, too?
+        if(!getPlayers().isEmpty()) {
+            blockChanges.add(new BlockChangeData(x, y, layer, item, mod));
+        }
         
         if(layer == Layer.FRONT) {
             if(item.isWhole()) {
@@ -743,34 +765,31 @@ public class Zone {
         
         MetaType meta = item.getMeta();
         int index = getBlockIndex(x, y);
-        Map<String, Object> metadata = data == null ? new HashMap<>() : MapHelper.copy(data);
-        Map<String, Object> toSend = MapHelper.copy(metadata);
-        toSend.put("i", item.getId());
-        
-        if(owner != null) {
-            toSend.put("p", owner.getDocumentId());
-        }
+        MetaBlock metaBlock = null;
         
         if(item.hasMeta()) {
-            MetaBlock metaBlock = new MetaBlock(x, y, item, owner, metadata);
+            metaBlock = new MetaBlock(x, y, item, owner, data);
             metaBlocks.put(index, metaBlock);
             indexMetaBlock(index, metaBlock);
         } else if(metaBlocks.containsKey(index)) {
             meta = metaBlocks.remove(index).getItem().getMeta();
-            toSend.clear();
             unindexMetaBlock(index);
         }
         
         switch(meta) {
-        case LOCAL:
-            sendMessageToChunk(new BlockMetaMessage(x, y, toSend), getChunk(x, y));
-            break;
-        case GLOBAL:
-            sendMessage(new BlockMetaMessage(x, y, Collections.emptyMap()));
-            sendMessage(new BlockMetaMessage(x, y, toSend));
-            break;
-        default:
-            break;
+            case LOCAL:
+                sendMessageToChunk(metaBlock == null ? new BlockMetaMessage(x, y) 
+                        : new BlockMetaMessage(metaBlock), getChunk(x, y));
+                break;
+            case GLOBAL:
+                sendMessage(new BlockMetaMessage(x, y)); // Send empty one first or it won't work for some reason
+                
+                if(metaBlock != null) {
+                    sendMessage(new BlockMetaMessage(metaBlock));
+                }
+                break;
+            default:
+                break;
         }
     }
     

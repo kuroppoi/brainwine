@@ -22,6 +22,7 @@ import brainwine.gameserver.serialization.BlockSerializer;
 import brainwine.gameserver.serialization.ItemCodeSerializer;
 import brainwine.gameserver.serialization.MessageSerializer;
 import brainwine.gameserver.serialization.NetworkChunkSerializer;
+import brainwine.gameserver.serialization.NetworkMetaBlockSerializer;
 import brainwine.gameserver.serialization.RequestDeserializerModifier;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.server.pipeline.MessageEncoder;
@@ -57,6 +58,7 @@ public class Server {
                     .addSerializer(MessageSerializer.INSTANCE)
                     .addSerializer(BlockSerializer.INSTANCE)
                     .addSerializer(NetworkChunkSerializer.INSTANCE)
+                    .addSerializer(NetworkMetaBlockSerializer.INSTANCE)
                     .addSerializer(ItemCodeSerializer.INSTANCE))
             .build();
     private static final ObjectWriter writer = mapper.writer();

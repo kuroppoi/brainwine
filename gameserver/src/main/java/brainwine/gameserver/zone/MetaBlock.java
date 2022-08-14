@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -39,7 +40,7 @@ public class MetaBlock {
     }
     
     public MetaBlock(int x, int y, Item item) {
-        this(x, y, item, null);
+        this(x, y, item, new HashMap<>());
     }
     
     public MetaBlock(int x, int y, Item item, Map<String, Object> metadata) {
@@ -84,6 +85,18 @@ public class MetaBlock {
     
     public void setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
+    }
+    
+    @JsonIgnore
+    public Map<String, Object> getClientMetadata() {
+        Map<String, Object> clientMetadata = new HashMap<>(metadata); // Shallow copy
+        clientMetadata.put("i", item.getId());
+        
+        if(hasOwner()) {
+            clientMetadata.put("p", owner);
+        }
+        
+        return clientMetadata;
     }
     
     public Map<String, Object> getMetadata() {

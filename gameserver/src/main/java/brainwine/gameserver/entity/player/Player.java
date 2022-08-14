@@ -2,6 +2,7 @@ package brainwine.gameserver.entity.player;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,6 +59,7 @@ import brainwine.gameserver.server.messages.TeleportMessage;
 import brainwine.gameserver.server.messages.WardrobeMessage;
 import brainwine.gameserver.server.messages.XpMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
+import brainwine.gameserver.server.models.EntityStatusData;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
@@ -173,11 +175,7 @@ public class Player extends Entity implements CommandExecutor {
         // Update tracked entities
         if(now - lastTrackedEntityUpdate >= TRACKED_ENTITY_UPDATE_INTERVAL) {
             updateTrackedEntities();
-            
-            for(Entity entity : trackedEntities) {
-                sendMessage(new EntityPositionMessage(entity));
-            }
-            
+            sendMessage(new EntityPositionMessage(trackedEntities));
             lastTrackedEntityUpdate = now;
         }
     }
@@ -269,21 +267,24 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new HealthMessage(health));
         sendMessage(new InventoryMessage(inventory));
         sendMessage(new WardrobeMessage(wardrobe));
+        sendMessage(new BlockMetaMessage(zone.getGlobalMetaBlocks()));
         
-        for(MetaBlock metaBlock : zone.getGlobalMetaBlocks()) {
-            sendMessage(new BlockMetaMessage(metaBlock));
-        }
-        
+        // Send skill data
         for(Skill skill : skills.keySet()) {
             sendMessage(new SkillMessage(skill, skills.get(skill)));
         }
         
-        for(Player peer : zone.getPlayers()) {
-            sendMessage(new EntityStatusMessage(peer, EntityStatus.ENTERING));
-            sendMessage(new EntityPositionMessage(peer.getId(), peer.getX(), peer.getY(), 0, 0, FacingDirection.EAST, 0, 0, 0));
+        // Send peer data
+        Collection<Player> peers = zone.getPlayers();
+        sendMessage(new EntityStatusMessage(peers, EntityStatus.ENTERING));
+        sendMessage(new EntityPositionMessage(peers));
+        
+        // TODO prepack this as well
+        for(Player peer : peers) {
             sendMessage(new EntityItemUseMessage(peer.getId(), 0, peer.getHeldItem(), 0));
         }
         
+        // Send achievement data
         for(Achievement achievement : AchievementManager.getAchievements()) {
             if(hasAchievement(achievement)) {
                 sendMessage(new AchievementMessage(achievement.getTitle(), 0));
@@ -296,6 +297,7 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
         
+        // And finally, enter the zone!
         if(isV3()) {
             sendMessage(new EventMessage("zoneEntered", null));
             notify("Welcome to " + zone.getName(), NotificationType.LARGE);
@@ -983,16 +985,28 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     private void updateTrackedEntities() {
+        // Get all entities in range of the player
         List<Entity> entitiesInRange = zone.getEntitiesInRange(x, y, ENTITY_VISIBILITY_RANGE);
+        
+        // Exclude self
         entitiesInRange.remove(this);
-        List<Entity> enteredEntities = entitiesInRange.stream().filter(entity -> !trackedEntities.contains(entity))
-                .collect(Collectors.toList());
-        List<Entity> departedEntities = trackedEntities.stream().filter(entity -> !entitiesInRange.contains(entity))
+        
+        // Get entities that have entered the player's view
+        List<Entity> enteredEntities = entitiesInRange.stream()
+                .filter(entity -> !trackedEntities.contains(entity))
                 .collect(Collectors.toList());
         
-        for(Entity entity : enteredEntities) {            
+        // Get entities that have left the player's view
+        List<Entity> departedEntities = trackedEntities.stream()
+                .filter(entity -> !entitiesInRange.contains(entity))
+                .collect(Collectors.toList());
+        
+        // Create status data for relevant entities
+        List<EntityStatusData> statuses = new ArrayList<>();
+        
+        for(Entity entity : enteredEntities) {
             if(entity instanceof Npc) {
-                sendMessage(new EntityStatusMessage(entity, EntityStatus.ENTERING));
+                statuses.add(EntityStatusData.entering(entity));
             }
             
             entity.addTracker(this);
@@ -1000,10 +1014,15 @@ public class Player extends Entity implements CommandExecutor {
         
         for(Entity entity : departedEntities) {
             if(entity instanceof Npc) {
-                sendMessage(new EntityStatusMessage(entity, EntityStatus.EXITING));
+                statuses.add(EntityStatusData.exiting(entity));
             }
             
             entity.removeTracker(this);
+        }
+        
+        // Send status data if there is any
+        if(!statuses.isEmpty()) {
+            sendMessage(new EntityStatusMessage(statuses));
         }
         
         trackedEntities.clear();

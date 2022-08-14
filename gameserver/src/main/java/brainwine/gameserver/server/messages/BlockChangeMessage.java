@@ -1,25 +1,24 @@
 package brainwine.gameserver.server.messages;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.models.BlockChangeData;
 
-@MessageInfo(id = 9, collection = true)
+@MessageInfo(id = 9, prepacked = true)
 public class BlockChangeMessage extends Message {
 
-    public int x;
-    public int y;
-    public Layer layer;
-    public int entityId;
-    public Item item;
-    public int mod;
+    public Collection<BlockChangeData> blockChanges;
+    
+    public BlockChangeMessage(Collection<BlockChangeData> blockChanges) {
+        this.blockChanges = blockChanges;
+    }
     
     public BlockChangeMessage(int x, int y, Layer layer, Item item, int mod) {
-        this.x = x;
-        this.y = y;
-        this.layer = layer;
-        this.item = item;
-        this.mod = mod;
+        this(Arrays.asList(new BlockChangeData(x, y, layer, item, mod)));
     }
 }

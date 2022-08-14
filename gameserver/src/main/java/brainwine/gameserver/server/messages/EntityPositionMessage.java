@@ -1,36 +1,30 @@
 package brainwine.gameserver.server.messages;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
 import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.models.EntityPositionData;
 
-@MessageInfo(id = 6, collection = true)
+@MessageInfo(id = 6, prepacked = true)
 public class EntityPositionMessage extends Message {
     
-    public int id;
-    public int x;
-    public int y;
-    public int velocityX;
-    public int velocityY;
-    public FacingDirection direction;
-    public int targetX;
-    public int targetY;
-    public int animation;
+    public Collection<EntityPositionData> positions;
     
-    public EntityPositionMessage(Entity entity) {
-        this(entity.getId(), entity.getX(), entity.getY(), entity.getVelocityX(), entity.getVelocityY(), entity.getDirection(), entity.getTargetX(), entity.getTargetY(), entity.getAnimation());
+    public EntityPositionMessage(Collection<? extends Entity> entities) {
+        this.positions = entities.stream().map(EntityPositionData::new).collect(Collectors.toList());
     }
     
-    public EntityPositionMessage(int id, float x, float y, float velocityX, float velocityY, FacingDirection direction, int targetX, int targetY, int animation) {
-        this.id = id;
-        this.x = (int)(x * Entity.POSITION_MODIFIER);
-        this.y = (int)(y * Entity.POSITION_MODIFIER);
-        this.velocityX = (int)(velocityX * Entity.VELOCITY_MODIFIER);
-        this.velocityY = (int)(velocityY * Entity.VELOCITY_MODIFIER);
-        this.direction = direction;
-        this.targetX = targetX * Entity.VELOCITY_MODIFIER;
-        this.targetY = targetY * Entity.VELOCITY_MODIFIER;
-        this.animation = animation;
+    public EntityPositionMessage(Entity entity) {
+        this.positions = Arrays.asList(new EntityPositionData(entity));
+    }
+    
+    public EntityPositionMessage(int id, float x, float y, float velocityX, float velocityY, FacingDirection direction,
+            int targetX, int targetY, int animation) {
+        this.positions = Arrays.asList(new EntityPositionData(id, x, y, velocityX, velocityY, direction, targetX, targetY, animation));
     }
 }
