@@ -43,6 +43,7 @@ public class EntityManager {
     private static final Map<Biome, List<EntitySpawn>> spawns = new HashMap<>();
     private final Map<Integer, Entity> entities = new HashMap<>();
     private final Map<Integer, Npc> npcs = new HashMap<>();
+    private final Map<Integer, Npc> mountedNpcs = new HashMap<>();
     private final Map<Integer, Player> players = new HashMap<>();
     private final Map<String, Player> playersByName = new HashMap<>();
     private final Zone zone;
@@ -193,6 +194,7 @@ public class EntityManager {
         }
         
         Item item = zone.getBlock(x, y).getFrontItem();
+        int index = zone.getBlockIndex(x, y);
         
         // Check for guardian entity
         if(item.getGuardLevel() > 0) {
@@ -213,6 +215,14 @@ public class EntityManager {
             }
         }
         
+        // Remove existing mounted entity at this position
+        // Ideally this should be done on block update but this works just fine
+        Npc existingMountedNpc;
+        
+        if((existingMountedNpc = mountedNpcs.remove(index)) != null) {
+            removeEntity(existingMountedNpc);
+        }
+        
         // Check for mounted entity (turrets & geysers)
         if(item.isEntity()) {
             EntityConfig config = EntityRegistry.getEntityConfig(item.getName());
@@ -221,6 +231,7 @@ public class EntityManager {
                 Npc entity = new Npc(zone, config);
                 entity.setMountBlock(x, y);
                 spawnEntity(entity, x, y);
+                mountedNpcs.put(index, entity);
             }
         }
     }
