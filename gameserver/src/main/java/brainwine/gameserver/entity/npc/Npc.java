@@ -8,9 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
-import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.behavior.SequenceBehavior;
@@ -36,19 +33,20 @@ public class Npc extends Entity {
     public static final int ATTACK_RETENTION_TIME = 2000;
     public static final int ATTACK_INVINCIBLE_TIME = 333;
     private final EntityConfig config;
-    private final Map<String, Object> properties = new HashMap<>();
-    private final Map<DamageType, Float> baseDefenses;
-    private final Map<DamageType, Float> activeDefenses = new HashMap<>();
-    private final Map<Player, Pair<Item, Long>> recentAttacks = new HashMap<>();
-    private final WeightedMap<EntityLoot> loot;
-    private final WeightedMap<EntityLoot> placedLoot;
-    private final Map<Item, WeightedMap<EntityLoot>> lootByWeapon;
-    private final List<String> animations;
-    private final SequenceBehavior behaviorTree;
-    private final Vector2i size;
     private final String typeName;
     private final float maxHealth;
     private final float baseSpeed;
+    private final Vector2i size;
+    private final WeightedMap<EntityLoot> loot;
+    private final WeightedMap<EntityLoot> placedLoot;
+    private final Map<Item, WeightedMap<EntityLoot>> lootByWeapon;
+    private final Map<DamageType, Float> resistances;
+    private final Map<DamageType, Float> weaknesses;
+    private final List<String> animations;
+    private final SequenceBehavior behaviorTree;
+    private final Map<String, Object> properties = new HashMap<>();
+    private final Map<DamageType, Float> activeDefenses = new HashMap<>();
+    private final Map<Player, Pair<Item, Long>> recentAttacks = new HashMap<>();
     private float speed;
     private int moveX;
     private int moveY;
@@ -57,7 +55,7 @@ public class Npc extends Entity {
     private Entity target;
     private long lastBehavedAt = System.currentTimeMillis();
     private long lastTrackedAt = System.currentTimeMillis();
-        
+    
     public Npc(Zone zone, EntityConfig config) {
         super(zone);
         
@@ -96,37 +94,28 @@ public class Npc extends Entity {
                 String attachment = entry.getValue();
                 
                 if(attachment != null) {
-                    slots.put(config.getSlots().indexOf(slot), config.getPossibleAttachments().indexOf(attachment));
+                    slots.put(config.getSlots().indexOf(slot), config.getAttachmentTypes().indexOf(attachment));
                 }
             }
             
             properties.put("sl", slots);
         }
         
-        // TODO add setters to the config class so we can just cache the more complicated stuff
         this.config = config;
-        this.type = config.getType();
         this.typeName = config.getName();
+        this.type = config.getType();
         this.maxHealth = config.getMaxHealth();
-        this.health = maxHealth;
         this.baseSpeed = config.getBaseSpeed();
-        this.speed = baseSpeed;
         this.size = config.getSize();
-        this.animations = config.getAnimations().stream().map(map -> MapHelper.getString(map, "name")).collect(Collectors.toList());
+        this.loot = config.getLoot();
+        this.placedLoot = config.getPlacedLoot();
+        this.lootByWeapon = config.getLootByWeapon();
+        this.resistances = config.getResistances();
+        this.weaknesses = config.getWeaknesses();
+        this.animations = config.getAnimations();
         this.behaviorTree = SequenceBehavior.createBehaviorTree(this, behavior);
-        this.loot = new WeightedMap<>(config.getLoot(), EntityLoot::getFrequency);
-        this.placedLoot = new WeightedMap<>(config.getPlacedLoot(), EntityLoot::getFrequency);
-        this.lootByWeapon = config.getLootByWeapon().entrySet().stream()
-                .collect(Collectors.toMap(
-                        Entry::getKey,
-                        entry -> new WeightedMap<EntityLoot>(entry.getValue(), EntityLoot::getFrequency)));
-        
-        // TODO should just merge defenses with weaknesses in the yml config tbh
-        this.baseDefenses = config.getResistances();
-        
-        config.getWeaknesses().forEach((type, multiplier) -> {
-            baseDefenses.put(type, baseDefenses.getOrDefault(type, 0F) - multiplier);
-        });
+        health = maxHealth;
+        speed = baseSpeed;
     }
     
     @Override
@@ -263,7 +252,6 @@ public class Npc extends Entity {
         return baseDamage * (1 - getDefense(type));
     }
     
-    @JsonIgnore // TODO Silly Jackson is drunk and errors trying to find a key deserializer for recentAttacks
     public Collection<Pair<Item, Long>> getRecentAttacks() {
         return Collections.unmodifiableCollection(recentAttacks.values());
     }
@@ -313,7 +301,7 @@ public class Npc extends Entity {
     }
     
     public float getBaseDefense(DamageType type) {
-        return baseDefenses.getOrDefault(type, 0F);
+        return resistances.getOrDefault(type, 0F) - weaknesses.getOrDefault(type, 0F);
     }
     
     public void setGuardBlock(int x, int y) {

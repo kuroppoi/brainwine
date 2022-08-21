@@ -1,88 +1,58 @@
 package brainwine.gameserver.entity;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.Nulls;
 
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.Vector2i;
+import brainwine.gameserver.util.WeightedMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EntityConfig {
     
-    @JsonProperty("code")
-    private int type;
-    
-    @JacksonInject("name") 
-    private String name;
-    
-    @JsonProperty("health")
-    private float maxHealth = 5;
-    
-    @JsonProperty("speed")
-    private float baseSpeed = 3;
-    
-    @JsonProperty("xp")
+    private final String name;
+    private final int type;
     private int experienceYield;
-    
-    @JsonProperty("group")
-    private EntityGroup group = EntityGroup.NONE;
-    
-    @JsonProperty("size")
+    private float maxHealth = Entity.DEFAULT_HEALTH;
+    private float baseSpeed = 3;
     private Vector2i size = new Vector2i(1, 1);
-    
-    @JsonProperty("loot")
-    private List<EntityLoot> loot = new ArrayList<>();
-    
-    @JsonProperty("placed_loot")
-    private List<EntityLoot> placedLoot = new ArrayList<>();
-    
-    @JsonProperty("loot_by_weapon")
-    private Map<Item, List<EntityLoot>> lootByWeapon = new HashMap<>();
-    
-    @JsonProperty("defense")
+    private EntityGroup group = EntityGroup.NONE;
+    private WeightedMap<EntityLoot> loot = new WeightedMap<>();
+    private WeightedMap<EntityLoot> placedLoot = new WeightedMap<>();
+    private Map<Item, WeightedMap<EntityLoot>> lootByWeapon = new HashMap<>();
     private Map<DamageType, Float> resistances = new HashMap<>();
-    
-    @JsonProperty("weakness")
     private Map<DamageType, Float> weaknesses = new HashMap<>();
-    
-    @JsonProperty("components")
-    private Map<String, String[]> components = Collections.emptyMap();
-    
-    @JsonProperty("set_attachments")
-    private Map<String, String> attachments = Collections.emptyMap();
-    
-    @JsonProperty("behavior")
-    private List<Map<String, Object>> behavior = Collections.emptyList();
-    
-    @JsonProperty("animations")
-    private List<Map<String, Object>> animations = Collections.emptyList();
-    
-    @JsonProperty("slots")
-    private List<String> slots = Collections.emptyList();
-    
-    @JsonProperty("attachments")
-    private List<String> possibleAttachments = Collections.emptyList();
+    private Map<String, String[]> components = new HashMap<>();
+    private Map<String, String> attachments = new HashMap<>();
+    private List<String> attachmentTypes = new ArrayList<>();
+    private List<String> slots = new ArrayList<>();
+    private List<String> animations = new ArrayList<>();
+    private List<Map<String, Object>> behavior = new ArrayList<>();
     
     @JsonCreator
-    private EntityConfig() {}
+    private EntityConfig(@JacksonInject("name") String name,
+            @JsonProperty(value = "code", required = true) int type) {
+        this.name = name;
+        this.type = type;
+    }
     
     @JsonCreator
     public static EntityConfig fromName(String name) {
         return EntityRegistry.getEntityConfig(name);
-    }
-    
-    public int getType() {
-        return type;
     }
     
     @JsonValue
@@ -90,67 +60,143 @@ public class EntityConfig {
         return name;
     }
     
-    public float getMaxHealth() {
-        return maxHealth;
+    public int getType() {
+        return type;
     }
     
-    public float getBaseSpeed() {
-        return baseSpeed;
-    }
-    
+    @JsonProperty("xp")
     public int getExperienceYield() {
         return experienceYield;
     }
     
-    public EntityGroup getGroup() {
-        return group;
+    @JsonProperty("health")
+    public float getMaxHealth() {
+        return maxHealth;
+    }
+    
+    @JsonProperty("speed")
+    public float getBaseSpeed() {
+        return baseSpeed;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP)
+    private void setSize(Vector2i size) {
+        this.size = size;
     }
     
     public Vector2i getSize() {
         return size;
     }
     
-    public List<EntityLoot> getLoot() {
+    @JsonSetter(nulls = Nulls.SKIP)
+    private void setGroup(EntityGroup group) {
+        this.group = group;
+    }
+    
+    public EntityGroup getGroup() {
+        return group;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setLoot(List<EntityLoot> loot) {
+        this.loot = new WeightedMap<>(loot, EntityLoot::getFrequency);
+    }
+    
+    public WeightedMap<EntityLoot> getLoot() {
         return loot;
     }
     
-    public List<EntityLoot> getPlacedLoot() {
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setPlacedLoot(List<EntityLoot> placedLoot) {
+        this.placedLoot = new WeightedMap<>(placedLoot, EntityLoot::getFrequency);
+    }
+    
+    public WeightedMap<EntityLoot> getPlacedLoot() {
         return placedLoot;
     }
     
-    public Map<Item, List<EntityLoot>> getLootByWeapon() {
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setLootByWeapon(Map<Item, List<EntityLoot>> lootByWeapon) {
+        this.lootByWeapon = lootByWeapon.entrySet().stream()
+                .collect(Collectors.toMap(
+                        Entry::getKey, entry -> new WeightedMap<EntityLoot>(entry.getValue(), EntityLoot::getFrequency)));
+    }
+    
+    public Map<Item, WeightedMap<EntityLoot>> getLootByWeapon() {
         return lootByWeapon;
+    }
+    
+    @JsonSetter(value = "defense", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setResistances(Map<DamageType, Float> resistances) {
+        this.resistances = resistances;
     }
     
     public Map<DamageType, Float> getResistances() {
         return resistances;
     }
     
+    @JsonSetter(value = "weakness", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setWeaknesses(Map<DamageType, Float> weaknesses) {
+        this.weaknesses = weaknesses;
+    }
+    
     public Map<DamageType, Float> getWeaknesses() {
         return weaknesses;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setComponents(Map<String, String[]> components) {
+        this.components = components;
     }
     
     public Map<String, String[]> getComponents() {
         return components;
     }
     
+    @JsonSetter(value = "set_attachments", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setAttachments(Map<String, String> attachments) {
+        this.attachments = attachments;
+    }
+    
     public Map<String, String> getAttachments() {
         return attachments;
     }
     
-    public List<Map<String, Object>> getBehavior() {
-        return behavior;
+    @JsonSetter(value = "attachments", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setAttachmentTypes(List<String> attachmentTypes) {
+        this.attachmentTypes = attachmentTypes;
     }
     
-    public List<Map<String, Object>> getAnimations() {
-        return animations;
+    public List<String> getAttachmentTypes() {
+        return attachmentTypes;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setSlots(List<String> slots) {
+        this.slots = slots;
     }
     
     public List<String> getSlots() {
         return slots;
     }
     
-    public List<String> getPossibleAttachments() {
-        return possibleAttachments;
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setBehavior(List<Map<String, Object>> behavior) {
+        this.behavior = behavior;
+    }
+    
+    public List<Map<String, Object>> getBehavior() {
+        return behavior;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private void setAnimations(List<Map<String, Object>> animations) {
+        this.animations = animations.stream()
+                .map(animation -> MapHelper.getString(animation, "name"))
+                .collect(Collectors.toList());
+    }
+    
+    public List<String> getAnimations() {
+        return animations;
     }
 }
