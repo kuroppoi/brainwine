@@ -110,17 +110,15 @@ public class GameConfiguration {
                     return;
                 }
                 
-                String[] segments = name.split("/", 2);
-                String category = segments.length == 2 ? segments[0] : "unknown";
+                String category = name.contains("/") ? name.substring(0, name.indexOf('/')) : "";
                 config.put("id", name);
                 
-                // Create an item title if it's missing
-                if(!config.containsKey("title")) {
-                    String title = WordUtils.capitalize((segments.length > 1 ? segments[1] : segments[0]).replace("-", " "));
-                    config.put("title", title);
+                if(!category.isEmpty()) {
+                    config.putIfAbsent("category", category);
                 }
                 
-                config.putIfAbsent("category", category);
+                config.putIfAbsent("title", WordUtils.capitalize(
+                        (name.contains("/") ? name.substring(name.lastIndexOf('/') + 1) : name).replace("-", " ")));
                 config.putIfAbsent("inventory_position", inventoryPositions.getOrDefault(name, new int[]{16, 0}));
                 config.putIfAbsent("block_size", new int[]{1, 1});
                 config.putIfAbsent("size", new int[]{1, 1});
