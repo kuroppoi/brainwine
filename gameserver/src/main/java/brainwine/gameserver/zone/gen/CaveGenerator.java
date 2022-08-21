@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
+import java.util.stream.Collectors;
 
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.util.MathUtils;
@@ -279,15 +280,14 @@ public class CaveGenerator implements GeneratorTask {
         return null;
     }
     
+    private List<CaveType> getEligibleCaveTypes(GeneratorContext ctx, int size, double depth){
+        return caveTypes.stream()
+                .filter(type -> size >= type.getMinSize() && size < type.getMaxSize()
+                        && depth >= type.getMinDepth() && depth <= type.getMaxDepth())
+                .collect(Collectors.toList());
+    }
+    
     private CaveType getRandomEligibleType(GeneratorContext ctx, int size, double depth) {
-        WeightedMap<CaveType> list = new WeightedMap<>();
-        
-        for(CaveType type : caveTypes) {
-            if(size >= type.getMinSize() && size <= type.getMaxSize() && depth >= type.getMinDepth() && depth <= type.getMaxDepth()) {
-                list.addEntry(type, type.getFrequency());
-            }
-        }
-        
-        return list.next(ctx.getRandom());
+        return new WeightedMap<>(getEligibleCaveTypes(ctx, size, depth), CaveType::getFrequency).next(ctx.getRandom());
     }
 }

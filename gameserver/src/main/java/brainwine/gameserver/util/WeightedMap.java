@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -18,6 +19,12 @@ public class WeightedMap<T> {
     private double totalWeight;
     
     public WeightedMap() {}
+    
+    public WeightedMap(Collection<T> entries, Function<T, Number> weightFunction) {
+        for(T entry : entries) {
+            addEntry(entry, weightFunction.apply(entry).doubleValue());
+        }
+    }
     
     @JsonCreator
     public WeightedMap(Collection<T> entries) {

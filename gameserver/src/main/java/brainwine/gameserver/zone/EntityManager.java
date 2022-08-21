@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -70,17 +71,19 @@ public class EntityManager {
         }
     }
     
-    private static EntityConfig getRandomEligibleEntity(Biome biome, String locale, double depth, Item baseItem) {
-        WeightedMap<EntityConfig> eligibleEntities = new WeightedMap<>();
-        
-        if(spawns.containsKey(biome)) {
-            spawns.get(biome).stream().filter(spawn -> locale.equalsIgnoreCase(spawn.getLocale())
-                    && depth >= spawn.getMinDepth() && depth <= spawn.getMaxDepth()
-                    && ((baseItem.getId() != 5 && baseItem.getId() != 6) || spawn.getOrifice() == baseItem))
-                .forEach(spawn -> eligibleEntities.addEntry(spawn.getEntity(), spawn.getFrequency()));
-        }
-        
-        return eligibleEntities.next();
+    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, Item baseItem){
+        return spawns.entrySet().stream()
+                .filter(entry -> entry.getKey() == biome)
+                .map(Entry::getValue)
+                .flatMap(Collection::stream)
+                .filter(spawn -> locale.equalsIgnoreCase(spawn.getLocale())
+                        && depth >= spawn.getMinDepth() && depth <= spawn.getMaxDepth()
+                        && ((baseItem.getId() != 5 && baseItem.getId() != 6) || spawn.getOrifice() == baseItem))
+                .collect(Collectors.toList());
+    }
+    
+    private static EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, Item baseItem) {
+        return new WeightedMap<>(getEligibleEntitySpawns(biome, locale, depth, baseItem), EntitySpawn::getFrequency).next();
     }
     
     public void tick(float deltaTime) {
@@ -127,7 +130,8 @@ public class EntityManager {
                 int y = position.getY();
                 Block block = chunk.getBlock(x, y);
                 String locale = block.getBaseItem().isAir() ? "sky" : "cave";
-                EntityConfig entity = getRandomEligibleEntity(zone.getBiome(), locale, y / (double)zone.getHeight(), block.getBaseItem());
+                EntitySpawn spawn = getRandomEligibleEntitySpawn(
+                        zone.getBiome(), locale, y / (double)zone.getHeight(), block.getBaseItem());
                 
                 if(immediate) {
                     if(tryBustOrifice(x, y, Layer.BACK) || tryBustOrifice(x, y, Layer.FRONT)) {
@@ -135,8 +139,12 @@ public class EntityManager {
                     }
                 }
                 
-                if(entity != null) {
-                    spawnEntity(new Npc(zone, entity), x, y);
+                if(spawn != null) {
+                    EntityConfig config = spawn.getEntity();
+                    
+                    if(config != null) {
+                        spawnEntity(new Npc(zone, config), x, y);
+                    }
                 }
             }
         }

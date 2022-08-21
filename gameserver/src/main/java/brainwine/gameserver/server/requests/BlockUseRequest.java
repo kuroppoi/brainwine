@@ -11,12 +11,10 @@ import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.loot.Loot;
-import brainwine.gameserver.loot.LootManager;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.zone.Block;
@@ -134,9 +132,7 @@ public class BlockUseRequest extends PlayerRequest {
                         }
                                                 
                         if(specialItem.equals("?")) {
-                            LootManager lootManager = GameServer.getInstance().getLootManager();
-                            Loot loot = lootManager.getRandomLoot(
-                                    player.getTotalSkillLevel(Skill.LUCK), zone.getBiome(), item.getLootCategories());
+                            Loot loot = GameServer.getInstance().getLootManager().getRandomLoot(player, item.getLootCategories());
                             
                             if(loot == null) {
                                 player.alert("No eligible loot could be found for this container.");

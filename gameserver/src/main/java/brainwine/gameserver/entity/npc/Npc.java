@@ -37,12 +37,12 @@ public class Npc extends Entity {
     public static final int ATTACK_INVINCIBLE_TIME = 333;
     private final EntityConfig config;
     private final Map<String, Object> properties = new HashMap<>();
-    private final Map<DamageType, Float> baseDefenses = new HashMap<>();
+    private final Map<DamageType, Float> baseDefenses;
     private final Map<DamageType, Float> activeDefenses = new HashMap<>();
     private final Map<Player, Pair<Item, Long>> recentAttacks = new HashMap<>();
-    private final WeightedMap<EntityLoot> loot = new WeightedMap<>();
-    private final WeightedMap<EntityLoot> placedLoot = new WeightedMap<>();
-    private final Map<Item, WeightedMap<EntityLoot>> lootByWeapon = new HashMap<>();
+    private final WeightedMap<EntityLoot> loot;
+    private final WeightedMap<EntityLoot> placedLoot;
+    private final Map<Item, WeightedMap<EntityLoot>> lootByWeapon;
     private final List<String> animations;
     private final SequenceBehavior behaviorTree;
     private final Vector2i size;
@@ -60,7 +60,6 @@ public class Npc extends Entity {
         
     public Npc(Zone zone, EntityConfig config) {
         super(zone);
-        this.config = config;
         
         // Add components & merge relevant configurations if applicable
         List<Map<String, Object>> behavior = new ArrayList<>(config.getBehavior());
@@ -104,27 +103,29 @@ public class Npc extends Entity {
             properties.put("sl", slots);
         }
         
-        type = config.getType();
-        typeName = config.getName();
-        maxHealth = config.getMaxHealth();
-        health = maxHealth;
-        baseSpeed = config.getBaseSpeed();
-        speed = baseSpeed;
-        size = config.getSize();
-        animations = config.getAnimations().stream().map(map -> MapHelper.getString(map, "name")).collect(Collectors.toList());
-        behaviorTree = SequenceBehavior.createBehaviorTree(this, behavior);
-        baseDefenses.putAll(config.getResistances());
+        // TODO add setters to the config class so we can just cache the more complicated stuff
+        this.config = config;
+        this.type = config.getType();
+        this.typeName = config.getName();
+        this.maxHealth = config.getMaxHealth();
+        this.health = maxHealth;
+        this.baseSpeed = config.getBaseSpeed();
+        this.speed = baseSpeed;
+        this.size = config.getSize();
+        this.animations = config.getAnimations().stream().map(map -> MapHelper.getString(map, "name")).collect(Collectors.toList());
+        this.behaviorTree = SequenceBehavior.createBehaviorTree(this, behavior);
+        this.loot = new WeightedMap<>(config.getLoot(), EntityLoot::getFrequency);
+        this.placedLoot = new WeightedMap<>(config.getPlacedLoot(), EntityLoot::getFrequency);
+        this.lootByWeapon = config.getLootByWeapon().entrySet().stream()
+                .collect(Collectors.toMap(
+                        Entry::getKey,
+                        entry -> new WeightedMap<EntityLoot>(entry.getValue(), EntityLoot::getFrequency)));
+        
+        // TODO should just merge defenses with weaknesses in the yml config tbh
+        this.baseDefenses = config.getResistances();
         
         config.getWeaknesses().forEach((type, multiplier) -> {
             baseDefenses.put(type, baseDefenses.getOrDefault(type, 0F) - multiplier);
-        });
-        
-        config.getLoot().forEach(loot -> this.loot.addEntry(loot, loot.getFrequency()));
-        config.getPlacedLoot().forEach(loot -> placedLoot.addEntry(loot, loot.getFrequency()));
-        config.getLootByWeapon().forEach((weapon, loot) -> {
-            WeightedMap<EntityLoot> lootMap = new WeightedMap<>();
-            loot.forEach(entry -> lootMap.addEntry(entry, entry.getFrequency()));
-            lootByWeapon.put(weapon, lootMap);
         });
     }
     
