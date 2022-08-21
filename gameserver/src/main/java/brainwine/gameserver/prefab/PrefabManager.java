@@ -12,6 +12,7 @@ import org.msgpack.core.MessageUnpacker;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import brainwine.gameserver.serialization.BlockDeserializer;
@@ -24,10 +25,11 @@ import brainwine.shared.JsonHelper;
 public class PrefabManager {
     
     private static final Logger logger = LogManager.getLogger();
-    private static final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory())
-            .registerModule(new SimpleModule()
+    private static final ObjectMapper mapper = JsonMapper.builder(new MessagePackFactory())
+            .addModule(new SimpleModule()
                     .addDeserializer(Block.class, BlockDeserializer.INSTANCE)
-                    .addSerializer(BlockSerializer.INSTANCE));
+                    .addSerializer(BlockSerializer.INSTANCE))
+            .build();
     private final File dataDir = new File("prefabs");
     private final Map<String, Prefab> prefabs = new HashMap<>();
     
@@ -47,12 +49,13 @@ public class PrefabManager {
     }
     
     private void loadPrefab(File file) {
-        String name = file.getName();
+        String name = file.getPath().substring(dataDir.getPath().length() + 1).replace(File.separatorChar, '/');
         File legacyBlocksFile = new File(file, "blocks.cmp");
+        File configFile = new File(file, "config.json");
         File blocksFile = new File(file, "blocks.dat");
         
         try {
-            PrefabBlockData blockData = null;
+            PrefabBlocksFile blockData = null;
             
             if(legacyBlocksFile.exists() && !blocksFile.exists()) {
                 logger.info("Updating blocks file for prefab '{}' ...", name);
@@ -66,14 +69,26 @@ public class PrefabManager {
                     blocks[i] = new Block(unpacker.unpackInt(), unpacker.unpackInt(), unpacker.unpackInt());
                 }
                 
-                blockData = new PrefabBlockData(width, height, blocks);
+                blockData = new PrefabBlocksFile(width, height, blocks);
                 Files.write(blocksFile.toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(blockData)));
                 legacyBlocksFile.delete();
             } else {
-                blockData = mapper.readValue(ZipUtils.inflateBytes(Files.readAllBytes(blocksFile.toPath())), PrefabBlockData.class);
+                // If no config or blocks file exists we will assume that this is a category directory.
+                // TODO maybe create a separate function for all this?
+                if(!configFile.exists() || !blocksFile.exists()) {
+                    for(File childFile : file.listFiles()) {
+                        if(childFile.isDirectory()) {
+                            loadPrefab(childFile);
+                        }
+                    }
+                    
+                    return;
+                }
+                
+                blockData = mapper.readValue(ZipUtils.inflateBytes(Files.readAllBytes(blocksFile.toPath())), PrefabBlocksFile.class);
             }
             
-            PrefabConfig config = JsonHelper.readValue(new File(file, "config.json"), PrefabConfig.class);
+            PrefabConfigFile config = JsonHelper.readValue(configFile, PrefabConfigFile.class);
             prefabs.put(name, new Prefab(config, blockData));
         } catch(Exception e) {
             logger.error("Could not load prefab {}:", name, e);
@@ -88,8 +103,8 @@ public class PrefabManager {
         
         File prefabDir = new File(dataDir, name);
         prefabDir.mkdirs();
-        JsonHelper.writeValue(new File(prefabDir, "config.json"), new PrefabConfig(prefab));
-        Files.write(new File(prefabDir, "blocks.dat").toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(new PrefabBlockData(prefab))));
+        JsonHelper.writeValue(new File(prefabDir, "config.json"), new PrefabConfigFile(prefab));
+        Files.write(new File(prefabDir, "blocks.dat").toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(new PrefabBlocksFile(prefab))));
         prefabs.put(name, prefab);
     }
     

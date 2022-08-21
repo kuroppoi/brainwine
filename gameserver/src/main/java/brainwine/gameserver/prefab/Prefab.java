@@ -24,7 +24,7 @@ public class Prefab {
     private Map<Item, CorrespondingReplacement> correspondingReplacements = new HashMap<>();
     private Map<Integer, Map<String, Object>> metadata = new HashMap<>();
     
-    protected Prefab(PrefabConfig config, PrefabBlockData blockData) {
+    protected Prefab(PrefabConfigFile config, PrefabBlocksFile blockData) {
         this(blockData.getWidth(), blockData.getHeight(), blockData.getBlocks(), config.getMetadata());
         dungeon = config.isDungeon();
         ruin = config.isRuin();

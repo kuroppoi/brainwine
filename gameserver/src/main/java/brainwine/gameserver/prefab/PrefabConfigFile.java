@@ -11,7 +11,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.util.WeightedMap;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PrefabConfig {
+public class PrefabConfigFile {
     
     @JsonProperty("dungeon")
     private boolean dungeon;
@@ -38,9 +38,9 @@ public class PrefabConfig {
     private Map<Integer, Map<String, Object>> metadata = new HashMap<>();
     
     @JsonCreator
-    private PrefabConfig() {}
+    private PrefabConfigFile() {}
     
-    protected PrefabConfig(Prefab prefab) {
+    protected PrefabConfigFile(Prefab prefab) {
         dungeon = prefab.isDungeon();
         ruin = prefab.isRuin();
         loot = prefab.hasLoot();

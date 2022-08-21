@@ -3,6 +3,7 @@ package brainwine.gameserver.command.commands;
 import static brainwine.gameserver.entity.player.NotificationType.ALERT;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
@@ -14,6 +15,7 @@ import brainwine.gameserver.zone.Zone;
 
 public class ExportCommand extends Command {
     
+    public static final Pattern PREFAB_NAME_PATTERN = Pattern.compile("\\w+(/\\w+)*");
     public static final int SIZE_LIMIT = 10000;
     
     @Override
@@ -29,6 +31,9 @@ public class ExportCommand extends Command {
         
         if(prefabManager.getPrefab(name) != null) {
             executor.notify("A prefab with that name already exists.", ALERT);
+            return;
+        } else if(!PREFAB_NAME_PATTERN.matcher(name).matches()) {
+            executor.notify("Please enter a valid prefab name. Example: dungeons/my_epic_dungeon (or just my_epic_dungeon)", ALERT);
             return;
         }
         
@@ -65,7 +70,7 @@ public class ExportCommand extends Command {
             return;
         }
         
-        executor.notify("Exporting your prefab ...", ALERT);
+        executor.notify(String.format("Exporting your prefab as '%s' ...", name), ALERT);
         
         try {
             prefabManager.addPrefab(name, prefab);

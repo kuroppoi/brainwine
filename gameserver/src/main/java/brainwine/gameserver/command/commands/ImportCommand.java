@@ -1,6 +1,7 @@
 package brainwine.gameserver.command.commands;
 
 import static brainwine.gameserver.entity.player.NotificationType.ALERT;
+import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
@@ -34,7 +35,8 @@ public class ImportCommand extends Command {
             }
         }
         
-        Prefab prefab = GameServer.getInstance().getPrefabManager().getPrefab(args[0]);
+        String name = args[0];
+        Prefab prefab = GameServer.getInstance().getPrefabManager().getPrefab(name);
         
         if(prefab == null) {
             player.notify("Sorry, could not find a prefab with that name.", ALERT);
@@ -42,6 +44,8 @@ public class ImportCommand extends Command {
         }
         
         player.getZone().placePrefab(prefab, x, y);
+        player.notify(String.format("Successfully imported '%s' @ [x: %s, y: %s, width: %s, height: %s]", 
+                name, x, y, prefab.getWidth(), prefab.getHeight()), SYSTEM);
     }
 
     @Override
