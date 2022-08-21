@@ -22,7 +22,7 @@ public class CaveType {
     private double maxDepth = 1;
     
     @JsonProperty("frequency")
-    private int frequency = 1;
+    private double frequency = 1;
     
     @JsonProperty("decorators")
     private List<CaveDecorator> decorators = new ArrayList<>();
@@ -43,7 +43,7 @@ public class CaveType {
         return maxDepth;
     }
     
-    public int getFrequency() {
+    public double getFrequency() {
         return frequency;
     }
     
