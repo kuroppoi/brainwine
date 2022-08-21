@@ -79,22 +79,38 @@ public class Inventory {
     }
     
     public void addItem(Item item) {
-        addItem(item, 1);
+        addItem(item, false);
+    }
+    
+    public void addItem(Item item, boolean sendMessage) {
+        addItem(item, 1, sendMessage);
     }
     
     public void addItem(Item item, int quantity) {
-        setItem(item, getQuantity(item) + quantity);
+        addItem(item, quantity, false);
+    }
+    
+    public void addItem(Item item, int quantity, boolean sendMessage) {
+        setItem(item, getQuantity(item) + quantity, sendMessage);
     }
     
     public void removeItem(Item item) {
-        removeItem(item, 1);
+        removeItem(item, false);
+    }
+    
+    public void removeItem(Item item, boolean sendMessage) {
+        removeItem(item, 1, sendMessage);
     }
     
     public void removeItem(Item item, int quantity) {
-        setItem(item, getQuantity(item) - quantity);
+        removeItem(item, quantity, false);
     }
     
-    public void setItem(Item item, int quantity) {
+    public void removeItem(Item item, int quantity, boolean sendMessage) {
+        setItem(item, getQuantity(item) - quantity, sendMessage);
+    }
+    
+    private void setItem(Item item, int quantity, boolean sendMessage) {
         if(quantity <= 0) {
             items.remove(item);
             hotbar.removeItem(item);
@@ -107,7 +123,9 @@ public class Inventory {
             items.put(item, quantity);
         }
         
-        player.sendMessage(new InventoryMessage(getClientConfig(item)));
+        if(sendMessage) {
+            player.sendMessage(new InventoryMessage(getClientConfig(item)));
+        }
     }
     
     public boolean hasItem(Item item) {

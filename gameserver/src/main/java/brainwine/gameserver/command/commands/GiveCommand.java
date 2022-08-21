@@ -71,14 +71,14 @@ public class GiveCommand extends Command {
         
         if(quantity > 0) {
             for(Item item : items) {
-                target.getInventory().addItem(item, quantity);
+                target.getInventory().addItem(item, quantity, true);
             }
             
             target.alert(String.format("You received %s %s from an administrator.", quantity, title));
             executor.notify(String.format("Gave %s %s to %s", quantity, title, target.getName()), SYSTEM);
         } else {
             for(Item item : items) {
-                target.getInventory().removeItem(item, -quantity);
+                target.getInventory().removeItem(item, -quantity, true);
             }
             
             target.alert(String.format("%s %s was taken from your inventory.", -quantity, title));

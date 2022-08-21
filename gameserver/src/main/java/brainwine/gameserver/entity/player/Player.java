@@ -916,7 +916,7 @@ public class Player extends Entity implements CommandExecutor {
         dialog.addSection(section);
         
         loot.getItems().forEach((item, quantity) -> {
-            inventory.addItem(item, quantity);
+            inventory.addItem(item, quantity, true);
             section.addItem(new DialogListItem()
                     .setItem(item.getId())
                     .setText(String.format("%s x %s", item.getTitle(), quantity)));

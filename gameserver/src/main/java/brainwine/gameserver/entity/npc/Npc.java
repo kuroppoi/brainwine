@@ -176,7 +176,7 @@ public class Npc extends Entity {
                 Item item = loot.getItem();
                 
                 if(!item.isAir()) {
-                    killer.getInventory().addItem(item, loot.getQuantity());
+                    killer.getInventory().addItem(item, loot.getQuantity(), true);
                 }
             }
         }
