@@ -87,7 +87,9 @@ public class EntityManager {
     }
     
     public void tick(float deltaTime) {
-        clearEntities();
+        if(!npcs.isEmpty()) {
+            clearEntities();
+        }
         
         for(Entity entity : getEntities()) {
             entity.tick(deltaTime);
@@ -169,18 +171,11 @@ public class EntityManager {
     }
     
     private void clearEntities() {
-        List<Npc> clearableEntities = new ArrayList<>();
-        
-        for(Npc npc : npcs.values()) {
-            if(npc.isDead() || !zone.isChunkLoaded((int)npc.getX(), (int)npc.getY()) || 
-                    (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME)) {
-                clearableEntities.add(npc);
-            }
-        }
-        
-        for(Npc npc : clearableEntities) {
-            removeEntity(npc);
-        }
+        npcs.values().stream()
+            .filter(npc -> npc.isDead() || !zone.isChunkLoaded((int)npc.getX(), (int)npc.getY()) ||
+                    (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME))
+            .collect(Collectors.toList())
+            .forEach(this::removeEntity);
     }
     
     public List<Entity> getEntitiesInRange(float x, float y, float range) {
