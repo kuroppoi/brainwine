@@ -114,8 +114,9 @@ public class Npc extends Entity {
         this.weaknesses = config.getWeaknesses();
         this.animations = config.getAnimations();
         this.behaviorTree = SequenceBehavior.createBehaviorTree(this, behavior);
+        this.direction = Math.random() < 0.5 ? FacingDirection.WEST : FacingDirection.EAST;
         health = maxHealth;
-        speed = baseSpeed;
+        speed = baseSpeed * (float)(0.9 + Math.random() * 0.2);
     }
     
     @Override
