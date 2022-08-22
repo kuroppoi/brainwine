@@ -111,12 +111,8 @@ public class GameConfiguration {
                 }
                 
                 String category = name.contains("/") ? name.substring(0, name.indexOf('/')) : "";
+                config.putIfAbsent("category", category);
                 config.put("id", name);
-                
-                if(!category.isEmpty()) {
-                    config.putIfAbsent("category", category);
-                }
-                
                 config.putIfAbsent("title", WordUtils.capitalize(
                         (name.contains("/") ? name.substring(name.lastIndexOf('/') + 1) : name).replace("-", " ")));
                 config.putIfAbsent("inventory_position", inventoryPositions.getOrDefault(name, new int[]{16, 0}));
