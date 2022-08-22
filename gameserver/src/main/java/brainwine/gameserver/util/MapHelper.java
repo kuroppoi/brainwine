@@ -34,6 +34,21 @@ public class MapHelper {
         return map;
     }
     
+    public static <K, V> Map<K, V> map(Class<K> keyType, Class<V> valueType, Object... keysAndValues) {
+        Map<K, V> map = new HashMap<>();
+        
+        for(int i = 0; i < keysAndValues.length / 2; i++) {
+            Object key = keysAndValues[i * 2];
+            Object value = keysAndValues[i * 2 + 1];
+            
+            if(keyType.isAssignableFrom(key.getClass()) && valueType.isAssignableFrom(value.getClass())) {
+                map.put((K)key, (V)value);
+            }
+        }
+        
+        return map;
+    }
+    
     public static void put(Map<?, ?> map, String path, Object value) {
         String[] segments = path.split("\\.");
         Map<Object, Object> current = (Map<Object, Object>)map;

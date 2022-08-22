@@ -20,7 +20,6 @@ import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
@@ -44,7 +43,6 @@ public class Npc extends Entity {
     private final Map<DamageType, Float> weaknesses;
     private final List<String> animations;
     private final SequenceBehavior behaviorTree;
-    private final Map<String, Object> properties = new HashMap<>();
     private final Map<DamageType, Float> activeDefenses = new HashMap<>();
     private final Map<Player, Pair<Item, Long>> recentAttacks = new HashMap<>();
     private float speed;
@@ -195,7 +193,6 @@ public class Npc extends Entity {
     @Override
     public Map<String, Object> getStatusConfig() {
         Map<String, Object> config = super.getStatusConfig();
-        config.putAll(properties);
         
         if(isDead()) {
             config.put("!", "v");
@@ -275,18 +272,6 @@ public class Npc extends Entity {
     
     public boolean isTransient() {
         return !isGuard() && !isMounted();
-    }
-    
-    public void setProperty(String key, Object value) {
-        if(value == null) {
-            properties.remove(key);
-        } else {
-            properties.put(key, value);
-        }
-        
-        for(Player tracker : trackers) {
-            tracker.sendMessage(new EntityChangeMessage(id, MapHelper.map(key, value)));
-        }
     }
     
     public EntityLoot getRandomLoot(Player awardee) {

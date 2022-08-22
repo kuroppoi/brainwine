@@ -58,7 +58,7 @@ public class ShielderBehavior extends Behavior {
     }
     
     protected void setShield(DamageType type) {
-        entity.setProperty("s", type);
+        entity.setProperty("s", type, true);
         entity.setDefense(currentShield, 0);
         currentShield = type;
         

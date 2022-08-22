@@ -1,5 +1,7 @@
 package brainwine.gameserver.behavior.parts;
 
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -9,6 +11,7 @@ import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
+import brainwine.gameserver.util.MapHelper;
 
 public class SpawnAttackBehavior extends Behavior {
     
@@ -31,16 +34,18 @@ public class SpawnAttackBehavior extends Behavior {
         
         if(bulletConfig != null) {
             Npc bullet = new Npc(entity.getZone(), bulletConfig);
-            bullet.setProperty("<", entity.getId());
-            bullet.setProperty(">", entity.getTarget().getId());
-            bullet.setProperty("*", true);
-            bullet.setProperty("s", speed);
+            Map<String, Object> details = MapHelper.map(String.class, Object.class,
+                    "<", entity.getId(),
+                    ">", entity.getTarget().getId(),
+                    "*", true,
+                    "s", speed);
             
             if(burst != null) {
-                bullet.setProperty("#", burst);
+                details.put("#", burst);
             }
             
-            entity.getZone().sendMessage(new EntityStatusMessage(bullet, EntityStatus.ENTERING));
+            bullet.setProperties(details);
+            entity.sendMessageToTrackers(new EntityStatusMessage(bullet, EntityStatus.ENTERING));
             return true;
         }
         

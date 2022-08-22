@@ -6,7 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
+import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.zone.Zone;
 
@@ -15,6 +18,7 @@ public abstract class Entity {
     public static final float DEFAULT_HEALTH = 5;
     public static final float POSITION_MODIFIER = 100F;
     public static final int VELOCITY_MODIFIER = (int)POSITION_MODIFIER;
+    protected final Map<String, Object> properties = new HashMap<>();
     protected final List<Player> trackers = new ArrayList<>();
     protected int type;
     protected String name;
@@ -78,6 +82,38 @@ public abstract class Entity {
     
     public boolean inRange(float x, float y, float range) {
         return MathUtils.inRange(this.x, this.y, x, y, range);
+    }
+    
+    public void setProperty(String key, Object value) {
+        setProperty(key, value, false);
+    }
+    
+    public void setProperty(String key, Object value, boolean sendMessage) {
+        setProperties(MapHelper.map(key, value), sendMessage);
+    }
+    
+    public void setProperties(Map<String, Object> properties) {
+        setProperties(properties, false);
+    }
+    
+    public void setProperties(Map<String, Object> properties, boolean sendMessage) {
+        properties.forEach((key, value) -> {
+            if(value == null) {
+                this.properties.remove(key);
+            } else {
+                this.properties.put(key, value);
+            }
+        });
+        
+        if(sendMessage) {
+            sendMessageToTrackers(new EntityChangeMessage(id, properties));
+        }
+    }
+    
+    public void sendMessageToTrackers(Message message) {
+        for(Player tracker : trackers) {
+            tracker.sendMessage(message);
+        }
     }
     
     public void addTracker(Player tracker) {
@@ -197,8 +233,7 @@ public abstract class Entity {
      */
     public Map<String, Object> getStatusConfig() {
         Map<String, Object> config = new HashMap<>();
-        config.put("name", name);
-        config.put("h", health);
+        config.putAll(properties);
         return config;
     }
 }
