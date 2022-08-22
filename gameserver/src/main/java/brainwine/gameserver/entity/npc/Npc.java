@@ -228,6 +228,10 @@ public class Npc extends Entity {
         return config;
     }
     
+    public Vector2i getSize() {
+        return size;
+    }
+    
     public void attack(Player attacker, Item weapon) {
         // Prevent damage if this entity is mounted and its mount is protected
         if(isMounted() && zone.isBlockProtected(mountBlock.getX(), mountBlock.getY(), attacker)) {
