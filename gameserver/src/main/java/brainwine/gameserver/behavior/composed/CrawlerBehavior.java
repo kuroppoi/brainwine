@@ -32,10 +32,10 @@ public class CrawlerBehavior extends SelectorBehavior {
             addChild(IdleBehavior.class, MapHelper.getMap(config, "idle"));
         }
         
-        addChild(new WalkBehavior(entity));
-        addChild(new ClimbBehavior(entity));
-        addChild(new TurnBehavior(entity));
-        addChild(new ClimbBehavior(entity));
-        addChild(new FallBehavior(entity));
+        addChild(WalkBehavior.class, config);
+        addChild(ClimbBehavior.class, config);
+        addChild(TurnBehavior.class, config);
+        addChild(ClimbBehavior.class, config);
+        addChild(FallBehavior.class, config);
     }
 }

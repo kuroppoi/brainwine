@@ -31,8 +31,8 @@ public class WalkerBehavior extends SelectorBehavior {
             addChild(IdleBehavior.class, MapHelper.getMap(config, "idle"));
         }
         
-        addChild(new WalkBehavior(entity));
-        addChild(new FallBehavior(entity));
-        addChild(new TurnBehavior(entity));
+        addChild(WalkBehavior.class, config);
+        addChild(FallBehavior.class, config);
+        addChild(TurnBehavior.class, config);
     }
 }
