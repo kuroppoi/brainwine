@@ -52,7 +52,7 @@ import brainwine.gameserver.entity.npc.Npc;
     @Type(name = "fly_toward", value = FlyTowardBehavior.class),
     @Type(name = "shielder", value = ShielderBehavior.class),
     @Type(name = "spawn_attack", value = SpawnAttackBehavior.class),
-    @Type(name = "randomly_target", value = RandomlyTargetBehavior.class)
+    @Type(name = "randomly_target", value = RandomlyTargetBehavior.class),
     @Type(name = "reporter", value = ReporterBehavior.class),
     @Type(name = "unblock", value = UnblockBehavior.class)
 })
