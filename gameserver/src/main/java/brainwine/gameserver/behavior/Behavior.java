@@ -19,9 +19,11 @@ import brainwine.gameserver.behavior.parts.FlyTowardBehavior;
 import brainwine.gameserver.behavior.parts.FollowBehavior;
 import brainwine.gameserver.behavior.parts.IdleBehavior;
 import brainwine.gameserver.behavior.parts.RandomlyTargetBehavior;
+import brainwine.gameserver.behavior.parts.ReporterBehavior;
 import brainwine.gameserver.behavior.parts.ShielderBehavior;
 import brainwine.gameserver.behavior.parts.SpawnAttackBehavior;
 import brainwine.gameserver.behavior.parts.TurnBehavior;
+import brainwine.gameserver.behavior.parts.UnblockBehavior;
 import brainwine.gameserver.behavior.parts.WalkBehavior;
 import brainwine.gameserver.entity.npc.Npc;
 
@@ -51,6 +53,8 @@ import brainwine.gameserver.entity.npc.Npc;
     @Type(name = "shielder", value = ShielderBehavior.class),
     @Type(name = "spawn_attack", value = SpawnAttackBehavior.class),
     @Type(name = "randomly_target", value = RandomlyTargetBehavior.class)
+    @Type(name = "reporter", value = ReporterBehavior.class),
+    @Type(name = "unblock", value = UnblockBehavior.class)
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Behavior {
