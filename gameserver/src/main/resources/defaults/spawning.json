@@ -203,6 +203,13 @@
       "frequency": 2
     },
     {
+      "entity": "creatures/snowworm",
+      "locale": "cave",
+      "min_depth": 0.5,
+      "orifice": "base/maw",
+      "frequency": 2
+    },
+    {
       "entity": "automata/tiny",
       "locale": "cave",
       "min_depth": 0.5,
@@ -326,6 +333,13 @@
       "frequency": 3
     },
     {
+      "entity": "creatures/sandworm",
+      "locale": "cave",
+      "min_depth": 0.5,
+      "orifice": "base/maw",
+      "frequency": 2
+    },
+    {
       "entity": "creatures/scorpion",
       "locale": "cave",
       "orifice": "base/maw",
@@ -414,7 +428,7 @@
       "orifice": "base/maw",
       "frequency": 9
     },
-{
+    {
       "entity": "automata/tiny",
       "locale": "cave",
       "orifice": "base/pipe",
@@ -438,7 +452,7 @@
       "orifice": "base/pipe",
       "frequency": 2
     },
-{
+    {
       "entity": "brains/tiny-flyer",
       "locale": "sky",
       "frequency": 5

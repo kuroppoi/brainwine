@@ -8,9 +8,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
 import brainwine.gameserver.behavior.composed.CrawlerBehavior;
+import brainwine.gameserver.behavior.composed.DiggerBehavior;
 import brainwine.gameserver.behavior.composed.FlyerBehavior;
 import brainwine.gameserver.behavior.composed.WalkerBehavior;
 import brainwine.gameserver.behavior.parts.ClimbBehavior;
+import brainwine.gameserver.behavior.parts.DigBehavior;
 import brainwine.gameserver.behavior.parts.FallBehavior;
 import brainwine.gameserver.behavior.parts.FlyBehavior;
 import brainwine.gameserver.behavior.parts.FlyTowardBehavior;
@@ -35,6 +37,7 @@ import brainwine.gameserver.entity.npc.Npc;
     @Type(name = "walker", value = WalkerBehavior.class),
     @Type(name = "crawler", value = CrawlerBehavior.class),
     @Type(name = "flyer", value = FlyerBehavior.class),
+    @Type(name = "digger", value = DiggerBehavior.class),
     // Parts
     @Type(name = "idle", value = IdleBehavior.class),
     @Type(name = "walk", value = WalkBehavior.class),
@@ -42,6 +45,7 @@ import brainwine.gameserver.entity.npc.Npc;
     @Type(name = "turn", value = TurnBehavior.class),
     @Type(name = "follow", value = FollowBehavior.class),
     @Type(name = "climb", value = ClimbBehavior.class),
+    @Type(name = "dig", value = DigBehavior.class),
     @Type(name = "fly", value = FlyBehavior.class),
     @Type(name = "fly_toward", value = FlyTowardBehavior.class),
     @Type(name = "shielder", value = ShielderBehavior.class),
