@@ -24,6 +24,7 @@ public class ZoneSearchRequest extends PlayerRequest {
     public void process(Player player) {
         List<Zone> result = new ArrayList<>();
         List<Zone> zones = searchZones(GameServer.getInstance().getZoneManager());
+        zones.remove(player.getZone());
         Collections.shuffle(zones);
         Set<Integer> indices = new HashSet<>();
         int index = (int)(Math.random() * zones.size());
