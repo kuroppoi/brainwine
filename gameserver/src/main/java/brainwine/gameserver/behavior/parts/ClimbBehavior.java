@@ -29,7 +29,8 @@ public class ClimbBehavior extends Behavior {
         FacingDirection direction = entity.getDirection();
         int y = side * direction.getId() * -1;
         
-        if((entity.isBlocked(side, 0) || entity.isBlocked(side, y)) && !entity.isBlocked(0, y)) {
+        if((entity.isBlocked(side, 0) || entity.isBlocked(side, y)) && !entity.isBlocked(0, y)
+                && entity.getZone().isChunkLoaded((int)entity.getX() + side, (int)entity.getY())) {
             lastClimbSide = side;
             entity.move(0, y, entity.getBaseSpeed() * 0.75F, side == -1 ? "climb-left" : "climb-right");
             return true;

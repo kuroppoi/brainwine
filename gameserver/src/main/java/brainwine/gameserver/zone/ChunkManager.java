@@ -197,7 +197,7 @@ public class ChunkManager {
     }
     
     public boolean isChunkLoaded(int x, int y) {
-        return isChunkLoaded(getChunkIndex(x, y));
+        return zone.areCoordinatesInBounds(x, y) && isChunkLoaded(getChunkIndex(x, y));
     }
     
     public boolean isChunkLoaded(int index) {
