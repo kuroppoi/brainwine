@@ -140,7 +140,7 @@ public class Npc extends Entity {
         }
         
         if(!trackers.isEmpty()) {
-            lastTrackedAt = System.currentTimeMillis();
+            lastTrackedAt = now;
         }
     }
     

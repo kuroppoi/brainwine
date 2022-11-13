@@ -15,11 +15,6 @@ public enum Biome {
     DEEP,
     SPACE;
     
-    @JsonValue
-    public String getId() {
-        return toString().toLowerCase();
-    }
-    
     @JsonCreator
     public static Biome fromName(String id) {
         for(Biome value : values()) {
@@ -34,5 +29,10 @@ public enum Biome {
     public static Biome getRandomBiome() {
         Biome[] biomes = values();
         return biomes[(int)(Math.random() * biomes.length)];
+    }
+    
+    @JsonValue
+    public String getId() {
+        return toString().toLowerCase();
     }
 }

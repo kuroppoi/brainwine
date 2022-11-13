@@ -1,6 +1,7 @@
 package brainwine.gameserver.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -14,8 +15,7 @@ import io.netty.util.internal.ThreadLocalRandom;
 
 public class WeightedMap<T> {
     
-    @JsonValue
-    private final Map<T, Double> map = new HashMap<>();
+    private final Map<T, Double> entries = new HashMap<>();
     private double totalWeight;
     
     public WeightedMap() {}
@@ -34,8 +34,8 @@ public class WeightedMap<T> {
     }
     
     @JsonCreator
-    public WeightedMap(Map<T, Double> map) {
-        map.forEach((entry, weight) -> {
+    public WeightedMap(Map<T, Double> entries) {
+        entries.forEach((entry, weight) -> {
             addEntry(entry, weight);
         });
     }
@@ -46,7 +46,7 @@ public class WeightedMap<T> {
     
     public WeightedMap<T> addEntry(T entry, double weight) {
         if(weight > 0 && entry != null) {
-            map.put(entry, weight);
+            entries.put(entry, weight);
             totalWeight += weight;
         }
         
@@ -54,7 +54,7 @@ public class WeightedMap<T> {
     }
     
     public boolean isEmpty() {
-        return map.isEmpty();
+        return entries.isEmpty();
     }
     
     public T next() {
@@ -70,10 +70,10 @@ public class WeightedMap<T> {
     }
     
     public T next(Random random, T def) {
-        if(!map.isEmpty()) {
+        if(!entries.isEmpty()) {
             double rolled = random.nextDouble() * totalWeight;
             
-            for(Entry<T, Double> entry : map.entrySet()) {
+            for(Entry<T, Double> entry : entries.entrySet()) {
                 double weight = entry.getValue();
                 
                 if(rolled < weight) {
@@ -85,5 +85,10 @@ public class WeightedMap<T> {
         }
         
         return def;
+    }
+    
+    @JsonValue
+    public Map<T, Double> getEntries() {
+        return Collections.unmodifiableMap(entries);
     }
 }

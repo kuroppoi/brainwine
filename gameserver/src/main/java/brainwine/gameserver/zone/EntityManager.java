@@ -71,7 +71,7 @@ public class EntityManager {
         }
     }
     
-    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, Item baseItem){
+    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, Item baseItem) {
         return spawns.entrySet().stream()
                 .filter(entry -> entry.getKey() == biome)
                 .map(Entry::getValue)
