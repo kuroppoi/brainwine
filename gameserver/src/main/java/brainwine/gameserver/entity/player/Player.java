@@ -1072,6 +1072,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("id", documentId);
         config.put("name", name);
         config.put("admin", admin);
+        config.put("premium", true);
         config.put("level", getLevel());
         config.put("xp", experience);
         config.put("points", skillPoints);
