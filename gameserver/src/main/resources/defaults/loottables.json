@@ -1,108 +1,1096 @@
 {
+  "wardrobe": [
+    {
+      "items": {
+        "tops/waistcoat-navy": 1
+      },
+      "frequency": 180
+    },
+    {
+      "items": {
+        "tops/coat-red": 1
+      },
+      "frequency": 120
+    },
+    {
+      "items": {
+        "tops/coat-blue": 1
+      },
+      "frequency": 50
+    },
+    {
+      "items": {
+        "tops/coat-yellow": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "tops/corset-black": 1
+      },
+      "frequency": 50
+    },
+    {
+      "items": {
+        "tops/tuxedo": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "tops/polka": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "tops/jacket-lady-green": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "tops/dress-pink": 1
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "tops/camo": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "tops/i-heart-dw": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "tops/prepboy": 1
+      },
+      "frequency": 14
+    },
+    {
+      "items": {
+        "tops/prepgirl": 1
+      },
+      "frequency": 14
+    },
+    {
+      "items": {
+        "tops/indy": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "tops/jailbird": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "tops/clown": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "tops/aviation": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "tops/charlie-brown": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "tops/tesla": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "headgear/helmet": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "headgear/bonnet": 1
+      },
+      "frequency": 100
+    },
+    {
+      "items": {
+        "headgear/baseball": 1
+      },
+      "frequency": 70
+    },
+    {
+      "items": {
+        "headgear/beanie": 1
+      },
+      "frequency": 60
+    },
+    {
+      "items": {
+        "headgear/bonnet-2": 1
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "headgear/bucket": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "headgear/party": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "headgear/aviator": 1
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "headgear/buckingham": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "headgear/ribbon": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "headgear/indy": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "headgear/constable-hat": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "headgear/tiara": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "headgear/cat": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "headgear/antlers": 1
+      },
+      "frequency": 13
+    },
+    {
+      "items": {
+        "headgear/dunce": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "headgear/earmuffs-strawberry": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "headgear/diving-helmet": 1
+      },
+      "frequency": 9
+    },
+    {
+      "items": {
+        "headgear/jester": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "headgear/space-helmet": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "headgear/beekeeper": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "headgear/panda": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "headgear/headphones": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "headgear/mad-hatter": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "headgear/turtle-helmet": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "headgear/terrapus": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "headgear/toad": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "headgear/cthulhu": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "headgear/accident": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "headgear/helmet-onyx": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "headgear/unicorn": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "headgear/diablo": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "facialgear/goggles": 1
+      },
+      "frequency": 50
+    },
+    {
+      "items": {
+        "facialgear/football": 1
+      },
+      "frequency": 35
+    },
+    {
+      "items": {
+        "facialgear/earrings-hoop": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "facialgear/rainbow": 1
+      },
+      "live": false,
+      "frequency": 30
+    },
+    {
+      "items": {
+        "facialgear/makeup": 1
+      },
+      "frequency": 28
+    },
+    {
+      "items": {
+        "facialgear/ice-queen-make-up": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "facialgear/tattoo-1": 1
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "facialgear/swirly": 1
+      },
+      "live": false,
+      "frequency": 25
+    },
+    {
+      "items": {
+        "facialgear/tattoo-3": 1
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "facialgear/tattoo-5": 1
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "facialgear/butterfly": 1
+      },
+      "frequency": 22
+    },
+    {
+      "items": {
+        "facialgear/goggles-lab": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "facialgear/clown": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "facialgear/witch-nose": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "facialgear/ski-glasses": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "facialgear/hazmat": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "facialgear/blindfold": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "facialgear/geordi": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "facialgear/masks/jack": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "facialgear/masks/amon": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "facialgear/masks/batman": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "facialgear/masks/cat": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "facialgear/masks/comedy": 1
+      },
+      "frequency": 50
+    },
+    {
+      "items": {
+        "facialgear/masks/lady-luna": 1
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "facialgear/masks/lone-ranger": 1
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "facialgear/masks/majora": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "facialgear/masks/phantom": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "facialgear/masks/pulcinella": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "facialgear/masks/tragedy": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "facialgear/masks/turtle": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "facialgear/masks/venetian": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "facialgear/hockey": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "facialgear/big-eyes": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "facialhair/goatee-large": 1
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "facialhair/chin-strap": 1
+      },
+      "frequency": 35
+    },
+    {
+      "items": {
+        "facialhair/franz": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "facialhair/anchor": 1
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "facialhair/soul-patch": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "facialhair/beard-seneca": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "facialhair/wizard": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "facialhair/gamekeeper": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "facialhair/plumber": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "hair/fro": 1
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "hair/mohawk": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "hair/windswept": 1
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "hair/mad-scientist": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "hair/balding": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "hair/soft-dreadlocks": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "hair/brat": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "hair/spiky": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "hair/cornrows": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "hair/pop-star": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "hair/pop-starlet": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "hair/folk": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "hair/rambo": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "hair/dj": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "hair/grease": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "hair/wedge": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "hair/godfather": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "hair/dame": 1
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "hair/edward": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "hair/flair": 1
+      },
+      "frequency": 12
+    },
+    {
+      "items": {
+        "facialhair/connected": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "hair/poof": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "hair/bruce": 1
+      },
+      "frequency": 4
+    },
+    {
+      "items": {
+        "hair/diva": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "hair/slick": 1
+      },
+      "frequency": 17
+    },
+    {
+      "items": {
+        "hair/lady-slick": 1
+      },
+      "frequency": 17
+    },
+    {
+      "items": {
+        "facialhair/old-dutch": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "hair/fringe-angled": 1
+      },
+      "frequency": 6
+    },
+    {
+      "items": {
+        "hair/helmet": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "hair/shaved-sides": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "hair/messy": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "facialhair/pencil": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "hair/lady-burns": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "hair/superman": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "hair/pageboy": 1
+      },
+      "frequency": 9
+    },
+    {
+      "items": {
+        "hair/boxer-hair": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "hair/joker": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "hair/dapper": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "hair/back-bun": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "facialhair/boxer-beard": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "hair/pixie": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "hair/secret-agent": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "hair/scissorhands": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "hair/rabbit": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "hair/elvis": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "hair/bride": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "bottoms/pants-dandy": 1
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "bottoms/dress-polka": 1
+      },
+      "frequency": 40
+    },
+    {
+      "items": {
+        "bottoms/dress-green": 1
+      },
+      "frequency": 25
+    },
+    {
+      "items": {
+        "bottoms/dress-pink": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "bottoms/pants-camo": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "bottoms/kilt": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "bottoms/tutu": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "bottoms/clown": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "footwear/boot-heeled": 1
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "footwear/clown-foot": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "emotes/beg": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "emotes/gasp": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "emotes/dance-backflip": 1
+      },
+      "frequency": 7
+    },
+    {
+      "items": {
+        "emotes/dance-monkey": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "emotes/faceplant": 1
+      },
+      "frequency": 3
+    },
+    {
+      "items": {
+        "emotes/dance-peanuts-1": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "emotes/dance-runningman": 1
+      },
+      "frequency": 30
+    },
+    {
+      "items": {
+        "emotes/dance-singleladies": 1
+      },
+      "frequency": 2
+    },
+    {
+      "items": {
+        "emotes/dance-snoopy": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "emotes/dance-ymca": 1
+      },
+      "frequency": 1
+    },
+    {
+      "items": {
+        "emotes/dance-swim": 1
+      },
+      "frequency": 8
+    },
+    {
+      "items": {
+        "emotes/tantrum": 1
+      },
+      "frequency": 5
+    },
+    {
+      "items": {
+        "emotes/tip-hat": 1
+      },
+      "frequency": 75
+    },
+    {
+      "items": {
+        "emotes/put-em-up": 1
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "emotes/faint": 1
+      },
+      "frequency": 5
+    }
+  ],
   "resources": [
     {
-	  "items": {
-	    "building/wood": 15,
-		"building/wood-board": 5
-	  },
-	  "frequency": 200
-	},
-	{
-	  "items": {
-	    "ground/copper-ore": 15,
-		"ground/zinc-ore": 5
-	  },
-	  "frequency": 160
-    },
-	{
-	  "items": {
-	    "ground/zinc-ore": 10
-	  },
-	  "frequency": 150
-    },
-	{
-	  "items": {
-	    "ground/clay": 15
-	  },
-	  "frequency": 160
+      "items": {
+        "building/wood": 15,
+        "building/wood-board": 5
+      },
+      "frequency": 200
     },
     {
-	  "items": {
-	    "ground/iron-ore": 10,
-		"building/iron": 5
-	  },
-	  "frequency": 120
+      "items": {
+        "ground/copper-ore": 15,
+        "ground/zinc-ore": 5
+      },
+      "frequency": 160
     },
-	{
-	  "items": {
-	    "back/paper": 20
-	  },
-	  "frequency": 80
+    {
+      "items": {
+        "ground/zinc-ore": 10
+      },
+      "frequency": 150
     },
-	{
-	  "items": {
-	    "ground/quartz-ore": 10,
-		"ground/lead-ore": 5
-	  },
-	  "frequency": 60
+    {
+      "items": {
+        "ground/clay": 15
+      },
+      "frequency": 160
     },
-	{
-	  "items": {
-	    "ground/lead-ore": 10,
-		"ground/iron-ore": 5
-	  },
-	  "frequency": 60
+    {
+      "items": {
+        "ground/iron-ore": 10,
+        "building/iron": 5
+      },
+      "frequency": 120
     },
-	{
-	  "items": {
-	    "back/glass": 15
-	  },
-	  "frequency": 60
+    {
+      "items": {
+        "back/paper": 20
+      },
+      "frequency": 80
     },
-	{
-	  "items": {
-	    "back/glass-divided": 15
-	  },
-	  "frequency": 50
+    {
+      "items": {
+        "ground/quartz-ore": 10,
+        "ground/lead-ore": 5
+      },
+      "frequency": 60
     },
-	{
-	  "items": {
-	    "building/brass": 10,
-		"building/iron": 10,
-		"building/copper": 10
-	  },
-	  "frequency": 40
+    {
+      "items": {
+        "ground/lead-ore": 10,
+        "ground/iron-ore": 5
+      },
+      "frequency": 60
     },
-	{
-	  "items": {
-	    "mechanical/pipe": 20
-	  },
-	  "frequency": 20
+    {
+      "items": {
+        "back/glass": 15
+      },
+      "frequency": 60
     },
-	{
-	  "items": {
-	    "ground/marble-ore": 10
-	  },
-	  "frequency": 20
+    {
+      "items": {
+        "back/glass-divided": 15
+      },
+      "frequency": 50
     },
-	{
-	  "items": {
-	    "ground/bloodstone-ore": 10
-	  },
-	  "frequency": 10
+    {
+      "items": {
+        "building/brass": 10,
+        "building/iron": 10,
+        "building/copper": 10
+      },
+      "frequency": 40
     },
-	{
-	  "items": {
-	    "ground/salt": 5,
-		"ground/fire-salt": 1
-	  },
-	  "frequency": 15
+    {
+      "items": {
+        "mechanical/pipe": 20
+      },
+      "frequency": 20
     },
-	{
-	  "items": {
-		"building/plug": 5
-	  },
-	  "frequency": 50
+    {
+      "items": {
+        "ground/marble-ore": 10
+      },
+      "frequency": 20
+    },
+    {
+      "items": {
+        "ground/bloodstone-ore": 10
+      },
+      "frequency": 10
+    },
+    {
+      "items": {
+        "ground/salt": 5,
+        "ground/fire-salt": 1
+      },
+      "frequency": 15
+    },
+    {
+      "items": {
+        "building/plug": 5
+      },
+      "frequency": 50
     }
   ],
   "treasure": [
@@ -266,14 +1254,14 @@
     },
     {
       "items": {
-	    "building/crystal-red": 1
-	  },
+        "building/crystal-red": 1
+      },
       "frequency": 6
     },
     {
       "items": {
-	    "bulding/crystal-purple": 1
-	  },
+        "bulding/crystal-purple": 1
+      },
       "frequency": 6
     },
     {
@@ -394,17 +1382,17 @@
   ],
   "treasure+": [
     {
-	  "crowns": 10,
-	  "frequency": 25
-	},
-	{
-	  "crowns": 20,
-	  "frequency": 12
-	},
-	{
-	  "crowns": 50,
-	  "frequency": 6
-	},
+      "crowns": 10,
+      "frequency": 25
+    },
+    {
+      "crowns": 20,
+      "frequency": 12
+    },
+    {
+      "crowns": 50,
+      "frequency": 6
+    },
     {
       "items": {
         "furniture/painting-autumn": 1
@@ -592,14 +1580,14 @@
       "items": {
         "furniture/moon": 1
       },
-	  "biome": "space",
+      "biome": "space",
       "frequency": 5
     },
     {
       "items": {
         "furniture/mars": 1
       },
-	  "biome": "desert",
+      "biome": "desert",
       "frequency": 5
     },
     {
@@ -754,8 +1742,8 @@
     },
     {
       "items": {
-	    "holiday/gift-tall": 1
-	  },
+        "holiday/gift-tall": 1
+      },
       "frequency": 6
     },
     {
@@ -915,8 +1903,8 @@
     },
     {
       "items": {
-	    "mechanical/bomb-spawner-large": 1
-	  },
+        "mechanical/bomb-spawner-large": 1
+      },
       "frequency": 8
     },
     {
@@ -1322,9 +2310,9 @@
     },
     {
       "items": {
-	    "consumables/cloak": 1,
-		"consumables/canister": 2
-	  },
+        "consumables/cloak": 1,
+        "consumables/canister": 2
+      },
       "frequency": 30
     },
     {
@@ -1431,8 +2419,8 @@
     {
       "items": {
         "consumables/filet-fire": 3,
-		"consumables/cloak": 1,
-		"consumables/teleporter": 1
+        "consumables/cloak": 1,
+        "consumables/teleporter": 1
       },
       "frequency": 15
     },

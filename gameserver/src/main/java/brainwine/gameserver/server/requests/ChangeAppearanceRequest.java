@@ -48,7 +48,7 @@ public class ChangeAppearanceRequest extends PlayerRequest {
                 
                 Item item = ItemRegistry.getItem((int)value);
                 
-                if(!player.hasClothing(item)) {
+                if(!item.isBase() && !player.getInventory().hasItem(item)) {
                     player.alert("Sorry, but you do not own this.");
                     return;
                 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,6 +16,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
+import brainwine.gameserver.server.messages.WardrobeMessage;
 
 @JsonIncludeProperties({"items", "hotbar", "accessories"})
 public class Inventory {
@@ -124,7 +126,11 @@ public class Inventory {
         }
         
         if(sendMessage) {
-            player.sendMessage(new InventoryMessage(getClientConfig(item)));
+            if(item.isClothing() && quantity > 0) {
+                player.sendMessage(new WardrobeMessage(item));
+            } else if(!item.isClothing()) {
+                player.sendMessage(new InventoryMessage(getClientConfig(item)));
+            }
         }
     }
     
@@ -162,6 +168,10 @@ public class Inventory {
         return accessories;
     }
     
+    public List<Item> getWardrobe() {
+        return items.keySet().stream().filter(item -> item.isClothing() && hasItem(item)).collect(Collectors.toList());
+    }
+    
     @JsonValue
     public Map<String, Object> getJsonValue() {
         Map<String, Object> map = new HashMap<>();
@@ -196,6 +206,12 @@ public class Inventory {
         
         for(Entry<Item, Integer> entry : items.entrySet()) {
             Item item = entry.getKey();
+            
+            // Exclude clothing, as that is sent in WardrobeMessage.
+            if(item.isClothing()) {
+                continue;
+            }
+            
             int quantity = entry.getValue();
             List<Object> itemData = new ArrayList<>();
             itemData.add(quantity);

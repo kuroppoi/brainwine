@@ -63,7 +63,8 @@ public class LootManager {
                 .map(Entry::getValue)
                 .flatMap(Collection::stream)
                 .filter(loot -> (loot.getBiome() == null || loot.getBiome() == player.getZone().getBiome())
-                        && (Math.random() <= luck * 0.015 || loot.getFrequency() >= minFrequency))
+                        && (Math.random() <= luck * 0.015 || loot.getFrequency() >= minFrequency)
+                        && !player.getInventory().getWardrobe().containsAll(loot.getItems().keySet()))
                 .collect(Collectors.toList());
         return eligibleLoot;
     }

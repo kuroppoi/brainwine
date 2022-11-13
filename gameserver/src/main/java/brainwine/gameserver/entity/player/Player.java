@@ -97,7 +97,6 @@ public class Player extends Entity implements CommandExecutor {
     private Map<Skill, Integer> skills;
     private Map<ClothingSlot, Item> equippedClothing;
     private Map<ColorSlot, String> equippedColors;
-    private final Set<Item> wardrobe = new HashSet<>();
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
@@ -266,7 +265,7 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new PlayerPositionMessage((int)x, (int)y));
         sendMessage(new HealthMessage(health));
         sendMessage(new InventoryMessage(inventory));
-        sendMessage(new WardrobeMessage(wardrobe));
+        sendMessage(new WardrobeMessage(inventory.getWardrobe()));
         sendMessage(new BlockMetaMessage(zone.getGlobalMetaBlocks()));
         
         // Send skill data
@@ -826,14 +825,6 @@ public class Player extends Entity implements CommandExecutor {
         
         equippedClothing.put(slot, item);
         zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
-    }
-    
-    public boolean hasClothing(Item item) {
-        if(!item.isClothing()) {
-            return false;
-        }
-        
-        return item.isBase() || wardrobe.contains(item);
     }
     
     public Map<ClothingSlot, Item> getEquippedClothing() {
