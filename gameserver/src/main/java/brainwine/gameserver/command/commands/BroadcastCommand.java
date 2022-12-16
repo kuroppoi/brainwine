@@ -4,7 +4,6 @@ import static brainwine.gameserver.entity.player.NotificationType.ALERT;
 import static brainwine.gameserver.entity.player.NotificationType.CHAT;
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
-import brainwine.gameserver.ConsoleThread;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
@@ -21,14 +20,11 @@ public class BroadcastCommand extends Command {
         
         String text = "[Server Notification] " + String.join(" ", args);
         
-        // TODO hook the console up to some kind of chat feed?
-        if(executor instanceof ConsoleThread) {
-            executor.notify(text, CHAT);
-        }
-        
         for(Player player : GameServer.getInstance().getPlayerManager().getPlayers()) {
             player.notify(text, SYSTEM);
         }
+        
+        executor.notify("Your message has been broadcasted.", ALERT);
     }
     
     @Override

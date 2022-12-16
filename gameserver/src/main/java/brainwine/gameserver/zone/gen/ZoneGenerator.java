@@ -49,8 +49,7 @@ public class ZoneGenerator {
     private static final Logger logger = LogManager.getLogger();
     private static final Map<String, ZoneGenerator> generators = new HashMap<>();
     private static final ZoneGenerator defaultGenerator = new ZoneGenerator();
-    private static final AsyncZoneGenerator asyncGenerator = new AsyncZoneGenerator();
-    private static boolean initialized;
+    private static AsyncZoneGenerator asyncGenerator;
     private final GeneratorTask terrainGenerator;
     private final GeneratorTask caveGenerator;
     private final GeneratorTask decorGenerator;
@@ -68,11 +67,7 @@ public class ZoneGenerator {
     }
     
     public static void init() {
-        if(initialized) {
-            logger.warn("ZoneGenerator is already initialized!");
-            return;
-        }
-        
+        generators.clear();
         logger.info("Loading zone generator configurations ...");
         ResourceUtils.copyDefaults("generators/");
         File dataDir = new File("generators");
@@ -96,9 +91,37 @@ public class ZoneGenerator {
         }
         
         logger.info("Starting async zone generator thread ...");
-        asyncGenerator.setDaemon(true);
+        asyncGenerator = new AsyncZoneGenerator();
         asyncGenerator.start();
-        initialized = true;
+    }
+    
+    /**
+     * Calls {@code stopAsyncZoneGenerator(false)}
+     * 
+     * @see #stopAsyncZoneGenerator(boolean)
+     */
+    public static void stopAsyncZoneGenerator() {
+        stopAsyncZoneGenerator(false);
+    }
+    
+    /**
+     * Gracefully stops the current zone generator thread.
+     * 
+     * @param wait If true, the thread that calls this function will be blocked until the zone generator thread dies.
+     */
+    public static void stopAsyncZoneGenerator(boolean wait) {
+        if(asyncGenerator != null && asyncGenerator.isAlive()) {
+            logger.info("Stopping async zone generator thread ...");
+            asyncGenerator.stopGracefully();
+            
+            if(wait) {
+                try {
+                    asyncGenerator.join();
+                } catch(InterruptedException e) {
+                    logger.error("Wait for zone generator thread death interrupted", e);
+                }
+            }
+        }
     }
     
     public static ZoneGenerator getZoneGenerator(String name) {

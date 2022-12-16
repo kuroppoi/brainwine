@@ -46,7 +46,7 @@ public class CommandManager {
     
     public static void init() {
         if(initialized) {
-            logger.warn("init() called twice");
+            logger.warn("CommandManager is already initialized - skipping!");
             return;
         }
         

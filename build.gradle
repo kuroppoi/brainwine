@@ -1,5 +1,10 @@
 plugins {
-    id 'application'
+    id 'java'
+}
+
+ext {
+    mainClass = 'brainwine.Bootstrap'
+    workingDirectory = 'run'
 }
 
 repositories {
@@ -7,50 +12,34 @@ repositories {
 }
 
 dependencies {
+    implementation 'com.formdev:flatlaf-intellij-themes:1.6'
+    implementation 'com.formdev:flatlaf-extras:1.6'
+    implementation 'com.formdev:flatlaf:1.6'
     implementation project(':api')
     implementation project(':gameserver')
     implementation project(':shared')
 }
 
-application {
-    mainClass = 'brainwine.Bootstrap'
-}
-
-run {
-    workingDir = file('run')
-}
-
-jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveBaseName = 'brainwine'
-
+task dist(type: Jar) {
     manifest {
-        attributes 'Main-Class': application.mainClass,
-                   'Multi-Release': 'true'
+        attributes 'Multi-Release': 'true',
+                   'Main-Class': project.ext.mainClass
     }
-}
-
-startScripts {
-    classpath = files('$APP_HOME/lib/*')
     
-    doLast {
-        windowsScript.text = windowsScript.text.replace('..', '')
-        unixScript.text = unixScript.text.replace('..', '')
-    }
-}
-
-distZip {
-    eachFile { file ->
-        if(file.path.contains('/bin/')) {
-            file.setPath(file.path.replace('bin/', ''))
+    from {
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
         }
     }
+    
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    dependsOn configurations.runtimeClasspath
+    with jar
 }
 
-distTar {
-    eachFile { file ->
-        if(file.path.contains('/bin/')) {
-            file.setPath(file.path.replace('bin/', ''))
-        }
-    }
+task run(type: JavaExec) {
+    mainClass = project.ext.mainClass
+    workingDir = project.ext.workingDirectory
+    classpath = sourceSets.main.runtimeClasspath
+    mkdir workingDir
 }

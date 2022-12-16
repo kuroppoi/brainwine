@@ -63,8 +63,7 @@ public class EntityManager {
         
         if(file.isFile()) {
             try {
-                Map<Biome, List<EntitySpawn>> loot = JsonHelper.readValue(file, new TypeReference<Map<Biome, List<EntitySpawn>>>(){});
-                spawns.putAll(loot);
+                spawns.putAll(JsonHelper.readValue(file, new TypeReference<Map<Biome, List<EntitySpawn>>>(){}));
             } catch (IOException e) {
                 logger.error("Failed to load entity spawns", e);
             }

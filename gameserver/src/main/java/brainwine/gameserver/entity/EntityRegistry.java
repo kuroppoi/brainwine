@@ -17,14 +17,9 @@ public class EntityRegistry {
     
     private static final Logger logger = LogManager.getLogger();
     private static final Map<String, EntityConfig> entities = new HashMap<>();
-    private static boolean initialized;
     
     public static void init() {
-        if(initialized) {
-            logger.warn("Already initialized!");
-            return;
-        }
-        
+        entities.clear();
         Map<String, Map<String, Object>> entityConfigs = MapHelper.getMap(GameConfiguration.getBaseConfig(), "entities");
         
         if(entityConfigs == null) {
@@ -32,7 +27,7 @@ public class EntityRegistry {
             return;
         }
         
-        for(Entry<String, Map<String, Object>> entry : entityConfigs.entrySet()) {     
+        for(Entry<String, Map<String, Object>> entry : entityConfigs.entrySet()) {
             String name = entry.getKey();
             Map<String, Object> config = entry.getValue();
             
@@ -50,7 +45,6 @@ public class EntityRegistry {
         
         int entityCount = entities.size();
         logger.info("Successfully loaded {} entit{}", entityCount, entityCount == 1 ? "y" : "ies");
-        initialized = true;
     }
     
     public static void registerEntityConfig(String name, EntityConfig config) {

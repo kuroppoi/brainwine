@@ -21,7 +21,7 @@ public class NetworkRegistry {
     
     public static void init() {
         if(initialized) {
-            logger.warn("init() called twice");
+            logger.warn("NetworkRegistry is already initialized - skipping!");
             return;
         }
         

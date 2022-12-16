@@ -1,70 +1,121 @@
 package brainwine;
 
+import java.awt.Desktop;
+import java.lang.reflect.InvocationTargetException;
+
+import javax.swing.ImageIcon;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import brainwine.api.Api;
-import brainwine.gameserver.GameServer;
-import brainwine.gameserver.TickLoop;
+import com.formdev.flatlaf.intellijthemes.FlatHighContrastIJTheme;
+
+import brainwine.gui.MainView;
 
 public class Bootstrap {
 
     private static Logger logger = LogManager.getLogger();
-    private final GameServer gameServer;
-    private final Api api;
-    private boolean shutdown;
+    private static boolean disableGui = false;
+    private static boolean forceGui = false;
+    private ServerThread serverThread;
+    private MainView mainView;
+    private boolean closeRequested;
     
     public static void main(String[] args) {
+        for(String arg : args) {
+            if(arg.equalsIgnoreCase("disablegui")) {
+                disableGui = true;
+            }
+            
+            if(arg.equalsIgnoreCase("forcegui")) {
+                forceGui = true;
+            }
+        }
+        
         new Bootstrap();
     }
     
     public Bootstrap() {
-        logger.warn("NOTE: THIS SERVER IS INCOMPLETE! EXPECT BAD CODE, BUGS, AND MISSING FEATURES!");
-        logger.warn("The server will start in 5 seconds");
-        
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            logger.error("Sleep interrupted", e);
+        if(!disableGui && (Desktop.isDesktopSupported() || forceGui)) {
+            logger.info("Creating main view ...");
+            
+            try {
+                SwingUtilities.invokeAndWait(() -> {
+                    // Setup theme
+                    FlatHighContrastIJTheme.setup();
+                    
+                    // Register icons
+                    UIManager.put("Brainwine.playIcon", new ImageIcon(getClass().getResource("/playIcon16x.png")));
+                    UIManager.put("Brainwine.serverIcon", new ImageIcon(getClass().getResource("/serverIcon16x.png")));
+                    UIManager.put("Brainwine.settingsIcon", new ImageIcon(getClass().getResource("/settingsIcon16x.png")));
+                    
+                    // Create view
+                    mainView = new MainView(this);
+                });
+            } catch (InvocationTargetException | InterruptedException e) {
+                logger.fatal("Could not create main view", e);
+                System.exit(1);
+            }
+        } else {
+            startServer();
+            
+            // Start console listener thread
+            ConsoleThread consoleThread = new ConsoleThread();
+            consoleThread.addListener(input -> {
+                executeCommand(input);
+            });
+            consoleThread.start();
         }
-        
-        logger.info("Bootstrapping ...");
-        gameServer = new GameServer();
-        api = new Api(new DirectDataFetcher(gameServer.getPlayerManager(), gameServer.getZoneManager()));
-        Runtime.getRuntime().addShutdownHook(new ShutdownThread(this));
-        logger.info("Bootstrap complete. Type 'stop' in the console to shutdown the server.");
-        runTickLoop();
     }
     
-    private void runTickLoop() {
-        TickLoop loop = new TickLoop(8, () -> {
-            gameServer.tick(); 
-        });
-        
-        while(!gameServer.shouldShutdown()) {
-            loop.update();
+    public void executeCommand(String commandLine) {
+        if(isServerRunning()) {
+            serverThread.executeCommand(commandLine);
         }
-        
-        onShutdown();
     }
     
-    public void shutdown() {
-        gameServer.shutdown();
+    public void closeApplication() {
+        if(!closeRequested) {
+            closeRequested = true;
+            
+            if(isServerRunning()) {
+                serverThread.stopGracefully();
+            } else {
+                System.exit(0);
+            }
+        }
     }
     
-    protected void onShutdown() {
-        if(shutdown) {
-            return;
+    public void startServer() {
+        if(!isServerRunning()) {
+            serverThread = new ServerThread(this);
+            serverThread.start();
         }
-        
-        shutdown = true;
-        logger.info("Shutting down ...");
-        
-        try {
-            gameServer.onShutdown();
-            api.onShutdown();
-        } catch(Exception e) {
-            logger.error("Exception occured whilst shutting down", e);
+    }
+    
+    public void stopServer() {
+        if(isServerRunning()) {
+            serverThread.stopGracefully();
         }
+    }
+    
+    public void onServerStarted() {
+        if(!disableGui) {
+            SwingUtilities.invokeLater(mainView::enableServerButton);
+        }
+    }
+    
+    public void onServerStopped() {
+        if(closeRequested) {
+            System.exit(0);
+        } else if(!disableGui) {
+            SwingUtilities.invokeLater(mainView::enableServerButton);
+        }
+    }
+    
+    public boolean isServerRunning() {
+        return serverThread != null && serverThread.isRunning();
     }
 }

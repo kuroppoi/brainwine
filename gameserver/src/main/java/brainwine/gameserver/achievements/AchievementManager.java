@@ -23,13 +23,10 @@ public class AchievementManager {
     private static final Logger logger = LogManager.getLogger();
     private static final Map<String, Achievement> achievements = new HashMap<>();
     private static final Set<String> unknownTypeIds = new HashSet<>();
-    private static boolean initialized;
     
     public static void loadAchievements() {
-        if(initialized) {
-            logger.warn("Already initialized!");
-            return;
-        }
+        achievements.clear();
+        unknownTypeIds.clear();
         
         logger.info("Loading achievements ...");
         Map<String, Map<String, Object>> achievementConfigs = MapHelper.getMap(GameConfiguration.getBaseConfig(), "achievements");
@@ -65,7 +62,6 @@ public class AchievementManager {
         
         int achievementCount = achievements.size();
         logger.info("Successfully loaded {} achievement{}", achievementCount, achievementCount == 1 ? "" : "s");
-        initialized = true;
     }
     
     public static void registerAchievement(Achievement achievement) {
