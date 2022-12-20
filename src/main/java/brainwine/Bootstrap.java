@@ -102,7 +102,7 @@ public class Bootstrap {
     }
     
     public void onServerStarted() {
-        if(!disableGui) {
+        if(mainView != null) {
             SwingUtilities.invokeLater(mainView::enableServerButton);
         }
     }
@@ -110,7 +110,7 @@ public class Bootstrap {
     public void onServerStopped() {
         if(closeRequested) {
             System.exit(0);
-        } else if(!disableGui) {
+        } else if(mainView != null) {
             SwingUtilities.invokeLater(mainView::enableServerButton);
         }
     }
