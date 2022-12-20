@@ -11,15 +11,17 @@
 		<OnStartupTriggeringPolicy/>
       </Policies>
 	</RollingFile>
-	<Listenable name="Listenable">
-	  <PatternLayout pattern="(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%t/%level] [%logger{1}]: %msg%n"/>
+	<Listenable name="GuiServerOutput">
+	   <!--It might a be better idea to mark server messages instead-->
+	  <MarkerFilter marker="gui" onMatch="DENY" onMismatch="ACCEPT"/>
+	  <PatternLayout pattern="(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%level] [%logger{1}]: %msg%n"/>
     </Listenable>
   </Appenders>
   <Loggers>
     <Root level="info">
       <AppenderRef ref="Console"/>
 	  <AppenderRef ref="LogFile"/>
-	  <AppenderRef ref="Listenable"/>
+	  <AppenderRef ref="GuiServerOutput"/>
     </Root>
   </Loggers>
 </Configuration>

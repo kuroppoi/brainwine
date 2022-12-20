@@ -2,6 +2,9 @@ package brainwine.gui;
 
 import java.awt.Color;
 
+import org.apache.logging.log4j.Marker;
+import org.apache.logging.log4j.MarkerManager;
+
 public class GuiConstants {
     
     public static final String GITHUB_REPOSITORY_URL = "https://github.com/kuroppoi/brainwine";
@@ -15,4 +18,5 @@ public class GuiConstants {
     public static final Color ERROR_COLOR = Color.RED.darker();
     public static final Color WARNING_COLOR = Color.YELLOW.darker();
     public static final Color INFO_COLOR = Color.WHITE.darker();
+    public static final Marker GUI_MARKER = MarkerManager.getMarker("gui");
 }

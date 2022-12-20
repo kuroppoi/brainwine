@@ -1,5 +1,8 @@
 package brainwine.gui;
 
+import static brainwine.gui.GuiConstants.DEEPWORLD_PLAYERPREFS;
+import static brainwine.gui.GuiConstants.GITHUB_REPOSITORY_URL;
+
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.WindowAdapter;
@@ -15,7 +18,9 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
-import com.formdev.flatlaf.extras.FlatInspector;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 import com.formdev.flatlaf.extras.components.FlatTabbedPane.TabAlignment;
 
@@ -29,13 +34,16 @@ import brainwine.util.SwingUtils;
 
 public class MainView {
     
+    private static final Logger logger = LogManager.getLogger();
     private final JFrame frame;
     private final JPanel panel;
     private final FlatTabbedPane tabbedPane;
     private final ServerPanel serverPanel;
     private final SettingsPanel settingsPanel;
     
-    public MainView(Bootstrap bootstrap) {        
+    public MainView(Bootstrap bootstrap) {
+        logger.info("Creating main view ...");
+        
         // Panels
         panel = new JPanel(new BorderLayout());
         serverPanel = new ServerPanel(bootstrap);
@@ -48,7 +56,7 @@ public class MainView {
         tabbedPane.setTabAlignment(TabAlignment.leading);
         
         if(OperatingSystem.isWindows()) {
-            tabbedPane.addTab("Play Game", UIManager.getIcon("Brainwine.playIcon"), new GamePanel());
+            tabbedPane.addTab("Play Game", UIManager.getIcon("Brainwine.playIcon"), new GamePanel(this));
         }
         
         tabbedPane.addTab("Server", UIManager.getIcon("Brainwine.serverIcon"), serverPanel);
@@ -63,7 +71,7 @@ public class MainView {
             helpMenu.add(SwingUtils.createAction("Clear Account Lock", this::showAccountLockPrompt));
         }
         
-        helpMenu.add(SwingUtils.createAction("GitHub", () -> DesktopUtils.browseUrl(GuiConstants.GITHUB_REPOSITORY_URL)));
+        helpMenu.add(SwingUtils.createAction("GitHub", () -> DesktopUtils.browseUrl(GITHUB_REPOSITORY_URL)));
         menuBar.add(helpMenu);
                 
         // Frame
@@ -86,7 +94,11 @@ public class MainView {
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
-        FlatInspector.install("K"); // TODO
+    }
+    
+    public void showHostSettings() {
+        tabbedPane.setSelectedComponent(settingsPanel);
+        settingsPanel.focusHostSettings();
     }
     
     public void enableServerButton() {
@@ -110,14 +122,14 @@ public class MainView {
     }
     
     private boolean clearAccountLock() {
-        ProcessResult queryResult = RegistryUtils.query(GuiConstants.DEEPWORLD_PLAYERPREFS, "playerLock*");
+        ProcessResult queryResult = RegistryUtils.query(DEEPWORLD_PLAYERPREFS, "playerLock*");
         
         if(queryResult.wasSuccessful()) {
             RegistryKey key = RegistryUtils.getFirstQueryResult(queryResult);
             
             if(key != null) {
                 String name = key.getName();
-                ProcessResult deleteResult = RegistryUtils.delete(GuiConstants.DEEPWORLD_PLAYERPREFS, name);
+                ProcessResult deleteResult = RegistryUtils.delete(DEEPWORLD_PLAYERPREFS, name);
                 return deleteResult.wasSuccessful();
             } else {
                 // Might as well.
