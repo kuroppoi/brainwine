@@ -67,6 +67,13 @@ public class ZoneManager {
         }
     }
     
+    public void onShutdown() {
+        for(Zone zone : zones.values()) {
+            saveZone(zone);
+            zone.getChunkManager().closeStream();
+        }
+    }
+    
     private void loadZone(File file) {
         String id = file.getName();
         File dataFile = new File(file, "zone.dat");

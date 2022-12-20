@@ -13,8 +13,10 @@ public class ItemRegistry {
     private static final Map<Integer, Item> items = new HashMap<>();
     private static final Map<String, Item> itemsByName = new HashMap<>();
     
-    static {
-        //registerItem(Item.AIR);
+    // TODO maybe just move the registry stuff here
+    public static void clear() {
+        items.clear();
+        itemsByName.clear();
     }
     
     public static boolean registerItem(Item item) {

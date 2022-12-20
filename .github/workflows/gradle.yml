@@ -1,7 +1,6 @@
 name: build
 on:
   push:
-    branches: [ master ]
     paths:
       - .github/workflows/gradle.yml
       - deepworld-config
@@ -25,10 +24,10 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x ./gradlew
     - name: Build with Gradle
-      run: ./gradlew build
+      run: ./gradlew dist
     - name: Upload artifact
       uses: actions/upload-artifact@v3.1.1
       with:
         name: brainwine
-        path: build/distributions/**
+        path: build/libs/brainwine.jar
         retention-days: 7

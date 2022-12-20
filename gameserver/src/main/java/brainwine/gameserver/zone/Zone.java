@@ -1015,6 +1015,10 @@ public class Zone {
         return chunkManager.getLoadedChunks();
     }
     
+    public ChunkManager getChunkManager() {
+        return chunkManager;
+    }
+    
     public void setSurface(int x, int surface) {
         if(x < 0 || x >= width) {
             return;

@@ -16,10 +16,11 @@ public class AsyncZoneGenerator extends Thread {
     
     private static final Logger logger = LogManager.getLogger();
     private final Queue<AsyncZoneGeneratorTask> tasks = new ConcurrentLinkedQueue<>();
-    private boolean running;
+    private volatile boolean running;
     
     public AsyncZoneGenerator() {
         super("zonegen");
+        setDaemon(true);
     }
     
     @Override
@@ -44,7 +45,16 @@ public class AsyncZoneGenerator extends Thread {
                 Consumer<Zone> callback = task.getCallback();
                 
                 if(callback != null) {
-                    GameServer.getInstance().queueSynchronousTask(() -> callback.accept(generated));
+                    GameServer gameServer = GameServer.getInstance();
+                    
+                    if(gameServer.shouldStop()) {
+                        logger.warn("Server shutdown has been requested while generating a zone!"
+                                + " Callback will be fired immediately on the async zone generator thread."
+                                + " Don't blame me for what happens!");
+                        callback.accept(generated);
+                    } else {
+                        gameServer.queueSynchronousTask(() -> callback.accept(generated));
+                    }
                 }
             }
         });
@@ -62,5 +72,9 @@ public class AsyncZoneGenerator extends Thread {
     
     public void addTask(ZoneGenerator generator, Biome biome, int width, int height, int seed, Consumer<Zone> callback) {
         addTask(new AsyncZoneGeneratorTask(generator, biome, width, height, seed, callback));
+    }
+    
+    public void stopGracefully() {
+        running = false;
     }
 }

@@ -8,7 +8,7 @@ public class StopCommand extends Command {
 
     @Override
     public void execute(CommandExecutor executor, String[] args) {
-        GameServer.getInstance().shutdown(); // YEET!!
+        GameServer.getInstance().stopGracefully(); // YEET!!
     }
     
     @Override

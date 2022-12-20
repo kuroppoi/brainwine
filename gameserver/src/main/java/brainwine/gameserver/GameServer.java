@@ -7,8 +7,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.achievements.AchievementManager;
+import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.EntityRegistry;
+import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.PlayerManager;
 import brainwine.gameserver.loot.LootManager;
 import brainwine.gameserver.prefab.PrefabManager;
@@ -18,10 +20,11 @@ import brainwine.gameserver.zone.EntityManager;
 import brainwine.gameserver.zone.ZoneManager;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
 
-public class GameServer {
+public class GameServer implements CommandExecutor {
     
     public static final int GLOBAL_SAVE_INTERVAL = 30000; // 30 seconds
     private static final Logger logger = LogManager.getLogger();
+    private static final Logger consoleLogger = LogManager.getLogger("Console");
     private static GameServer instance;
     private final Thread handlerThread;
     private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
@@ -32,7 +35,7 @@ public class GameServer {
     private final Server server;
     private long lastTick = System.currentTimeMillis();
     private long lastSave = lastTick;
-    private boolean shutdownRequested;
+    private volatile boolean shouldStop;
     
     public GameServer() {
         instance = this;
@@ -52,14 +55,21 @@ public class GameServer {
         NetworkRegistry.init();
         server = new Server();
         server.addEndpoint(5002);
-        ConsoleThread consoleThread = new ConsoleThread(this);
-        consoleThread.setDaemon(true); // otherwise the JVM won't exit.
-        consoleThread.start();
         logger.info("All done! GameServer startup took {} milliseconds", System.currentTimeMillis() - startTime);
     }
     
     public static GameServer getInstance() {
         return instance;
+    }
+    
+    @Override
+    public void notify(Object message, NotificationType type) {
+        consoleLogger.info(message);
+    }
+
+    @Override
+    public boolean isAdmin() {
+        return true;
     }
     
     public void tick() {
@@ -90,8 +100,7 @@ public class GameServer {
     public void queueSynchronousTask(Runnable task) {
         if(Thread.currentThread() == handlerThread) {
             task.run();
-        }
-        else {
+        } else {
             tasks.add(task);
         }
     }
@@ -102,16 +111,19 @@ public class GameServer {
     public void onShutdown() {
         logger.info("Shutting down GameServer ...");
         server.close();
-        zoneManager.saveZones();
+        ZoneGenerator.stopAsyncZoneGenerator(true);
+        logger.info("Saving zone data ...");
+        zoneManager.onShutdown();
+        logger.info("Saving player data ...");
         playerManager.savePlayers();
     }
     
-    public void shutdown() {
-        shutdownRequested = true;
+    public void stopGracefully() {
+        shouldStop = true;
     }
     
-    public boolean shouldShutdown() {
-        return shutdownRequested;
+    public boolean shouldStop() {
+        return shouldStop;
     }
     
     public LootManager getLootManager() {

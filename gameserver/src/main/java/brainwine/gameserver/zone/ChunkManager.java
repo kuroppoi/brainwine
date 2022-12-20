@@ -94,6 +94,18 @@ public class ChunkManager {
         }
     }
     
+    protected void closeStream() {
+        if(file != null) {
+            try {
+                file.close();
+            } catch(IOException e) {
+                logger.error("Could not close blocks file stream for zone {}", zone.getDocumentId());
+            } finally {
+                file = null;
+            }
+        }
+    }
+    
     public void saveChunks() {
         List<Chunk> inactiveChunks = new ArrayList<>();
         
