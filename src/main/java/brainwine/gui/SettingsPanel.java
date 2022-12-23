@@ -1,6 +1,7 @@
 package brainwine.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.util.prefs.BackingStoreException;
@@ -103,7 +104,12 @@ public class SettingsPanel extends JPanel {
     
     private JPanel createGameSettingsPanel() {
         // Gateway host field
-        gatewayHostField = new FlatTextField();
+        gatewayHostField = new FlatTextField() {
+            @Override
+            public Dimension getPreferredSize() {
+                return themeBox.getPreferredSize();
+            }
+        };
         gatewayHostField.setText(GuiPreferences.getString(GuiPreferences.GATEWAY_HOST_KEY, "local"));
         gatewayHostField.setPlaceholderText("127.0.0.1:5001");
         gatewayHostField.getDocument().addDocumentListener(new DocumentChangeListener() {
@@ -114,7 +120,12 @@ public class SettingsPanel extends JPanel {
         });
         
         // API host field
-        apiHostField = new FlatTextField();
+        apiHostField = new FlatTextField() {
+            @Override
+            public Dimension getPreferredSize() {
+                return themeBox.getPreferredSize();
+            }
+        };
         apiHostField.setText(GuiPreferences.getString(GuiPreferences.API_HOST_KEY, "local"));
         apiHostField.setPlaceholderText("127.0.0.1:5003");
         apiHostField.getDocument().addDocumentListener(new DocumentChangeListener() {
@@ -128,9 +139,9 @@ public class SettingsPanel extends JPanel {
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(createCategoryBorder("Game Settings"));
         panel.add(new JLabel("Gateway Host"), SwingUtils.createConstraints(0, 0));
-        panel.add(gatewayHostField, SwingUtils.createConstraints(1, 0));
+        panel.add(gatewayHostField, SwingUtils.createConstraints(1, 0, 1, 1, 0, 0));
         panel.add(new JLabel("API Host"), SwingUtils.createConstraints(0, 1));
-        panel.add(apiHostField, SwingUtils.createConstraints(1, 1));
+        panel.add(apiHostField, SwingUtils.createConstraints(1, 1, 1, 1, 0, 0));
         return panel;
     }
     
