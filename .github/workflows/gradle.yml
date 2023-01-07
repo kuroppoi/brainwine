@@ -1,6 +1,8 @@
 name: build
 on:
+  workflow_dispatch:
   push:
+    branches: [master]
     paths:
       - .github/workflows/gradle.yml
       - deepworld-config
@@ -13,7 +15,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2.5.0
+    - uses: actions/checkout@v3.3.0
     - name: Checkout submodules
       run: git submodule update --init --recursive
     - name: Set up JDK 8
