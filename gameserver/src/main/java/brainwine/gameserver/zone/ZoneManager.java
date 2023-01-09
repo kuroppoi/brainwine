@@ -84,7 +84,7 @@ public class ZoneManager {
             
             if(legacyDataFile.exists() && !dataFile.exists()) {
                 data = convertLegacyDataFile(legacyDataFile, dataFile);
-                legacyDataFile.delete();
+                // legacyDataFile.delete(); Let's just keep it..
             } else {
                 data = mapper.readValue(ZipUtils.inflateBytes(Files.readAllBytes(dataFile.toPath())), ZoneDataFile.class);
             }
@@ -126,7 +126,7 @@ public class ZoneManager {
         }
         
         ZoneDataFile data = new ZoneDataFile(surface, sunlight, null, pendingSunlight, chunksExplored);
-        mapper.writeValue(outputFile, data);
+        Files.write(outputFile.toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(data)));
         return data;
     }
     

@@ -89,23 +89,10 @@ public class Zone {
         int[] sunlight = data.getSunlight();
         int[] depths = data.getDepths();
         boolean[] chunksExplored = data.getChunksExplored();
-        
-        if(surface.length == width) {
-            this.surface = surface;
-        }
-        
-        if(sunlight.length == width) {
-            this.sunlight = sunlight;
-        }
-        
-        if(depths.length == 3) {
-            this.depths = depths;
-        }
-        
-        if(chunksExplored.length == getChunkCount()) {
-            this.chunksExplored = chunksExplored;
-        }
-        
+        this.surface = surface != null && surface.length == width ? surface : this.surface;
+        this.sunlight = sunlight != null && sunlight.length == width ? sunlight : this.sunlight;
+        this.depths = depths != null && depths.length == 3 ? depths : this.depths;
+        this.chunksExplored = chunksExplored != null && chunksExplored.length == getChunkCount() ? chunksExplored : this.chunksExplored;
         pendingSunlight.addAll(data.getPendingSunlight());
         creationDate = config.getCreationDate();
     }
