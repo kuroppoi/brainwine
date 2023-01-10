@@ -74,6 +74,7 @@ public class Zone {
     private final ChunkManager chunkManager;
     private final WeatherManager weatherManager = new WeatherManager();
     private final EntityManager entityManager = new EntityManager(this);
+    private final LiquidManager liquidManager = new LiquidManager(this);
     private final Queue<DugBlock> digQueue = new ArrayDeque<>();
     private final List<BlockChangeData> blockChanges = new ArrayList<>();
     private final Set<Integer> pendingSunlight = new HashSet<>();
@@ -123,6 +124,7 @@ public class Zone {
         long now = System.currentTimeMillis();
         weatherManager.tick(deltaTime);
         entityManager.tick(deltaTime);
+        liquidManager.tick(deltaTime);
         
         // One full cycle = 1200 seconds = 20 minutes
         time += deltaTime * (1.0F / 1200.0F);
@@ -716,6 +718,10 @@ public class Zone {
             }
             
             sendMessageToChunk(new LightMessage(x, getSunlight(x, 1)), chunk);
+        } else if(layer == Layer.LIQUID) {
+            if(!item.isAir() && mod > 0) {
+                liquidManager.indexLiquidBlock(x, y);
+            }
         }
     }
     
@@ -935,28 +941,33 @@ public class Zone {
     }
     
     protected void onChunkLoaded(Chunk chunk) {
-        // Update sunlight
-        if(!pendingSunlight.isEmpty()) {
-            int chunkX = chunk.getX();
-            
-            for(int x = chunkX; x < chunkX + chunk.getWidth(); x++) {
-                if(pendingSunlight.contains(x)) {
-                    recalculateSunlight(x, sunlight[x]);
-                    sendMessageToChunk(new LightMessage(x, getSunlight(x, 1)), chunk);
-                }
-            }
-        }
+        int chunkX = chunk.getX();
+        int chunkY = chunk.getY();
         
-        // Spawn block-related entities
-        for(int x = 0; x < chunk.getWidth(); x++) {
-            for(int y = 0; y < chunk.getHeight(); y++) {
-                entityManager.trySpawnBlockEntity(chunk.getX() + x, chunk.getY() + y);
+        for(int x = chunkX; x < chunkX + chunk.getWidth(); x++) {
+            // Update pending sunlight
+            if(pendingSunlight.contains(x)) {
+                recalculateSunlight(x, sunlight[x]);
+                sendMessageToChunk(new LightMessage(x, getSunlight(x, 1)), chunk);
+            }
+            
+            for(int y = chunkY; y < chunkY + chunk.getHeight(); y++) {
+                // Spawn block-related entities
+                entityManager.trySpawnBlockEntity(x, y);
+                
+                // Index liquids
+                Block block = chunk.getBlock(x, y);
+                
+                if(!block.getLiquidItem().isAir() && block.getLiquidMod() > 0) {
+                    liquidManager.indexLiquidBlock(x, y);
+                }
             }
         }
     }
     
-    protected void onChunkUnloaded(Chunk chunk) {
-        // TODO
+    protected void onChunkUnloaded(Chunk chunk) { 
+        // TODO is this function ever gonna be necessary?
+        // It seems that most (if not all) thingies are unindexed automatically.
     }
     
     public void saveChunks() {
