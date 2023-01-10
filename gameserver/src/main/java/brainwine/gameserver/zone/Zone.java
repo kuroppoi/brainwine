@@ -936,6 +936,10 @@ public class Zone {
         return entityManager.getPlayers();
     }
     
+    public int settleLiquids() {
+        return liquidManager.settleLiquids();
+    }
+    
     public boolean areCoordinatesInBounds(int x, int y) {
         return x >= 0 && y >= 0 && x < width && y < height;
     }

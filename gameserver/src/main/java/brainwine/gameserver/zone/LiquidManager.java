@@ -13,6 +13,7 @@ public class LiquidManager {
     
     public static final int LIQUID_UPDATE_INTERVAL = 250;
     public static final int MAX_TRANSFER_DISTANCE = 20;
+    public static final int MAX_SETTLE_UPDATE_COUNT = 10000;
     private final Set<Integer> liquidIndices = new HashSet<>();
     private final Zone zone;
     private long lastLiquidUpdate;
@@ -25,14 +26,18 @@ public class LiquidManager {
         long now = System.currentTimeMillis();
         
         // Check if it's time to update liquids yet
-        if(now < lastLiquidUpdate + LIQUID_UPDATE_INTERVAL) {
-            return;
+        if(now > lastLiquidUpdate + LIQUID_UPDATE_INTERVAL) {
+            updateLiquids();
+            lastLiquidUpdate = now;
         }
-        
+    }
+    
+    private int updateLiquids() {
         // Sort in reverse order so that lower liquid blocks are updated first
         List<Integer> liquidIndicesToUpdate = new ArrayList<>(liquidIndices);
         Collections.sort(liquidIndicesToUpdate, Collections.reverseOrder());
         liquidIndices.clear();
+        int liquidsChanged = 0;
         
         for(int liquidIndex : liquidIndicesToUpdate) {
             int x = liquidIndex % zone.getWidth();
@@ -91,11 +96,16 @@ public class LiquidManager {
             
             // Re-index liquid if there is still any left
             if(newMod > 0) {
-                liquidIndices.add(y * zone.getWidth() + x);
+                indexLiquidBlock(x, y);
+            }
+            
+            // Increase total change count if the liquid mod has changed
+            if(newMod != mod) {
+                liquidsChanged++;
             }
         }
         
-        lastLiquidUpdate = now;
+        return liquidsChanged;
     }
     
     private int transferLiquid(Item item, int mod, int sourceX, int sourceY, int destX, int destY, boolean allowDiagonal) {
@@ -136,6 +146,16 @@ public class LiquidManager {
         }
         
         return mod - transferAmount;
+    }
+    
+    public int settleLiquids() {
+        int updateCount = 1;
+        
+        while(updateLiquids() > 0 && updateCount < MAX_SETTLE_UPDATE_COUNT) {
+            updateCount++;
+        }
+        
+        return updateCount;
     }
     
     public void indexLiquidBlock(int x, int y) {
