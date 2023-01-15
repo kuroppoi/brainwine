@@ -29,6 +29,7 @@ import brainwine.gameserver.command.commands.RegisterCommand;
 import brainwine.gameserver.command.commands.RickrollCommand;
 import brainwine.gameserver.command.commands.SayCommand;
 import brainwine.gameserver.command.commands.SeedCommand;
+import brainwine.gameserver.command.commands.SettleLiquidsCommand;
 import brainwine.gameserver.command.commands.SkillPointsCommand;
 import brainwine.gameserver.command.commands.StopCommand;
 import brainwine.gameserver.command.commands.TeleportCommand;
@@ -79,6 +80,7 @@ public class CommandManager {
         registerCommand(new ExperienceCommand());
         registerCommand(new LevelCommand());
         registerCommand(new SkillPointsCommand());
+        registerCommand(new SettleLiquidsCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {
