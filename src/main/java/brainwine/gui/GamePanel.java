@@ -1,10 +1,12 @@
 package brainwine.gui;
 
-import static brainwine.gui.GuiConstants.COMMUNITY_HUB_URL;
 import static brainwine.gui.GuiConstants.DEEPWORLD_ASSEMBLY_PATH;
 import static brainwine.gui.GuiConstants.DEEPWORLD_PLAYERPREFS;
-import static brainwine.gui.GuiConstants.RUN_GAME_URL;
+import static brainwine.gui.GuiConstants.HTTP_COMMUNITY_HUB_URL;
+import static brainwine.gui.GuiConstants.HTTP_STEAM_DOWNLOAD_URL;
+import static brainwine.gui.GuiConstants.STEAM_COMMUNITY_HUB_URL;
 import static brainwine.gui.GuiConstants.STEAM_REGISTRY_LOCATION;
+import static brainwine.gui.GuiConstants.STEAM_RUN_GAME_URL;
 
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -53,9 +55,13 @@ public class GamePanel extends JPanel {
     }
     
     private void startGame() {
-        // Check if steam is installed
+        // Show option to download Steam if it is not installed
         if(!isSteamInstalled()) {
-            JOptionPane.showMessageDialog(getRootPane(), "Steam is required for this action.", "Attention", JOptionPane.WARNING_MESSAGE);
+            if(JOptionPane.showConfirmDialog(getRootPane(), "You need the Steam desktop application to play Deepworld on Windows.\n"
+                    + "Would you like to go to the download page?", "Attention", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                DesktopUtils.browseUrl(HTTP_STEAM_DOWNLOAD_URL);
+            }
+            
             return;
         }
         
@@ -80,18 +86,18 @@ public class GamePanel extends JPanel {
         }
         
         // Start the game!
-        DesktopUtils.browseUrl(RUN_GAME_URL);
+        DesktopUtils.browseUrl(STEAM_RUN_GAME_URL);
     }
     
     private void openCommunityHub() {
-        // Check if steam is installed
+        // If Steam is not installed, open the community hub in a web browser
         if(!isSteamInstalled()) {
-            JOptionPane.showMessageDialog(getRootPane(), "Steam is required for this action.", "Attention", JOptionPane.WARNING_MESSAGE);
+            DesktopUtils.browseUrl(HTTP_COMMUNITY_HUB_URL);
             return;
         }
         
-        // Open the community hub!
-        DesktopUtils.browseUrl(COMMUNITY_HUB_URL);
+        // Otherwise, open it through Steam!
+        DesktopUtils.browseUrl(STEAM_COMMUNITY_HUB_URL);
     }
     
     private boolean isSteamInstalled() {
