@@ -1,0 +1,45 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "back/wallpaper-1": [
+      "back/wallpaper-1",
+      "back/wallpaper-2",
+      "back/wallpaper-3",
+      "back/wallpaper-4",
+      "back/wallpaper-5",
+      "back/wallpaper-6",
+      "back/wallpaper-7",
+      "back/wallpaper-8",
+      "back/wallpaper-9",
+      "back/wallpaper-10",
+      "back/wallpaper-11",
+      "back/wallpaper-12"
+    ],
+    "back/wallpaper-2": [
+      "back/wallpaper-1",
+      "back/wallpaper-2",
+      "back/wallpaper-3",
+      "back/wallpaper-4",
+      "back/wallpaper-5",
+      "back/wallpaper-6",
+      "back/wallpaper-7",
+      "back/wallpaper-8",
+      "back/wallpaper-9",
+      "back/wallpaper-10",
+      "back/wallpaper-11",
+      "back/wallpaper-12"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {
+    "1117": {
+      "cd": true,
+      "m": "",
+      ">": [[ 24, 12 ]]
+    }
+  }
+}

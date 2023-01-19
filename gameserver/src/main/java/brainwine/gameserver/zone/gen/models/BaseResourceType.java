@@ -1,8 +1,5 @@
 package brainwine.gameserver.zone.gen.models;
 
-/**
- * Couldn't figure out what else to name it tbh.
- */
 public enum BaseResourceType {
     
     CLAY(new ModTileBlock(541, 1, 1), new ModTileBlock(542, 1, 1), new ModTileBlock(543, 1, 1), new ModTileBlock(544, 1, 1), new ModTileBlock(545, 1, 1), new ModTileBlock(546, 1, 2), new ModTileBlock(547, 1, 2), new ModTileBlock(548, 2, 1), new ModTileBlock(549, 2, 1)),

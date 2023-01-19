@@ -1,0 +1,15 @@
+{
+  "dungeon": false,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "back/wood-panel": [
+      "back/wood-panel",
+      "back/wood-panel-decorative"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

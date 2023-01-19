@@ -1,0 +1,15 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+     "building/trapdoor-wood": [
+      "building/trapdoor-wood",
+      "building/trapdoor-brass"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

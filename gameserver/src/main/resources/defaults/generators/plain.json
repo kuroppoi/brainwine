@@ -1,111 +1,258 @@
 {
-  "surface_fillers": [
-    "vegetation/shrub-dead"
-  ],
-  "speleothems": [
-    "ground/stalagmite-1",
-    "ground/stalagmite-2",
-    "ground/stalagmite-3",
-    "ground/stalagmite-4",
-    "ground/stalagmite-5"
-  ],
-  "stone_variants": {
+  "terrain_type": "normal",
+  "min_amplitude": 15,
+  "max_amplitude": 45,
+  "surface_region_size": 50,
+  "dungeon_region": [80, 64],
+  "dungeon_chance": 0.25,
+  "background_accent_chance": 0.033,
+  "background_drawing_chance": 0.001,
+  "stone_types": {
     "default": 17,
     "sandstone": 4,
     "limestone": 2
   },
-  "unique_structures": [
-    "paint_bunker",
-    "head_bunker"
+  "spawn_buildings": [
+    "spawns/plain_1",
+    "spawns/plain_2",
+    "spawns/plain_3",
+    "spawns/plain_4"
   ],
   "dungeons": [
-    "dungeon_large_1",
-    "dungeon_large_2",
-    "dungeon_medium_1",
-    "dungeon_medium_2",
-    "dungeon_medium_3",
-    "dungeon_medium_4",
-    "dungeon_medium_5",
-    "dungeon_medium_6",
-    "dungeon_medium_7",
-    "dungeon_medium_8",
-    "dungeon_medium_9",
-    "dungeon_medium_10",
-    "dungeon_small_1",
-    "dungeon_small_2",
-    "dungeon_small_3",
-    "dungeon_small_4"
+    "dungeons/generic_small_1",
+    "dungeons/generic_small_2",
+    "dungeons/generic_small_3",
+    "dungeons/generic_small_4",
+    "dungeons/generic_small_5",
+    "dungeons/generic_small_6",
+    "dungeons/generic_small_7",
+    "dungeons/generic_small_8",
+    "dungeons/generic_small_9",
+    "dungeons/generic_medium_1",
+    "dungeons/generic_medium_2",
+    "dungeons/generic_medium_3",
+    "dungeons/generic_medium_4",
+    "dungeons/generic_medium_5",
+    "dungeons/generic_medium_6",
+    "dungeons/generic_medium_7",
+    "dungeons/generic_medium_8",
+    "dungeons/generic_medium_9",
+    "dungeons/generic_medium_10",
+    "dungeons/generic_medium_11",
+    "dungeons/generic_large_1",
+    "dungeons/generic_large_2",
+    "dungeons/generic_large_3",
+    "dungeons/generic_large_4",
+    "dungeons/generic_large_5"
   ],
-  "spawn_towers": [
-    "spawn_building_plain_1",
-    "spawn_building_plain_2",
-    "spawn_building_plain_3",
-    "spawn_building_plain_4"
-  ],
-  "base_resources": {
-    "clay": {
-      "per": 1200
+  "special_structures": [
+    {
+      "prefab": "misc/painting_bunker",
+      "blocks_per_spawn": 1200000,
+      "max": 1
     },
-    "logs": {
-      "per": 1600,
+    {
+      "prefab": "misc/head_bunker",
+      "blocks_per_spawn": 1200000,
+      "max": 1
+    },
+    {
+      "prefab": "misc/luxury_bunker",
+      "blocks_per_spawn": 240000,
+      "max": 5
+    }
+  ],
+  "base_resources": [
+    {
+      "type": "clay",
+      "blocks_per_spawn": 1200
+    },
+    {
+      "type": "logs",
+      "blocks_per_spawn": 1600,
       "min_depth": 0.05,
       "max_depth": 0.2
     },
-    "roots": {
-      "per": 1600,
+    {
+      "type": "roots",
+      "blocks_per_spawn": 1600,
       "max_depth": 0.2
     },
-    "rocks": {
-      "per": 300,
+    {
+      "type": "rocks",
+      "blocks_per_spawn": 300,
       "min_depth": 0.1
     }
-  },
-  "ore_deposits": {
-    "ground/iron": {
-      "per": 2400,
+  ],
+  "ore_deposits": [
+    {
+      "item": "ground/iron",
+      "blocks_per_spawn": 2400,
       "min_size": 6,
       "max_size": 13,
       "min_depth": 0.35
     },
-    "ground/copper": {
-      "per": 2700,
+    {
+      "item": "ground/copper",
+      "blocks_per_spawn": 2700,
       "min_size": 6,
       "max_size": 13,
       "min_depth": 0.1,
       "max_depth": 0.5
     },
-    "ground/zinc": {
-      "per": 3600,
+    {
+      "item": "ground/zinc",
+      "blocks_per_spawn": 3600,
       "min_size": 5,
       "max_size": 11,
       "min_depth": 0.4,
       "max_depth": 0.8
     },
-    "ground/quartz": {
-      "per": 3200,
+    {
+      "item": "ground/quartz",
+      "blocks_per_spawn": 3200,
       "min_size": 3,
       "max_size": 9,
       "min_depth": 0.1,
       "max_depth": 0.5
     },
-    "ground/lead": {
-      "per": 2700,
+    {
+      "item": "ground/lead",
+      "blocks_per_spawn": 2700,
       "min_size": 4,
       "max_size": 9,
       "min_depth": 0.2
     },
-    "ground/sulfur": {
-      "per": 3700,
+    {
+      "item": "ground/sulfur",
+      "blocks_per_spawn": 3700,
       "min_size": 5,
       "max_size": 10,
       "min_depth": 0.7
     },
-    "ground/marble": {
-      "per": 13000,
+    {
+      "item": "ground/marble",
+      "blocks_per_spawn": 13000,
       "min_size": 3,
       "max_size": 10,
       "min_depth": 0.6,
       "max_depth": 0.8
+    }
+  ],
+  "global_surface_decorators": [
+    {
+      "type": "item",
+      "item_spawn_chance": 0.2,
+      "items": ["vegetation/shrub-dead"]
+    }
+  ],
+  "global_cave_decorators": [
+    {
+      "type": "item",
+      "floor": true,
+      "ceiling": true,
+      "item_spawn_chance": 0.2,
+      "items": [
+        "ground/stalagmite-1",
+        "ground/stalagmite-2",
+        "ground/stalagmite-3",
+        "ground/stalagmite-4",
+        "ground/stalagmite-5"
+      ]
+    },
+    {
+      "type": "item",
+      "chance": 0.2,
+      "floor": false,
+      "ceiling": true,
+      "corners_only": true,
+      "item_spawn_chance": 0.15,
+      "items": ["ground/cobweb"]
+    },
+    {
+      "type": "item",
+      "chance": 0.1,
+      "item_spawn_chance": 0.33,
+      "items": ["vegetation/mushrooms-tiny"]
+    },
+    {
+      "type": "item",
+      "chance": 0.2,
+      "item_spawn_chance": 0.1,
+      "items": ["ground/terrapus-egg"]
+    }
+  ],
+  "surface_region_types": {
+    "town": {
+      "frequency": 8,
+      "decorators": [
+        {
+          "type": "structure",
+          "max_structures": 4,
+          "structure_spawn_chance": 0.1,
+          "prefabs": [
+            "ruins/plain_surface_building_1",
+            "ruins/plain_surface_building_2",
+            "ruins/plain_surface_building_3",
+            "ruins/plain_surface_building_4",
+            "ruins/plain_surface_building_5",
+            "ruins/plain_surface_building_6",
+            "ruins/plain_surface_building_7",
+            "ruins/plain_surface_building_8",
+            "ruins/plain_surface_building_9",
+            "ruins/plain_surface_building_10"
+          ]
+        },
+        {
+          "type": "rubble",
+          "rubble_types": ["wood", "stone", "metal"]
+        }
+      ]
+    },
+    "forest": {
+      "frequency": 8,
+      "decorators": [
+        {
+          "type": "tree",
+          "tree_spawn_chance": 0.2
+        }
+      ]
+    },
+    "shrubbery": {
+      "frequency": 5,
+      "decorators": [
+        {
+          "type": "item",
+          "item_spawn_chance": 0.2,
+          "items": ["vegetation/shrub-dead"]
+        },
+        {
+          "type": "tree",
+          "tree_spawn_chance": 0.05
+        }
+      ]
+    },
+    "rubble": {
+      "frequency": 3,
+      "decorators": [
+        {
+          "type": "rubble",
+          "rubble_types": ["wood", "stone", "metal"]
+        }
+      ]
+    },
+    "graveyard": {
+      "frequency": 3,
+      "decorators": [
+        {
+          "type": "item",
+          "item_spawn_chance": 0.15,
+          "items": {
+            "rubble/gravestone": 8,
+            "rubble/skeleton": 1
+          }
+        }
+      ]
     }
   },
   "cave_types": {
@@ -158,7 +305,7 @@
           "liquid": true
         },
         {
-          "type": "floor",
+          "type": "item",
           "item_spawn_chance": 0.1,
           "items": {
             "vegetation/mushroom-acid": 16,
@@ -178,7 +325,7 @@
           "liquid": true
         },
         {
-          "type": "floor",
+          "type": "item",
           "item_spawn_chance": 0.1,
           "items": {
             "vegetation/mushroom-lava": 16,
@@ -190,19 +337,19 @@
     "hatchery": {
       "max_size": 300,
       "frequency": 3,
-	  "decorators": [
-	    {
-		  "type": "floor",
-		  "item_spawn_chance": 0.175,
-		  "items": ["ground/terrapus-egg"],
-		  "mods": {
-		    "ground/terrapus-egg": {
-			  "0": 1,
-			  "1": 4
-			}
-		  }
-		}
-	  ]
+      "decorators": [
+        {
+          "type": "item",
+          "item_spawn_chance": 0.175,
+          "items": ["ground/terrapus-egg"],
+          "mods": {
+            "ground/terrapus-egg": {
+              "0": 1,
+              "1": 4
+            }
+          }
+        }
+      ]
     },
     "crystal": {
       "min_size": 30,
@@ -212,7 +359,7 @@
       "frequency": 2,
       "decorators": [
         {
-          "type": "floor",
+          "type": "item",
           "item_spawn_chance": 0.07,
           "items": {
             "ground/crystal-blue-1": 16,
@@ -231,7 +378,7 @@
       "frequency": 1,
       "decorators": [
         {
-          "type": "floor",
+          "type": "item",
           "single_type": true,
           "item_spawn_chance": 0.07,
           "items": {
@@ -251,7 +398,21 @@
       "decorators": [
         {
           "type": "structure",
-          "prefabs": {}
+          "prefabs": {
+            "ruins/generic_stone_1": 128,
+            "ruins/generic_metal_1": 16,
+            "ruins/generic_metal_2": 8,
+            "ruins/generic_metal_3": 8,
+            "ruins/generic_metal_4": 8,
+            "ruins/generic_wood_1": 8,
+            "ruins/generic_wood_2": 8,
+            "ruins/generic_wood_3": 4,
+            "ruins/generic_wood_4": 8,
+            "ruins/generic_wood_5": 8,
+            "ruins/generic_buried_house_1": 4,
+            "ruins/generic_buried_house_2": 4,
+            "ruins/generic_buried_house_3": 4
+          }
         }
       ]
     },
@@ -260,7 +421,7 @@
       "frequency": 5,
       "decorators": [
         {
-          "type": "floor",
+          "type": "item",
           "item_spawn_chance": 0.175,
           "items": ["ground/guano"]
         }
@@ -271,7 +432,7 @@
       "frequency": 4,
       "decorators": [
         {
-          "type": "floor",
+          "type": "item",
           "item_spawn_chance": 0.175,
           "items": ["ground/salt-crystal"]
         }
@@ -285,7 +446,7 @@
       "frequency": 5,
       "decorators": [
         {
-          "type": "floor",
+          "type": "item",
           "item_spawn_chance": 0.175,
           "items": {
             "rubble/gravestone": 4,

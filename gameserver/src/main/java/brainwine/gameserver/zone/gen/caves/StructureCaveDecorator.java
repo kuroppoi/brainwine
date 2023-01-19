@@ -1,23 +1,30 @@
 package brainwine.gameserver.zone.gen.caves;
 
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.prefab.Prefab;
+import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.gen.GeneratorContext;
-import brainwine.gameserver.zone.gen.models.BlockPosition;
 
 public class StructureCaveDecorator extends CaveDecorator {
     
     @JsonProperty("prefabs")
-    private WeightedMap<Prefab> prefabs = new WeightedMap<>();
+    protected WeightedMap<Prefab> prefabs = new WeightedMap<>();
+    
+    @JsonCreator
+    protected StructureCaveDecorator() {}
     
     @Override
     public void decorate(GeneratorContext ctx, Cave cave) {
         if(!prefabs.isEmpty()) {
-            // TODO maybe randomly offset by prefab size
-            BlockPosition position = cave.getBlocks().get(ctx.nextInt(cave.getSize() - 1));
-            ctx.placePrefab(prefabs.next(), position.getX(), position.getY());
+            List<Vector2i> blocks = cave.getBlocks();
+            Vector2i position = blocks.get(ctx.nextInt(blocks.size() - 1));
+            Prefab prefab = prefabs.next(ctx.getRandom());
+            ctx.placePrefab(prefab, position.getX() - prefab.getWidth() / 2, position.getY() - prefab.getHeight() / 2);
         }
     }
 }

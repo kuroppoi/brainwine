@@ -1,0 +1,26 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {},
+  "corresponding_replace": {},
+  "metadata": {
+    "2306": {
+      "cd": true,
+      "m": "",
+      ">": [[ 10, 29 ]]
+    },
+    "416": {
+      "cd": true,
+      "m": "",
+      ">": [[ 36, 30 ]]
+    },
+    "2977": {
+      "cd": true,
+      "m": "",
+      ">": [[ 35, 42 ]]
+    }
+  }
+}

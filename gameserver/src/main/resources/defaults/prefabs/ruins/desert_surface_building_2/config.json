@@ -1,0 +1,37 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "containers/sack-large": [
+      "containers/sack-large",
+      "containers/crate-large"
+    ],
+    "containers/sack-small": [
+      "containers/sack-small",
+      "containers/crate-small",
+      "ammo/bullets",
+      "ammo/gunpowder",
+      "building/pitch"
+    ]
+  },
+  "corresponding_replace": {
+    "building/roof-brown-edge": {
+      "key": "building/roof-brown",
+      "values": {
+        "building/roof-brown": "building/roof-brown-edge",
+        "building/roof-spanish": "building/roof-spanish-edge"
+      }
+    },
+    "building/roof-brown-edge-large": {
+      "key": "building/roof-brown",
+      "values": {
+        "building/roof-brown": "building/roof-brown-edge-large",
+        "building/roof": "building/roof-spanish-edge-large"
+      }
+    }
+  },
+  "metadata": {}
+}

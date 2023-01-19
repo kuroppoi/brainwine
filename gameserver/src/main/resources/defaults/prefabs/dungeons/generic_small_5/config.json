@@ -1,0 +1,38 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "back/brick": [
+      "back/brick",
+      "back/brick-mixed",
+      "back/brick-tan",
+      "back/brick-blue"
+    ],
+    "building/pitch": [
+      "building/pitch",
+      "ammo/gunpowder",
+      "ammo/bullets",
+      "containers/sack-small",
+      "containers/crate-small"
+    ],
+    "containers/crate-small": [
+      "building/pitch",
+      "ammo/gunpowder",
+      "ammo/bullets",
+      "containers/sack-small",
+      "containers/crate-small"
+    ],
+    "ammo/gunpowder": [
+      "building/pitch",
+      "ammo/gunpowder",
+      "ammo/bullets",
+      "containers/sack-small",
+      "containers/crate-small"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

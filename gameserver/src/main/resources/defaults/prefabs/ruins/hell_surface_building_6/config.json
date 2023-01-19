@@ -1,0 +1,15 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "back/glass": [
+      "back/glass",
+      "back/glass-divided"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

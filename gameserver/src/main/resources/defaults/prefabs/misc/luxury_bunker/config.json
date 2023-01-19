@@ -1,0 +1,43 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "furniture/painting-une-pipe": {
+      "furniture/painting-notch": 1,
+      "furniture/painting-outling": 3,
+      "furniture/solar-system-diorama": 3,
+      "furniture/painting-surfer": 8,
+      "furniture/airship-in-bottle": 8,
+      "furniture/painting-mayflower": 10,
+      "furniture/painting-autumn": 10,
+      "furniture/painting-leapquest": 22,
+      "furniture/painting-digdug": 22,
+      "furniture/painting-alpaca": 30,
+      "furniture/globe": 30,
+      "furniture/painting-northerners": 48,
+      "furniture/painting-smasheroid": 48,
+      "furniture/painting-gashlycrumb": 67,
+      "furniture/painting-son-of-man": 104,
+      "furniture/painting-une-pipe": 600,
+      "air": 2028
+    },
+    "furniture/head-deer": {
+      "furniture/head-predator": 1,
+      "furniture/head-tiger": 3,
+      "furniture/head-fish": 10,
+      "furniture/head-cthulhu": 50,
+      "furniture/head-bear": 80,
+      "furniture/head-deer": 80,
+      "air": 448
+    },
+    "back/wood-panel-decorative": [
+      "back/wood-panel",
+      "back/wood-panel-decorative"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

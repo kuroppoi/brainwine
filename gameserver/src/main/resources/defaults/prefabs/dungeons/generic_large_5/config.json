@@ -1,0 +1,89 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "back/brick": [
+      "back/brick",
+      "back/brick-mixed",
+      "back/brick-tan",
+      "back/brick-blue"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {
+    "1888": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          18,
+          34
+        ]
+      ]
+    },
+    "1569": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          29,
+          28
+        ]
+      ]
+    },
+    "1425": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          29,
+          28
+        ]
+      ]
+    },
+    "1426": {
+      "cd": true,
+      "t": "10",
+      "m": "",
+      ">": [
+        [
+          37,
+          7
+        ]
+      ]
+    },
+    "788": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          18,
+          14
+        ]
+      ]
+    },
+    "2085": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          18,
+          34
+        ]
+      ]
+    },
+    "302": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          18,
+          14
+        ]
+      ]
+    }
+  }
+}

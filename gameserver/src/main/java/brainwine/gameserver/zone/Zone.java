@@ -47,6 +47,7 @@ import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.server.models.BlockChangeData;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.SimplexNoise;
 import brainwine.gameserver.util.Vector2i;
 
 public class Zone {
@@ -132,7 +133,7 @@ public class Zone {
         if(time >= 1.0F) {
             time -= 1.0F;
         }
-                
+        
         if(!getPlayers().isEmpty()) {
             if(now >= lastStatusUpdate + 4000) {
                 sendMessage(new ZoneStatusMessage(getStatusConfig()));
@@ -429,6 +430,10 @@ public class Zone {
     }
     
     public void placePrefab(Prefab prefab, int x, int y, Random random) {
+        placePrefab(prefab, x, y, random, random.nextLong()); // Can't get seed from random, so just generate one
+    }
+    
+    public void placePrefab(Prefab prefab, int x, int y, Random random, long seed) {
         int width = prefab.getWidth();
         int height = prefab.getHeight();
         Block[] blocks = prefab.getBlocks();
@@ -457,7 +462,12 @@ public class Zone {
         });
         
         for(int i = 0; i < width; i++) {
-            for(int j = 0; j < height; j++) { 
+            for(int j = 0; j < height; j++) {
+                // Skip ruined bits
+                if(prefab.isRuin() && SimplexNoise.noise2(seed, (x + i) / 8.0, (y + j) / 8.0, 2) > 0.4) {
+                    continue;
+                }
+                
                 int index = j * width + (mirrored ? width - 1 - i : i);
                 Block block = blocks[index];
                 Item baseItem = replacedItems.getOrDefault(block.getBaseItem(), block.getBaseItem());
@@ -559,6 +569,7 @@ public class Zone {
             }
         }
         
+        // Index dungeon if there are any guard blocks present
         if(guardBlocks > 0) {
             dungeons.put(dungeonId, guardBlocks);
         }

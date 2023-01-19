@@ -1,0 +1,36 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": false,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "building/roof-brown": [
+      "building/roof-brown",
+      "building/roof"
+    ],
+    "back/glass": [
+      "back/glass",
+      "back/glass-divided"
+    ],
+    "building/fence-iron-1": [
+      "building/fence-iron-1",
+      "building/fence-iron-2"
+    ],
+    "building/ladder-wood": [
+      "building/ladder-wood",
+      "building/ladder-brass",
+      "building/ladder-rope"
+    ]
+  },
+  "corresponding_replace": {
+    "building/roof-brown-edge": {
+      "key": "building/roof-brown",
+      "values": {
+        "building/roof-brown": "building/roof-brown-edge",
+        "building/roof": "building/roof-edge"
+      }
+    }
+  },
+  "metadata": {}
+}

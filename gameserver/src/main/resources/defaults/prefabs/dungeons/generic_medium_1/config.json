@@ -1,0 +1,16 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {},
+  "corresponding_replace": {},
+  "metadata": {
+    "1017": {
+      "cd": true,
+      "m": "",
+      ">": [[ 11, 8 ]]
+    }
+  }
+}

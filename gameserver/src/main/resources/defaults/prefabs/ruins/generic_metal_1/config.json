@@ -1,0 +1,25 @@
+{
+  "dungeon": false,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "back/wood-panel": [
+      "back/wood-panel",
+      "back/wood-panel-decorative"
+    ],
+    "ammo/bullets": [
+      "ammo/bullets",
+      "ammo/gunpowder",
+      "building/pitch"
+    ],
+    "ammo/gunpowder": [
+      "ammo/bullets",
+      "ammo/gunpowder",
+      "building/pitch"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

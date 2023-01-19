@@ -1,0 +1,32 @@
+{
+  "dungeon": false,
+  "ruin": false,
+  "loot": false,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "back/wallpaper-1": [
+      "back/wallpaper-1",
+      "back/wallpaper-2",
+      "back/wallpaper-3",
+      "back/wallpaper-4",
+      "back/wallpaper-5",
+      "back/wallpaper-6",
+      "back/wallpaper-7",
+      "back/wallpaper-8",
+      "back/wallpaper-9",
+      "back/wallpaper-10",
+      "back/wallpaper-11",
+      "back/wallpaper-12"
+    ],
+    "arctic/ice-sculpture-swan": {
+      "arctic/ice-sculpture-seahorse": 64,
+      "arctic/ice-sculpture-swan": 32,
+      "arctic/ice-sculpture-penguin": 16,
+      "arctic/ice-sculpture-android": 8,
+      "arctic/ice-sculpture-eiffel-tower": 4
+    }
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

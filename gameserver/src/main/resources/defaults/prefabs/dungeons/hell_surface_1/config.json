@@ -1,0 +1,31 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {},
+  "corresponding_replace": {},
+  "metadata": {
+    "147": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          8,
+          12
+        ]
+      ]
+    },
+    "344": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          8,
+          12
+        ]
+      ]
+    }
+  }
+}
