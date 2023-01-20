@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.behavior.SequenceBehavior;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityConfig;
@@ -45,11 +44,13 @@ public class Npc extends Entity {
     private final SequenceBehavior behaviorTree;
     private final Map<DamageType, Float> activeDefenses = new HashMap<>();
     private final Map<Player, Pair<Item, Long>> recentAttacks = new HashMap<>();
+    private final List<Npc> children = new ArrayList<>();
     private float speed;
     private int moveX;
     private int moveY;
     private Vector2i guardBlock;
     private Vector2i mountBlock;
+    private Entity owner;
     private Entity target;
     private long lastBehavedAt = System.currentTimeMillis();
     private long lastTrackedAt = System.currentTimeMillis();
@@ -294,6 +295,22 @@ public class Npc extends Entity {
         return resistances.getOrDefault(type, 0F) - weaknesses.getOrDefault(type, 0F);
     }
     
+    public void addChild(Npc child) {
+        children.add(child);
+    }
+    
+    public void removeChild(Npc child) {
+        children.remove(child);
+    }
+    
+    public int getChildCount() {
+        return children.size();
+    }
+    
+    public Collection<Npc> getChildren() {
+        return Collections.unmodifiableCollection(children);
+    }
+    
     public void setGuardBlock(int x, int y) {
         setGuardBlock(new Vector2i(x, y));
     }
@@ -327,25 +344,19 @@ public class Npc extends Entity {
     }
     
     public boolean isPlayerPlaced() {
-        return getOwner() != null;
+        return owner instanceof Player;
     }
     
-    public boolean isOwnedBy(Player player) {
-        return player == getOwner();
+    public boolean isOwnedBy(Entity entity) {
+        return entity == owner;
     }
     
-    public Player getOwner() {
-        return GameServer.getInstance().getPlayerManager().getPlayerById(getOwnerId());
+    public void setOwner(Entity owner) {
+        this.owner = owner;
     }
     
-    private String getOwnerId() {
-        MetaBlock metaBlock = isMounted() ? zone.getMetaBlock(mountBlock.getX(), mountBlock.getY()) : null;
-        
-        if(metaBlock != null) {
-            return metaBlock.getOwner();
-        }
-        
-        return null;
+    public Entity getOwner() {
+        return owner;
     }
     
     public void setTarget(Entity target) {

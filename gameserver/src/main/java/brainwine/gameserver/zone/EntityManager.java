@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -17,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityRegistry;
@@ -42,7 +44,7 @@ public class EntityManager {
     private static final Logger logger = LogManager.getLogger();
     private static final ThreadLocalRandom random = ThreadLocalRandom.current();
     private static final Map<Biome, List<EntitySpawn>> spawns = new HashMap<>();
-    private final Map<Integer, Entity> entities = new HashMap<>();
+    private final Map<Integer, Entity> entities = new ConcurrentHashMap<>(); // TODO is there a better solution?
     private final Map<Integer, Npc> npcs = new HashMap<>();
     private final Map<Integer, Npc> mountedNpcs = new HashMap<>();
     private final Map<Integer, Player> players = new HashMap<>();
@@ -231,6 +233,13 @@ public class EntityManager {
             
             if(config != null) {
                 Npc entity = new Npc(zone, config);
+                MetaBlock metaBlock = zone.getMetaBlock(x, y);
+                
+                // Set owner entity if it has one
+                if(metaBlock != null && metaBlock.hasOwner()) {
+                    entity.setOwner(GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner()));
+                }
+                
                 entity.setMountBlock(x, y);
                 spawnEntity(entity, x, y);
                 mountedNpcs.put(index, entity);
@@ -289,6 +298,14 @@ public class EntityManager {
             zone.sendMessage(new EntityStatusMessage(entity, EntityStatus.EXITING));
         } else {
             npcs.remove(entityId);
+            
+            // Remove entity from parent's children if it has one
+            Npc npc = (Npc)entity;
+            Entity owner = npc.getOwner();
+            
+            if(owner instanceof Npc) {
+                ((Npc)owner).removeChild(npc);
+            }
         }
     }
     
