@@ -83,9 +83,6 @@ public class CaveGeneratorTask implements GeneratorTask {
             StoneType stoneType = cave.getStoneType();
             int spawnerCount = 0;
             
-            // plain, hell, desert, deep
-            boolean hollow = !asteroids && (terrainType == TerrainType.FILLED || cave.getDepth() >= 0.1) && ctx.nextDouble() <= 0.1;
-            
             for(Vector2i block : cave.getBlocks()) {
                 int x = block.getX();
                 int y = block.getY();
@@ -124,6 +121,8 @@ public class CaveGeneratorTask implements GeneratorTask {
                 }
                 
                 // Hollow out the cave if applicable
+                boolean hollow = !asteroids && (terrainType == TerrainType.FILLED || cave.getDepth() >= 0.1) && ctx.nextDouble() <= 0.1;
+                
                 if(hollow && SimplexNoise.noise2(ctx.getSeed(), x / 20.0, y / 20.0) > 0.4) {
                     ctx.updateBlock(x, y, Layer.BASE, 1);
                 }
