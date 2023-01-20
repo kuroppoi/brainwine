@@ -226,7 +226,7 @@ public class Zone {
     }
     
     public Vector2i raynext(int x1, int y1, int x2, int y2) {
-        List<Vector2i> path = raycast(x1, y1, x2, y2, true, true, true);
+        List<Vector2i> path = raycast(x1, y1, x2, y2, true, false, true);
         
         if(path != null && path.size() > 1) {
             return path.get(1);
