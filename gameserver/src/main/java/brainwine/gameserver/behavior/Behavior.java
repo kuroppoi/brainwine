@@ -13,6 +13,7 @@ import brainwine.gameserver.behavior.composed.FlyerBehavior;
 import brainwine.gameserver.behavior.composed.WalkerBehavior;
 import brainwine.gameserver.behavior.parts.ClimbBehavior;
 import brainwine.gameserver.behavior.parts.DigBehavior;
+import brainwine.gameserver.behavior.parts.EruptionAttackBehavior;
 import brainwine.gameserver.behavior.parts.FallBehavior;
 import brainwine.gameserver.behavior.parts.FlyBehavior;
 import brainwine.gameserver.behavior.parts.FlyTowardBehavior;
@@ -52,6 +53,7 @@ import brainwine.gameserver.entity.npc.Npc;
     @Type(name = "fly_toward", value = FlyTowardBehavior.class),
     @Type(name = "shielder", value = ShielderBehavior.class),
     @Type(name = "spawn_attack", value = SpawnAttackBehavior.class),
+    @Type(name = "eruption_attack", value = EruptionAttackBehavior.class),
     @Type(name = "randomly_target", value = RandomlyTargetBehavior.class),
     @Type(name = "reporter", value = ReporterBehavior.class),
     @Type(name = "unblock", value = UnblockBehavior.class)
