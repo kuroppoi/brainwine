@@ -1,0 +1,53 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {},
+  "corresponding_replace": {},
+  "metadata": {
+    "81": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          6,
+          3
+        ]
+      ]
+    },
+    "57": {
+      "cd": true,
+      "t": "10",
+      "m": "",
+      ">": [
+        [
+          21,
+          4
+        ]
+      ]
+    },
+    "489": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          6,
+          3
+        ]
+      ]
+    },
+    "121": {
+      "cd": true,
+      "t": "10",
+      "m": "",
+      ">": [
+        [
+          21,
+          4
+        ]
+      ]
+    }
+  }
+}

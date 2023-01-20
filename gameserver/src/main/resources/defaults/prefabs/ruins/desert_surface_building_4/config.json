@@ -1,0 +1,19 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": false,
+  "replace": {
+    "back/glass": [
+      "back/glass",
+      "back/glass-divided"
+    ],
+    "building/fence-wood-1": [
+      "building/fence-wood-1",
+      "building/fence-wood-2"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

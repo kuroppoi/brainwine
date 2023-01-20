@@ -1,0 +1,68 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "building/brick-tan": [
+      "building/brick",
+      "building/brick-mixed",
+      "building/brick-blue"
+    ],
+    "building/roof-brown": [
+      "building/roof-brown",
+      "building/roof"
+    ],
+    "back/glass-divided": [
+      "back/glass-divided",
+      "back/glass"
+    ],
+    "building/fence-iron-1": [
+      "building/fence-iron-1",
+      "building/fence-iron-2"
+    ],
+    "building/trapdoor-wood": [
+      "building/trapdoor-wood",
+      "building/trapdoor-brass"
+    ],
+    "building/ladder-wood": [
+      "building/ladder-wood",
+      "building/ladder-brass",
+      "building/ladder-rope"
+    ]
+  },
+  "corresponding_replace": {
+    "back/brick-tan": {
+      "key": "building/brick-tan",
+      "values": {
+        "building/brick-tan": "back/brick-tan",
+        "building/brick": "back/brick",
+        "building/brick-mixed": "back/brick-mixed",
+        "building/brick-blue": "back/brick-blue"
+      }
+    },
+    "building/roof-brown-edge": {
+      "key": "building/roof-brown",
+      "values": {
+        "building/roof-brown": "building/roof-brown-edge",
+        "building/roof": "building/roof-edge"
+      }
+    },
+    "building/roof-brown-edge-large": {
+      "key": "building/roof-brown",
+      "values": {
+        "building/roof-brown": "building/roof-brown-edge-large",
+        "building/roof": "building/roof-edge-large"
+      }
+    },
+    "building/fence-iron-tall-1": {
+      "key": "building/fence-iron-1",
+      "values": {
+        "building/fence-iron-1": "building/fence-iron-tall-1",
+        "building/fence-iron-2": "building/fence-iron-tall-2"
+      }
+    }
+  },
+  "metadata": {}
+}

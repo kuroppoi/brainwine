@@ -1,0 +1,20 @@
+{
+  "dungeon": false,
+  "ruin": false,
+  "loot": false,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "building/fence-iron-2": [
+      "building/fence-iron-1",
+      "building/fence-iron-2"
+    ],
+    "building/ladder-wood": [
+      "building/ladder-wood",
+      "building/ladder-brass",
+      "building/ladder-rope"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

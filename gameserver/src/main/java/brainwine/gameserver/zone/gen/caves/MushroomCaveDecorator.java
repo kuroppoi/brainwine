@@ -1,73 +1,70 @@
 package brainwine.gameserver.zone.gen.caves;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.gen.GeneratorContext;
-import brainwine.gameserver.zone.gen.models.BlockPosition;
 
 public class MushroomCaveDecorator extends CaveDecorator {
     
     @JsonProperty("mushrooms")
-    private final WeightedMap<MushroomType> mushrooms = new WeightedMap<>();
+    protected final WeightedMap<MushroomType> mushrooms = new WeightedMap<>();
     
     @JsonProperty("mushroom_spawn_chance")
-    private double spawnChance = 0.2;
+    protected double spawnChance = 0.33;
     
     @JsonProperty("elder_spawn_chance")
-    private double elderSpawnChance = 0.05;
+    protected double elderSpawnChance = 0.05;
+    
+    @JsonCreator
+    protected MushroomCaveDecorator() {}
     
     @Override
     public void decorate(GeneratorContext ctx, Cave cave) {
-        if(!mushrooms.isEmpty()) {
-            MushroomType mushroom = mushrooms.next(ctx.getRandom());
+        // Return if there are no mushrooms to generate
+        if(mushrooms.isEmpty()) {
+            return;
+        }
+        
+        // Get random mushroom type
+        MushroomType mushroom = mushrooms.next(ctx.getRandom());
+        
+        for(Vector2i block : cave.getFloorBlocks()) {
+            // Skip if the spawn try fails
+            if(ctx.nextDouble() > spawnChance) {
+                continue;
+            }
             
-            for(BlockPosition block : cave.getFloorBlocks()) {
-                if(ctx.nextDouble() <= spawnChance) {
-                    int x = block.getX();
-                    int y = block.getY();
-                    int item = mushroom.getItem();
-                    
-                    if(mushroom.hasStalk()) {
-                        growMushroom(ctx, x, y, item, mushroom.getStalk(), mushroom.getMaxHeight());
-                    } else if(mushroom.hasElder() && ctx.nextDouble() <= elderSpawnChance){
-                        ctx.updateBlock(x, y, Layer.FRONT, mushroom.getElder());
-                    } else {
-                        ctx.updateBlock(x, y, Layer.FRONT, item);
-                    }
-                }
+            int x = block.getX();
+            int y = block.getY();
+            
+            // If the mushroom has a stalk, try to grow it instead of just placing it
+            // Otherwise, check if it has an elder variant and try to spawn that instead
+            // Lastly, just place the mushroom if everything else failed
+            if(mushroom.hasStalk()) {
+                growMushroom(ctx, x, y, mushroom);
+            } else if(mushroom.hasElder() && ctx.nextDouble() <= elderSpawnChance){
+                ctx.updateBlock(x, y, Layer.FRONT, mushroom.getElder());
+            } else {
+                ctx.updateBlock(x, y, Layer.FRONT, mushroom.getItem());
             }
         }
     }
     
-    private void growMushroom(GeneratorContext ctx, int x, int y, int item, int stalk, int maxHeight) {
-        int space = 0;
+    protected void growMushroom(GeneratorContext ctx, int x, int y, MushroomType mushroom) {
+        int currentHeight = 0;
         
-        for(int i = y; i > y - maxHeight; i--) {
-            if(ctx.inBounds(x, i)) {
-                if(!ctx.getZone().getBlock(x, i).getFrontItem().isAir()) {
-                    break;
-                }
-                
-                space++;
-            }
+        // While we haven't reached the maximum height, there is space and it succeeds to grow
+        while(currentHeight < mushroom.getMaxHeight() && !ctx.isOccupied(x, y - currentHeight, Layer.FRONT)
+                && ctx.nextDouble() < 0.25) {
+            // Place the stalk!
+            ctx.updateBlock(x, y - currentHeight++, Layer.FRONT, mushroom.getStalk());
         }
         
-        int height = 1;
-        double growChance = 0.5;
-        
-        for(int i = 0; i < space; i++) {
-            if(ctx.nextDouble() <= growChance) {
-                height++;
-                growChance *= 0.5;
-            } else {
-                break;
-            }
-        }
-        
-        for(int i = y; i > y - height; i--) {
-            ctx.updateBlock(x, i, Layer.FRONT, i - 1 == y - height ? item : stalk);
-        }
+        // Finally place the mushroom cap!
+        ctx.updateBlock(x, y - currentHeight, Layer.FRONT, mushroom.getItem());
     }
 }

@@ -1,0 +1,23 @@
+{
+  "dungeon": false,
+  "ruin": false,
+  "loot": false,
+  "decay": true,
+  "mirrorable": false,
+  "replace": {
+    "building/roof-brown": [
+      "building/roof-brown",
+      "building/roof-spanish"
+    ]
+  },
+  "corresponding_replace": {
+    "building/roof-brown-edge": {
+      "key": "building/roof-brown",
+      "values": {
+        "building/roof-brown": "building/roof-brown-edge",
+        "building/roof-spanish": "building/roof-spanish-edge"
+      }
+    }
+  },
+  "metadata": {}
+}

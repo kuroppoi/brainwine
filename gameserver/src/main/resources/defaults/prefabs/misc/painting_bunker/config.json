@@ -1,0 +1,35 @@
+{
+  "dungeon": false,
+  "ruin": false,
+  "loot": false,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "furniture/painting-une-pipe": {
+      "furniture/painting-notch": 1,
+      "furniture/painting-outling": 3,
+      "furniture/solar-system-diorama": 3,
+      "furniture/painting-surfer": 8,
+      "furniture/airship-in-bottle": 8,
+      "furniture/painting-mayflower": 10,
+      "furniture/painting-autumn": 10,
+      "furniture/painting-leapquest": 22,
+      "furniture/painting-digdug": 22,
+      "furniture/painting-alpaca": 30,
+      "furniture/globe": 30,
+      "furniture/painting-northerners": 48,
+      "furniture/painting-smasheroid": 48,
+      "furniture/painting-gashlycrumb": 67,
+      "furniture/painting-son-of-man": 104,
+      "furniture/painting-une-pipe": 600
+    }
+  },
+  "corresponding_replace": {},
+  "metadata": {
+    "84": {
+      "cd": true,
+      "m": "",
+      ">": [[ 14, 5 ]]
+    }
+  }
+}

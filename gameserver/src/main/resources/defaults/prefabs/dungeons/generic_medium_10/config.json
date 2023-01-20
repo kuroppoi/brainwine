@@ -1,0 +1,22 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {},
+  "corresponding_replace": {},
+  "metadata": {
+    "909": {
+      "cd": true,
+      "m": "",
+      ">": [[ 21, 28 ]]
+    },
+    "425": {
+      "cd": true,
+      "t": "10",
+      "m": "",
+      ">": [[ 3, 22 ]]
+    }
+  }
+}

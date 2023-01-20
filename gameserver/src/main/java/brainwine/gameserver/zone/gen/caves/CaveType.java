@@ -3,6 +3,7 @@ package brainwine.gameserver.zone.gen.caves;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -26,6 +27,9 @@ public class CaveType {
     
     @JsonProperty("decorators")
     private List<CaveDecorator> decorators = new ArrayList<>();
+    
+    @JsonCreator
+    private CaveType() {}
     
     public int getMinSize() {
         return minSize;

@@ -14,6 +14,11 @@ import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.util.ResourceUtils;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.gen.tasks.CaveGeneratorTask;
+import brainwine.gameserver.zone.gen.tasks.DecorGeneratorTask;
+import brainwine.gameserver.zone.gen.tasks.GeneratorTask;
+import brainwine.gameserver.zone.gen.tasks.StructureGeneratorTask;
+import brainwine.gameserver.zone.gen.tasks.TerrainGeneratorTask;
 import brainwine.shared.JsonHelper;
 
 public class ZoneGenerator {
@@ -60,10 +65,10 @@ public class ZoneGenerator {
     }
     
     public ZoneGenerator(GeneratorConfig config) {
-        terrainGenerator = new TerrainGenerator(config);
-        caveGenerator = new CaveGenerator(config);
-        decorGenerator = new DecorGenerator(config);
-        structureGenerator = new StructureGenerator(config);
+        terrainGenerator = new TerrainGeneratorTask(config);
+        caveGenerator = new CaveGeneratorTask(config);
+        decorGenerator = new DecorGeneratorTask(config);
+        structureGenerator = new StructureGeneratorTask(config);
     }
     
     public static void init() {

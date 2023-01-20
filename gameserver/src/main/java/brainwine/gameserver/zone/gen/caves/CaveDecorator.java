@@ -12,7 +12,7 @@ import brainwine.gameserver.zone.gen.GeneratorContext;
 
 @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")
 @JsonSubTypes({
-    @Type(name = "floor", value = FloorCaveDecorator.class),
+    @Type(name = "item", value = ItemCaveDecorator.class),
     @Type(name = "mushroom", value = MushroomCaveDecorator.class),
     @Type(name = "fill", value = FillCaveDecorator.class),
     @Type(name = "structure", value = StructureCaveDecorator.class),

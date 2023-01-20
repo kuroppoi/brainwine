@@ -1,0 +1,33 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "containers/sack-large": [
+      "containers/sack-large",
+      "containers/crate-large",
+      "containers/crate-industrial-large"
+    ],
+    "containers/crate-large": [
+      "containers/sack-large",
+      "containers/crate-large",
+      "containers/crate-industrial-large"
+    ],
+    "containers/crate-small": [
+      "containers/crate-small",
+      "containers/sack-small",
+      "ammo/bullets",
+      "ammo/gunpowder"
+    ],
+    "containers/sack-small": [
+      "containers/crate-small",
+      "containers/sack-small",
+      "ammo/bullets",
+      "ammo/gunpowder"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

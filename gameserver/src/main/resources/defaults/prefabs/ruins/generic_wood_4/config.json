@@ -1,0 +1,26 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "containers/crate-small": [
+      "containers/crate-small",
+      "containers/sack-small",
+      "building/pitch",
+      "ammo/bullets",
+      "ammo/gunpowder"
+    ],
+    "building/ladder-wood": [
+      "building/ladder-wood",
+      "building/ladder-brass"
+    ],
+    "back/wood-panel": [
+      "back/wood-panel",
+      "back/wood-panel-decorative"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

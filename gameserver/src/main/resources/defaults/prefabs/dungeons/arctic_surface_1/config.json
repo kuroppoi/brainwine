@@ -1,0 +1,20 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "ammo/gunpowder": [
+      "ammo/gunpowder",
+      "ammo/bullets"
+    ],
+    "building/ladder-wood": [
+      "building/ladder-wood",
+      "building/ladder-brass",
+      "building/ladder-rope"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

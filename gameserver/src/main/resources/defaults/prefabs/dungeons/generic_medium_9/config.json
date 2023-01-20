@@ -1,0 +1,59 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "back/wallpaper-1": [
+      "back/wallpaper-1",
+      "back/wallpaper-2",
+      "back/wallpaper-3",
+      "back/wallpaper-4",
+      "back/wallpaper-5",
+      "back/wallpaper-6",
+      "back/wallpaper-7",
+      "back/wallpaper-8",
+      "back/wallpaper-9",
+      "back/wallpaper-10",
+      "back/wallpaper-11",
+      "back/wallpaper-12"
+    ],
+    "back/wallpaper-2": [
+      "back/wallpaper-1",
+      "back/wallpaper-2",
+      "back/wallpaper-3",
+      "back/wallpaper-4",
+      "back/wallpaper-5",
+      "back/wallpaper-6",
+      "back/wallpaper-7",
+      "back/wallpaper-8",
+      "back/wallpaper-9",
+      "back/wallpaper-10",
+      "back/wallpaper-11",
+      "back/wallpaper-12"
+    ],
+    "back/brick-mixed": [
+      "back/brick-mixed",
+      "back/brick",
+      "back/brick-tan",
+      "back/brick-blue"
+    ],
+    "ammo/bullets": [
+      "ammo/bullets",
+      "containers/crate-small"
+    ],
+    "containers/sack-small": [
+      "containers/sack-small",
+      "building/pitch"
+    ]
+  },
+  "corresponding_replace": {},
+  "metadata": {
+    "886": {
+      "cd": true,
+      "m": "",
+      ">": [[ 23, 7 ]]
+    }
+  }
+}
