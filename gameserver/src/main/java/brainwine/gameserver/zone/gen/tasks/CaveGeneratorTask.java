@@ -80,6 +80,7 @@ public class CaveGeneratorTask implements GeneratorTask {
         
         for(Cave cave : caves) {
             ctx.addCave(cave);
+            boolean hollow = !asteroids && (terrainType == TerrainType.FILLED || cave.getDepth() >= 0.1) && ctx.nextDouble() <= 0.1;
             StoneType stoneType = cave.getStoneType();
             int spawnerCount = 0;
             
@@ -121,8 +122,6 @@ public class CaveGeneratorTask implements GeneratorTask {
                 }
                 
                 // Hollow out the cave if applicable
-                boolean hollow = !asteroids && (terrainType == TerrainType.FILLED || cave.getDepth() >= 0.1) && ctx.nextDouble() <= 0.1;
-                
                 if(hollow && SimplexNoise.noise2(ctx.getSeed(), x / 20.0, y / 20.0) > 0.4) {
                     ctx.updateBlock(x, y, Layer.BASE, 1);
                 }
