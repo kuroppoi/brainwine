@@ -2,7 +2,7 @@ package brainwine.gameserver.util;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -15,7 +15,7 @@ import io.netty.util.internal.ThreadLocalRandom;
 
 public class WeightedMap<T> {
     
-    private final Map<T, Double> entries = new HashMap<>();
+    private final Map<T, Double> entries = new LinkedHashMap<>();
     private double totalWeight;
     
     public WeightedMap() {}
