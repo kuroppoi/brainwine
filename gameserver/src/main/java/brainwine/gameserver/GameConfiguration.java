@@ -61,7 +61,7 @@ public class GameConfiguration {
             Map<String, Object> config = MapHelper.copy(baseConfig);
             
             configUpdates.forEach((version2, update) -> {
-                if(VersionUtils.isGreaterOrEqualTo(version2, version2)) {
+                if(VersionUtils.isGreaterOrEqualTo(version, version2)) {
                     merge(config, update);
                 }
             });
@@ -223,14 +223,17 @@ public class GameConfiguration {
     }
     
     public static Map<String, Object> getClientConfig(Player player) {
-        Map<String, Object> config = baseConfig;
+        Entry<String, Map<String, Object>> current = null;
         
         for(Entry<String, Map<String, Object>> entry : versionedConfigs.entrySet()) {
-            if(VersionUtils.isGreaterOrEqualTo(player.getClientVersion(), entry.getKey())) {
-                config = entry.getValue();
+            String version = entry.getKey();
+            
+            if((current == null || VersionUtils.isGreaterThan(version, current.getKey())) 
+                    && VersionUtils.isGreaterOrEqualTo(player.getClientVersion(), version)) {
+                current = entry;
             }
         }
         
-        return config;
+        return current == null ? baseConfig : current.getValue();
     }
 }
