@@ -67,7 +67,7 @@ public class StructureGeneratorTask implements GeneratorTask {
             
             for(int i = 0; i < structureCount; i++) {
                 int x = ctx.nextInt(width);
-                int minY = ctx.getZone().getSurface()[x];
+                int minY = ctx.getSurface(x);
                 int y = ctx.nextInt(height - minY) + minY;
                 ctx.placePrefab(structure.getPrefab(), x, y);
             }
@@ -131,11 +131,11 @@ public class StructureGeneratorTask implements GeneratorTask {
         }
         
         // Populate world with broken teleporters (TODO: world machines and component chests)
-        // Eligible containers are containers that are below surface and are either a mech chest (824) or a non-dungeon red chest (801)
+        // Eligible containers are containers that are below surface and are either a mech chest or a non-dungeon red chest
         List<MetaBlock> replaceableContainers = ctx.getZone().getMetaBlocks(metaBlock
-                -> metaBlock.getY() > ctx.getZone().getSurface()[metaBlock.getX()]
-                && (metaBlock.getItem().getId() == 824 
-                || (metaBlock.getItem().getId() == 801 && !metaBlock.getMetadata().containsKey("@"))));
+                -> ctx.isUnderground(metaBlock.getX(), metaBlock.getY())
+                && (metaBlock.getItem().hasId("containers/chest-mechanical-large") 
+                || (metaBlock.getItem().hasId("containers/chest") && !metaBlock.getMetadata().containsKey("@"))));
         Collections.shuffle(replaceableContainers, ctx.getRandom());
         int brokenTeleporterCount = Math.min(replaceableContainers.size(), Math.max(1, width * height / (ctx.nextInt(80000) + 120000)));
         
@@ -143,8 +143,8 @@ public class StructureGeneratorTask implements GeneratorTask {
             MetaBlock container = replaceableContainers.remove(0);
             int x = container.getX();
             int y = container.getY();
-            ctx.updateBlock(x, y, Layer.FRONT, 890);
-            ctx.getZone().setMetaBlock(x, y, 0);
+            ctx.updateBlock(x, y, Layer.FRONT, "mechanical/teleporter");
+            ctx.getZone().removeMetaBlock(x, y); // Broken teleporters should have no metadata
         }
     }
     

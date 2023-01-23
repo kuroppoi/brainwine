@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.SimplexNoise;
@@ -88,7 +89,7 @@ public class CaveGeneratorTask implements GeneratorTask {
                 int x = block.getX();
                 int y = block.getY();
                 
-                if(y - 1 <= ctx.getZone().getSurface()[x]) {
+                if(y - 1 <= ctx.getSurface(x)) {
                     ctx.updateBlock(x, y - 1, Layer.FRONT, 0);
                     cave.removeCeilingBlock(block);
                 }
@@ -123,7 +124,7 @@ public class CaveGeneratorTask implements GeneratorTask {
                 
                 // Hollow out the cave if applicable
                 if(hollow && SimplexNoise.noise2(ctx.getSeed(), x / 20.0, y / 20.0) > 0.4) {
-                    ctx.updateBlock(x, y, Layer.BASE, 1);
+                    ctx.updateBlock(x, y, Layer.BASE, "base/empty");
                 }
                 
                 // Try to generate an entity spawner (maw or pipe)
@@ -134,11 +135,12 @@ public class CaveGeneratorTask implements GeneratorTask {
                     for(int i = x - 2; i <= x + 2; i++) {
                         for(int j = y - 2; j <= y + 2; j++) {
                             if(ctx.inBounds(i, j)) {
-                                int baseItem = ctx.getZone().getBlock(i, j).getBaseItem().getId();
+                                Item baseItem = ctx.getBlock(i, j).getBaseItem();
                                 double distance = Math.hypot(i - x, j - y);
                                 
                                 // Prevent spawners from generating near each other
-                                if((!cells[i][j] || baseItem == 1 || baseItem == 5 || baseItem == 6) && distance < 2.5) {
+                                if((!cells[i][j] || baseItem.hasId("base/empty") || baseItem.hasId("base/maw") || baseItem.hasId("base/pipe")) 
+                                        && distance < 2.5) {
                                     spawnerEligible = false;
                                 }
                             }
@@ -147,11 +149,11 @@ public class CaveGeneratorTask implements GeneratorTask {
                 }
                 
                 if(spawnerEligible) {
-                    int type = ctx.nextDouble() < 0.2 ? 6 : 5;
+                    String spawner = ctx.nextDouble() < 0.2 ? "base/pipe" : "base/maw";
                     
-                    // Only pipes can spawn in sandstone/limestone
-                    if(type == 6 || ctx.getZone().getBlock(x, y).getBaseItem().getId() == 2) {
-                        ctx.updateBlock(x, y, Layer.BASE, type);
+                    // Pipes will always generate, but maws can only generate in regular earth
+                    if(spawner.equals("base/pipe") || ctx.getBlock(x, y).getBaseItem().hasId("base/earth")) {
+                        ctx.updateBlock(x, y, Layer.BASE, spawner);
                         spawnerCount++;
                     }
                 }
@@ -167,7 +169,7 @@ public class CaveGeneratorTask implements GeneratorTask {
         
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
-                if((y >= ctx.getZone().getSurface()[x] + ctx.nextInt(3)) && ctx.nextDouble() <= cellRate) {
+                if((y >= ctx.getSurface(x) + ctx.nextInt(3)) && ctx.nextDouble() <= cellRate) {
                     cells[x][y] = true;
                 }
             }
@@ -262,7 +264,7 @@ public class CaveGeneratorTask implements GeneratorTask {
         int size = blocks.size();
         
         if(size > 20 && size < 800) {
-            int surface = ctx.getZone().getSurface()[x];
+            int surface = ctx.getSurface(x);
             double depth = (double)(y - surface) / (ctx.getHeight() - surface);
             Cave cave = new Cave(getRandomEligibleCaveType(ctx, size, depth), 
                     stoneVariants.next(ctx.getRandom(), StoneType.DEFAULT), depth);

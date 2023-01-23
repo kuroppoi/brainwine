@@ -19,7 +19,6 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.InjectableValues;
 
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.player.Player;
@@ -99,20 +98,20 @@ public class GameConfiguration {
         
         if(items != null) {
             List<String> ignoredItems = new ArrayList<>();
-            items.forEach((name, v) -> {
+            items.forEach((id, v) -> {
                 Map<String, Object> config = (Map<String, Object>)v;
                 
                 if(!config.containsKey("code")) {
-                    ignoredItems.add(name);
+                    ignoredItems.add(id);
                     return;
                 }
                 
-                String category = name.contains("/") ? name.substring(0, name.indexOf('/')) : "";
+                String category = id.contains("/") ? id.substring(0, id.indexOf('/')) : "";
                 config.putIfAbsent("category", category);
-                config.put("id", name);
+                config.put("id", id);
                 config.putIfAbsent("title", WordUtils.capitalize(
-                        (name.contains("/") ? name.substring(name.lastIndexOf('/') + 1) : name).replace("-", " ")));
-                config.putIfAbsent("inventory_position", inventoryPositions.getOrDefault(name, new int[]{16, 0}));
+                        (id.contains("/") ? id.substring(id.lastIndexOf('/') + 1) : id).replace("-", " ")));
+                config.putIfAbsent("inventory_position", inventoryPositions.getOrDefault(id, new int[]{16, 0}));
                 config.putIfAbsent("block_size", new int[]{1, 1});
                 config.putIfAbsent("size", new int[]{1, 1});
                 
@@ -122,7 +121,7 @@ public class GameConfiguration {
                     
                     // Move change definitions to item root, but *only* for V3 clients
                     if(useConfig.containsKey("change")) {
-                        MapHelper.put(configV3, String.format("items.%s.change", name), Arrays.asList(useConfig.get("change")));
+                        MapHelper.put(configV3, String.format("items.%s.change", id), Arrays.asList(useConfig.get("change")));
                     }
                 }
                 
@@ -156,10 +155,10 @@ public class GameConfiguration {
                 
                 // Register item
                 try {
-                    Item item = JsonHelper.readValue(config, Item.class, new InjectableValues.Std().addValue("name", name));
+                    Item item = JsonHelper.readValue(config, Item.class);
                     ItemRegistry.registerItem(item);
                 } catch (JsonProcessingException e) {
-                    logger.fatal("Failed to register item {}", name, e);
+                    logger.fatal("Failed to register item {}", id, e);
                     System.exit(0);
                 }
             });

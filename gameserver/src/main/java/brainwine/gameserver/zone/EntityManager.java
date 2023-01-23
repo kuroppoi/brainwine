@@ -79,7 +79,7 @@ public class EntityManager {
                 .flatMap(Collection::stream)
                 .filter(spawn -> locale.equalsIgnoreCase(spawn.getLocale())
                         && depth >= spawn.getMinDepth() && depth <= spawn.getMaxDepth()
-                        && ((baseItem.getId() != 5 && baseItem.getId() != 6) || spawn.getOrifice() == baseItem))
+                        && ((!baseItem.hasId("base/maw") && !baseItem.hasId("base/pipe")) || spawn.getOrifice() == baseItem))
                 .collect(Collectors.toList());
     }
     
@@ -118,9 +118,9 @@ public class EntityManager {
             for(int x = chunk.getX(); x < chunk.getX() +  chunk.getWidth(); x++) {
                 for(int y = chunk.getY(); y < chunk.getY() + chunk.getHeight(); y++) {
                     Block block = chunk.getBlock(x, y);
-                    int base = block.getBaseItem().getId();
+                    Item baseItem = block.getBaseItem();
                     
-                    if((immediate && base == 5 || base == 6) || 
+                    if((immediate && baseItem.hasId("base/maw") || baseItem.hasId("base/pipe")) || 
                             (!immediate && block.getBackItem().isAir() && block.getFrontItem().isAir())) {
                         eligiblePositions.add(new Vector2i(x, y));
                     }
@@ -229,7 +229,7 @@ public class EntityManager {
         
         // Check for mounted entity (turrets & geysers)
         if(item.isEntity()) {
-            EntityConfig config = EntityRegistry.getEntityConfig(item.getName());
+            EntityConfig config = EntityRegistry.getEntityConfig(item.getId());
             
             if(config != null) {
                 Npc entity = new Npc(zone, config);

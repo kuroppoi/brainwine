@@ -90,7 +90,7 @@ public class MetaBlock {
     @JsonIgnore
     public Map<String, Object> getClientMetadata() {
         Map<String, Object> clientMetadata = new HashMap<>(metadata); // Shallow copy
-        clientMetadata.put("i", item.getId());
+        clientMetadata.put("i", item.getCode());
         
         if(hasOwner()) {
             clientMetadata.put("p", owner);

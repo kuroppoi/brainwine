@@ -22,8 +22,8 @@ import brainwine.gameserver.zone.gen.surface.SurfaceRegion;
 
 public class DecorGeneratorTask implements GeneratorTask {
     
+    private static final String[] drawings = {"base/drawing-modern", "base/drawing-historical", "base/drawing-danger"};
     private final TerrainType terrainType;
-    private final int[] drawingItemIds = { 12, 13, 14 };
     private final double backgroundAccentChance;
     private final double backgroundDrawingChance;
     private final BaseResource[] baseResources;
@@ -51,7 +51,7 @@ public class DecorGeneratorTask implements GeneratorTask {
         
         for(int i = 0; i < steamVentCount; i++) {
             int x = ctx.nextInt(ctx.getWidth());
-            int surface = ctx.getZone().getSurface()[x];
+            int surface = ctx.getSurface(x);
             int minDepth = surface + (int)(surface * 0.15);
             int startX  = ctx.nextInt(ctx.getWidth());
             int startY = ctx.nextInt(ctx.getHeight() - minDepth + 1) + minDepth;
@@ -61,13 +61,13 @@ public class DecorGeneratorTask implements GeneratorTask {
         // Generate background accents and drawings
         for(int x = 0; x < ctx.getWidth(); x++) {
             for(int y = 0; y < ctx.getHeight(); y++) {
-                if(ctx.getZone().getBlock(x, y).getBaseItem().getId() == 2) {
+                if(ctx.getBlock(x, y).getBaseItem().hasId("base/earth")) {
                     if(ctx.nextDouble() <= backgroundDrawingChance) {
-                        ctx.updateBlock(x, y, Layer.BASE, drawingItemIds[ctx.nextInt(drawingItemIds.length)]);
+                        ctx.updateBlock(x, y, Layer.BASE, drawings[ctx.nextInt(drawings.length)]);
                     }
                     
                     if(ctx.nextDouble() <= backgroundAccentChance) {
-                        ctx.updateBlock(x, y, Layer.BASE, 15);
+                        ctx.updateBlock(x, y, Layer.BASE, "base/earth-accent");
                     }
                 }
             }
@@ -138,7 +138,7 @@ public class DecorGeneratorTask implements GeneratorTask {
                 break;
             }
             
-            int surface = ctx.getZone().getSurface()[x];
+            int surface = ctx.getSurface(x);
             double depth = (double)(y - surface) / (ctx.getHeight() - surface);
             
             // Break loop if not deep enough below surface
@@ -164,25 +164,25 @@ public class DecorGeneratorTask implements GeneratorTask {
             Vector2i position = path.get(i);
             int x = position.getX();
             int y = position.getY();
-            int baseItem = ctx.getZone().getBlock(x, y).getBaseItem().getId();
+            Item baseItem = ctx.getBlock(x, y).getBaseItem();
             
             // Place vent caps at places where placement is interrupted
-            if(baseItem <= 1 || baseItem == 3 || baseItem == 4) {
+            if(baseItem.isAir() || baseItem.hasId("base/empty") || baseItem.hasId("base/sandstone") || baseItem.hasId("base/limestone")) {
                 if(!interrupted) {
                     if(i > 0) {
                         Vector2i previousPosition = path.get(i - 1);
                         int previousX = previousPosition.getX();
                         int previousY = previousPosition.getY();
-                        ctx.updateBlock(previousX, previousY, Layer.BASE, 11);
+                        ctx.updateBlock(previousX, previousY, Layer.BASE, "base/vent-cap");
                     }
                     
                     interrupted = true;
                 }
             } else if(interrupted) {
-                ctx.updateBlock(x, y, Layer.BASE, 11);
+                ctx.updateBlock(x, y, Layer.BASE, "base/vent-cap");
                 interrupted = false;
             } else {
-                ctx.updateBlock(x, y, Layer.BASE, i == 0 || i + 1 == size ? 11 : 10);
+                ctx.updateBlock(x, y, Layer.BASE, i == 0 || i + 1 == size ? "base/vent-cap" : "base/vent");
             }
         }
     }
@@ -219,8 +219,8 @@ public class DecorGeneratorTask implements GeneratorTask {
             return false;
         }
         
-        int baseItem = ctx.getZone().getBlock(x, y).getBaseItem().getId();
-        return baseItem == 10 || baseItem == 11;
+        Item baseItem = ctx.getBlock(x, y).getBaseItem();
+        return baseItem.hasId("base/vent") || baseItem.hasId("base/vent-cap");
     }
     
     private List<Vector2i> randomWalk(GeneratorContext ctx, int x, int y, int maxWalks) {
@@ -265,24 +265,26 @@ public class DecorGeneratorTask implements GeneratorTask {
     private void generateBaseResources(GeneratorContext ctx, BaseResource resource) {
         ModTileBlock[] blocks = resource.getType().getBlocks();
         
-        if(blocks.length > 0) {
-            int width = ctx.getWidth();
-            int height = ctx.getHeight();
-            float amount = width * height / (float)resource.getBlocksPerSpawn();
-            int resourceCount = (int)amount;
-            
-            if(ctx.nextDouble() < (amount - resourceCount)) {
-                resourceCount++;
-            }
-            
-            for(int i = 0; i < resourceCount; i++) {
-                int x = ctx.nextInt(width);
-                int surface = ctx.getZone().getSurface()[x];
-                int minY = (int)(resource.getMinDepth() * (height - surface)) + surface;
-                int maxY = (int)(resource.getMaxDepth() * (height - surface)) + surface;
-                int y = ctx.nextInt(maxY - minY + 1) + minY;
-                placeModTileBlock(ctx, x, y, blocks[ctx.nextInt(blocks.length)]);
-            }
+        if(blocks.length == 0) {
+            return;
+        }
+        
+        int width = ctx.getWidth();
+        int height = ctx.getHeight();
+        float amount = width * height / (float)resource.getBlocksPerSpawn();
+        int resourceCount = (int)amount;
+        
+        if(ctx.nextDouble() < (amount - resourceCount)) {
+            resourceCount++;
+        }
+        
+        for(int i = 0; i < resourceCount; i++) {
+            int x = ctx.nextInt(width);
+            int surface = ctx.getSurface(x);
+            int minY = (int)(resource.getMinDepth() * (height - surface)) + surface;
+            int maxY = (int)(resource.getMaxDepth() * (height - surface)) + surface;
+            int y = ctx.nextInt(maxY - minY + 1) + minY;
+            placeModTileBlock(ctx, x, y, blocks[ctx.nextInt(blocks.length)]);
         }
     }
     
@@ -319,7 +321,7 @@ public class DecorGeneratorTask implements GeneratorTask {
         
         for(int i = 0; i < veinCount; i++) {
             int x = ctx.nextInt(width);
-            int surface = ctx.getZone().getSurface()[x];
+            int surface = ctx.getSurface(x);
             int minY = (int)(deposit.getMinDepth() * (height - surface)) + surface;
             int maxY = (int)(deposit.getMaxDepth() * (height - surface)) + surface;
             int y = ctx.nextInt(maxY - minY + 1) + minY;

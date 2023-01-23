@@ -150,7 +150,7 @@ public class Zone {
                 int y = dugBlock.getY();
                 Block block = getBlock(x, y);
                 
-                if(block != null && block.getFrontItem().getId() == 519) {
+                if(block != null && block.getFrontItem().hasId("ground/earth-dug")) {
                     updateBlock(x, y, Layer.FRONT, dugBlock.getItem(), dugBlock.getMod());
                 }
             }
@@ -659,7 +659,7 @@ public class Zone {
         
         Block block = getBlock(x, y);
         digQueue.add(new DugBlock(x, y, block.getFrontItem(), block.getFrontMod(), System.currentTimeMillis() + 10000));
-        updateBlock(x, y, Layer.FRONT, 519, 0);
+        updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
     }
     
     public void updateBlock(int x, int y, Layer layer, int item) {
@@ -675,6 +675,22 @@ public class Zone {
     }
     
     public void updateBlock(int x, int y, Layer layer, int item, int mod, Player owner, Map<String, Object> metadata) {
+        updateBlock(x, y, layer, ItemRegistry.getItem(item), mod, owner, metadata);
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, String item) {
+        updateBlock(x, y, layer, item, 0);
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, String item, int mod) {
+        updateBlock(x, y, layer, item, mod, null);
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, String item, int mod, Player owner) {
+        updateBlock(x, y, layer, item, mod, owner, null);
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, String item, int mod, Player owner, Map<String, Object> metadata) {
         updateBlock(x, y, layer, ItemRegistry.getItem(item), mod, owner, metadata);
     }
     
@@ -707,7 +723,7 @@ public class Zone {
         
         if(layer == Layer.FRONT) {
             if(item.isWhole()) {
-                updateBlock(x, y, Layer.LIQUID, Item.AIR, 0);
+                updateBlock(x, y, Layer.LIQUID, Item.AIR);
             }
             
             if(item.hasMeta()) {
@@ -717,7 +733,7 @@ public class Zone {
                     setMetaBlock(x, y, item, owner, metadata);
                 }
             } else if(metaBlocks.containsKey(getBlockIndex(x, y))) {
-                setMetaBlock(x, y, 0);
+                removeMetaBlock(x, y);
             }
             
             entityManager.trySpawnBlockEntity(x, y);
@@ -754,11 +770,23 @@ public class Zone {
         return null;
     }
     
+    public void removeMetaBlock(int x, int y) {
+        setMetaBlock(x, y, 0);
+    }
+    
     public void setMetaBlock(int x, int y, int item) {
         setMetaBlock(x, y, item, null, null);
     }
     
     public void setMetaBlock(int x, int y, int item, Player owner, Map<String, Object> data) {
+        setMetaBlock(x, y, ItemRegistry.getItem(item), owner, data);
+    }
+    
+    public void setMetaBlock(int x, int y, String item) {
+        setMetaBlock(x, y, item, null, null);
+    }
+    
+    public void setMetaBlock(int x, int y, String item, Player owner, Map<String, Object> data) {
         setMetaBlock(x, y, ItemRegistry.getItem(item), owner, data);
     }
     
@@ -846,20 +874,25 @@ public class Zone {
     }
     
     public MetaBlock getRandomSpawnBlock() {
-        List<MetaBlock> spawnBlocks = getMetaBlocks(block -> block.getItem().getId() == 891 || block.getItem().getId() == 934);
+        List<MetaBlock> spawnBlocks = getMetaBlocks(block 
+                -> block.getItem().hasId("mechanical/zone-teleporter") || block.getItem().hasId("signs/obelisk-spawn"));
         return spawnBlocks.isEmpty() ? null : spawnBlocks.get((int)(Math.random() * spawnBlocks.size()));
     }
     
     public List<MetaBlock> getMetaBlocksWithUse(ItemUseType useType) {
         return getMetaBlocks(metaBlock -> metaBlock.getItem().hasUse(useType));
     }
-    
-    public List<MetaBlock> getMetaBlocksWithItem(Item item) {
-        return getMetaBlocksWithItem(item.getId());
-    }
         
     public List<MetaBlock> getMetaBlocksWithItem(int item) {
-        return getMetaBlocks(metaBlock -> metaBlock.getItem().getId() == item);
+        return getMetaBlocksWithItem(ItemRegistry.getItem(item));
+    }
+    
+    public List<MetaBlock> getMetaBlocksWithItem(String item) {
+        return getMetaBlocksWithItem(ItemRegistry.getItem(item));
+    }
+    
+    public List<MetaBlock> getMetaBlocksWithItem(Item item) {
+        return getMetaBlocks(metaBlock -> metaBlock.getItem() == item);
     }
     
     public List<MetaBlock> getMetaBlocks(Predicate<MetaBlock> predicate) {
@@ -1033,11 +1066,9 @@ public class Zone {
     }
     
     public void setSurface(int x, int surface) {
-        if(x < 0 || x >= width) {
-            return;
+        if(areCoordinatesInBounds(x, surface)) {
+            this.surface[x] = surface;
         }
-        
-        this.surface[x] = surface;
     }
     
     public int[] getSurface() {

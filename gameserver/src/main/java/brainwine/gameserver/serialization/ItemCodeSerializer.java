@@ -19,6 +19,6 @@ public class ItemCodeSerializer extends StdSerializer<Item> {
     
     @Override
     public void serialize(Item item, JsonGenerator generator, SerializerProvider provider) throws IOException {
-        generator.writeNumber(item.getId());
+        generator.writeNumber(item.getCode());
     }
 }

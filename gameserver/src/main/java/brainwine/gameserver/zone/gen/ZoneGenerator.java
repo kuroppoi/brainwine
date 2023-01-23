@@ -166,7 +166,7 @@ public class ZoneGenerator {
         
         // Bedrock
         for(int x = 0; x < width; x++) {
-            ctx.updateBlock(x, height - 1, Layer.FRONT, 666, 0);
+            ctx.updateBlock(x, height - 1, Layer.FRONT, "ground/bedrock");
         }
         
         return zone;

@@ -2,17 +2,17 @@ package brainwine.gameserver.zone.gen.models;
 
 public class ModTileBlock {
     
-    private int item;
-    private int width;
-    private int height;
+    private final String item;
+    private final int width;
+    private final int height;
     
-    public ModTileBlock(int item, int width, int height) {
+    public ModTileBlock(String item, int width, int height) {
         this.item = item;
         this.width = width;
         this.height = height;
     }
     
-    public int getItem() {
+    public String getItem() {
         return item;
     }
     

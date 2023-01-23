@@ -1,11 +1,22 @@
 package brainwine.gameserver.zone.gen.models;
 
+// Well, this is rather embarrassing...
 public enum BaseResourceType {
     
-    CLAY(new ModTileBlock(541, 1, 1), new ModTileBlock(542, 1, 1), new ModTileBlock(543, 1, 1), new ModTileBlock(544, 1, 1), new ModTileBlock(545, 1, 1), new ModTileBlock(546, 1, 2), new ModTileBlock(547, 1, 2), new ModTileBlock(548, 2, 1), new ModTileBlock(549, 2, 1)),
-    LOGS(new ModTileBlock(522, 2, 1), new ModTileBlock(523, 2, 1), new ModTileBlock(524, 2, 1), new ModTileBlock(525, 2, 1), new ModTileBlock(526, 4, 2)),
-    ROOTS(new ModTileBlock(534, 2, 1), new ModTileBlock(535, 2, 1), new ModTileBlock(536, 1, 2), new ModTileBlock(537, 2, 2), new ModTileBlock(538, 3, 3)),
-    ROCKS(new ModTileBlock(528, 1, 1), new ModTileBlock(529, 2, 1), new ModTileBlock(530, 2, 2));
+    CLAY(new ModTileBlock("ground/clay-1", 1, 1),new ModTileBlock("ground/clay-2", 1, 1), new ModTileBlock("ground/clay-3", 1, 1), 
+            new ModTileBlock("ground/clay-4", 1, 1), new ModTileBlock("ground/clay-5", 1, 1), new ModTileBlock("ground/clay-6", 1, 2), 
+            new ModTileBlock("ground/clay-7", 1, 2), new ModTileBlock("ground/clay-8", 2, 1), new ModTileBlock("ground/clay-9", 2, 1)),
+    
+    LOGS(new ModTileBlock("ground/petrified-wood-1", 2, 1), new ModTileBlock("ground/petrified-wood-2", 2, 1),
+            new ModTileBlock("ground/petrified-wood-3", 2, 1), new ModTileBlock("ground/petrified-wood-4", 2, 1), 
+            new ModTileBlock("ground/petrified-wood-large-1", 4, 2)),
+    
+    ROOTS(new ModTileBlock("ground/earth-root-wide-3", 2, 1), new ModTileBlock("ground/earth-root-wide-4", 2, 1),
+            new ModTileBlock("ground/earth-root-tall-1", 1, 2), new ModTileBlock("ground/earth-root-big-1", 2, 2), 
+            new ModTileBlock("ground/earth-root-huge-1", 3, 3)),
+    
+    ROCKS(new ModTileBlock("ground/earth-rock", 1, 1), new ModTileBlock("ground/earth-rock-wide-1", 2, 1), 
+            new ModTileBlock("ground/earth-rock-big-1", 2, 2));
     
     private final ModTileBlock[] blocks;
     

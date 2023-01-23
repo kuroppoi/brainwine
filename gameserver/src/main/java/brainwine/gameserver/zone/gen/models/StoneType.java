@@ -5,23 +5,23 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 public enum StoneType {
     
     @JsonEnumDefaultValue
-    DEFAULT(2, 512),
-    SANDSTONE(3, 510),
-    LIMESTONE(4, 511);
+    DEFAULT("base/earth", "ground/earth"),
+    SANDSTONE("base/sandstone", "ground/sandstone"),
+    LIMESTONE("base/limestone", "ground/limestone");
     
-    private final int baseItem;
-    private final int frontItem;
+    private final String baseItem;
+    private final String frontItem;
     
-    private StoneType(int baseItem, int frontItem) {
+    private StoneType(String baseItem, String frontItem) {
         this.baseItem = baseItem;
         this.frontItem = frontItem;
     }
     
-    public int getBaseItem() {
+    public String getBaseItem() {
         return baseItem;
     }
     
-    public int getFrontItem() {
+    public String getFrontItem() {
         return frontItem;
     }
 }

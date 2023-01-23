@@ -14,9 +14,9 @@ public class RubbleSurfaceDecorator extends ItemSurfaceDecorator {
     @JsonSetter(value = "rubble_types", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     protected void setRubbleTypes(WeightedMap<RubbleType> types) {        
         types.getEntries().forEach((type, weight) -> {
-            int[] itemIds = type.getItemIds();
+            String[] itemIds = type.getItemIds();
             
-            for(int itemId : itemIds) {
+            for(String itemId : itemIds) {
                 items.addEntry(ItemRegistry.getItem(itemId), weight / (double)itemIds.length);
             }
         });

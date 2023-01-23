@@ -216,7 +216,7 @@ public class Inventory {
             List<Object> itemData = new ArrayList<>();
             itemData.add(quantity);
             addItemLocation(item, itemData);
-            data.put(String.valueOf(item.getId()), itemData);
+            data.put(String.valueOf(item.getCode()), itemData);
         }
         
         return data;
@@ -235,7 +235,7 @@ public class Inventory {
             addItemLocation(item, itemData);
         }
         
-        data.put(String.valueOf(item.getId()), itemData);
+        data.put(String.valueOf(item.getCode()), itemData);
         return data;
     }
 }

@@ -141,7 +141,7 @@ public class LiquidManager {
         
         // Update the source and destination blocks if anything was transferred!
         if(transferAmount > 0) {
-            zone.updateBlock(sourceX, sourceY, Layer.LIQUID, mod - transferAmount == 0 ? 0 : item.getId(), mod - transferAmount);
+            zone.updateBlock(sourceX, sourceY, Layer.LIQUID, mod - transferAmount == 0 ? 0 : item.getCode(), mod - transferAmount);
             zone.updateBlock(destX, destY, Layer.LIQUID, item, destMod + transferAmount);
         }
         

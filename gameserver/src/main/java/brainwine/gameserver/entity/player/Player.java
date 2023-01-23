@@ -909,7 +909,7 @@ public class Player extends Entity implements CommandExecutor {
         loot.getItems().forEach((item, quantity) -> {
             inventory.addItem(item, quantity, true);
             section.addItem(new DialogListItem()
-                    .setItem(item.getId())
+                    .setItem(item.getCode())
                     .setText(String.format("%s x %s", item.getTitle(), quantity)));
         });
         
@@ -1046,14 +1046,14 @@ public class Player extends Entity implements CommandExecutor {
         Map<String, Object> appearance = new HashMap<>();
         
         for(Entry<ClothingSlot, Item> entry : equippedClothing.entrySet()) {
-            appearance.put(entry.getKey().getId(), entry.getValue().getId());
+            appearance.put(entry.getKey().getId(), entry.getValue().getCode());
         }
         
         for(Entry<ColorSlot, String> entry : equippedColors.entrySet()) {
             appearance.put(entry.getKey().getId(), entry.getValue());
         }
         
-        appearance.put(ClothingSlot.SUIT.getId(), inventory.findJetpack().getId()); // Jetpack
+        appearance.put(ClothingSlot.SUIT.getId(), inventory.findJetpack().getCode()); // Jetpack
         return appearance;
     }
     

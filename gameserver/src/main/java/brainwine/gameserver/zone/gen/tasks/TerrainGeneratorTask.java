@@ -35,14 +35,14 @@ public class TerrainGeneratorTask implements GeneratorTask {
         // Determine surface first, then start placing blocks.
         if(type == TerrainType.FILLED) {
             for(int x = 0; x < width; x++) {
-                ctx.getZone().setSurface(x, 0);
+                ctx.setSurface(x, 0);
             }
         } else {
             double amplitude = ctx.nextDouble() * (maxAmplitude - minAmplitude) + minAmplitude;
             
             for(int x = 0; x < width; x++) {
                 int surface = (int)(SimplexNoise.noise2(ctx.getSeed(), x / 256.0, 0, 7) * amplitude) + surfaceLevel;
-                ctx.getZone().setSurface(x, surface);
+                ctx.setSurface(x, surface);
                 
                 if(surface > lowestSurfaceLevel) {
                     lowestSurfaceLevel = surface;
@@ -64,12 +64,12 @@ public class TerrainGeneratorTask implements GeneratorTask {
         
         // Place the blocks!
         for(int x = 0; x < width; x++) {
-            int surface = ctx.getZone().getSurface()[x];
+            int surface = ctx.getSurface(x);
             
             // Only generate a thin layer for asteroids, cave gen will take care of the rest.
             for(int y = surface; y < (type == TerrainType.ASTEROIDS ? surface + 6 : height); y++) {
                 ctx.updateBlock(x, y, Layer.FRONT, ctx.getEarthLayer(y));
-                ctx.updateBlock(x, y, Layer.BASE, 2);
+                ctx.updateBlock(x, y, Layer.BASE, "base/earth");
             }
         }
     }

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -19,24 +19,13 @@ import brainwine.gameserver.util.Vector2i;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Item {
     
-    public static final Item AIR = new Item() {
-        
-        @Override
-        public int getId() {
-            return 0;
-        }
-        
-        @Override
-        public String getName() {
-            return "air";
-        }
-    };
+    public static final Item AIR = new Item("air", 0);
+    
+    @JsonProperty("id")
+    private String id;
     
     @JsonProperty("code")
-    private int id;
-    
-    @JacksonInject("name") 
-    private String name;
+    private int code;
     
     @JsonProperty("title")
     private String title;
@@ -152,21 +141,26 @@ public class Item {
     @JsonProperty("use")
     private Map<ItemUseType, Object> useConfigs = new HashMap<>();
     
-    private Item(){}
+    @JsonCreator
+    private Item(@JsonProperty(value = "id", required = true) String id,
+            @JsonProperty(value = "code", required = true) int code) {
+        this.id = id;
+        this.code = code;
+    }
     
     @JsonCreator
-    private static Item fromId(int id) {
+    public static Item get(String id) {
         return ItemRegistry.getItem(id);
     }
     
     @JsonCreator
-    private static Item fromName(String name) {
-        return ItemRegistry.getItem(name);
+    public static Item get(int code) {
+        return ItemRegistry.getItem(code);
     }
     
     @Override
     public int hashCode() {
-        return id;
+        return Objects.hash(id, code);
     }
     
     @Override
@@ -176,16 +170,29 @@ public class Item {
         }
         
         Item item = (Item)object; 
-        return item.getId() == id;
-    }
-    
-    public int getId() {
-        return id;
+        return item.getId().equals(id);
     }
     
     @JsonValue
-    public String getName() {
-        return name;
+    @Override
+    public String toString() {
+        return id;
+    }
+    
+    public boolean hasId(String id) {
+        return this.id.equals(id);
+    }
+    
+    public boolean hasCode(int code) {
+        return this.code == code;
+    }
+    
+    public String getId() {
+        return id;
+    }
+    
+    public int getCode() {
+        return code;
     }
     
     public String getTitle() {
@@ -197,7 +204,7 @@ public class Item {
     }
     
     public boolean isAir() {
-        return id == 0;
+        return code == 0;
     }
     
     public Fieldability getFieldability() {

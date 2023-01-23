@@ -112,17 +112,16 @@ public class GeneratorContext {
         
         for(int i = x; i < x + width; i++) {
             // Don't place scaffolding unless there is a block right above it
-            if(zone.getBlock(i, y - 1).getFrontItem().isAir()) {
+            if(getBlock(i, y - 1).getFrontItem().isAir()) {
                 continue;
             }
             
             int j = y;
-            Block block = null;
             
             // Place scaffolding all the way down until it hits solid ground
-            while((block = zone.getBlock(i, j)) != null && block.getBaseItem().isAir() && !block.getFrontItem().isWhole()) {
+            while(j < getHeight() && isAir(i, j, Layer.BASE) && !isWhole(i, j, Layer.FRONT)) {
                 if(!ruin || SimplexNoise.noise2(seed, i / 8.0, j / 8.0, 2) <= 0.4) {
-                    updateBlock(i, j, Layer.BACK, 258);
+                    updateBlock(i, j, Layer.BACK, "back/scaffold-decayed");
                 }
                 
                 j++;
@@ -157,6 +156,18 @@ public class GeneratorContext {
         zone.updateBlock(x, y, layer, item, mod, null, metadata);
     }
     
+    public void updateBlock(int x, int y, Layer layer, String item) {
+        zone.updateBlock(x, y, layer, item);
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, String item, int mod) {
+        zone.updateBlock(x, y, layer, item, mod);
+    }
+    
+    public void updateBlock(int x, int y, Layer layer, String item, int mod, Map<String, Object> metadata) {
+        zone.updateBlock(x, y, layer, item, mod, null, metadata);
+    }
+    
     public void updateBlock(int x, int y, Layer layer, Item item) {
         zone.updateBlock(x, y, layer, item);
     }
@@ -169,16 +180,28 @@ public class GeneratorContext {
         zone.updateBlock(x, y, layer, item, mod, null, metadata);
     }
     
+    public Block getBlock(int x, int y) {
+        return zone.getBlock(x, y);
+    }
+    
     public boolean inBounds(int x, int y) {
         return zone.areCoordinatesInBounds(x, y);
     }
     
     public boolean isUnderground(int x, int y) { 
-        return zone.areCoordinatesInBounds(x, y) && y >= zone.getSurface()[x];
+        return inBounds(x, y) && y >= zone.getSurface()[x];
+    }
+    
+    public boolean isAir(int x, int y, Layer layer) {
+        return inBounds(x, y) && getBlock(x, y).getItem(layer).isAir();
     }
     
     public boolean isOccupied(int x, int y, Layer layer) {
-        return zone.areCoordinatesInBounds(x, y) && !zone.getBlock(x, y).getItem(layer).isAir();
+        return inBounds(x, y) && !getBlock(x, y).getItem(layer).isAir();
+    }
+    
+    public boolean isWhole(int x, int y, Layer layer) {
+        return inBounds(x, y) && getBlock(x, y).getItem(layer).isWhole();
     }
     
     public boolean isSolid(int x, int y) {
@@ -190,18 +213,30 @@ public class GeneratorContext {
     }
     
     public boolean isEarthy(int x, int y) {
-        if(!zone.areCoordinatesInBounds(x, y)) {
-            return false;
-        }
-        
-        return zone.getBlock(x, y).getFrontItem().isEarthy();
+        return inBounds(x, y) && getBlock(x, y).getFrontItem().isEarthy();
     }
     
-    public int getEarthLayer(int y) {
+    public void setSurface(int x, int surface) {
+        zone.setSurface(x, surface);
+    }
+    
+    public int getSurface(int x) {
+        return inBounds(x, 0) ? zone.getSurface()[x] : 0;
+    }
+    
+    public String getEarthLayer(int y) {
         int[] depths = zone.getDepths();
-        return zone.getBiome() == Biome.DEEP 
-                ? y >= depths[2] ? 598 : y >= depths[1] ? 597 : y >= depths[0] ? 596 : 595
-                : y >= depths[2] ? 518 : y >= depths[1] ? 517 : y >= depths[0] ? 516 : 512;
+        String[] earthLayers = zone.getBiome() == Biome.DEEP
+              ? new String[] {"ground/deep-earth", "ground/deep-earth-mid", "ground/deep-earth-deep", "ground/deep-earth-very-deep"}
+              : new String[] {"ground/earth", "ground/earth-mid", "ground/earth-deep", "ground/earth-very-deep"};
+        
+        for(int i = depths.length; i > 0; i--) {
+            if(y >= depths[i - 1]) {
+                return earthLayers[i];
+            }
+        }
+        
+        return earthLayers[0];
     }
     
     public int getWidth() {
