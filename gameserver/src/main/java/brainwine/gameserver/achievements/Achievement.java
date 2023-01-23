@@ -27,6 +27,7 @@ import brainwine.gameserver.util.MathUtils;
     @Type(name = "SidekickAchievement", value = SidekickAchievement.class),
     @Type(name = "ScavengingAchievement", value = ScavengingAchievement.class),
     @Type(name = "DiscoveryAchievement", value = DiscoveryAchievement.class),
+    @Type(name = "SpawnerStoppageAchievement", value = SpawnerStoppageAchievement.class),
     @Type(name = "Journeyman", value = JourneymanAchievement.class)
 })
 @JsonSerialize(using = AchievementSerializer.class)

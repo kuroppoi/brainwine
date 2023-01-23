@@ -87,6 +87,9 @@ public class Item {
     @JsonProperty("placeover")
     private boolean placeover;
     
+    @JsonProperty("custom_place")
+    private boolean customPlace;
+    
     @JsonProperty("base")
     private boolean base;
     
@@ -309,6 +312,10 @@ public class Item {
     
     public boolean canPlaceOver() {
         return placeover;
+    }
+    
+    public boolean hasCustomPlace() {
+        return customPlace;
     }
     
     public boolean isWhole() {

@@ -20,6 +20,7 @@ import brainwine.gameserver.achievements.MiningAchievement;
 import brainwine.gameserver.achievements.RaiderAchievement;
 import brainwine.gameserver.achievements.ScavengingAchievement;
 import brainwine.gameserver.achievements.SidekickAchievement;
+import brainwine.gameserver.achievements.SpawnerStoppageAchievement;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.item.Item;
 
@@ -37,6 +38,7 @@ public class PlayerStatistics {
     private int areasExplored;
     private int containersLooted;
     private int dungeonsRaided;
+    private int mawsPlugged;
     private int deaths;
     
     @JsonIgnore
@@ -291,6 +293,20 @@ public class PlayerStatistics {
     
     public int getDungeonsRaided() {
         return dungeonsRaided;
+    }
+    
+    public void trackMawPlugged() {
+        mawsPlugged++;
+        player.addExperience(5);
+        player.updateAchievementProgress(SpawnerStoppageAchievement.class);
+    }
+    
+    public void setMawsPlugged(int mawsPlugged) {
+        this.mawsPlugged = mawsPlugged;
+    }
+    
+    public int getMawsPlugged() {
+        return mawsPlugged;
     }
     
     public void trackDeath() {

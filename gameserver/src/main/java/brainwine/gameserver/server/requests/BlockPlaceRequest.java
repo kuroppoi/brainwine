@@ -87,6 +87,33 @@ public class BlockPlaceRequest extends PlayerRequest {
         player.getInventory().removeItem(item);
         player.getStatistics().trackItemPlaced();
         player.trackPlacement(x, y, item);
+        
+        // Process custom place if applicable
+        if(item.hasCustomPlace()) {
+            processCustomPlace(player);
+        }
+    }
+    
+    private void processCustomPlace(Player player) {
+        Zone zone = player.getZone();
+        
+        switch(item.getId()) {
+            // See if we can plug a maw or pipe
+            case "building/plug":
+                Item baseItem = zone.getBlock(x, y).getBaseItem();
+                String plugged = baseItem.hasId("base/maw") ? "base/maw-plugged"
+                        : baseItem.hasId("base/pipe") ? "base/pipe-plugged" : null;
+                
+                if(plugged != null) {
+                    zone.updateBlock(x, y, Layer.FRONT, 0); // Remove the plug front block
+                    zone.updateBlock(x, y, Layer.BASE, plugged);
+                    player.getStatistics().trackMawPlugged();
+                }
+                
+                break;
+            // No valid item; do nothing
+            default: break;
+        }
     }
     
     private void fail(Player player, String reason) {
