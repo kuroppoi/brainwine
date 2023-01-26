@@ -12,9 +12,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'com.formdev:flatlaf-intellij-themes:1.6'
-    implementation 'com.formdev:flatlaf-extras:1.6'
-    implementation 'com.formdev:flatlaf:1.6'
+    implementation 'com.formdev:flatlaf-intellij-themes:3.0'
+    implementation 'com.formdev:flatlaf-extras:3.0'
+    implementation 'com.formdev:flatlaf:3.0'
     implementation project(':api')
     implementation project(':gameserver')
     implementation project(':shared')
