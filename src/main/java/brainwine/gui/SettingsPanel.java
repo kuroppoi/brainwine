@@ -23,7 +23,7 @@ import javax.swing.event.DocumentEvent;
 
 import com.formdev.flatlaf.extras.components.FlatScrollPane;
 import com.formdev.flatlaf.extras.components.FlatTextField;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatGitHubDarkIJTheme;
+import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerIJTheme;
 
 import brainwine.gui.event.DocumentChangeListener;
 import brainwine.gui.theme.Theme;
@@ -153,7 +153,7 @@ public class SettingsPanel extends JPanel {
         if(!showPrompt || JOptionPane.showConfirmDialog(getRootPane(), 
                 "Are you sure you want to reset all settings to their default values?", 
                 "Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-            themeBox.setSelectedItem(ThemeManager.getTheme(FlatGitHubDarkIJTheme.class));
+            themeBox.setSelectedItem(ThemeManager.getTheme(FlatMaterialDarkerIJTheme.class));
             fontSizeSpinner.setValue(14);
             embedMenuBarCheckox.setSelected(true);
             
