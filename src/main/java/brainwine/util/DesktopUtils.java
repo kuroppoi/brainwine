@@ -7,7 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 public class DesktopUtils {
-        
+    
     public static void browseUrl(String url) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
         
