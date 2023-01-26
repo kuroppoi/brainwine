@@ -13,7 +13,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
@@ -34,13 +33,17 @@ import brainwine.util.SwingUtils;
 @SuppressWarnings("serial")
 public class SettingsPanel extends JPanel {
     
+    private final MainView mainView;
     private JComboBox<Theme> themeBox;
+    private JComboBox<String> tabPlacementBox;
     private JSpinner fontSizeSpinner;
-    private JCheckBox embedMenuBarCheckox;
+    private JCheckBox embedMenuBarCheckbox;
     private FlatTextField gatewayHostField;
     private FlatTextField apiHostField;
     
-    public SettingsPanel() {
+    public SettingsPanel(MainView mainView) {
+        this.mainView = mainView;
+        
         // Reset Button
         JButton resetButton = new JButton("Reset to Defaults");
         resetButton.addActionListener(event -> resetSettings(true));
@@ -51,6 +54,7 @@ public class SettingsPanel extends JPanel {
         
         // Button Panel
         JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+        buttonPanel.setBorder(createCategoryBorder("Reset Settings"));
         buttonPanel.add(resetButton);
         buttonPanel.add(clearButton);
 
@@ -62,8 +66,7 @@ public class SettingsPanel extends JPanel {
             settingsPanel.add(createGameSettingsPanel(), SwingUtils.createConstraints(0, 1));
         }
         
-        settingsPanel.add(new JSeparator(), SwingUtils.createConstraints(0, 2));
-        settingsPanel.add(buttonPanel, SwingUtils.createConstraints(0, 3));
+        settingsPanel.add(buttonPanel, SwingUtils.createConstraints(0, 2));
 
         // Scroll pane (TODO doesn't actually scroll)
         FlatScrollPane scrollPane = new FlatScrollPane();
@@ -79,26 +82,33 @@ public class SettingsPanel extends JPanel {
         themeBox = new JComboBox<>();
         ThemeManager.getThemes().forEach(themeBox::addItem);
         themeBox.setSelectedItem(ThemeManager.getCurrentTheme());
-        themeBox.addItemListener(item -> SwingUtilities.invokeLater(() -> ThemeManager.setTheme((Theme)item.getItem())));
+        themeBox.addActionListener(event -> setThemePreference((Theme)themeBox.getSelectedItem()));
+        
+        // Tabbed pane orientation box
+        tabPlacementBox = new JComboBox<>(new String[] {"Top", "Left", "Bottom", "Right"});
+        tabPlacementBox.setSelectedIndex(mainView.getTabPlacement() - 1);
+        tabPlacementBox.addActionListener(event -> setTabPlacementPreference(tabPlacementBox.getSelectedIndex() + 1));
         
         // Font size changer
         fontSizeSpinner = new JSpinner(new SpinnerNumberModel(SwingUtils.getDefaultFontSize(), 10, 28, 1));
-        fontSizeSpinner.addChangeListener(event -> SwingUtils.setDefaultFontSize((int)fontSizeSpinner.getValue()));
-        
+        fontSizeSpinner.addChangeListener(event -> setFontSizePreference((int)fontSizeSpinner.getValue()));
+
         // Menu bar embed checkbox
-        embedMenuBarCheckox = new JCheckBox();
-        embedMenuBarCheckox.setSelected(SwingUtils.isMenuBarEmbedded());
-        embedMenuBarCheckox.addChangeListener(event -> SwingUtils.setMenuBarEmbedded(embedMenuBarCheckox.isSelected()));
+        embedMenuBarCheckbox = new JCheckBox();
+        embedMenuBarCheckbox.setSelected(SwingUtils.isMenuBarEmbedded());
+        embedMenuBarCheckbox.addChangeListener(event -> setEmbedMenuBarPreference(embedMenuBarCheckbox.isSelected()));
         
         // Panel
         JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(createCategoryBorder("Visual Settings"));
         panel.add(new JLabel("Theme"), SwingUtils.createConstraints(0, 0));
         panel.add(themeBox, SwingUtils.createConstraints(1, 0));
-        panel.add(new JLabel("Font Size"), SwingUtils.createConstraints(0, 1));
-        panel.add(fontSizeSpinner, SwingUtils.createConstraints(1, 1));
-        panel.add(new JLabel("Embed Menu Bar"), SwingUtils.createConstraints(0, 2));
-        panel.add(embedMenuBarCheckox, SwingUtils.createConstraints(1, 2));
+        panel.add(new JLabel("Tab Placement"), SwingUtils.createConstraints(0, 1));
+        panel.add(tabPlacementBox, SwingUtils.createConstraints(1, 1));
+        panel.add(new JLabel("Font Size"), SwingUtils.createConstraints(0, 2));
+        panel.add(fontSizeSpinner, SwingUtils.createConstraints(1, 2));
+        panel.add(new JLabel("Embed Menu Bar"), SwingUtils.createConstraints(0, 3));
+        panel.add(embedMenuBarCheckbox, SwingUtils.createConstraints(1, 3));
         return panel;
     }
     
@@ -149,13 +159,40 @@ public class SettingsPanel extends JPanel {
         gatewayHostField.requestFocus();
     }
     
+    private void setThemePreference(Theme theme) {
+        SwingUtilities.invokeLater(() -> {
+            ThemeManager.setTheme(theme);
+        });
+
+        GuiPreferences.setString(GuiPreferences.THEME_KEY, theme.getClassName());
+    }
+    
+    private void setTabPlacementPreference(int tabPlacement) {
+        SwingUtilities.invokeLater(() -> {
+            mainView.setTabPlacement(tabPlacement);
+        });
+        
+        GuiPreferences.setInt(GuiPreferences.TAB_PLACEMENT_KEY, tabPlacement);
+    }
+    
+    private void setFontSizePreference(int fontSize) {
+        SwingUtils.setDefaultFontSize(fontSize);
+        GuiPreferences.setInt(GuiPreferences.FONT_SIZE_KEY, fontSize);
+    }
+    
+    private void setEmbedMenuBarPreference(boolean embedMenuBar) {
+        SwingUtils.setMenuBarEmbedded(embedMenuBar);
+        GuiPreferences.setBoolean(GuiPreferences.EMBED_MENU_BAR_KEY, embedMenuBar);
+    }
+    
     private void resetSettings(boolean showPrompt) {
         if(!showPrompt || JOptionPane.showConfirmDialog(getRootPane(), 
                 "Are you sure you want to reset all settings to their default values?", 
                 "Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             themeBox.setSelectedItem(ThemeManager.getTheme(FlatMaterialDarkerIJTheme.class));
+            tabPlacementBox.setSelectedIndex(0);
             fontSizeSpinner.setValue(14);
-            embedMenuBarCheckox.setSelected(true);
+            embedMenuBarCheckbox.setSelected(true);
             
             if(OperatingSystem.isWindows()) {
                 gatewayHostField.setText("local");

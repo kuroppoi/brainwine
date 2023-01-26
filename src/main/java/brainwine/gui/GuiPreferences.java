@@ -1,18 +1,13 @@
 package brainwine.gui;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
-import javax.swing.UIManager;
-
-import brainwine.util.SwingUtils;
 
 public class GuiPreferences {
     
     public static final String ROOT_KEY = "brainwine";
     public static final String THEME_KEY = "theme";
+    public static final String TAB_PLACEMENT_KEY = "tabPlacement";
     public static final String FONT_SIZE_KEY = "fontSize";
     public static final String EMBED_MENU_BAR_KEY = "embedMenuBar";
     public static final String GATEWAY_HOST_KEY = "gatewayHost";
@@ -25,29 +20,6 @@ public class GuiPreferences {
         }
         
         return preferences;
-    }
-    
-    public static void createPropertyListeners() {
-        UIManager.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent event) {                
-                if(event.getPropertyName().equals("lookAndFeel")) {
-                    setString(THEME_KEY, UIManager.getLookAndFeel().getClass().getName());
-                }
-            }
-        });
-        
-        UIManager.getDefaults().addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            public void propertyChange(PropertyChangeEvent event) {
-                String name = event.getPropertyName();
-                
-                switch(name) {
-                    case "defaultFont": setInt(FONT_SIZE_KEY, SwingUtils.getDefaultFontSize()); break;
-                    case "TitlePane.menuBarEmbedded": setBoolean(EMBED_MENU_BAR_KEY, SwingUtils.isMenuBarEmbedded()); break;
-                }
-            }
-        });
     }
     
     public static void setString(String key, String value) {

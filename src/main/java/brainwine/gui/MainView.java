@@ -2,6 +2,7 @@ package brainwine.gui;
 
 import static brainwine.gui.GuiConstants.DEEPWORLD_PLAYERPREFS;
 import static brainwine.gui.GuiConstants.GITHUB_REPOSITORY_URL;
+import static brainwine.gui.GuiConstants.GUI_MARKER;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -15,12 +16,12 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.UIManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 import com.formdev.flatlaf.extras.components.FlatTabbedPane.TabAlignment;
 
@@ -42,25 +43,23 @@ public class MainView {
     private final SettingsPanel settingsPanel;
     
     public MainView(Bootstrap bootstrap) {
-        logger.info("Creating main view ...");
+        logger.info(GUI_MARKER, "Creating main view ...");
         
-        // Panels
+        // Panel
         panel = new JPanel(new BorderLayout());
-        serverPanel = new ServerPanel(bootstrap);
-        settingsPanel = new SettingsPanel();
         
         // Tabs
         tabbedPane = new FlatTabbedPane();
         tabbedPane.setShowContentSeparators(true);
-        tabbedPane.setTabPlacement(JTabbedPane.LEFT);
         tabbedPane.setTabAlignment(TabAlignment.leading);
+        setTabPlacement(GuiPreferences.getInt(GuiPreferences.TAB_PLACEMENT_KEY, 1), false);
         
         if(OperatingSystem.isWindows()) {
             tabbedPane.addTab("Play Game", UIManager.getIcon("Brainwine.playIcon"), new GamePanel(this));
         }
         
-        tabbedPane.addTab("Server", UIManager.getIcon("Brainwine.serverIcon"), serverPanel);
-        tabbedPane.addTab("Settings", UIManager.getIcon("Brainwine.settingsIcon"), settingsPanel);
+        tabbedPane.addTab("Server", UIManager.getIcon("Brainwine.serverIcon"), serverPanel = new ServerPanel(bootstrap));
+        tabbedPane.addTab("Settings", UIManager.getIcon("Brainwine.settingsIcon"), settingsPanel = new SettingsPanel(this));
         panel.add(tabbedPane);
         
         // Menu
@@ -87,13 +86,33 @@ public class MainView {
             }
         });
         frame.setJMenuBar(menuBar);
-        frame.setMinimumSize(new Dimension(848, 480));
+        frame.setMinimumSize(new Dimension(848, 520));
         frame.setFocusable(true);
         frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         frame.add(panel);
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+    }
+    
+    public void setTabPlacement(int tabPlacement) {
+        setTabPlacement(tabPlacement, true);
+    }
+    
+    public void setTabPlacement(int tabPlacement, boolean animateChange) {
+        if(animateChange) {
+            FlatAnimatedLafChange.showSnapshot();
+        }
+        
+        tabbedPane.setTabPlacement(Math.min(4, Math.max(1, tabPlacement)));
+        
+        if(animateChange) {
+            FlatAnimatedLafChange.hideSnapshotWithAnimation();
+        }
+    }
+    
+    public int getTabPlacement() {
+        return tabbedPane.getTabPlacement();
     }
     
     public void showHostSettings() {

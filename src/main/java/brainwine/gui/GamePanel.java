@@ -2,21 +2,32 @@ package brainwine.gui;
 
 import static brainwine.gui.GuiConstants.DEEPWORLD_ASSEMBLY_PATH;
 import static brainwine.gui.GuiConstants.DEEPWORLD_PLAYERPREFS;
+import static brainwine.gui.GuiConstants.GUI_MARKER;
 import static brainwine.gui.GuiConstants.HTTP_COMMUNITY_HUB_URL;
 import static brainwine.gui.GuiConstants.HTTP_STEAM_DOWNLOAD_URL;
 import static brainwine.gui.GuiConstants.STEAM_COMMUNITY_HUB_URL;
 import static brainwine.gui.GuiConstants.STEAM_REGISTRY_LOCATION;
 import static brainwine.gui.GuiConstants.STEAM_RUN_GAME_URL;
 
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.LinearGradientPaint;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import brainwine.gui.component.ImagePanel;
 import brainwine.util.DesktopUtils;
 import brainwine.util.ProcessResult;
 import brainwine.util.RegistryKey;
@@ -24,8 +35,11 @@ import brainwine.util.RegistryUtils;
 import brainwine.util.SwingUtils;
 
 @SuppressWarnings("serial")
-public class GamePanel extends JPanel {
+public class GamePanel extends ImagePanel {
     
+    private static final Logger logger = LogManager.getLogger();
+    private final LinearGradientPaint gradientPaint = new LinearGradientPaint(0, 0, 0, 15,
+            new float[] {0.0F, 1.0F}, new Color[] {Color.BLACK, new Color(0, 0, 0, 0)});
     private final JButton startGameButton;
     private final JButton communityHubButton;
     
@@ -46,12 +60,34 @@ public class GamePanel extends JPanel {
         
         // Button panel
         JPanel buttonPanel = new JPanel(new GridBagLayout());
+        buttonPanel.setOpaque(false);
+        
         JPanel topPanel = new JPanel(new GridLayout(1, 2));
+        topPanel.setOpaque(false);
         topPanel.add(hostSettingsButton);
         topPanel.add(communityHubButton);
         buttonPanel.add(topPanel, SwingUtils.createConstraints(0, 0));
         buttonPanel.add(startGameButton, SwingUtils.createConstraints(0, 1, 2, 1));
         add(buttonPanel);
+        
+        // Load & set background image
+        try {
+            setImage(ImageIO.read(getClass().getResourceAsStream("/background.jpg")));
+        } catch (IllegalArgumentException | IOException e) {
+            logger.error(GUI_MARKER, "Could not load background image", e);
+        }
+    }
+    
+    @Override
+    public void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        
+        // Draw shadow gradient below the title bar if this panel has a background image
+        if(getImage() != null) {
+            Graphics2D g2d = (Graphics2D)graphics;
+            g2d.setPaint(gradientPaint);
+            g2d.fillRect(0, 0, getWidth(), 15);
+        }
     }
     
     private void startGame() {

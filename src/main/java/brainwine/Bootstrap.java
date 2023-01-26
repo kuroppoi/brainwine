@@ -89,9 +89,10 @@ public class Bootstrap {
             UIManager.put("Brainwine.powerIcon", new ImageIcon(getClass().getResource("/powerIcon16x.png")));
             UIManager.put("Brainwine.consoleFont", new Font("Consolas", Font.PLAIN, 12));
             UIManager.put("Spinner.editorAlignment", JTextField.LEFT);
+            UIManager.put("TitlePane.unifiedBackground", false);
+            UIManager.put("Button.foreground", UIManager.get("MenuBar.foreground"));
             SwingUtils.setDefaultFontSize(Math.min(28, Math.max(10, GuiPreferences.getInt(GuiPreferences.FONT_SIZE_KEY, 14))));
             SwingUtils.setMenuBarEmbedded(GuiPreferences.getBoolean(GuiPreferences.EMBED_MENU_BAR_KEY, true));
-            GuiPreferences.createPropertyListeners();
             
             // Create view
             mainView = new MainView(this);
