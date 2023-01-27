@@ -1,6 +1,5 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.GameServer;
@@ -14,7 +13,7 @@ public class ImportCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length < 1) {
-            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
+            executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
         
@@ -30,7 +29,7 @@ public class ImportCommand extends Command {
                 x = Integer.parseInt(args[1]);
                 y = Integer.parseInt(args[2]);
             } catch(NumberFormatException e) {
-                player.notify("X and Y must be valid numbers.", ALERT);
+                player.notify("X and Y must be valid numbers.", SYSTEM);
                 return;
             }
         }
@@ -39,7 +38,7 @@ public class ImportCommand extends Command {
         Prefab prefab = GameServer.getInstance().getPrefabManager().getPrefab(name);
         
         if(prefab == null) {
-            player.notify("Sorry, could not find a prefab with that name.", ALERT);
+            player.notify("Sorry, could not find a prefab with that name.", SYSTEM);
             return;
         }
         

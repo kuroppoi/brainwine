@@ -1,6 +1,6 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
+import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
@@ -21,7 +21,7 @@ public class ExportCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {    
         if(args.length < 5) {
-            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
+            executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
         
@@ -30,10 +30,10 @@ public class ExportCommand extends Command {
         String name = String.join(" ", Arrays.copyOfRange(args, 4, args.length));
         
         if(prefabManager.getPrefab(name) != null) {
-            executor.notify("A prefab with that name already exists.", ALERT);
+            executor.notify("A prefab with that name already exists.", SYSTEM);
             return;
         } else if(!PREFAB_NAME_PATTERN.matcher(name).matches()) {
-            executor.notify("Please enter a valid prefab name. Example: dungeons/my_epic_dungeon (or just my_epic_dungeon)", ALERT);
+            executor.notify("Please enter a valid prefab name. Example: dungeons/my_epic_dungeon (or just my_epic_dungeon)", SYSTEM);
             return;
         }
         
@@ -48,35 +48,35 @@ public class ExportCommand extends Command {
             width = Integer.parseInt(args[2]);
             height = Integer.parseInt(args[3]);
         } catch(NumberFormatException e) {
-            executor.notify("Parameters must be valid numbers.", ALERT);
+            executor.notify("Parameters must be valid numbers.", SYSTEM);
             return;
         }
         
         if(width < 0 || height < 0) {
-            executor.notify("Width and height must be positive.", ALERT);
+            executor.notify("Width and height must be positive.", SYSTEM);
             return;
         } else if(width * height > SIZE_LIMIT) {
-            executor.notify(String.format("Sorry, your prefab is too large. Max size: %s blocks.", SIZE_LIMIT), ALERT);
+            executor.notify(String.format("Sorry, your prefab is too large. Max size: %s blocks.", SIZE_LIMIT), SYSTEM);
             return;
         } else if(x < 0 || x + width >= zone.getWidth() || y < 0 || y + height >= zone.getHeight()) {
-            executor.notify("These coordinates are out of bounds.", ALERT);
+            executor.notify("These coordinates are out of bounds.", SYSTEM);
             return;
         }
         
         Prefab prefab = zone.chop(x, y, width, height);
         
         if(prefab == null) {
-            executor.notify("Sorry, something went wrong. Please try again.", ALERT);
+            executor.notify("Sorry, something went wrong. Please try again.", SYSTEM);
             return;
         }
         
-        executor.notify(String.format("Exporting your prefab as '%s' ...", name), ALERT);
+        executor.notify(String.format("Exporting your prefab as '%s' ...", name), SYSTEM);
         
         try {
             prefabManager.addPrefab(name, prefab);
-            executor.notify(String.format("Your prefab '%s' was successfully exported!", name), ALERT);
+            executor.notify(String.format("Your prefab '%s' was successfully exported!", name), SYSTEM);
         } catch (Exception e) {
-            executor.notify(String.format("An error occured while exporting prefab '%s': %s", name, e.getMessage()), ALERT);
+            executor.notify(String.format("An error occured while exporting prefab '%s': %s", name, e.getMessage()), SYSTEM);
         }
     }
     

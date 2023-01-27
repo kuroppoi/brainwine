@@ -51,7 +51,7 @@ public class SkillPointsCommand extends Command {
         }
         
         target.setSkillPoints(amount);
-        target.alert(String.format("Your skill point count has been set to %s.", amount));
+        target.notify(String.format("Your skill point count has been set to %s.", amount), SYSTEM);
         executor.notify(String.format("Successfully set %s's skill point count to %s.", target.getName(), amount), SYSTEM);
     }
 

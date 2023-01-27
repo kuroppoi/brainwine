@@ -1,6 +1,6 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
+import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
@@ -15,7 +15,7 @@ public class HealthCommand extends Command {
         
         if(args.length < 2) {
             if(args.length == 0 || !(executor instanceof Player)) {
-                executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
+                executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
                 return;
             }
             target = (Player)executor;
@@ -24,10 +24,10 @@ public class HealthCommand extends Command {
         }
         
         if(target == null) {
-            executor.notify("This player does not exist.", ALERT);
+            executor.notify("This player does not exist.", SYSTEM);
             return;
         } else if(!target.isOnline()) {
-            executor.notify("This player is offline.", ALERT);
+            executor.notify("This player is offline.", SYSTEM);
             return;
         }
         
@@ -36,15 +36,15 @@ public class HealthCommand extends Command {
         try {
             health = Float.parseFloat(args[0]);
         } catch(NumberFormatException e) {
-            executor.notify("Health must be a valid number.", ALERT);
+            executor.notify("Health must be a valid number.", SYSTEM);
             return;
         }
         
         target.setHealth(health);
-        target.alert(String.format("Your health has been set to %s", target.getHealth()));
+        target.notify(String.format("Your health has been set to %s", target.getHealth()), SYSTEM);
         
         if(target != executor) {
-            executor.notify(String.format("Set %s's health to %s", target.getName(), target.getHealth()), ALERT);
+            executor.notify(String.format("Set %s's health to %s", target.getName(), target.getHealth()), SYSTEM);
         }
     }
 

@@ -16,10 +16,10 @@ public class ZoneChangeRequest extends PlayerRequest {
         Zone zone = GameServer.getInstance().getZoneManager().getZoneByName(zoneName);
         
         if(zone == null) {
-            player.alert("Sorry, could not find a zone with name " + zoneName);
+            player.notify("Sorry, could not find a zone with name " + zoneName);
             return;
         } else if(zone == player.getZone()) {
-            player.alert("You're already in " + zoneName);
+            player.notify("You're already in " + zoneName);
             return;
         }
         

@@ -37,7 +37,7 @@ public class DialogRequest extends PlayerRequest {
                     onSkillUpgrade(player);
                     break;
                 default:
-                    player.alert("Sorry, this action is not implemented yet.");
+                    player.notify("Sorry, this action is not implemented yet.");
                     break;
             }
             return;
@@ -50,7 +50,7 @@ public class DialogRequest extends PlayerRequest {
     
     private void onSkillUpgrade(Player player) {
         if(player.getSkillPoints() <= 0) {
-            player.alert("Sorry, you are out of skill points. Level up to earn some more!");
+            player.notify("Sorry, you are out of skill points. Level up to earn some more!");
             return;
         }
         
@@ -61,7 +61,7 @@ public class DialogRequest extends PlayerRequest {
                 .collect(Collectors.toList());
         
         if(upgradeableSkills.isEmpty()) {
-            player.alert("You've maxed out all available skills!");
+            player.notify("You've maxed out all available skills!");
             return;
         }
         
@@ -81,14 +81,14 @@ public class DialogRequest extends PlayerRequest {
             }
             
             if(player.getSkillPoints() <= 0) {
-                player.alert("Sorry, you are out of skill points. Level up to earn some more!");
+                player.notify("Sorry, you are out of skill points. Level up to earn some more!");
                 return;
             }
             
             Skill skill = Skill.fromId(input[0].toString());
             
             if(!player.getUpgradeableSkills().contains(skill)) {
-                player.alert("Sorry, you cannot upgrade that skill right now.");
+                player.notify("Sorry, you cannot upgrade that skill right now.");
                 return;
             }
             

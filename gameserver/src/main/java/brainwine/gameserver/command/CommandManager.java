@@ -1,6 +1,6 @@
 package brainwine.gameserver.command;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
+import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -108,7 +108,7 @@ public class CommandManager {
         Command command = commands.getOrDefault(commandName, aliases.get(commandName));
         
         if(command == null || !command.canExecute(executor)) {
-            executor.notify("Unknown command. Type '/help' for a list of commands.", ALERT);
+            executor.notify("Unknown command. Type '/help' for a list of commands.", SYSTEM);
             return;
         }
         

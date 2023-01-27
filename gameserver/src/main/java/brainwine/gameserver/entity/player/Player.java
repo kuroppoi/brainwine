@@ -187,12 +187,11 @@ public class Player extends Entity implements CommandExecutor {
     
     @Override
     public void notify(Object message, NotificationType type) {
-        if(type == NotificationType.SYSTEM && !isV3()) {
-            sendMessage(new NotificationMessage(message, NotificationType.STANDARD));
-            return;
+        if(type == NotificationType.SYSTEM && isV3()) {
+            sendMessage(new NotificationMessage(message, NotificationType.PEER_ACCOMPLISHMENT));
+        } else {
+            sendMessage(new NotificationMessage(message, type));
         }
-        
-        sendMessage(new NotificationMessage(message, type));
     }
     
     @Override
@@ -408,7 +407,7 @@ public class Player extends Entity implements CommandExecutor {
         Consumer<Object[]> handler = dialogs.remove(id);
         
         if(handler == null) {
-            alert("Sorry, the request has expired.");
+            notify("Sorry, the request has expired.");
         } else {
             // TODO since we're dealing with user input, should we just try-catch this?
             handler.accept(input);
@@ -514,8 +513,8 @@ public class Player extends Entity implements CommandExecutor {
         sendMessageToPeers(new NotificationMessage(message, type));
     }
     
-    public void alert(String text) {
-        notify(text, NotificationType.ALERT);
+    public void notify(Object message) {
+        notify(message, NotificationType.POPUP);
     }
     
     public void setHeldItem(Item item) {
@@ -782,9 +781,9 @@ public class Player extends Entity implements CommandExecutor {
             String notification = achievement.getNotification();
             
             if(notification == null) {
-                alert(String.format("You're %s to the %s achievement!", description, title));
+                notify(String.format("You're %s to the %s achievement!", description, title));
             } else {
-                alert(String.format("You've %s - %s to the %s achievement!",
+                notify(String.format("You've %s - %s to the %s achievement!",
                         notification.replace("*", String.valueOf(progress)), description, title));
             }
             

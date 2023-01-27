@@ -1,6 +1,6 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
+import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
@@ -24,7 +24,7 @@ public class GenerateZoneCommand extends Command {
         int seed = (int)(Math.random() * Integer.MAX_VALUE);
         
         if(args.length > 0 && args.length < 2) {
-            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
+            executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
         
@@ -33,15 +33,16 @@ public class GenerateZoneCommand extends Command {
                 width = Integer.parseInt(args[0]);
                 height = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
-                executor.notify("Zone width and height must be valid numbers.", ALERT);
+                executor.notify("Zone width and height must be valid numbers.", SYSTEM);
                 return;
             }
             
             if(width < MIN_WIDTH || width > MAX_WIDTH || height < MIN_HEIGHT || height > MAX_HEIGHT) {
-                executor.notify(String.format("Zones must be between %sx%s and %sx%s blocks.", MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT), ALERT);
+                executor.notify(String.format("Zones must be between %sx%s and %sx%s blocks.",
+                        MIN_WIDTH, MIN_HEIGHT, MAX_WIDTH, MAX_HEIGHT), SYSTEM);
                 return;
             } else if(width % Zone.DEFAULT_CHUNK_WIDTH != 0 || height % Zone.DEFAULT_CHUNK_HEIGHT != 0) {
-                executor.notify(String.format("Zone size must be a multiple of %s", Zone.DEFAULT_CHUNK_WIDTH), ALERT);
+                executor.notify(String.format("Zone size must be a multiple of %s", Zone.DEFAULT_CHUNK_WIDTH), SYSTEM);
                 return;
             }
         }
@@ -57,7 +58,7 @@ public class GenerateZoneCommand extends Command {
             generator = ZoneGenerator.getZoneGenerator(name);
             
             if(generator == null) {
-                executor.notify(String.format("The zone generator '%s' does not exist.", name), ALERT);
+                executor.notify(String.format("The zone generator '%s' does not exist.", name), SYSTEM);
                 return;
             }
         } else {
@@ -77,13 +78,13 @@ public class GenerateZoneCommand extends Command {
             }
         }
         
-        executor.notify("Your zone is being generated. It should be ready soon!", ALERT);
+        executor.notify("Your zone is being generated. It should be ready soon!", SYSTEM);
         generator.generateZoneAsync(biome, width, height, seed, zone -> {
             if(zone == null) {
-                executor.notify("An unexpected error occured while generating your zone.", ALERT);
+                executor.notify("An unexpected error occured while generating your zone.", SYSTEM);
             } else {
                 GameServer.getInstance().getZoneManager().addZone(zone);
-                executor.notify(String.format("Your zone '%s' is ready for exploration!", zone.getName()), ALERT);
+                executor.notify(String.format("Your zone '%s' is ready for exploration!", zone.getName()), SYSTEM);
             }
         });
     }

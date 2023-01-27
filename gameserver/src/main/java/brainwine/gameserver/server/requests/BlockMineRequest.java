@@ -130,7 +130,7 @@ public class BlockMineRequest extends PlayerRequest {
     }
     
     private void fail(Player player, String reason) {
-        player.alert(reason);
+        player.notify(reason);
         Block block = player.getZone().getBlock(x, y);
         player.sendDelayedMessage(new BlockChangeMessage(x, y, layer, block.getItem(layer), block.getMod(layer)));
         player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));

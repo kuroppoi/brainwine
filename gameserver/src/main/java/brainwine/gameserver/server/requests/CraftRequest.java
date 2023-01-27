@@ -28,7 +28,7 @@ public class CraftRequest extends PlayerRequest {
     @Override
     public void process(Player player) {
         if(item.isAir() || !item.isCraftable()) {
-            player.alert("Sorry, you can't craft this item.");
+            player.notify("Sorry, you can't craft this item.");
             return;
         }
         
@@ -37,7 +37,7 @@ public class CraftRequest extends PlayerRequest {
             Pair<Skill, Integer> craftingSkill = item.getCraftingSkill();
             
             if(player.getTotalSkillLevel(craftingSkill.getFirst()) < craftingSkill.getLast()) {
-                player.alert("You are not skilled enough to craft this item.");
+                player.notify("You are not skilled enough to craft this item.");
                 return;
             }
         }
@@ -50,7 +50,7 @@ public class CraftRequest extends PlayerRequest {
             Item item = ingredient.getItem();
             
             if(!inventory.hasItem(item, ingredient.getQuantity() * quantity)) {
-                player.alert(String.format("You do not have enough %s to craft this.", item.getTitle()));
+                player.notify(String.format("You do not have enough %s to craft this.", item.getTitle()));
                 return;
             }
         }
@@ -65,7 +65,7 @@ public class CraftRequest extends PlayerRequest {
                         -> metaBlock.getItem() == craftingHelper.getItem()).count();
                 
                 if(quantityMissing > 0) {
-                    player.alert(String.format("You can't craft this item because your workshop is lacking %sx %s.",
+                    player.notify(String.format("You can't craft this item because your workshop is lacking %sx %s.",
                             quantityMissing, craftingHelper.getItem().getTitle()));
                     return;
                 }

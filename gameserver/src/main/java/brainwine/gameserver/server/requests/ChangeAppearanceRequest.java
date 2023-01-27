@@ -27,7 +27,7 @@ public class ChangeAppearanceRequest extends PlayerRequest {
             String meta = "" + data.get("meta");
 
             if(meta.equals("randomize")) {
-                player.alert("Sorry, you can't randomize your appearance yet.");
+                player.notify("Sorry, you can't randomize your appearance yet.");
             } else {
                 player.showDialog(DialogHelper.getWardrobeDialog(meta));
             }
@@ -49,7 +49,7 @@ public class ChangeAppearanceRequest extends PlayerRequest {
                 Item item = ItemRegistry.getItem((int)value);
                 
                 if(!item.isBase() && !player.getInventory().hasItem(item)) {
-                    player.alert("Sorry, but you do not own this.");
+                    player.notify("Sorry, but you do not own this.");
                     return;
                 }
                 

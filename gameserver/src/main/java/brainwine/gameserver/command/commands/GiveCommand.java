@@ -1,6 +1,5 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import java.util.ArrayList;
@@ -18,14 +17,14 @@ public class GiveCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length < 2) {
-            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
+            executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
         
         Player target = GameServer.getInstance().getPlayerManager().getPlayer(args[0]);
         
         if(target == null) {
-            executor.notify("That player does not exist.", ALERT);
+            executor.notify("That player does not exist.", SYSTEM);
             return;
         }
         
@@ -50,7 +49,7 @@ public class GiveCommand extends Command {
             }
             
             if(item.isAir()) {
-                executor.notify("This item does not exist.", ALERT);
+                executor.notify("This item does not exist.", SYSTEM);
                 return;
             }
             
@@ -64,7 +63,7 @@ public class GiveCommand extends Command {
             try {
                 quantity = Integer.parseInt(args[2]);
             } catch(NumberFormatException e) {
-                executor.notify("Quantity must be a valid number.", ALERT);
+                executor.notify("Quantity must be a valid number.", SYSTEM);
                 return;
             }
         }
@@ -74,14 +73,14 @@ public class GiveCommand extends Command {
                 target.getInventory().addItem(item, quantity, true);
             }
             
-            target.alert(String.format("You received %s %s from an administrator.", quantity, title));
+            target.notify(String.format("You received %s %s from an administrator.", quantity, title), SYSTEM);
             executor.notify(String.format("Gave %s %s to %s", quantity, title, target.getName()), SYSTEM);
         } else {
             for(Item item : items) {
                 target.getInventory().removeItem(item, -quantity, true);
             }
             
-            target.alert(String.format("%s %s was taken from your inventory.", -quantity, title));
+            target.notify(String.format("%s %s was taken from your inventory.", -quantity, title), SYSTEM);
             executor.notify(String.format("Took %s %s from %s", -quantity, title, target.getName()), SYSTEM);
         }
     }

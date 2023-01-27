@@ -1,7 +1,6 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
-import static brainwine.gameserver.entity.player.NotificationType.CHAT;
+import static brainwine.gameserver.entity.player.NotificationType.POPUP;
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.GameServer;
@@ -14,7 +13,7 @@ public class BroadcastCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length == 0) {
-            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
+            executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
         
@@ -24,7 +23,7 @@ public class BroadcastCommand extends Command {
             player.notify(text, SYSTEM);
         }
         
-        executor.notify("Your message has been broadcasted.", ALERT);
+        executor.notify("Your message has been broadcasted.", POPUP);
     }
     
     @Override

@@ -1,6 +1,6 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
+import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
@@ -12,7 +12,7 @@ public class ThinkCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(args.length == 0) {
-            executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
+            executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
         

@@ -12,7 +12,7 @@ public class TransactionRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
-        player.alert("Sorry, the crown store has not been implemented yet.");
+        player.notify("Sorry, the crown store has not been implemented yet.");
         player.sendMessage(new StatMessage("crowns", player.getCrowns()));
     }
 }

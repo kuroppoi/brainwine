@@ -4,18 +4,20 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum NotificationType {
     
-    ALERT(1),
-    STANDARD(2),
+    POPUP(1),
+    SYSTEM(2),
     EMOTE(3),
-    INVISIBLE_DIALOG(5),
+    FANCY_EMOTE(4),
+    INVISIBLE_DIALOG(5), // v2 only
     LARGE(6),
     ACCOMPLISHMENT(10),
-    SYSTEM(11),
-    REWARD(12),
+    PEER_ACCOMPLISHMENT(11),
+    REWARD(12), // v2 only
     CHAT(20),
-    LEVEL_UP(21),
-    ACHIEVEMENT(22),
-    WELCOME(333);
+    LEVEL_UP(21), // v3 only
+    ACHIEVEMENT(22), // v3 only
+    WELCOME(333), // v2 only
+    MAINTENANCE(503); // v2 only
     
     private final int id;
     

@@ -1,6 +1,5 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.GameServer;
@@ -17,7 +16,7 @@ public class SeedCommand extends Command {
         
         if(!(executor instanceof Player)) {
             if(args.length < 1) {
-                executor.notify(String.format("Usage: %s", getUsage(executor)), ALERT);
+                executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
                 return;
             }
         } else {
@@ -29,7 +28,7 @@ public class SeedCommand extends Command {
         }
         
         if(target == null) {
-            executor.notify("This zone does not exist.", ALERT);
+            executor.notify("This zone does not exist.", SYSTEM);
             return;
         }
         

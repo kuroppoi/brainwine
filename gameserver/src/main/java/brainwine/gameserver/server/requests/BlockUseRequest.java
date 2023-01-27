@@ -58,12 +58,12 @@ public class BlockUseRequest extends PlayerRequest {
                     
                     switch(publicUse) {
                         case "owner":
-                            player.alert(String.format("This %s is owned by %s.", 
+                            player.notify(String.format("This %s is owned by %s.", 
                                     item.getTitle().toLowerCase(), owner == null ? "nobody.." : owner.getName()));
                             break;
                     }
                 } else {
-                    player.alert("Sorry, that belongs to somebody else.");
+                    player.notify("Sorry, that belongs to somebody else.");
                     return;
                 }
             }
@@ -127,7 +127,7 @@ public class BlockUseRequest extends PlayerRequest {
                         String dungeonId = MapHelper.getString(metadata, "@");
                         
                         if(dungeonId != null && item.hasUse(ItemUseType.FIELDABLE) && zone.isDungeonIntact(dungeonId)) {
-                            player.alert("This container is secured by protectors in the area.");
+                            player.notify("This container is secured by protectors in the area.");
                             break;
                         }
                                                 
@@ -135,14 +135,14 @@ public class BlockUseRequest extends PlayerRequest {
                             Loot loot = GameServer.getInstance().getLootManager().getRandomLoot(player, item.getLootCategories());
                             
                             if(loot == null) {
-                                player.alert("No eligible loot could be found for this container.");
+                                player.notify("No eligible loot could be found for this container.");
                             } else {
                                 metadata.remove("$");
                                 player.awardLoot(loot, item.getLootGraphic());
                                 player.getStatistics().trackContainerLooted(item);
                             }
                         } else {
-                            player.alert("Sorry, this container can't be looted right now.");
+                            player.notify("Sorry, this container can't be looted right now.");
                         }
                         
                         if(mod != 0) {

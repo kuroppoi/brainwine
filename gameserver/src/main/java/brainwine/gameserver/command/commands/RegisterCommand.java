@@ -1,7 +1,5 @@
 package brainwine.gameserver.command.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.ALERT;
-
 import org.apache.commons.validator.routines.EmailValidator;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -11,6 +9,8 @@ import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.entity.player.Player;
 
+import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+
 public class RegisterCommand extends Command {
     
     @Override
@@ -18,7 +18,7 @@ public class RegisterCommand extends Command {
         Player player = (Player)executor;
         
         if(player.isRegistered()) {
-            player.notify("You have already registered your account.", ALERT);
+            player.notify("You have already registered your account.", SYSTEM);
             return;
         }
         
@@ -31,17 +31,17 @@ public class RegisterCommand extends Command {
             String password = input[1].toString();
             
             if(email.length() > 128 || !EmailValidator.getInstance().isValid(email)) {
-                player.alert("Please enter a valid e-mail address.");
+                player.notify("Please enter a valid e-mail address.");
                 return;
             }
             
             if(GameServer.getInstance().getPlayerManager().isEmailTaken(email)) {
-                player.alert("Sorry, this e-mail address is already in use.");
+                player.notify("Sorry, this e-mail address is already in use.");
                 return;
             }
             
             if(!password.matches("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,64}$")) {
-                player.alert("Please enter a valid password.");
+                player.notify("Please enter a valid password.");
                 return;
             }
             
@@ -50,7 +50,7 @@ public class RegisterCommand extends Command {
             player.setEmail(email);
             player.setPassword(BCrypt.hashpw(password, BCrypt.gensalt()));
             player.checkRegistration();
-            player.alert("Your account has been successfully registered!");
+            player.notify("Your account has been successfully registered!");
         });
     }
     
