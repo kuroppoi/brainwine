@@ -70,8 +70,8 @@ public class Zone {
     private boolean[] chunksExplored;
     private OffsetDateTime creationDate = OffsetDateTime.now();
     private float time = (float)Math.random(); // TODO temporary
-    private float temperature = 0;
-    private float acidity = 1;
+    private float temperature;
+    private float acidity;
     private final ChunkManager chunkManager;
     private final WeatherManager weatherManager = new WeatherManager();
     private final EntityManager entityManager = new EntityManager(this);
@@ -96,6 +96,7 @@ public class Zone {
         this.depths = depths != null && depths.length == 3 ? depths : this.depths;
         this.chunksExplored = chunksExplored != null && chunksExplored.length == getChunkCount() ? chunksExplored : this.chunksExplored;
         pendingSunlight.addAll(data.getPendingSunlight());
+        acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
         creationDate = config.getCreationDate();
     }
     
@@ -112,6 +113,7 @@ public class Zone {
         sunlight = new int[width];
         chunksExplored = new boolean[numChunksWidth * numChunksHeight];
         chunkManager = new ChunkManager(this);
+        acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : 1;
         Arrays.fill(surface, height);
         Arrays.fill(sunlight, height);
     }
@@ -1232,6 +1234,14 @@ public class Zone {
     
     public int getChunkCount() {
         return numChunksWidth * numChunksHeight;
+    }
+    
+    public void setAcidity(float acidity) {
+        this.acidity = acidity;
+    }
+    
+    public float getAcidity() {
+        return acidity;
     }
     
     public OffsetDateTime getCreationDate() {

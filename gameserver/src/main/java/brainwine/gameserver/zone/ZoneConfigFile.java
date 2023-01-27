@@ -24,17 +24,21 @@ public class ZoneConfigFile {
     private int height;
     
     @JsonSetter(nulls = Nulls.SKIP)
+    private float acidity = 1.0F;
+    
+    @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime creationDate = OffsetDateTime.now();
     
     public ZoneConfigFile(Zone zone) {
-        this(zone.getName(), zone.getBiome(), zone.getWidth(), zone.getHeight(), zone.getCreationDate());
+        this(zone.getName(), zone.getBiome(), zone.getWidth(), zone.getHeight(), zone.getAcidity(), zone.getCreationDate());
     }
     
-    public ZoneConfigFile(String name, Biome biome, int width, int height, OffsetDateTime creationDate) {
+    public ZoneConfigFile(String name, Biome biome, int width, int height, float acidity, OffsetDateTime creationDate) {
         this.name = name;
         this.biome = biome;
         this.width = width;
         this.height = height;
+        this.acidity = acidity;
         this.creationDate = creationDate;
     }
     
@@ -61,6 +65,10 @@ public class ZoneConfigFile {
     
     public int getHeight() {
         return height;
+    }
+    
+    public float getAcidity() {
+        return acidity;
     }
     
     public OffsetDateTime getCreationDate() {
