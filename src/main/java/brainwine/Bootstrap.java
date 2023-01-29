@@ -3,8 +3,12 @@ package brainwine;
 import java.awt.Desktop;
 import java.awt.Font;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -41,6 +45,7 @@ public class Bootstrap {
     }
     
     public Bootstrap() {
+        // Create gui or directly start server if gui is disabled or not supported
         if(!disableGui && (Desktop.isDesktopSupported() || forceGui)) {
             try {
                 createMainView();
@@ -49,6 +54,16 @@ public class Bootstrap {
                 System.exit(1);
             }
         } else {
+            // Check read/write permissions
+            if(!checkReadWritePermissions()) {
+                logger.error("=============================================================");
+                logger.error("Brainwine has no read or write permissions in this directory.");
+                logger.error("Please elevate the process or move it to another location.");
+                logger.error("=============================================================");
+                System.exit(1);
+            }
+            
+            // Start the server (duh)
             startServer();
             
             // Start console listener thread
@@ -94,9 +109,21 @@ public class Bootstrap {
             SwingUtils.setDefaultFontSize(Math.min(28, Math.max(10, GuiPreferences.getInt(GuiPreferences.FONT_SIZE_KEY, 14))));
             SwingUtils.setMenuBarEmbedded(GuiPreferences.getBoolean(GuiPreferences.EMBED_MENU_BAR_KEY, true));
             
+            // Check read/write permissions
+            if(!checkReadWritePermissions()) {
+                JOptionPane.showMessageDialog(null, "I have no read or write permissions at this location.\n"
+                        + "Please move me somewhere else!", "Attention", JOptionPane.ERROR_MESSAGE);
+                System.exit(1);
+            }
+            
             // Create view
             mainView = new MainView(this);
         });
+    }
+    
+    private boolean checkReadWritePermissions() {
+        Path path = Paths.get("");
+        return Files.isReadable(path) && Files.isWritable(path);
     }
     
     public void startServer() {
