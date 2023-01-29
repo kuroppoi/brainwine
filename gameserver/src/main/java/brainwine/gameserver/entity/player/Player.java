@@ -131,6 +131,7 @@ public class Player extends Entity implements CommandExecutor {
         this.skills = config.getSkills();
         this.equippedClothing = config.getEquippedClothing();
         this.equippedColors = config.getEquippedColors();
+        health = getMaxHealth();
         inventory.setPlayer(this);
         statistics.setPlayer(this);
     }
@@ -201,7 +202,8 @@ public class Player extends Entity implements CommandExecutor {
     
     @Override
     public float getMaxHealth() {
-        return 10; // TODO
+        int stamina = Math.min(10, getTotalSkillLevel(Skill.STAMINA));
+        return DEFAULT_HEALTH + (stamina < 10 ? (stamina - 1) * 0.5F : 5);
     }
     
     @Override

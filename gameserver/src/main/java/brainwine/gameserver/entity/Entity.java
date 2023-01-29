@@ -22,7 +22,7 @@ public abstract class Entity {
     protected final List<Player> trackers = new ArrayList<>();
     protected int type;
     protected String name;
-    protected float health = getMaxHealth();
+    protected float health = DEFAULT_HEALTH;
     protected int id;
     protected Zone zone;
     protected float x;
