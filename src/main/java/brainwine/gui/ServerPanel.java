@@ -59,7 +59,7 @@ public class ServerPanel extends JPanel {
         consoleOutput.setEditable(false);
         ListenableAppender.addListener("GuiServerOutput", message -> {
             Level level = message.getLevel();
-            Color color = level == Level.ERROR ? ERROR_COLOR : level == Level.WARN ? WARNING_COLOR : INFO_COLOR;
+            Color color = (level == Level.ERROR || level == Level.FATAL) ? ERROR_COLOR : level == Level.WARN ? WARNING_COLOR : INFO_COLOR;
             appendConsoleOutput(message.getFormattedMessage(), color);
         });
         
