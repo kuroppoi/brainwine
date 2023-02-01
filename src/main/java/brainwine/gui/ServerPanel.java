@@ -50,6 +50,11 @@ public class ServerPanel extends JPanel {
             public Font getFont() {
                 return UIManager.getFont("Brainwine.consoleFont");
             }
+            
+            @Override
+            public boolean getScrollableTracksViewportWidth() {
+                return getUI().getPreferredSize(this).width <= getParent().getSize().width;
+            }
         };;
         consoleOutput.setEditable(false);
         ListenableAppender.addListener(message -> {
