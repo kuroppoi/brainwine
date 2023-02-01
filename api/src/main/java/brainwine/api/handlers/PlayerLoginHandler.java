@@ -1,6 +1,6 @@
 package brainwine.api.handlers;
 
-import static brainwine.api.util.ContextUtils.*;
+import static brainwine.api.util.ContextUtils.error;
 
 import brainwine.api.DataFetcher;
 import brainwine.api.models.ServerConnectInfo;
