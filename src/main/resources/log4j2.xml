@@ -13,7 +13,7 @@
 	</RollingFile>
 	<Listenable name="GuiServerOutput">
 	  <MarkerFilter marker="SERVER" onMatch="ACCEPT" onMismatch="DENY"/>
-      <PatternLayout pattern="(%d{yyyy-MM-dd HH:mm:ss.SSS}) [%level] [%logger{1}]: %msg%n"/>
+	  <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} %5level - %msg%n"/>
     </Listenable>
   </Appenders>
   <Loggers>
