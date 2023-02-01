@@ -1,5 +1,7 @@
 package brainwine.gameserver.entity;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -23,7 +25,7 @@ public class EntityRegistry {
         Map<String, Map<String, Object>> entityConfigs = MapHelper.getMap(GameConfiguration.getBaseConfig(), "entities");
         
         if(entityConfigs == null) {
-            logger.warn("No entity configurations exist!");
+            logger.warn(SERVER_MARKER, "No entity configurations exist!");
             return;
         }
         
@@ -39,17 +41,17 @@ public class EntityRegistry {
                 registerEntityConfig(name, JsonHelper.readValue(config, EntityConfig.class, 
                         new InjectableValues.Std().addValue("name", name)));
             } catch(Exception e) {
-                logger.error("Could not deserialize entity config for entity '{}'", name, e);
+                logger.error(SERVER_MARKER, "Could not deserialize entity config for entity '{}'", name, e);
             }
         }
         
         int entityCount = entities.size();
-        logger.info("Successfully loaded {} entit{}", entityCount, entityCount == 1 ? "y" : "ies");
+        logger.info(SERVER_MARKER, "Successfully loaded {} entit{}", entityCount, entityCount == 1 ? "y" : "ies");
     }
     
     public static void registerEntityConfig(String name, EntityConfig config) {
         if(entities.containsKey(name)) {
-            logger.warn("Attempted to register entity with name '{}' twice", name);
+            logger.warn(SERVER_MARKER, "Attempted to register entity with name '{}' twice", name);
             return;
         }
         

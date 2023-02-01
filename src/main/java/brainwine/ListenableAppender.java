@@ -2,7 +2,9 @@ package brainwine;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.logging.log4j.core.Appender;
@@ -23,7 +25,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginFactory;
     printObject = true)
 public class ListenableAppender extends AbstractAppender {
     
-    protected static final List<Consumer<LogMessage>> listeners = new ArrayList<>();
+    protected static final Map<String, List<Consumer<LogMessage>>> listenersByAppender = new HashMap<>();
     
     protected ListenableAppender(String name, Filter filter,
             Layout<? extends Serializable> layout, boolean ignoreExceptions,
@@ -40,9 +42,11 @@ public class ListenableAppender extends AbstractAppender {
         return new ListenableAppender(name, filter, layout, ignoreExceptions, null);
     }
     
-    public static void addListener(Consumer<LogMessage> listener) {
-        synchronized(listeners) {
+    public static void addListener(String appenderName, Consumer<LogMessage> listener) {
+        synchronized(listenersByAppender) {
+            List<Consumer<LogMessage>> listeners = listenersByAppender.getOrDefault(appenderName, new ArrayList<>());
             listeners.add(listener);
+            listenersByAppender.putIfAbsent(appenderName, listeners);
         }
     }
     
@@ -52,9 +56,13 @@ public class ListenableAppender extends AbstractAppender {
         String formattedMessage = getLayout().toSerializable(event).toString();
         LogMessage logMessage = new LogMessage(event.getLevel(), message, formattedMessage);
         
-        synchronized(listeners) {
-            for(Consumer<LogMessage> listener : listeners) {
-                listener.accept(logMessage);
+        synchronized(listenersByAppender) {
+            List<Consumer<LogMessage>> listeners = listenersByAppender.get(getName());
+            
+            if(listeners != null) {
+                for(Consumer<LogMessage> listener : listeners) {
+                    listener.accept(logMessage);
+                }
             }
         }
     }

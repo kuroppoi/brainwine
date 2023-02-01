@@ -2,12 +2,12 @@ package brainwine.gui;
 
 import static brainwine.gui.GuiConstants.DEEPWORLD_ASSEMBLY_PATH;
 import static brainwine.gui.GuiConstants.DEEPWORLD_PLAYERPREFS;
-import static brainwine.gui.GuiConstants.GUI_MARKER;
 import static brainwine.gui.GuiConstants.HTTP_COMMUNITY_HUB_URL;
 import static brainwine.gui.GuiConstants.HTTP_STEAM_DOWNLOAD_URL;
 import static brainwine.gui.GuiConstants.STEAM_COMMUNITY_HUB_URL;
 import static brainwine.gui.GuiConstants.STEAM_REGISTRY_LOCATION;
 import static brainwine.gui.GuiConstants.STEAM_RUN_GAME_URL;
+import static brainwine.shared.LogMarkers.GUI_MARKER;
 
 import java.awt.Color;
 import java.awt.Graphics;

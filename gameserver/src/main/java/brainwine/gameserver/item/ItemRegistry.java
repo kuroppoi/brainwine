@@ -1,5 +1,7 @@
 package brainwine.gameserver.item;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,12 +27,12 @@ public class ItemRegistry {
         int code = item.getCode();
         
         if(items.containsKey(id)) {
-            logger.warn("Duplicate item id {} for code {}", id, code);
+            logger.warn(SERVER_MARKER, "Duplicate item id {} for code {}", id, code);
             return false;
         }
         
         if(itemsByCode.containsKey(code)) {
-            logger.warn("Duplicate item code {} for id {}", code, id);
+            logger.warn(SERVER_MARKER, "Duplicate item code {} for id {}", code, id);
             return false;
         }
         

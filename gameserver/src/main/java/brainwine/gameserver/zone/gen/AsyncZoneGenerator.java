@@ -1,5 +1,7 @@
 package brainwine.gameserver.zone.gen;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.function.Consumer;
@@ -38,7 +40,8 @@ public class AsyncZoneGenerator extends Thread {
                 try {
                     zone = generator.generateZone(biome, width, height, seed);
                 } catch(Exception e) {
-                    logger.error("An unexpected error occured while generating zone [biome:{}, width:{}, height:{}, seed:{}]", biome, width, height, generator, seed, e);
+                    logger.error(SERVER_MARKER, "An unexpected error occured while generating zone [biome:{}, width:{}, height:{}, seed:{}]",
+                            biome, width, height, seed, e);
                 }
                 
                 Zone generated = zone;
@@ -48,7 +51,7 @@ public class AsyncZoneGenerator extends Thread {
                     GameServer gameServer = GameServer.getInstance();
                     
                     if(gameServer.shouldStop()) {
-                        logger.warn("Server shutdown has been requested while generating a zone!"
+                        logger.warn(SERVER_MARKER, "Server shutdown has been requested while generating a zone!"
                                 + " Callback will be fired immediately on the async zone generator thread."
                                 + " Don't blame me for what happens!");
                         callback.accept(generated);

@@ -1,5 +1,7 @@
 package brainwine.api;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.File;
 import java.util.List;
 
@@ -24,18 +26,18 @@ public class Api {
     
     public Api(DataFetcher dataFetcher) {
         long startTime = System.currentTimeMillis();
-        logger.info("Starting API ...");
+        logger.info(SERVER_MARKER, "Starting API ...");
         this.dataFetcher = dataFetcher;
-        logger.info("Using data fetcher {}", dataFetcher.getClass().getName());
-        logger.info("Loading configuration ...");
+        logger.info(SERVER_MARKER, "Using data fetcher {}", dataFetcher.getClass().getName());
+        logger.info(SERVER_MARKER, "Loading configuration ...");
         config = loadConfig();
         gatewayService = new GatewayService(this, config.getGatewayPort());
         portalService = new PortalService(this, config.getPortalPort());
-        logger.info("All done! API startup took {} milliseconds", System.currentTimeMillis() - startTime);
+        logger.info(SERVER_MARKER, "All done! API startup took {} milliseconds", System.currentTimeMillis() - startTime);
     }
     
     public void onShutdown() {
-        logger.info("Shutting down API ...");
+        logger.info(SERVER_MARKER, "Shutting down API ...");
         gatewayService.stop();
         portalService.stop();
     }
@@ -52,7 +54,7 @@ public class Api {
             
             return JsonHelper.readValue(file, ApiConfig.class);
         } catch (Exception e) {
-            logger.fatal("Failed to load configuration", e);
+            logger.fatal(SERVER_MARKER, "Failed to load configuration", e);
             System.exit(-1);
         }
         

@@ -1,5 +1,7 @@
 package brainwine.gameserver.behavior;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,11 +41,11 @@ public class SequenceBehavior extends CompositeBehavior {
                 
                 // TODO get rid of this once we add the remaining behaviors
                 if(!loggedInvalidTypes.contains(type)) {
-                    logger.warn("No implementation exists for behavior type '{}'", type);
+                    logger.warn(SERVER_MARKER, "No implementation exists for behavior type '{}'", type);
                     loggedInvalidTypes.add(type);
                 }
             } catch(IOException e) {
-                logger.error("Could not add behavior type '{}' to behavior tree for entity with type '{}'", 
+                logger.error(SERVER_MARKER, "Could not add behavior type '{}' to behavior tree for entity with type '{}'", 
                         MapHelper.getString(config, "type", "unknown"), npc.getType(), e);
             }
         }

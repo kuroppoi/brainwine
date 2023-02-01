@@ -1,5 +1,7 @@
 package brainwine.gameserver;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -41,7 +43,7 @@ public class GameServer implements CommandExecutor {
         instance = this;
         handlerThread = Thread.currentThread();
         long startTime = System.currentTimeMillis();
-        logger.info("Starting GameServer ...");
+        logger.info(SERVER_MARKER, "Starting GameServer ...");
         CommandManager.init();
         GameConfiguration.init();
         AchievementManager.loadAchievements();
@@ -55,7 +57,7 @@ public class GameServer implements CommandExecutor {
         NetworkRegistry.init();
         server = new Server();
         server.addEndpoint(5002);
-        logger.info("All done! GameServer startup took {} milliseconds", System.currentTimeMillis() - startTime);
+        logger.info(SERVER_MARKER, "All done! GameServer startup took {} milliseconds", System.currentTimeMillis() - startTime);
     }
     
     public static GameServer getInstance() {
@@ -64,7 +66,7 @@ public class GameServer implements CommandExecutor {
     
     @Override
     public void notify(Object message, NotificationType type) {
-        consoleLogger.info(message);
+        consoleLogger.info(SERVER_MARKER, message);
     }
 
     @Override
@@ -109,12 +111,12 @@ public class GameServer implements CommandExecutor {
      * Called by the bootstrapper when the program closes.
      */
     public void onShutdown() {
-        logger.info("Shutting down GameServer ...");
+        logger.info(SERVER_MARKER, "Shutting down GameServer ...");
         server.close();
         ZoneGenerator.stopAsyncZoneGenerator(true);
-        logger.info("Saving zone data ...");
+        logger.info(SERVER_MARKER, "Saving zone data ...");
         zoneManager.onShutdown();
-        logger.info("Saving player data ...");
+        logger.info(SERVER_MARKER, "Saving player data ...");
         playerManager.savePlayers();
     }
     

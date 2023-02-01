@@ -1,5 +1,7 @@
 package brainwine.gameserver.loot;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -33,7 +35,7 @@ public class LootManager {
     }
     
     private void loadLootTables() {
-        logger.info("Loading loot tables ...");
+        logger.info(SERVER_MARKER, "Loading loot tables ...");
         File file = new File("loottables.json");
         ResourceUtils.copyDefaults("loottables.json");
         
@@ -42,7 +44,7 @@ public class LootManager {
                 Map<String, List<Loot>> loot = JsonHelper.readValue(file, new TypeReference<Map<String, List<Loot>>>(){});
                 lootTables.putAll(loot);
             } catch (IOException e) {
-                logger.error("Failed to load loot tables", e);
+                logger.error(SERVER_MARKER, "Failed to load loot tables", e);
             }
         }
     }

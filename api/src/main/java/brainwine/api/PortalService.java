@@ -1,5 +1,7 @@
 package brainwine.api;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,7 +20,7 @@ public class PortalService {
     private final Javalin portal;
     
     public PortalService(Api api, int port) {
-        logger.info("Starting PortalService @ port {} ...", port);
+        logger.info(SERVER_MARKER, "Starting PortalService @ port {} ...", port);
         DataFetcher dataFetcher = api.getDataFetcher();
         portal = Javalin.create(config -> config.jsonMapper(new JavalinJackson(JsonHelper.MAPPER))).start(port);
         portal.exception(Exception.class, new SimpleExceptionHandler());

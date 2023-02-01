@@ -1,5 +1,7 @@
 package brainwine;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -24,15 +26,15 @@ public class ServerThread extends Thread {
     @Override
     public void run() {
         try {
-            logger.warn("NOTE: THIS SERVER IS INCOMPLETE! EXPECT BAD CODE, BUGS, AND MISSING FEATURES!");
-            logger.info("Starting server ...");
+            logger.warn(SERVER_MARKER, "NOTE: THIS SERVER IS INCOMPLETE! EXPECT BAD CODE, BUGS, AND MISSING FEATURES!");
+            logger.info(SERVER_MARKER, "Starting server ...");
             gameServer = new GameServer();
             api = new Api(new DirectDataFetcher(gameServer.getPlayerManager(), gameServer.getZoneManager()));
             TickLoop tickLoop = new TickLoop(8, () -> {
                 gameServer.tick();
             });
             
-            logger.info("Server has started");
+            logger.info(SERVER_MARKER, "Server has started");
             running = true;
             bootstrap.onServerStarted();
             
@@ -40,7 +42,7 @@ public class ServerThread extends Thread {
                 tickLoop.update();
             }
         } catch(Exception e) {
-            logger.error("An unexpected exception occured", e);
+            logger.error(SERVER_MARKER, "An unexpected exception occured", e);
         } finally {
             stopUnsafe();
         }
@@ -63,12 +65,19 @@ public class ServerThread extends Thread {
     
     private void stopUnsafe() {
         try {
-            logger.info("Stopping server ...");
-            gameServer.onShutdown();
-            api.onShutdown();
-            logger.info("Server has stopped");
+            logger.info(SERVER_MARKER, "Stopping server ...");
+            
+            if(gameServer != null) {
+                gameServer.onShutdown();
+            }
+            
+            if(api != null) {
+                api.onShutdown();
+            }
+            
+            logger.info(SERVER_MARKER, "Server has stopped");
         } catch(Exception e) {
-            logger.error("An unexpected exception occured whilst shutting down", e);
+            logger.error(SERVER_MARKER, "An unexpected exception occured whilst shutting down", e);
         } finally {
             running = false;
             bootstrap.onServerStopped();

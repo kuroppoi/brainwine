@@ -1,5 +1,7 @@
 package brainwine.gameserver.dialog;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,7 +32,7 @@ public class DialogHelper {
         try {
             return JsonHelper.readValue(config, Dialog.class);
         } catch (JsonProcessingException e) {
-            logger.error("Failed to deserialize dialog: {}", path, e);
+            logger.error(SERVER_MARKER, "Failed to deserialize dialog: {}", path, e);
             return messageDialog(String.format("Deserialization for dialog '%s' failed: %s", path, e.getMessage()));
         }
     }
@@ -48,7 +50,7 @@ public class DialogHelper {
         try {
             input = JsonHelper.readValue(config, DialogInput.class);
         } catch (JsonProcessingException e) {
-            logger.error("Failed to deserialize dialog: {}", path, e);
+            logger.error(SERVER_MARKER, "Failed to deserialize dialog: {}", path, e);
             return messageDialog(String.format("Deserialization for dialog '%s' failed: %s", path, e.getMessage()));
         }
         

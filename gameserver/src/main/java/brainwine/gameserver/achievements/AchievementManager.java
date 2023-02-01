@@ -1,5 +1,7 @@
 package brainwine.gameserver.achievements;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -28,11 +30,11 @@ public class AchievementManager {
         achievements.clear();
         unknownTypeIds.clear();
         
-        logger.info("Loading achievements ...");
+        logger.info(SERVER_MARKER, "Loading achievements ...");
         Map<String, Map<String, Object>> achievementConfigs = MapHelper.getMap(GameConfiguration.getBaseConfig(), "achievements");
         
         if(achievementConfigs == null) {
-            logger.warn("No achievement configurations exist!");
+            logger.warn(SERVER_MARKER, "No achievement configurations exist!");
             return;
         }
         
@@ -52,23 +54,24 @@ public class AchievementManager {
             } catch(MismatchedInputException e) {
                 unknownTypeIds.add(MapHelper.getString(config, "type"));
             } catch(Exception e) {
-                logger.error("Could not deserialize achievement '{}'", title, e);
+                logger.error(SERVER_MARKER, "Could not deserialize achievement '{}'", title, e);
             }
         }
         
         if(!unknownTypeIds.isEmpty()) {
-            logger.warn("Some achievements could not be loaded due to missing implementations: {}", unknownTypeIds);
+            logger.warn(SERVER_MARKER, "Some achievements could not be loaded due to missing implementations:");
+            logger.warn(SERVER_MARKER, unknownTypeIds);
         }
         
         int achievementCount = achievements.size();
-        logger.info("Successfully loaded {} achievement{}", achievementCount, achievementCount == 1 ? "" : "s");
+        logger.info(SERVER_MARKER, "Successfully loaded {} achievement{}", achievementCount, achievementCount == 1 ? "" : "s");
     }
     
     public static void registerAchievement(Achievement achievement) {
         String title = achievement.getTitle();
         
         if(getAchievement(title) != null) {
-            logger.warn("Attempted to register duplicate achievement '{}'", title);
+            logger.warn(SERVER_MARKER, "Attempted to register duplicate achievement '{}'", title);
             return;
         }
         

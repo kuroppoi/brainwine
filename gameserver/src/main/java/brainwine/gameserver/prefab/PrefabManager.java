@@ -1,5 +1,7 @@
 package brainwine.gameserver.prefab;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.util.HashMap;
@@ -34,7 +36,7 @@ public class PrefabManager {
     private final Map<String, Prefab> prefabs = new HashMap<>();
     
     public PrefabManager() {
-        logger.info("Loading prefabs ...");
+        logger.info(SERVER_MARKER, "Loading prefabs ...");
         ResourceUtils.copyDefaults("prefabs/");
         
         if(dataDir.isDirectory()) {
@@ -45,7 +47,7 @@ public class PrefabManager {
             }
         }
         
-        logger.info("Successfully loaded {} prefab(s)", prefabs.size());
+        logger.info(SERVER_MARKER, "Successfully loaded {} prefab(s)", prefabs.size());
     }
     
     private void loadPrefab(File file) {
@@ -58,7 +60,7 @@ public class PrefabManager {
             PrefabBlocksFile blockData = null;
             
             if(legacyBlocksFile.exists() && !blocksFile.exists()) {
-                logger.info("Updating blocks file for prefab '{}' ...", name);
+                logger.info(SERVER_MARKER, "Updating blocks file for prefab '{}' ...", name);
                 MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(
                         ZipUtils.inflateBytes(Files.readAllBytes(legacyBlocksFile.toPath())));
                 int width = unpacker.unpackInt();
@@ -91,13 +93,13 @@ public class PrefabManager {
             PrefabConfigFile config = JsonHelper.readValue(configFile, PrefabConfigFile.class);
             prefabs.put(name, new Prefab(config, blockData));
         } catch(Exception e) {
-            logger.error("Could not load prefab {}:", name, e);
+            logger.error(SERVER_MARKER, "Could not load prefab {}:", name, e);
         }
     }
     
     public void addPrefab(String name, Prefab prefab) throws Exception {
         if(prefabs.containsKey(name)) {
-            logger.warn("Duplicate prefab name: {}", name);
+            logger.warn(SERVER_MARKER, "Duplicate prefab name: {}", name);
             return;
         }
         

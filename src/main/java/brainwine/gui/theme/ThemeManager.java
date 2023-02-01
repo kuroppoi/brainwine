@@ -1,6 +1,6 @@
 package brainwine.gui.theme;
 
-import static brainwine.gui.GuiConstants.GUI_MARKER;
+import static brainwine.shared.LogMarkers.GUI_MARKER;
 
 import java.util.ArrayList;
 import java.util.Collections;

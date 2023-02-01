@@ -2,7 +2,7 @@ package brainwine.gui;
 
 import static brainwine.gui.GuiConstants.DEEPWORLD_PLAYERPREFS;
 import static brainwine.gui.GuiConstants.GITHUB_REPOSITORY_URL;
-import static brainwine.gui.GuiConstants.GUI_MARKER;
+import static brainwine.shared.LogMarkers.GUI_MARKER;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

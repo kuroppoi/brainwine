@@ -1,5 +1,7 @@
 package brainwine.gameserver.server;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
@@ -75,11 +77,11 @@ public class Server {
             eventLoopGroup = new NioEventLoopGroup(0, threadFactory);
         }
         
-        logger.info("Using channel type {}", eventLoopGroup.getClass());
+        logger.info(SERVER_MARKER, "Using channel type {}", eventLoopGroup.getClass());
     }
     
     public void addEndpoint(int port) {
-        logger.info("Opening endpoint @ port {} ...", port);
+        logger.info(SERVER_MARKER, "Opening endpoint @ port {} ...", port);
         endpoints.add(new ServerBootstrap().group(eventLoopGroup).channel(channelType).childHandler(new ChannelInitializer<Channel>() {
             @Override
             protected void initChannel(Channel channel) throws Exception {
@@ -93,7 +95,7 @@ public class Server {
     }
     
     public void close() {
-        logger.info("Closing endpoints ...");
+        logger.info(SERVER_MARKER, "Closing endpoints ...");
         eventLoopGroup.shutdownGracefully();
     }
 }

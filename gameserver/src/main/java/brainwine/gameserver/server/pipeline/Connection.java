@@ -1,5 +1,7 @@
 package brainwine.gameserver.server.pipeline;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
 import java.util.concurrent.Callable;
@@ -59,7 +61,7 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
         }
         
         String error = cause.getMessage();
-        logger.warn(error);
+        logger.warn(SERVER_MARKER, error);
         //kick(error);
     }
     

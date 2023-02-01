@@ -1,6 +1,7 @@
 package brainwine.gameserver.command;
 
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -47,7 +48,7 @@ public class CommandManager {
     
     public static void init() {
         if(initialized) {
-            logger.warn("CommandManager is already initialized - skipping!");
+            logger.warn(SERVER_MARKER, "CommandManager is already initialized - skipping!");
             return;
         }
         
@@ -56,7 +57,7 @@ public class CommandManager {
     }
     
     private static void registerCommands() {
-        logger.info("Registering commands ...");
+        logger.info(SERVER_MARKER, "Registering commands ...");
         registerCommand(new StopCommand());
         registerCommand(new RegisterCommand());
         registerCommand(new TeleportCommand());
@@ -119,7 +120,7 @@ public class CommandManager {
         String name = command.getName();
         
        if(commands.containsKey(name)) {
-           logger.warn("Attempted to register duplicate command {} with name {}", command.getClass(), name);
+           logger.warn(SERVER_MARKER, "Attempted to register duplicate command {} with name {}", command.getClass(), name);
            return;
        }
        
@@ -129,7 +130,7 @@ public class CommandManager {
        if(aliases != null) {
            for(String alias : aliases) {
                if(commands.containsKey(alias) || CommandManager.aliases.containsKey(alias)) {
-                   logger.warn("Duplicate alias {} for command {}", alias, command.getClass());
+                   logger.warn(SERVER_MARKER, "Duplicate alias {} for command {}", alias, command.getClass());
                    continue;
                }
                

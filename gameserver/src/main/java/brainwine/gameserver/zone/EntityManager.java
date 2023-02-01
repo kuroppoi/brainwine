@@ -1,5 +1,7 @@
 package brainwine.gameserver.zone;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -59,7 +61,7 @@ public class EntityManager {
     
     public static void loadEntitySpawns() {
         spawns.clear();
-        logger.info("Loading entity spawns ...");
+        logger.info(SERVER_MARKER, "Loading entity spawns ...");
         File file = new File("spawning.json");
         ResourceUtils.copyDefaults("spawning.json");
         
@@ -67,7 +69,7 @@ public class EntityManager {
             try {
                 spawns.putAll(JsonHelper.readValue(file, new TypeReference<Map<Biome, List<EntitySpawn>>>(){}));
             } catch (IOException e) {
-                logger.error("Failed to load entity spawns", e);
+                logger.error(SERVER_MARKER, "Failed to load entity spawns", e);
             }
         }
     }

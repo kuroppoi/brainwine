@@ -1,5 +1,7 @@
 package brainwine.gameserver.server;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +23,7 @@ public class NetworkRegistry {
     
     public static void init() {
         if(initialized) {
-            logger.warn("NetworkRegistry is already initialized - skipping!");
+            logger.warn(SERVER_MARKER, "NetworkRegistry is already initialized - skipping!");
             return;
         }
         
@@ -31,13 +33,13 @@ public class NetworkRegistry {
     }
     
     private static void registerRequests() {
-        logger.info("Registering requests ...");
+        logger.info(SERVER_MARKER, "Registering requests ...");
         Reflections reflections = new Reflections("brainwine.gameserver.server.requests");
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(RequestInfo.class);
         
         for(Class<?> clazz : classes) {
             if(!Request.class.isAssignableFrom(clazz)) {
-                logger.warn("Attempted to register non-request class {}", clazz.getSimpleName());
+                logger.warn(SERVER_MARKER, "Attempted to register non-request class {}", clazz.getSimpleName());
                 continue;
             }
             
@@ -47,13 +49,13 @@ public class NetworkRegistry {
     }
     
     private static void registerMessages() {
-        logger.info("Registering messages ...");
+        logger.info(SERVER_MARKER, "Registering messages ...");
         Reflections reflections = new Reflections("brainwine.gameserver.server.messages");
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(MessageInfo.class);
         
         for(Class<?> clazz : classes) {
             if(!Message.class.isAssignableFrom(clazz)) {
-                logger.warn("Attempted to register non-message class {}", clazz.getSimpleName());
+                logger.warn(SERVER_MARKER, "Attempted to register non-message class {}", clazz.getSimpleName());
                 continue;
             }
             
@@ -64,12 +66,12 @@ public class NetworkRegistry {
     
     public static void registerRequest(int id, Class<? extends Request> type) {
         if(!type.isAnnotationPresent(RequestInfo.class)) {
-            logger.warn("RequestInfo annotation not present for class {}", type.getTypeName());
+            logger.warn(SERVER_MARKER, "RequestInfo annotation not present for class {}", type.getTypeName());
             return;
         }
         
         if(requests.containsKey(id)) {
-            logger.warn("Attempted to register duplicate request {}", type.getTypeName());
+            logger.warn(SERVER_MARKER, "Attempted to register duplicate request {}", type.getTypeName());
             return;
         }
         
@@ -82,12 +84,12 @@ public class NetworkRegistry {
     
     public static void registerMessage(Class<? extends Message> type, int id) {
         if(!type.isAnnotationPresent(MessageInfo.class)) {
-            logger.warn("MessageInfo annotation not present for class {}", type.getTypeName());
+            logger.warn(SERVER_MARKER, "MessageInfo annotation not present for class {}", type.getTypeName());
             return;
         }
         
         if(messageIds.containsKey(type)) {
-            logger.warn("Attempted to register duplicate message {}", type.getTypeName());
+            logger.warn(SERVER_MARKER, "Attempted to register duplicate message {}", type.getTypeName());
             return;
         }
         

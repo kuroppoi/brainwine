@@ -1,5 +1,7 @@
 package brainwine.gameserver.zone;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -36,7 +38,7 @@ public class ZoneManager {
     private Map<String, Zone> zonesByName = new HashMap<>();
         
     public ZoneManager() {
-        logger.info("Loading zone data ...");
+        logger.info(SERVER_MARKER, "Loading zone data ...");
         dataDir.mkdirs();
         
         for(File file : dataDir.listFiles()) {
@@ -46,18 +48,18 @@ public class ZoneManager {
         }
         
         if(zones.isEmpty()) {
-            logger.info("No zones were loaded. Generating default zone ...");
+            logger.info(SERVER_MARKER, "No zones were loaded. Generating default zone ...");
             ZoneGenerator generator = ZoneGenerator.getZoneGenerator(Biome.PLAIN);
             
             if(generator == null) {
-                logger.warn("No generator for plain biomes was found! The default generator will be used.");
+                logger.warn(SERVER_MARKER, "No generator for plain biomes was found! The default generator will be used.");
                 generator = ZoneGenerator.getDefaultZoneGenerator();
             }
             
             Zone zone = generator.generateZone(Biome.PLAIN, 2000, 600);
             addZone(zone);
         } else {
-            logger.info("Successfully loaded {} zone(s)", zonesByName.size());
+            logger.info(SERVER_MARKER, "Successfully loaded {} zone(s)", zonesByName.size());
         }
     }
     
@@ -94,7 +96,7 @@ public class ZoneManager {
             zone.setMetaBlocks(JsonHelper.readList(new File(file, "metablocks.json"), MetaBlock.class));
             addZone(zone);
         } catch (Exception e) {
-            logger.error("Zone load failure. id: {}", id, e);
+            logger.error(SERVER_MARKER, "Zone load failure. id: {}", id, e);
         }
     }
     
@@ -146,7 +148,7 @@ public class ZoneManager {
             JsonHelper.writeValue(new File(file, "config.json"), new ZoneConfigFile(zone));
             Files.write(new File(file, "zone.dat").toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(new ZoneDataFile(zone))));
         } catch(Exception e) {
-            logger.error("Zone save failure. id: {}", zone.getDocumentId(), e);
+            logger.error(SERVER_MARKER, "Zone save failure. id: {}", zone.getDocumentId(), e);
         }
     }
     
@@ -155,7 +157,7 @@ public class ZoneManager {
         String name = zone.getName();
         
         if(zonesByName.containsKey(name.toLowerCase())) {
-            logger.warn("Duplicate name {} for zone id {}", name, id);
+            logger.warn(SERVER_MARKER, "Duplicate name {} for zone id {}", name, id);
             return;
         }
         

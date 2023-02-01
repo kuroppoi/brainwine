@@ -1,5 +1,7 @@
 package brainwine.gameserver;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,16 +45,16 @@ public class GameConfiguration {
         baseConfig.clear();
         configUpdates.clear();
         versionedConfigs.clear();
-        logger.info("Loading game configuration ...");
+        logger.info(SERVER_MARKER, "Loading game configuration ...");
         LoaderOptions options = new LoaderOptions();
         options.setMaxAliasesForCollections(Short.MAX_VALUE);
         yaml = new Yaml(options);
         loadConfigFiles();
-        logger.info("Configuring ...");
+        logger.info(SERVER_MARKER, "Configuring ...");
         configure();
-        logger.info("Caching versioned configurations ...");
+        logger.info(SERVER_MARKER, "Caching versioned configurations ...");
         cacheVersionedConfigs();
-        logger.info("Load complete! Took {} milliseconds", System.currentTimeMillis() - startTime);
+        logger.info(SERVER_MARKER, "Load complete! Took {} milliseconds", System.currentTimeMillis() - startTime);
     }
     
     private static void cacheVersionedConfigs() {
@@ -158,7 +160,7 @@ public class GameConfiguration {
                     Item item = JsonHelper.readValue(config, Item.class);
                     ItemRegistry.registerItem(item);
                 } catch (JsonProcessingException e) {
-                    logger.fatal("Failed to register item {}", id, e);
+                    logger.fatal(SERVER_MARKER, "Failed to register item {}", id, e);
                     System.exit(0);
                 }
             });
@@ -168,7 +170,7 @@ public class GameConfiguration {
             }
         }
         
-        logger.info("Successfully loaded {} item(s)", ItemRegistry.getItems().size());
+        logger.info(SERVER_MARKER, "Successfully loaded {} item(s)", ItemRegistry.getItems().size());
     }
     
     private static void loadConfigFiles() {
@@ -196,7 +198,7 @@ public class GameConfiguration {
                 baseConfig.putAll(config);
             }
         } catch(Exception e) {
-            logger.fatal("Could not load configuration files", e);
+            logger.fatal(SERVER_MARKER, "Could not load configuration files", e);
             System.exit(-1);
         }
     }

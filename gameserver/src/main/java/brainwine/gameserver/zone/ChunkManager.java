@@ -1,5 +1,7 @@
 package brainwine.gameserver.zone;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -50,7 +52,7 @@ public class ChunkManager {
         File legacyBlocksFile = new File(zone.getDirectory(), "blocks");
         
         if(!blocksFile.exists() && legacyBlocksFile.exists()) {
-            logger.info("Updating blocks file for zone {} ...", zone.getDocumentId());
+            logger.info(SERVER_MARKER, "Updating blocks file for zone {} ...", zone.getDocumentId());
             DataInputStream inputStream = null;
             DataOutputStream outputStream = null;
             
@@ -87,7 +89,7 @@ public class ChunkManager {
                 inputStream.close();
                 outputStream.close();
             } catch(Exception e) {
-                logger.error("Could not update blocks file for zone {}", zone.getDocumentId(), e);
+                logger.error(SERVER_MARKER, "Could not update blocks file for zone {}", zone.getDocumentId(), e);
             }
             
             legacyBlocksFile.delete();
@@ -99,7 +101,7 @@ public class ChunkManager {
             try {
                 file.close();
             } catch(IOException e) {
-                logger.error("Could not close blocks file stream for zone {}", zone.getDocumentId());
+                logger.error(SERVER_MARKER, "Could not close blocks file stream for zone {}", zone.getDocumentId());
             } finally {
                 file = null;
             }
@@ -153,7 +155,7 @@ public class ChunkManager {
             file.write(bytes);
             chunk.setModified(false);
         } catch (IOException e) {
-            logger.error("Could not save chunk {} of zone {}", index, zone.getDocumentId(), e);
+            logger.error(SERVER_MARKER, "Could not save chunk {} of zone {}", index, zone.getDocumentId(), e);
         }
     }
     
@@ -168,7 +170,7 @@ public class ChunkManager {
             file.read(bytes);
             return mapper.readValue(ZipUtils.inflateBytes(bytes), Chunk.class);
         } catch(Exception e) {
-            logger.error("Could not load chunk {} of zone {}", index, zone.getDocumentId(), e);
+            logger.error(SERVER_MARKER, "Could not load chunk {} of zone {}", index, zone.getDocumentId(), e);
         }
         
         return null;

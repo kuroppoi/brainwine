@@ -1,5 +1,7 @@
 package brainwine.gameserver.behavior;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -37,13 +39,13 @@ public abstract class CompositeBehavior extends Behavior {
         try {
             addChild(JsonHelper.readValue(config, type, new InjectableValues.Std().addValue(Npc.class, entity)));
         } catch(IOException e) {
-            logger.error("Could not add child behavior of type {}.", type.getName(), e);
+            logger.error(SERVER_MARKER, "Could not add child behavior of type {}.", type.getName(), e);
         }
     }
     
     public void addChild(Behavior child) {
         if(children.contains(child)) {
-            logger.warn("Duplicate child instance {} for behavior {}", child, this);
+            logger.warn(SERVER_MARKER, "Duplicate child instance {} for behavior {}", child, this);
             return;
         }
         

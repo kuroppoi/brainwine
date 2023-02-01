@@ -1,5 +1,7 @@
 package brainwine.api;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -20,7 +22,7 @@ public class GatewayService {
     private final Javalin gateway;
     
     public GatewayService(Api api, int port) {
-        logger.info("Starting GatewayService @ port {} ...", port);
+        logger.info(SERVER_MARKER, "Starting GatewayService @ port {} ...", port);
         DataFetcher dataFetcher = api.getDataFetcher();
         String gameServerHost = api.getGameServerHost();
         gateway = Javalin.create(config -> config.jsonMapper(new JavalinJackson(JsonHelper.MAPPER))).start(port);

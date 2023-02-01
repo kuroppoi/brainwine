@@ -1,5 +1,7 @@
 package brainwine.gameserver.zone.gen;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,7 +75,7 @@ public class ZoneGenerator {
     
     public static void init() {
         generators.clear();
-        logger.info("Loading zone generator configurations ...");
+        logger.info(SERVER_MARKER, "Loading zone generator configurations ...");
         ResourceUtils.copyDefaults("generators/");
         File dataDir = new File("generators");
         
@@ -83,19 +85,19 @@ public class ZoneGenerator {
                     String name = ResourceUtils.removeFileSuffix(file.getName()).toLowerCase();
                     
                     if(generators.containsKey(name)) {
-                        logger.warn("Duplicate generator config name '{}'", name);
+                        logger.warn(SERVER_MARKER, "Duplicate generator config name '{}'", name);
                         continue;
                     }
                     
                     GeneratorConfig config = JsonHelper.readValue(file, GeneratorConfig.class);
                     generators.put(name, new ZoneGenerator(config));
                 } catch(Exception e) {
-                    logger.error("Failed to load generator config '{}'", file.getName(), e);
+                    logger.error(SERVER_MARKER, "Failed to load generator config '{}'", file.getName(), e);
                 }
             }
         }
         
-        logger.info("Starting async zone generator thread ...");
+        logger.info(SERVER_MARKER, "Starting async zone generator thread ...");
         asyncGenerator = new AsyncZoneGenerator();
         asyncGenerator.start();
     }
@@ -116,14 +118,14 @@ public class ZoneGenerator {
      */
     public static void stopAsyncZoneGenerator(boolean wait) {
         if(asyncGenerator != null && asyncGenerator.isAlive()) {
-            logger.info("Stopping async zone generator thread ...");
+            logger.info(SERVER_MARKER, "Stopping async zone generator thread ...");
             asyncGenerator.stopGracefully();
             
             if(wait) {
                 try {
                     asyncGenerator.join();
                 } catch(InterruptedException e) {
-                    logger.error("Wait for zone generator thread death interrupted", e);
+                    logger.error(SERVER_MARKER, "Wait for zone generator thread death interrupted", e);
                 }
             }
         }

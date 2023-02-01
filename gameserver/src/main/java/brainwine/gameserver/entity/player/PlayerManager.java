@@ -1,5 +1,7 @@
 package brainwine.gameserver.entity.player;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +36,7 @@ public class PlayerManager {
     }
     
     private void loadPlayers() {
-        logger.info("Loading player data ...");
+        logger.info(SERVER_MARKER, "Loading player data ...");
         File dataDir = new File("players");
         dataDir.mkdirs();
         
@@ -44,7 +46,7 @@ public class PlayerManager {
             }
         }
         
-        logger.info("Successfully loaded {} player(s)", playersById.size());
+        logger.info(SERVER_MARKER, "Successfully loaded {} player(s)", playersById.size());
     }
     
     private void loadPlayer(File file) {
@@ -61,14 +63,14 @@ public class PlayerManager {
             String name = player.getName();
             
             if(playersByName.containsKey(name)) {
-                logger.warn("Duplicate name {} for player id {}", name, id);
+                logger.warn(SERVER_MARKER, "Duplicate name {} for player id {}", name, id);
                 return;
             }
             
             playersById.put(id, player);
             playersByName.put(name.toLowerCase(), player);
         } catch (Exception e) {
-            logger.error("Could not load configuration for player id {}", id, e);
+            logger.error(SERVER_MARKER, "Could not load configuration for player id {}", id, e);
         }
     }
     
@@ -84,7 +86,7 @@ public class PlayerManager {
         try {
             JsonHelper.writeValue(file, new PlayerConfigFile(player));
         } catch(Exception e) {
-            logger.error("Could not save player id {}", player.getDocumentId(), e);
+            logger.error(SERVER_MARKER, "Could not save player id {}", player.getDocumentId(), e);
         }
     }
     

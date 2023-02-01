@@ -1,6 +1,7 @@
 package brainwine.api.handlers;
 
-import static brainwine.api.util.ContextUtils.*;
+import static brainwine.api.util.ContextUtils.error;
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -14,7 +15,7 @@ public class SimpleExceptionHandler implements ExceptionHandler<Exception> {
     
     @Override
     public void handle(Exception exception, Context ctx) {
-        logger.error("Exception caught", exception);
+        logger.error(SERVER_MARKER, "Exception caught", exception);
         error(ctx, "%s", exception);
     }
 }
