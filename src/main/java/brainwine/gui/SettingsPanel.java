@@ -191,7 +191,7 @@ public class SettingsPanel extends JPanel {
                 "Confirmation", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
             themeBox.setSelectedItem(ThemeManager.getTheme(FlatMaterialDarkerIJTheme.class));
             tabPlacementBox.setSelectedIndex(0);
-            fontSizeSpinner.setValue(14);
+            fontSizeSpinner.setValue(15);
             embedMenuBarCheckbox.setSelected(true);
             
             if(OperatingSystem.isWindows()) {

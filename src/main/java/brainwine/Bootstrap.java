@@ -106,7 +106,7 @@ public class Bootstrap {
             UIManager.put("Spinner.editorAlignment", JTextField.LEFT);
             UIManager.put("TitlePane.unifiedBackground", false);
             UIManager.put("Button.foreground", UIManager.get("MenuBar.foreground"));
-            SwingUtils.setDefaultFontSize(Math.min(28, Math.max(10, GuiPreferences.getInt(GuiPreferences.FONT_SIZE_KEY, 14))));
+            SwingUtils.setDefaultFontSize(Math.min(28, Math.max(10, GuiPreferences.getInt(GuiPreferences.FONT_SIZE_KEY, 15))));
             SwingUtils.setMenuBarEmbedded(GuiPreferences.getBoolean(GuiPreferences.EMBED_MENU_BAR_KEY, true));
             
             // Check read/write permissions
