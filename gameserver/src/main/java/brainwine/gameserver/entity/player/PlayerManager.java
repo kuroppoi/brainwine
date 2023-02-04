@@ -140,11 +140,15 @@ public class PlayerManager {
     }
     
     public void onPlayerConnect(Player player) {
-        playersByConnection.put(player.getConnection(), player);
+        Connection connection = player.getConnection();
+        playersByConnection.put(connection, player);
+        logger.info(SERVER_MARKER, "{} logged into zone {} from {}", player.getName(), player.getZone().getName(), connection.getAddress());
     }
     
     public void onPlayerDisconnect(Player player) {
-        playersByConnection.remove(player.getConnection());
+        Connection connection = player.getConnection();
+        playersByConnection.remove(connection);
+        logger.info(SERVER_MARKER, "{} disconnected: {}", player.getName(), connection.getDisconnectReason());
     }
     
     public boolean isEmailTaken(String email) {

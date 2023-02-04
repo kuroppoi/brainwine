@@ -184,6 +184,7 @@ public class Player extends Entity implements CommandExecutor {
     public void die(Player killer) {
         statistics.trackDeath();
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.DEAD)); // TODO killer id
+        GameServer.getInstance().notify(String.format("%s died", name), NotificationType.CHAT);
     }
     
     @Override
@@ -513,6 +514,7 @@ public class Player extends Entity implements CommandExecutor {
     
     public void notifyPeers(Object message, NotificationType type) {
         sendMessageToPeers(new NotificationMessage(message, type));
+        GameServer.getInstance().notify(message, type);
     }
     
     public void notify(Object message) {

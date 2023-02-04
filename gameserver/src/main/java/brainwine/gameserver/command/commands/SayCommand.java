@@ -18,7 +18,7 @@ public class SayCommand extends Command {
         
         String text = String.join(" ", args);
         Player player = ((Player)executor);
-        player.getZone().chat(player, text, ChatType.SPEECH);
+        player.getZone().sendChatMessage(player, text, ChatType.SPEECH);
     }
     
     @Override

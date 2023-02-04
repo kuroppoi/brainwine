@@ -113,6 +113,11 @@ public class CommandManager {
             return;
         }
         
+        if(executor instanceof Player) {
+            Player player = (Player)executor;
+            logger.info(SERVER_MARKER, "{} used command '/{}'", player.getName(), commandName + (args.length == 0 ? "" : " " + String.join(" ", args)));
+        }
+        
         command.execute(executor, args);
     }
     

@@ -21,7 +21,6 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.concurrent.Future;
-import io.netty.util.concurrent.FutureListener;
 
 public class Connection extends SimpleChannelInboundHandler<Request> {
 
@@ -29,6 +28,7 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
     private Channel channel;
     private SocketAddress address;
     private Player player;
+    private String disconnectReason;
     
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -36,6 +36,7 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
         channel = ctx.channel();
         address = channel.remoteAddress();
         logger = LogManager.getLogger(address.toString());
+        disconnectReason = null;
     }
     
     @Override
@@ -89,6 +90,7 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
     
     public void kick(String reason, boolean shouldReconnect) {
         if(isOpen()) {
+            disconnectReason = reason;
             sendMessage(new KickMessage(reason, shouldReconnect)).addListener(ChannelFutureListener.CLOSE);
         }
     }
@@ -103,5 +105,13 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
     
     public boolean isOpen() {
         return channel.isOpen();
+    }
+    
+    public SocketAddress getAddress() {
+        return address;
+    }
+    
+    public String getDisconnectReason() {
+        return disconnectReason;
     }
 }

@@ -26,7 +26,6 @@ public class GameServer implements CommandExecutor {
     
     public static final int GLOBAL_SAVE_INTERVAL = 30000; // 30 seconds
     private static final Logger logger = LogManager.getLogger();
-    private static final Logger consoleLogger = LogManager.getLogger("Console");
     private static GameServer instance;
     private final Thread handlerThread;
     private final Queue<Runnable> tasks = new ConcurrentLinkedQueue<>();
@@ -66,7 +65,7 @@ public class GameServer implements CommandExecutor {
     
     @Override
     public void notify(Object message, NotificationType type) {
-        consoleLogger.info(SERVER_MARKER, message);
+        logger.info(SERVER_MARKER, message);
     }
 
     @Override

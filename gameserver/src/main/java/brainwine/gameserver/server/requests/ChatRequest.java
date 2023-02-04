@@ -20,6 +20,6 @@ public class ChatRequest extends PlayerRequest {
             return;
         }
         
-        player.getZone().chat(player, text);
+        player.getZone().sendChatMessage(player, text);
     }
 }

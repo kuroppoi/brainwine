@@ -199,8 +199,8 @@ public class Zone {
         }
     }
     
-    public void chat(Player sender, String text) {
-        chat(sender, text, ChatType.CHAT);
+    public void sendChatMessage(Player sender, String text) {
+        sendChatMessage(sender, text, ChatType.CHAT);
     }
     
     /**
@@ -210,8 +210,9 @@ public class Zone {
      * @param text The text.
      * @param type The display type.
      */
-    public void chat(Player sender, String text, ChatType type) {
+    public void sendChatMessage(Player sender, String text, ChatType type) {
         sendMessage(new ChatMessage(sender.getId(), text, type));
+        GameServer.getInstance().notify(String.format("%s: %s", sender.getName(), text), NotificationType.CHAT);
     }
     
     public boolean isPointVisibleFrom(int x1, int y1, int x2, int y2) {

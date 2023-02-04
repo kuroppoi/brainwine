@@ -40,7 +40,6 @@ public class AuthenticateRequest extends Request {
                 Player player = playerManager.getPlayer(name);
                 player.setConnection(connection);
                 player.setClientVersion(version);
-                playerManager.onPlayerConnect(player);
                 Zone zone = player.getZone();
                 
                 if(zone == null) {
@@ -53,6 +52,7 @@ public class AuthenticateRequest extends Request {
                     return;
                 }
                 
+                playerManager.onPlayerConnect(player);
                 zone.addEntity(player);
             });
         });

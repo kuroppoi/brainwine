@@ -18,7 +18,7 @@ public class ThinkCommand extends Command {
         
         String text = String.join(" ", args);
         Player player = ((Player)executor);
-        player.getZone().chat(player, text, ChatType.THOUGHT);
+        player.getZone().sendChatMessage(player, text, ChatType.THOUGHT);
     }
     
     @Override
