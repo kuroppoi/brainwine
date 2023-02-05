@@ -4,6 +4,7 @@ import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -151,7 +152,11 @@ public class CommandManager {
         return names;
     }
     
+    public static Command getCommand(String name) {
+        return commands.get(name);
+    }
+    
     public static Collection<Command> getCommands() {
-        return commands.values();
+        return Collections.unmodifiableCollection(commands.values());
     }
 }
