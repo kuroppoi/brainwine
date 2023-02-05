@@ -46,7 +46,7 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
-        if(!MathUtils.inRange(x, y, player.getX(), player.getY(), player.getMiningRange()) && !player.isAdmin()) {
+        if(!player.isGodMode() && !MathUtils.inRange(x, y, player.getX(), player.getY(), player.getMiningRange())) {
             fail(player, "This block is too far away.");
             return;
         }
@@ -60,22 +60,22 @@ public class BlockMineRequest extends PlayerRequest {
         }
         
         // TODO block ownership & 'placed' fieldability
-        if(!digging && item.getFieldability() == Fieldability.TRUE && zone.isBlockProtected(x, y, player) && !player.isAdmin()) {
+        if(!player.isGodMode() && !digging && item.getFieldability() == Fieldability.TRUE && zone.isBlockProtected(x, y, player)) {
             fail(player, "This block is protected.");
             return;
         }
         
-        if(item.isInvulnerable() && !player.isAdmin()) {
+        if(!player.isGodMode() && item.isInvulnerable()) {
             fail(player, "This block cannot be mined.");
             return;
         }
         
-        if(item.isEntity() && !player.isAdmin()) {
+        if(!player.isGodMode() && item.isEntity()) {
             fail(player, "You must destroy the entity instead of its mount.");
             return;
         }
         
-        if(item.requiresMiningSkill()) {
+        if(!player.isGodMode() && item.requiresMiningSkill()) {
             Pair<Skill, Integer> miningSkill = item.getMiningSkill();
             
             if(player.getTotalSkillLevel(miningSkill.getFirst()) < miningSkill.getLast()) {
@@ -92,7 +92,8 @@ public class BlockMineRequest extends PlayerRequest {
         if(metaBlock != null) {
             Map<String, Object> metadata = metaBlock.getMetadata();
             
-            if(!metaBlock.hasOwner() && item.hasUse(ItemUseType.SWITCH)) {
+            // Check if block is a natural switch with an active door
+            if(!player.isGodMode() && !metaBlock.hasOwner() && item.hasUse(ItemUseType.SWITCH)) {
                 List<List<Integer>> positions = MapHelper.getList(metadata, ">", Collections.emptyList());
                 
                 for(List<Integer> position : positions) {
@@ -109,11 +110,13 @@ public class BlockMineRequest extends PlayerRequest {
                 }
             }
             
-            if(item.hasUse(ItemUseType.CONTAINER) && metadata.containsKey("$")) {
+            // Check if block is an unlooted container
+            if(!player.isGodMode() && item.hasUse(ItemUseType.CONTAINER) && metadata.containsKey("$")) {
                 fail(player, "Can't mine a container with loot in it.");
                 return;
             }
             
+            // Unindex guard block if it is one
             if(item.hasUse(ItemUseType.GUARD)) {
                 String dungeonId = MapHelper.getString(metadata, "@");
                 zone.destroyGuardBlock(dungeonId, player);

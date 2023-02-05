@@ -23,7 +23,7 @@ public class BlocksRequest extends PlayerRequest {
         Zone zone = player.getZone();
         
         // TODO threshold should probably be based on chunk size & perception level
-        if(player.getActiveChunkCount() > 64) {
+        if(!player.isGodMode() && player.getActiveChunkCount() > 64) {
             return;
         }
         
@@ -42,7 +42,7 @@ public class BlocksRequest extends PlayerRequest {
             double distance = Math.hypot(player.getX() - x, player.getY() - y);
             distance = Math.min(distance, Math.hypot(player.getTeleportX() - x, player.getTeleportY() - y));
             
-            if(distance > zone.getChunkWidth() * 5) {
+            if(!player.isGodMode() && distance > zone.getChunkWidth() * 5) {
                 continue;
             }
             

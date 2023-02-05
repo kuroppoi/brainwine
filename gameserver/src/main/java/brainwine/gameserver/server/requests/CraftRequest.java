@@ -33,7 +33,7 @@ public class CraftRequest extends PlayerRequest {
         }
         
         // Check crafting skill
-        if(item.requiresCraftingSkill()) {
+        if(!player.isGodMode() && item.requiresCraftingSkill()) {
             Pair<Skill, Integer> craftingSkill = item.getCraftingSkill();
             
             if(player.getTotalSkillLevel(craftingSkill.getFirst()) < craftingSkill.getLast()) {
@@ -56,7 +56,7 @@ public class CraftRequest extends PlayerRequest {
         }
         
         // Check if required crafting helpers are nearby
-        if(item.requiresWorkshop()) {
+        if(!player.isGodMode() && item.requiresWorkshop()) {
             List<MetaBlock> workshop = player.getZone().getMetaBlocks(metaBlock
                     -> MathUtils.inRange(player.getX(), player.getY(), metaBlock.getX(), metaBlock.getY(), 10));
             

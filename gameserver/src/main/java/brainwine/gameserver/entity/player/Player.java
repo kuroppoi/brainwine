@@ -107,6 +107,7 @@ public class Player extends Entity implements CommandExecutor {
     private Vector2i spawnPoint = new Vector2i(0, 0);
     private int teleportX;
     private int teleportY;
+    private boolean godMode;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private Zone nextZone;
@@ -490,6 +491,14 @@ public class Player extends Entity implements CommandExecutor {
     
     public int getTeleportY() {
         return teleportY;
+    }
+    
+    public void setGodMode(boolean godMode) {
+        this.godMode = godMode;
+    }
+    
+    public boolean isGodMode() {
+        return admin && godMode;
     }
     
     /**

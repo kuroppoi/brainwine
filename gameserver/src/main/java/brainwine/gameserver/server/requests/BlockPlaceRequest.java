@@ -35,37 +35,37 @@ public class BlockPlaceRequest extends PlayerRequest {
             return;
         }
         
-        if(!MathUtils.inRange(x, y, player.getX(), player.getY(), player.getPlacementRange()) && !player.isAdmin()) {
+        if(!player.isGodMode() && !MathUtils.inRange(x, y, player.getX(), player.getY(), player.getPlacementRange())) {
             fail(player, "This block is too far away.");
             return;
         }
         
-        if(!player.getInventory().hasItem(item)) {
+        if(!player.isGodMode() && !player.getInventory().hasItem(item)) {
             fail(player, "You do not have enough of this item.");
             return;
         }
         
-        if(!item.isPlacable() && !player.isAdmin()) {
+        if(!player.isGodMode() && !item.isPlacable()) {
             fail(player, "This item cannot be placed.");
             return;
         }
         
-        if(item.getLayer() != layer && !player.isAdmin()) {
+        if(!player.isGodMode() && item.getLayer() != layer) {
             fail(player, "This item cannot be placed here.");
             return;
         }
         
-        if(zone.isBlockProtected(x, y, player) && !player.isAdmin()) {
+        if(!player.isGodMode() && zone.isBlockProtected(x, y, player)) {
             fail(player, "This block is protected.");
             return;
         }
         
-        if(zone.isBlockOccupied(x, y, layer) && !player.isAdmin()) {
+        if(!player.isGodMode() && zone.isBlockOccupied(x, y, layer)) {
             fail(player, "This block is occupied.");
             return;
         }
         
-        if(item.requiresPlacingSkill()) {
+        if(!player.isGodMode() && item.requiresPlacingSkill()) {
             Pair<Skill, Integer> placingSkill = item.getPlacingSkill();
             
             if(player.getTotalSkillLevel(placingSkill.getFirst()) < placingSkill.getLast()) {
@@ -74,7 +74,7 @@ public class BlockPlaceRequest extends PlayerRequest {
             }
         }
         
-        if(item.isDish() && zone.willDishOverlap(x, y, item.getField(), player)) {
+        if(!player.isGodMode() && item.isDish() && zone.willDishOverlap(x, y, item.getField(), player)) {
             fail(player, "Dish will overlap another protector.");
             return;
         }

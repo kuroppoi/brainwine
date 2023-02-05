@@ -18,7 +18,7 @@ public class HealthRequest extends PlayerRequest {
     public void process(Player player) {
         float health = this.health / 1000.0F;
         
-        if(health >= player.getHealth()) {
+        if(!player.isGodMode() && health >= player.getHealth()) {
             return;
         }
         
