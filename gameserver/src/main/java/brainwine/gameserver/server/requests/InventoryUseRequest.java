@@ -1,5 +1,6 @@
 package brainwine.gameserver.server.requests;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import brainwine.gameserver.annotations.OptionalField;
@@ -27,43 +28,51 @@ public class InventoryUseRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
+        // Don't do anything if the player is dead or doesn't own this item
         if(player.isDead() || !player.getInventory().hasItem(item)) {
             return;
         }
         
-        if(type == 0) {
-            if(status != 2) {
+        // Try to consume item if it is a consumable
+        if(item.isConsumable()) {
+            if(status == 1) {
+                player.consume(item);
+            }
+        } else {
+            // Set current held item if applicable
+            if(type == 0 && status != 2) {
                 player.setHeldItem(item);
             }
             
-            // Use item
-            if(status == 1) {
-                if(item.isConsumable()) {
-                    player.consume(item);
+            // Send item use data to other players in the zone
+            player.sendMessageToPeers(new EntityItemUseMessage(player.getId(), type, item, status));
+            
+            // Lovely type ambiguity. Always nice.
+            if(item.isWeapon() && status == 1) {
+                Collection<?> entityIds = details instanceof Collection ? (Collection<?>)details
+                        : details instanceof Integer ? Arrays.asList((int)details) : null;
+                
+                // Skip if null aka details was of an invalid type
+                if(entityIds == null) {
+                    return;
                 }
                 
-                // Lovely type ambiguity. Always nice.
-                if(item.isWeapon() && details instanceof Collection) {
-                    Collection<?> entityIds = (Collection<?>)details;
-                    int maxTargetableEntities = player.getMaxTargetableEntities();
-                    
-                    for(Object id : entityIds) {
-                        if(id instanceof Integer) {
-                            Npc npc = player.getZone().getNpc((int)id);
-                            
-                            if(npc != null && player.canSee(npc)) {
-                                npc.attack(player, item);
-                            }
-                        }
+                int maxTargetableEntities = player.getMaxTargetableEntities();
+                
+                for(Object id : entityIds) {
+                    if(id instanceof Integer) {
+                        Npc npc = player.getZone().getNpc((int)id);
                         
-                        if(--maxTargetableEntities <= 0) {
-                            break;
+                        if(npc != null && (player.isGodMode() || player.canSee(npc))) {
+                            npc.attack(player, item);
                         }
+                    }
+                    
+                    if(--maxTargetableEntities <= 0) {
+                        break;
                     }
                 }
             }
         }
-        
-        player.sendMessageToPeers(new EntityItemUseMessage(player.getId(), type, item, status));
     }
 }
