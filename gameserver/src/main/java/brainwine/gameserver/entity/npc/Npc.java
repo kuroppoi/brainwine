@@ -235,7 +235,7 @@ public class Npc extends Entity {
     
     public void attack(Player attacker, Item weapon) {
         // Prevent damage if this entity is mounted and its mount is protected
-        if(isMounted() && zone.isBlockProtected(mountBlock.getX(), mountBlock.getY(), attacker)) {
+        if(!attacker.isGodMode() && isMounted() && zone.isBlockProtected(mountBlock.getX(), mountBlock.getY(), attacker)) {
             return;
         }
         
@@ -243,7 +243,7 @@ public class Npc extends Entity {
         long now = System.currentTimeMillis();
         
         // Reject the attack if the player already attacked this entity recently
-        if(recentAttack != null && now < recentAttack.getLast() + ATTACK_INVINCIBLE_TIME) {
+        if(!attacker.isGodMode() && recentAttack != null && now < recentAttack.getLast() + ATTACK_INVINCIBLE_TIME) {
             return;
         }
         
