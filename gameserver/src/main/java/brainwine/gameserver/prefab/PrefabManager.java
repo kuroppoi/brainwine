@@ -4,7 +4,9 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -33,7 +35,7 @@ public class PrefabManager {
                     .addSerializer(BlockSerializer.INSTANCE))
             .build();
     private final File dataDir = new File("prefabs");
-    private final Map<String, Prefab> prefabs = new HashMap<>();
+    private final Map<String, Prefab> prefabs = new LinkedHashMap<>();
     
     public PrefabManager() {
         logger.info(SERVER_MARKER, "Loading prefabs ...");
@@ -91,13 +93,15 @@ public class PrefabManager {
             }
             
             PrefabConfigFile config = JsonHelper.readValue(configFile, PrefabConfigFile.class);
-            prefabs.put(name, new Prefab(config, blockData));
+            prefabs.put(name, new Prefab(name, config, blockData));
         } catch(Exception e) {
             logger.error(SERVER_MARKER, "Could not load prefab {}:", name, e);
         }
     }
     
-    public void addPrefab(String name, Prefab prefab) throws Exception {
+    public void addPrefab(Prefab prefab) throws Exception {
+        String name = prefab.getName().toLowerCase();
+        
         if(prefabs.containsKey(name)) {
             logger.warn(SERVER_MARKER, "Duplicate prefab name: {}", name);
             return;
@@ -111,6 +115,10 @@ public class PrefabManager {
     }
     
     public Prefab getPrefab(String name) {
-        return prefabs.get(name);
+        return prefabs.get(name.toLowerCase());
+    }
+    
+    public Collection<Prefab> getPrefabs() {
+        return Collections.unmodifiableCollection(prefabs.values());
     }
 }

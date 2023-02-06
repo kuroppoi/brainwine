@@ -38,7 +38,7 @@ public class ImportCommand extends Command {
         Prefab prefab = GameServer.getInstance().getPrefabManager().getPrefab(name);
         
         if(prefab == null) {
-            player.notify("Sorry, could not find a prefab with that name.", SYSTEM);
+            player.notify(String.format("Prefab '%s' does not exist. Type '/prefabs' for a list of prefabs.", name), SYSTEM);
             return;
         }
         

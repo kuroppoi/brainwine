@@ -12,6 +12,7 @@ import brainwine.gameserver.zone.Block;
 
 public class Prefab {
     
+    private String name;
     private boolean dungeon;
     private boolean ruin;
     private boolean loot;
@@ -24,8 +25,8 @@ public class Prefab {
     private Map<Item, CorrespondingReplacement> correspondingReplacements = new HashMap<>();
     private Map<Integer, Map<String, Object>> metadata = new HashMap<>();
     
-    protected Prefab(PrefabConfigFile config, PrefabBlocksFile blockData) {
-        this(blockData.getWidth(), blockData.getHeight(), blockData.getBlocks(), config.getMetadata());
+    protected Prefab(String name, PrefabConfigFile config, PrefabBlocksFile blockData) {
+        this(name, blockData.getWidth(), blockData.getHeight(), blockData.getBlocks(), config.getMetadata());
         dungeon = config.isDungeon();
         ruin = config.isRuin();
         loot = config.hasLoot();
@@ -35,7 +36,8 @@ public class Prefab {
         correspondingReplacements = config.getCorrespondingReplacements();
     }
     
-    public Prefab(int width, int height, Block[] blocks, Map<Integer, Map<String, Object>> metadata) {
+    public Prefab(String name, int width, int height, Block[] blocks, Map<Integer, Map<String, Object>> metadata) {
+        this.name = name;
         this.width = width;
         this.height = height;
         this.blocks = blocks;
@@ -45,6 +47,10 @@ public class Prefab {
     @JsonCreator
     private static Prefab fromName(String name) {
         return GameServer.getInstance().getPrefabManager().getPrefab(name);
+    }
+    
+    public String getName() {
+        return name;
     }
     
     public boolean isDungeon() {

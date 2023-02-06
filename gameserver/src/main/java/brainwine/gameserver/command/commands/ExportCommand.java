@@ -27,7 +27,7 @@ public class ExportCommand extends Command {
         
         Zone zone = ((Player)executor).getZone();
         PrefabManager prefabManager = GameServer.getInstance().getPrefabManager();
-        String name = String.join(" ", Arrays.copyOfRange(args, 4, args.length));
+        String name = String.join(" ", Arrays.copyOfRange(args, 4, args.length)).toLowerCase();
         
         if(prefabManager.getPrefab(name) != null) {
             executor.notify("A prefab with that name already exists.", SYSTEM);
@@ -63,7 +63,7 @@ public class ExportCommand extends Command {
             return;
         }
         
-        Prefab prefab = zone.chop(x, y, width, height);
+        Prefab prefab = zone.createPrefabFromSection(name, x, y, width, height);
         
         if(prefab == null) {
             executor.notify("Sorry, something went wrong. Please try again.", SYSTEM);
@@ -73,7 +73,7 @@ public class ExportCommand extends Command {
         executor.notify(String.format("Exporting your prefab as '%s' ...", name), SYSTEM);
         
         try {
-            prefabManager.addPrefab(name, prefab);
+            prefabManager.addPrefab(prefab);
             executor.notify(String.format("Your prefab '%s' was successfully exported!", name), SYSTEM);
         } catch (Exception e) {
             executor.notify(String.format("An error occured while exporting prefab '%s': %s", name, e.getMessage()), SYSTEM);

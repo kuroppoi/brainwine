@@ -393,7 +393,7 @@ public class Zone {
         return false;
     }
     
-    public Prefab chop(int x, int y, int width, int height) {
+    public Prefab createPrefabFromSection(String name, int x, int y, int width, int height) {
         if(!areCoordinatesInBounds(x, y) || !areCoordinatesInBounds(x + width, y + height)) {
             return null;
         }
@@ -425,7 +425,7 @@ public class Zone {
             }
         }
         
-        return new Prefab(width, height, blocks, metadata);
+        return new Prefab(name, width, height, blocks, metadata);
     }
     
     public void placePrefab(Prefab prefab, int x, int y) {
