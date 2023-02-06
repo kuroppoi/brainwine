@@ -33,7 +33,7 @@ public class HelpCommand extends Command {
                     arg = arg.substring(1);
                 }
                 
-                Command command = CommandManager.getCommand(arg);
+                Command command = CommandManager.getCommand(arg, true);
                 
                 // If command does not exist (or can not be used by the executor) then notify the executor of this.
                 if(command == null || !command.canExecute(executor)) {

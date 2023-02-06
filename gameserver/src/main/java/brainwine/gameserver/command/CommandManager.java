@@ -107,7 +107,7 @@ public class CommandManager {
             commandName = commandName.substring(1);
         }
         
-        Command command = commands.getOrDefault(commandName, aliases.get(commandName));
+        Command command = getCommand(commandName, true);
         
         if(command == null || !command.canExecute(executor)) {
             executor.notify("Unknown command. Type '/help' for a list of commands.", SYSTEM);
@@ -153,7 +153,11 @@ public class CommandManager {
     }
     
     public static Command getCommand(String name) {
-        return commands.get(name);
+        return getCommand(name, false);
+    }
+    
+    public static Command getCommand(String name, boolean allowAlias) {
+        return commands.getOrDefault(name, allowAlias ? aliases.get(name) : null);
     }
     
     public static Collection<Command> getCommands() {
