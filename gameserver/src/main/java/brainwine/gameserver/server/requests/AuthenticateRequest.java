@@ -1,9 +1,12 @@
 package brainwine.gameserver.server.requests;
 
+import java.time.format.DateTimeFormatter;
+
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.entity.player.PlayerRestriction;
 import brainwine.gameserver.entity.player.PlayerManager;
 import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.pipeline.Connection;
@@ -38,20 +41,30 @@ public class AuthenticateRequest extends Request {
             
             server.queueSynchronousTask(() -> {
                 Player player = playerManager.getPlayer(name);
-                player.setConnection(connection);
-                player.setClientVersion(version);
+                PlayerRestriction ban = player.getCurrentBan();
                 Zone zone = player.getZone();
                 
-                if(zone == null) {
-                    // TODO default zone 'n stuff.
-                    zone = server.getZoneManager().getRandomZone();
-                }
-                
-                if(zone == null) {
-                    player.kick("No default zone could be found.");
+                // Deny access if the player is currently banned
+                if(ban != null) {
+                    connection.kick(String.format("You are banned from the server until %s for: %s", 
+                            ban.getEndDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), ban.getReason()));
                     return;
                 }
                 
+                // Try to put player in a random zone if current zone is null
+                // TODO default zone
+                if(zone == null) {
+                    zone = server.getZoneManager().getRandomZone();
+                }
+                
+                // Kick player if zone is still null (aka it failed to find a suitable random zone)
+                if(zone == null) {
+                    connection.kick("No default zone could be found.");
+                    return;
+                }
+                
+                player.setConnection(connection);
+                player.setClientVersion(version);
                 playerManager.onPlayerConnect(player);
                 zone.addEntity(player);
             });

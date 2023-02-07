@@ -2,48 +2,53 @@ package brainwine.gameserver.command.commands;
 
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
-import brainwine.gameserver.entity.player.ChatType;
 import brainwine.gameserver.entity.player.Player;
 
-public class ThinkCommand extends Command {
+public class UnmuteCommand extends Command {
 
     @Override
     public void execute(CommandExecutor executor, String[] args) {
-        if(args.length == 0) {
+        if(args.length < 1) {
             executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
         
-        Player player = ((Player)executor);
+        Player target = GameServer.getInstance().getPlayerManager().getPlayer(args[0]);
         
-        if(player.isMuted()) {
-            player.notify("You are currently muted. Your chat message was not sent.", SYSTEM);
+        if(target == null) {
+            executor.notify("This player does not exist.", SYSTEM);
             return;
         }
         
-        String text = String.join(" ", args);
-        player.getZone().sendChatMessage(player, text, ChatType.THOUGHT);
+        if(!target.isMuted()) {
+            executor.notify(String.format("%s isn't currently muted.", target.getName()), SYSTEM);
+            return;
+        }
+        
+        target.unmute(executor instanceof Player ? (Player)executor : null);
+        executor.notify(String.format("Player %s has been unmuted.", target.getName()), SYSTEM);
     }
-    
+
     @Override
     public String getName() {
-        return "think";
+        return "unmute";
     }
     
     @Override
     public String getDescription() {
-        return "Shows a thought bubble to nearby players.";
+        return "Unmutes a player.";
     }
     
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/think <message>";
+        return "/unmute <player>";
     }
     
     @Override
     public boolean canExecute(CommandExecutor executor) {
-        return executor instanceof Player;
+        return executor.isAdmin();
     }
 }

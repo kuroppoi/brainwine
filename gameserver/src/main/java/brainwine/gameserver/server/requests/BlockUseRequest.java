@@ -91,7 +91,14 @@ public class BlockUseRequest extends PlayerRequest {
                                 String key = MapHelper.getString(section, "input.key");
                                 
                                 if(key != null) {
-                                    metadata.put(key, data[i]);
+                                    String text = String.valueOf(data[i]);
+                                    
+                                    // Get rid of text if player is currently muted
+                                    if(player.isMuted() && MapHelper.getBoolean(section, "input.sanitize")) {
+                                        text = text.replaceAll(".", "*");
+                                    }
+                                    
+                                    metadata.put(key, text);
                                 } else if(MapHelper.getBoolean(section, "input.mod")) {
                                     List<Object> options = MapHelper.getList(section, "input.options");
                                     

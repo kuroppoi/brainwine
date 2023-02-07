@@ -16,8 +16,14 @@ public class SayCommand extends Command {
             return;
         }
         
-        String text = String.join(" ", args);
         Player player = ((Player)executor);
+        
+        if(player.isMuted()) {
+            player.notify("You are currently muted. Your chat message was not sent.", SYSTEM);
+            return;
+        }
+        
+        String text = String.join(" ", args);
         player.getZone().sendChatMessage(player, text, ChatType.SPEECH);
     }
     

@@ -31,6 +31,8 @@ public class PlayerConfigFile {
     private Inventory inventory = new Inventory();
     private PlayerStatistics statistics = new PlayerStatistics();
     private List<String> authTokens = new ArrayList<>();
+    private List<PlayerRestriction> mutes = new ArrayList<>();
+    private List<PlayerRestriction> bans = new ArrayList<>();
     private Set<Achievement> achievements = new HashSet<>();
     private Map<String, Float> ignoredHints = new HashMap<>();
     private Map<Skill, Integer> skills = new HashMap<>();
@@ -50,6 +52,8 @@ public class PlayerConfigFile {
         this.inventory = player.getInventory();
         this.statistics = player.getStatistics();
         this.authTokens = player.getAuthTokens();
+        this.mutes = player.getMutes();
+        this.bans = player.getBans();
         this.achievements = player.getAchievements();
         this.ignoredHints = player.getIgnoredHints();
         this.skills = player.getSkills();
@@ -84,6 +88,16 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<PlayerRestriction> getMutes() {
+        return mutes;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<PlayerRestriction> getBans() {
+        return bans;
     }
     
     public int getExperience() {

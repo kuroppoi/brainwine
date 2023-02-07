@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.command.commands.AdminCommand;
+import brainwine.gameserver.command.commands.BanCommand;
 import brainwine.gameserver.command.commands.BroadcastCommand;
 import brainwine.gameserver.command.commands.EntityCommand;
 import brainwine.gameserver.command.commands.ExperienceCommand;
@@ -25,6 +26,7 @@ import brainwine.gameserver.command.commands.HelpCommand;
 import brainwine.gameserver.command.commands.ImportCommand;
 import brainwine.gameserver.command.commands.KickCommand;
 import brainwine.gameserver.command.commands.LevelCommand;
+import brainwine.gameserver.command.commands.MuteCommand;
 import brainwine.gameserver.command.commands.PlayerIdCommand;
 import brainwine.gameserver.command.commands.PositionCommand;
 import brainwine.gameserver.command.commands.PrefabListCommand;
@@ -37,6 +39,8 @@ import brainwine.gameserver.command.commands.SkillPointsCommand;
 import brainwine.gameserver.command.commands.StopCommand;
 import brainwine.gameserver.command.commands.TeleportCommand;
 import brainwine.gameserver.command.commands.ThinkCommand;
+import brainwine.gameserver.command.commands.UnbanCommand;
+import brainwine.gameserver.command.commands.UnmuteCommand;
 import brainwine.gameserver.command.commands.ZoneIdCommand;
 import brainwine.gameserver.entity.player.Player;
 
@@ -64,6 +68,10 @@ public class CommandManager {
         registerCommand(new RegisterCommand());
         registerCommand(new TeleportCommand());
         registerCommand(new KickCommand());
+        registerCommand(new MuteCommand());
+        registerCommand(new UnmuteCommand());
+        registerCommand(new BanCommand());
+        registerCommand(new UnbanCommand());
         registerCommand(new SayCommand());
         registerCommand(new ThinkCommand());
         registerCommand(new BroadcastCommand());

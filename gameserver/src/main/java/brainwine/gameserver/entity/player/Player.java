@@ -1,5 +1,7 @@
 package brainwine.gameserver.entity.player;
 
+import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -92,6 +94,8 @@ public class Player extends Entity implements CommandExecutor {
     private Inventory inventory;
     private PlayerStatistics statistics;
     private List<String> authTokens;
+    private List<PlayerRestriction> mutes;
+    private List<PlayerRestriction> bans;
     private Set<Achievement> achievements;
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
@@ -127,6 +131,8 @@ public class Player extends Entity implements CommandExecutor {
         this.inventory = config.getInventory();
         this.statistics = config.getStatistics();
         this.authTokens = config.getAuthTokens();
+        this.mutes = config.getMutes();
+        this.bans = config.getBans();
         this.achievements = config.getAchievements();
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
@@ -144,6 +150,8 @@ public class Player extends Entity implements CommandExecutor {
         this.inventory = new Inventory(this);
         this.statistics = new PlayerStatistics(this);
         this.authTokens = new ArrayList<>();
+        this.mutes = new ArrayList<>();
+        this.bans = new ArrayList<>();
         this.achievements = new HashSet<>();
         this.ignoredHints = new HashMap<>();
         this.skills = new HashMap<>();
@@ -633,6 +641,74 @@ public class Player extends Entity implements CommandExecutor {
     
     protected List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    public void mute(String reason, OffsetDateTime until) {
+        mute(null, reason, until);
+    }
+    
+    public void mute(Player issuer, String reason, OffsetDateTime endDate) {
+        mutes.add(new PlayerRestriction(issuer, reason, endDate));
+        notify(String.format("You have been muted until %s for: %s", 
+                endDate.format(DateTimeFormatter.RFC_1123_DATE_TIME), reason) , NotificationType.SYSTEM);
+    }
+    
+    public void unmute() {
+        unmute(null);
+    }
+    
+    public void unmute(Player issuer) {
+        PlayerRestriction currentMute = getCurrentMute();
+        
+        if(currentMute != null) {
+            currentMute.pardon(issuer);
+            notify("You have been unmuted.", NotificationType.SYSTEM);
+        }
+    }
+    
+    public boolean isMuted() {
+        return getCurrentMute() != null;
+    }
+    
+    public PlayerRestriction getCurrentMute() {
+        return mutes.stream().filter(PlayerRestriction::isActive).findFirst().orElse(null);
+    }
+    
+    public List<PlayerRestriction> getMutes() {
+        return Collections.unmodifiableList(mutes);
+    }
+    
+    public void ban(String reason, OffsetDateTime until) {
+        ban(null, reason, until);
+    }
+    
+    public void ban(Player issuer, String reason, OffsetDateTime endDate) {
+        bans.add(new PlayerRestriction(issuer, reason, endDate));
+        kick(String.format("You have been banned: %s", reason));
+    }
+    
+    public void unban() {
+        unban(null);
+    }
+    
+    public void unban(Player issuer) {
+        PlayerRestriction currentBan = getCurrentBan();
+        
+        if(currentBan != null) {
+            currentBan.pardon(issuer);
+        }
+    }
+    
+    public boolean isBanned() {
+        return getCurrentBan() != null;
+    }
+    
+    public PlayerRestriction getCurrentBan() {
+        return bans.stream().filter(PlayerRestriction::isActive).findFirst().orElse(null);
+    }
+    
+    public List<PlayerRestriction> getBans() {
+        return Collections.unmodifiableList(bans);
     }
     
     public void setAdmin(boolean admin) {
