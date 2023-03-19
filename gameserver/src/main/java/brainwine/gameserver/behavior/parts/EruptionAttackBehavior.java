@@ -73,7 +73,7 @@ public class EruptionAttackBehavior extends Behavior {
         // Let 'er rip!
         Npc projectile = new Npc(entity.getZone(), entityConfig);
         projectile.setProperties(details);
-        entity.getZone().sendMessage(new EntityStatusMessage(projectile, EntityStatus.ENTERING));
+        entity.sendMessageToTrackers(new EntityStatusMessage(projectile, EntityStatus.ENTERING));
         return true;
     }
     
