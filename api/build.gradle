@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'io.javalin:javalin:4.6.4'
+    implementation 'io.javalin:javalin:4.6.8'
     implementation project(':shared')
 }
 
