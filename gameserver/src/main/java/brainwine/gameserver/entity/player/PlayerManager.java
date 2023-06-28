@@ -21,7 +21,7 @@ import brainwine.shared.JsonHelper;
 public class PlayerManager {
     
     // TODO check platforms as well
-    public static final List<String> SUPPORTED_VERSIONS = Arrays.asList("2.11.0.1", "2.11.1", "3.13.1");
+    public static final List<String> SUPPORTED_VERSIONS = Arrays.asList("1.12.1", "2.11.0.1", "2.11.1", "3.13.1");
     private static final Logger logger = LogManager.getLogger();
     private final Map<String, Player> playersById = new HashMap<>();
     private final Map<String, Player> playersByName = new HashMap<>();
