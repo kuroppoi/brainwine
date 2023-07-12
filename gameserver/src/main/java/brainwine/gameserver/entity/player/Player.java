@@ -530,8 +530,13 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void notifyPeers(Object message, NotificationType type) {
-        sendMessageToPeers(new NotificationMessage(message, type));
         GameServer.getInstance().notify(message, type);
+        
+        for(Player player : zone.getPlayers()) {
+             if(player != this) {
+                 player.notify(message, type);
+             }
+         }
     }
     
     public void notify(Object message) {
