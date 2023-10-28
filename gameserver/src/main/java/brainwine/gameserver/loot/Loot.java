@@ -20,7 +20,7 @@ public class Loot {
     private int crowns;
     
     @JsonProperty("frequency")
-    private int frequency = 1;
+    private double frequency = 1.0;
     
     @JsonProperty("biome")
     private Biome biome;
@@ -36,7 +36,7 @@ public class Loot {
         return crowns;
     }
     
-    public int getFrequency() {
+    public double getFrequency() {
         return frequency;
     }
     

@@ -11,10 +11,10 @@ public class EntityLoot {
     
     private final Item item;
     private final int quantity;
-    private final int frequency;
+    private final double frequency;
     
     @ConstructorProperties({"item", "quantity", "frequency"})
-    public EntityLoot(Item item, int quantity, int frequency) {
+    public EntityLoot(Item item, int quantity, double frequency) {
         this.item = item;
         this.quantity = quantity < 1 ? 1 : quantity;
         this.frequency = frequency < 1 ? 1 : frequency;
@@ -28,7 +28,7 @@ public class EntityLoot {
         return quantity;
     }
     
-    public int getFrequency() {
+    public double getFrequency() {
         return frequency;
     }
 }
