@@ -2,6 +2,8 @@ package brainwine.gameserver;
 
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -50,6 +52,7 @@ public class GameConfiguration {
         options.setMaxAliasesForCollections(Short.MAX_VALUE);
         yaml = new Yaml(options);
         loadConfigFiles();
+        loadConfigOverrides();
         logger.info(SERVER_MARKER, "Configuring ...");
         configure();
         logger.info(SERVER_MARKER, "Caching versioned configurations ...");
@@ -200,6 +203,25 @@ public class GameConfiguration {
         } catch(Exception e) {
             logger.fatal(SERVER_MARKER, "Could not load configuration files", e);
             System.exit(-1);
+        }
+    }
+    
+    private static void loadConfigOverrides() {
+        try {
+            File configOverridesFile = new File("config_overrides.yml");
+            
+            if(!configOverridesFile.exists()) {
+                logger.info(SERVER_MARKER, "No config overrides found. To override game config properties, put them in a file called 'config_overrides.yml'");
+                return;
+            }
+            
+            try(FileInputStream inputStream = new FileInputStream(configOverridesFile)) {
+                Map<String, Object> configOverrides = yaml.load(inputStream);
+                merge(baseConfig, configOverrides);
+                logger.warn(SERVER_MARKER, "Configuration overrides have been loaded, proceed with caution.");
+            }
+        } catch(Exception e) {
+            logger.error(SERVER_MARKER, "Could not load configuration overrides", e);
         }
     }
     
