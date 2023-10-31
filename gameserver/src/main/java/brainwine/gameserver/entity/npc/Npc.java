@@ -247,7 +247,7 @@ public class Npc extends Entity {
             return;
         }
         
-        float damage = attacker.isGodMode() ? 9999 : calculateDamage(weapon.getDamage() / 4, weapon.getDamageType());
+        float damage = attacker.isGodMode() ? 9999 : calculateDamage(weapon.getDamage(), weapon.getDamageType());
         damage(damage, attacker);
         recentAttacks.put(attacker, new Pair<>(weapon, now));
     }
