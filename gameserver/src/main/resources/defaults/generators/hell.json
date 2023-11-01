@@ -56,7 +56,7 @@
     },
     {
       "prefab": "misc/luxury_bunker",
-      "blocks_per_spawn": 240000,
+      "blocks_per_spawn": 400000,
       "max": 5
     }
   ],
