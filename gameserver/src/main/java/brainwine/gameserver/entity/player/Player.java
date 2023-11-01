@@ -36,6 +36,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.AchievementMessage;
@@ -608,6 +609,14 @@ public class Player extends Entity implements CommandExecutor {
     
     public int getMaxTargetableEntities() {
         return 1 + getTotalSkillLevel(Skill.AGILITY) / 2;
+    }
+    
+    public double getMiningBonusChance(MiningBonus bonus) {
+        if(heldItem.getGroup() != bonus.getTool()) {
+            return 0.0;
+        }
+        
+        return bonus.getChance() * (getTotalSkillLevel(bonus.getSkill()) / (double)MAX_SKILL_LEVEL) * heldItem.getToolBonus();
     }
     
     public String getDocumentId() {
