@@ -384,8 +384,9 @@
           "items": {
             "ground/crystal-rainbow": 1,
             "ground/onyx": 8,
-            "ground/crystal-red-1": 50,
-            "ground/crystal-purple-1": 45
+            "ground/crystal-red-1": 60,
+            "ground/crystal-purple-1": 15,
+            "ground/crystal-yellow": 20
           }
         }
       ]
