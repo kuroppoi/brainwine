@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.annotations.RequestInfo;
+import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Action;
@@ -12,6 +13,7 @@ import brainwine.gameserver.item.Fieldability;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
@@ -123,12 +125,29 @@ public class BlockMineRequest extends PlayerRequest {
             }
         }
         
-        Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
         zone.updateBlock(x, y, layer, 0, 0, player);
         player.getStatistics().trackItemMined(item);
+        Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
+        int quantity = 1;
+        
+        // Apply mining bonus if there is one
+        if(item.hasMiningBonus()) {
+            MiningBonus bonus = item.getMiningBonus();
+            if(Math.random() < player.getMiningBonusChance(bonus)) {
+                if(!bonus.getItem().isAir()) {
+                    inventoryItem = bonus.getItem();
+                }
+                                
+                if(bonus.isDoubleLoot()) {
+                    quantity *= 2;
+                }
+                
+                player.notify(bonus.getNotification(), NotificationType.FANCY_EMOTE);
+            }
+        }
         
         if(!inventoryItem.isAir()) {
-            player.getInventory().addItem(inventoryItem);
+            player.getInventory().addItem(inventoryItem, quantity, true);
         }
     }
     

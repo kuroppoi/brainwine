@@ -57,6 +57,9 @@ public class Item {
     @JsonProperty("size")
     private Vector2i size = new Vector2i(1, 1);
     
+    @JsonProperty("tile_size")
+    private Vector2i tileSize = new Vector2i(1, 1);
+    
     @JsonProperty("field")
     private int field;
     
@@ -119,6 +122,12 @@ public class Item {
     
     @JsonProperty("loot")
     private String[] lootCategories = {};
+    
+    @JsonProperty("tool_bonus")
+    private double toolBonus;
+    
+    @JsonProperty("mining_bonus")
+    private MiningBonus miningBonus;
     
     @JsonProperty("skill_bonuses")
     private Map<Skill, Integer> skillBonuses = new HashMap<>();
@@ -262,6 +271,14 @@ public class Item {
         return size.getY();
     }
     
+    public int getTileWidth() {
+        return tileSize.getX();
+    }
+    
+    public int getTileHeight() {
+        return tileSize.getY();
+    }
+    
     public boolean isDish() {
         return field > 1;
     }
@@ -380,6 +397,18 @@ public class Item {
     
     public String[] getLootCategories() {
         return lootCategories;
+    }
+    
+    public double getToolBonus() {
+        return toolBonus;
+    }
+    
+    public boolean hasMiningBonus() {
+        return miningBonus != null;
+    }
+    
+    public MiningBonus getMiningBonus() {
+        return miningBonus;
     }
     
     public int getCraftingQuantity() {
