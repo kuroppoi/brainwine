@@ -5,6 +5,7 @@ import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
@@ -81,6 +82,17 @@ public class BlockPlaceRequest extends PlayerRequest {
         
         if(layer == Layer.LIQUID) {
             mod = 5;
+        } else if(item.getMod() == ModType.ROTATION) {
+            // Automatically orient rotatable blocks based on adjacent block
+            if(zone.isChunkLoaded(x, y + 1) && zone.getBlock(x, y + 1).getFrontItem().isWhole()) {
+                mod = 0;
+            } else if(zone.isChunkLoaded(x, y - 1) && zone.getBlock(x, y - 1).getFrontItem().isWhole()) {
+                mod = 2;
+            } else if(zone.isChunkLoaded(x - 1, y) && zone.getBlock(x - 1, y).getFrontItem().isWhole()) {
+                mod = 1;
+            } else if(zone.isChunkLoaded(x + 1, y) && zone.getBlock(x + 1, y).getFrontItem().isWhole()) {
+                mod = 3;
+            }
         }
         
         zone.updateBlock(x, y, layer, item, mod, player);
