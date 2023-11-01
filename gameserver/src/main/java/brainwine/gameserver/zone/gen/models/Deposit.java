@@ -1,14 +1,15 @@
 package brainwine.gameserver.zone.gen.models;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class BaseResource {
+import brainwine.gameserver.item.Item;
+import brainwine.gameserver.util.WeightedMap;
+
+public class Deposit {
     
-    @JsonProperty("type")
-    private BaseResourceType type;
+    @JsonProperty("items")
+    private WeightedMap<Item> items;
     
     @JsonProperty("blocks_per_spawn")
     private int blocksPerSpawn = 2000;
@@ -20,12 +21,12 @@ public class BaseResource {
     private double maxDepth = 1;
     
     @JsonCreator
-    private BaseResource(@JsonProperty(value = "type", required = true) BaseResourceType type) {
-        this.type = type;
+    private Deposit(@JsonProperty(value = "items", required = true) WeightedMap<Item> items) {
+        this.items = items;
     }
     
-    public BaseResourceType getType() {
-        return type;
+    public WeightedMap<Item> getItems() {
+        return items;
     }
     
     public int getBlocksPerSpawn() {

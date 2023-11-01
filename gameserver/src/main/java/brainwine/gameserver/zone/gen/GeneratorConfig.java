@@ -14,11 +14,11 @@ import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.gen.caves.CaveDecorator;
 import brainwine.gameserver.zone.gen.caves.CaveType;
-import brainwine.gameserver.zone.gen.models.BaseResource;
+import brainwine.gameserver.zone.gen.models.Deposit;
 import brainwine.gameserver.zone.gen.models.OreDeposit;
+import brainwine.gameserver.zone.gen.models.SpecialStructure;
 import brainwine.gameserver.zone.gen.models.StoneType;
 import brainwine.gameserver.zone.gen.models.TerrainType;
-import brainwine.gameserver.zone.gen.models.SpecialStructure;
 import brainwine.gameserver.zone.gen.surface.SurfaceDecorator;
 import brainwine.gameserver.zone.gen.surface.SurfaceRegionType;
 
@@ -37,7 +37,7 @@ public class GeneratorConfig {
     private WeightedMap<Prefab> spawnBuildings = new WeightedMap<>();
     private WeightedMap<Prefab> dungeons = new WeightedMap<>();
     private SpecialStructure[] specialStructures = {};
-    private BaseResource[] baseResources = {};
+    private Deposit[] deposits = {};
     private OreDeposit[] oreDeposits = {};
     private List<SurfaceDecorator> globalSurfaceDecorators = new ArrayList<>();
     private List<CaveDecorator> globalCaveDecorators = new ArrayList<>();
@@ -106,9 +106,9 @@ public class GeneratorConfig {
         return specialStructures;
     }
     
-    @JsonSetter(value = "base_resources", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
-    public BaseResource[] getBaseResources() {
-        return baseResources;
+    @JsonSetter(value = "deposits", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Deposit[] getDeposits() {
+        return deposits;
     }
     
     @JsonSetter(value = "ore_deposits", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)

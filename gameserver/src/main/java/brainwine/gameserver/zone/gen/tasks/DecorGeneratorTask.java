@@ -12,8 +12,7 @@ import brainwine.gameserver.zone.gen.caves.Cave;
 import brainwine.gameserver.zone.gen.caves.CaveDecorator;
 import brainwine.gameserver.zone.gen.caves.CaveType;
 import brainwine.gameserver.zone.gen.caves.StructureCaveDecorator;
-import brainwine.gameserver.zone.gen.models.BaseResource;
-import brainwine.gameserver.zone.gen.models.ModTileBlock;
+import brainwine.gameserver.zone.gen.models.Deposit;
 import brainwine.gameserver.zone.gen.models.OreDeposit;
 import brainwine.gameserver.zone.gen.models.TerrainType;
 import brainwine.gameserver.zone.gen.surface.StructureSurfaceDecorator;
@@ -26,7 +25,7 @@ public class DecorGeneratorTask implements GeneratorTask {
     private final TerrainType terrainType;
     private final double backgroundAccentChance;
     private final double backgroundDrawingChance;
-    private final BaseResource[] baseResources;
+    private final Deposit[] deposits;
     private final OreDeposit[] oreDeposits;
     private final List<SurfaceDecorator> globalSurfaceDecorators;
     private final List<CaveDecorator> globalCaveDecorators;
@@ -35,7 +34,7 @@ public class DecorGeneratorTask implements GeneratorTask {
         terrainType = config.getTerrainType();
         backgroundAccentChance = config.getBackgroundAccentChance();
         backgroundDrawingChance = config.getBackgroundDrawingChance();
-        baseResources = config.getBaseResources();
+        deposits = config.getDeposits();
         oreDeposits = config.getOreDeposits();
         globalSurfaceDecorators = config.getGlobalSurfaceDecorators();
         globalCaveDecorators = config.getGlobalCaveDecorators();
@@ -111,9 +110,9 @@ public class DecorGeneratorTask implements GeneratorTask {
             }
         }
         
-        // Generate base resources (rocks, logs 'n roots)
-        for(BaseResource resource : baseResources) {
-            generateBaseResources(ctx, resource);
+        // Generate generic deposits
+        for(Deposit deposit : deposits) {
+            generateDeposits(ctx, deposit);
         }
         
         // Generate ore veins
@@ -262,16 +261,10 @@ public class DecorGeneratorTask implements GeneratorTask {
         randomWalk(ctx, nextX, nextY, maxWalks, current + 1, recentDirections, path);
     }
     
-    private void generateBaseResources(GeneratorContext ctx, BaseResource resource) {
-        ModTileBlock[] blocks = resource.getType().getBlocks();
-        
-        if(blocks.length == 0) {
-            return;
-        }
-        
+    private void generateDeposits(GeneratorContext ctx, Deposit deposit) {        
         int width = ctx.getWidth();
         int height = ctx.getHeight();
-        float amount = width * height / (float)resource.getBlocksPerSpawn();
+        float amount = width * height / (float)deposit.getBlocksPerSpawn();
         int resourceCount = (int)amount;
         
         if(ctx.nextDouble() < (amount - resourceCount)) {
@@ -281,16 +274,16 @@ public class DecorGeneratorTask implements GeneratorTask {
         for(int i = 0; i < resourceCount; i++) {
             int x = ctx.nextInt(width);
             int surface = ctx.getSurface(x);
-            int minY = (int)(resource.getMinDepth() * (height - surface)) + surface;
-            int maxY = (int)(resource.getMaxDepth() * (height - surface)) + surface;
+            int minY = (int)(deposit.getMinDepth() * (height - surface)) + surface;
+            int maxY = (int)(deposit.getMaxDepth() * (height - surface)) + surface;
             int y = ctx.nextInt(maxY - minY + 1) + minY;
-            placeModTileBlock(ctx, x, y, blocks[ctx.nextInt(blocks.length)]);
+            placeBlockTile(ctx, x, y, deposit.getItems().next(ctx.getRandom()));
         }
     }
     
-    private void placeModTileBlock(GeneratorContext ctx, int x, int y, ModTileBlock block) {
-        int width = block.getWidth();
-        int height = block.getHeight(); 
+    private void placeBlockTile(GeneratorContext ctx, int x, int y, Item item) {
+        int width = item.getTileWidth();
+        int height = item.getTileHeight(); 
         
         for(int i = x; i < x + width; i++) {
             for(int j = y; j < y + height; j++) {
@@ -303,7 +296,7 @@ public class DecorGeneratorTask implements GeneratorTask {
         for(int i = 0; i < width; i++) {
             for(int j = 0; j < height; j++) {
                 int mod = j * width + i;
-                ctx.updateBlock(x + i, y + j, Layer.FRONT, block.getItem(), mod);
+                ctx.updateBlock(x + i, y + j, Layer.FRONT, item, mod);
             }
         }
     }

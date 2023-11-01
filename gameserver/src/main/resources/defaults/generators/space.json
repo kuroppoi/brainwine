@@ -52,10 +52,27 @@
       "max": 1
     }
   ],
-  "base_resources": [
+  "deposits": [
     {
-      "type": "rocks",
+      "items": [
+        "ground/earth-rock",
+        "ground/earth-rock-wide-1",
+        "ground/earth-rock-big-1"
+      ],
       "blocks_per_spawn": 100
+    },
+    {
+      "items": {
+        "ground/fossil-shell-buried": 400,
+        "ground/fossil-miner-buried": 160,
+        "ground/fossil-fish-buried": 80,
+        "ground/fossil-trilobyte-buried": 50,
+        "ground/fossil-mammoth-buried": 15,
+        "ground/fossil-pterodactyl-buried": 6,
+        "ground/fossil-trex-buried": 1,
+        "ground/fossil-oldone-buried": 0.1
+      },
+      "blocks_per_spawn": 2000
     }
   ],
   "ore_deposits": [

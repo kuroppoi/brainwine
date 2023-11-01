@@ -70,26 +70,68 @@
       "max": 3
     }
   ],
-  "base_resources": [
+  "deposits": [
     {
-      "type": "clay",
+      "items": [
+        "ground/clay-1",
+        "ground/clay-2",
+        "ground/clay-3",
+        "ground/clay-4",
+        "ground/clay-5",
+        "ground/clay-6",
+        "ground/clay-7",
+        "ground/clay-8",
+        "ground/clay-9"
+      ],
       "blocks_per_spawn": 1200
     },
     {
-      "type": "logs",
+      "items": [
+        "ground/petrified-wood-1",
+        "ground/petrified-wood-2",
+        "ground/petrified-wood-3",
+        "ground/petrified-wood-4",
+        "ground/petrified-wood-large-1",
+        "ground/petrified-wood-large-2"
+      ],
       "blocks_per_spawn": 1600,
       "min_depth": 0.05,
       "max_depth": 0.2
     },
     {
-      "type": "roots",
+      "items": [
+        "ground/earth-root-1",
+        "ground/earth-root-wide-1",
+        "ground/earth-root-wide-2",
+        "ground/earth-root-wide-3",
+        "ground/earth-root-wide-4",
+        "ground/earth-root-tall-1",
+        "ground/earth-root-big-1",
+        "ground/earth-root-huge-1"
+      ],
       "blocks_per_spawn": 1600,
       "max_depth": 0.2
     },
     {
-      "type": "rocks",
+      "items": [
+        "ground/earth-rock",
+        "ground/earth-rock-wide-1",
+        "ground/earth-rock-big-1"
+      ],
       "blocks_per_spawn": 300,
       "min_depth": 0.1
+    },
+    {
+      "items": {
+        "ground/fossil-shell-buried": 400,
+        "ground/fossil-miner-buried": 160,
+        "ground/fossil-fish-buried": 80,
+        "ground/fossil-trilobyte-buried": 50,
+        "ground/fossil-mammoth-buried": 15,
+        "ground/fossil-pterodactyl-buried": 6,
+        "ground/fossil-trex-buried": 1
+      },
+      "blocks_per_spawn": 2000
     }
   ],
   "ore_deposits": [
