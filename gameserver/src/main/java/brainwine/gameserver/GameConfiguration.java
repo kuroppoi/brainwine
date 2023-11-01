@@ -230,7 +230,13 @@ public class GameConfiguration {
             if(dst.containsKey(k)) {
                 Object o = dst.get(k);
                 
-                if(o instanceof Map && v instanceof Map) {
+                if(o instanceof Map) {
+                    // Safety check for config overrides
+                    if(!(v instanceof Map)) {
+                        logger.warn(SERVER_MARKER, "Configuration merger attempted to transform object '{}' into non-object value!", k);
+                        return;
+                    }
+                    
                     merge((Map<String, Object>)o, (Map<String, Object>)v);
                 } else {
                     dst.put(k, v);
