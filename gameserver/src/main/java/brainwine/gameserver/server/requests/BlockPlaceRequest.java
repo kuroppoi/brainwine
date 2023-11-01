@@ -82,7 +82,7 @@ public class BlockPlaceRequest extends PlayerRequest {
         
         if(layer == Layer.LIQUID) {
             mod = 5;
-        } else if(item.getMod() == ModType.ROTATION) {
+        } else if(item.getMod() == ModType.ROTATION && !item.isMirrorable()) {
             // Automatically orient rotatable blocks based on adjacent block
             if(zone.isChunkLoaded(x, y + 1) && zone.getBlock(x, y + 1).getFrontItem().isWhole()) {
                 mod = 0;
