@@ -5,7 +5,7 @@ on:
   push:
     branches: [master]
     paths:
-      - .github/workflows/gradle.yml
+      - .github/workflows/build.yml
       - deepworld-config
       - api/**
       - gameserver/**
