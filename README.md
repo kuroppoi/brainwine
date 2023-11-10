@@ -1,5 +1,5 @@
 # Brainwine
-[![build](https://github.com/kuroppoi/brainwine/actions/workflows/gradle.yml/badge.svg)](https://github.com/kuroppoi/brainwine/actions)
+[![build](https://github.com/kuroppoi/brainwine/actions/workflows/build.yml/badge.svg)](https://github.com/kuroppoi/brainwine/actions)
 
 Brainwine is a Deepworld private server written in Java, made with user-friendliness and portability in mind.
 Due to the time it will take for this project to be complete (and my inconsistent working on it), brainwine has been prematurely open-sourced
