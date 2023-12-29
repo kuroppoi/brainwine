@@ -31,7 +31,7 @@ public class RandomlyTargetBehavior extends Behavior {
         if(!entity.hasTarget()) {
             Player target = entity.getZone().getRandomPlayerInRange(entity.getX(), entity.getY(), range);
             
-            if(target != null && !target.isGodMode() && !target.isDead() && !entity.isOwnedBy(target) && entity.canSee(target)) {
+            if(target != null && !target.isGodMode() && !target.isDead() && !entity.isOwnedBy(target) && (!blockable || entity.canSee(target))) {
                 entity.setTarget(target);
                 targetLockedAt = now;
             }
