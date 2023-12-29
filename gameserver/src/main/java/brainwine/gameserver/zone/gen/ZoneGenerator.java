@@ -12,6 +12,7 @@ import java.util.function.Consumer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.util.ResourceUtils;
 import brainwine.gameserver.zone.Biome;
@@ -156,10 +157,22 @@ public class ZoneGenerator {
     }
     
     public Zone generateZone(Biome biome, int width, int height, int seed) {
-        String firstName = FIRST_NAMES[(int)(Math.random() * FIRST_NAMES.length)];
-        String lastName = LAST_NAMES[(int)(Math.random() * LAST_NAMES.length)];
-        String name = firstName + " " + lastName;
-        Zone zone = new Zone(generateDocumentId(seed), name, biome, width, height);
+        String id = generateDocumentId(seed);
+        String name = getRandomName();
+        int retryCount = 0;
+        
+        while(GameServer.getInstance().getZoneManager().getZoneByName(name) != null) {
+            if(retryCount >= 10) {
+                name = id;
+                logger.warn(SERVER_MARKER, "Could not generate a unique name for zone {}", id);
+                break;
+            }
+            
+            name = getRandomName();
+            retryCount++;
+        }
+        
+        Zone zone = new Zone(id, name, biome, width, height);
         GeneratorContext ctx = new GeneratorContext(zone, seed);
         terrainGenerator.generate(ctx);
         caveGenerator.generate(ctx);
@@ -195,6 +208,12 @@ public class ZoneGenerator {
         long mostSigBits = (((long)seed) << 32) | (random.nextInt() & 0xFFFFFFFFL);
         long leastSigBits = random.nextLong();
         return new UUID(mostSigBits, leastSigBits).toString();
+    }
+    
+    private static String getRandomName() {
+        String firstName = FIRST_NAMES[(int)(Math.random() * FIRST_NAMES.length)];
+        String lastName = LAST_NAMES[(int)(Math.random() * LAST_NAMES.length)];
+        return firstName + " " + lastName;
     }
     
     private static int getRandomSeed() {
