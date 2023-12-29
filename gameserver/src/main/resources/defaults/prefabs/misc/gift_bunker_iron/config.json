@@ -1,0 +1,40 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "holiday/gingerbread-house": {
+      "holiday/gingerbread-house": 2,
+      "holiday/tree-charlie-brown": 15,
+      "holiday/candy-cane-small": 100,
+      "holiday/gift-small": 150,
+      "air": 250
+    },
+    "holiday/stocking": {
+      "air": 10,
+      "holiday/stocking-onyx": 20,
+      "holiday/stocking": 70
+    },
+    "vegetation/pine-tree-festive": {
+      "vegetation/pine-tree-festive": 80,
+      "holiday/gift-tall": 10,
+      "air": 10
+    },
+    "holiday/gift-small": {
+      "holiday/gift-small": 75,
+      "air": 25
+    },
+    "holiday/gift-tall": {
+      "holiday/gift-tall": 75,
+      "air": 25
+    },
+    "holiday/gift-large": {
+      "air": 50,
+      "holiday/gift-large": 50
+    }
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

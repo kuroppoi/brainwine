@@ -1,0 +1,37 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "mechanical/telescope": {
+      "containers/crate-large": 1,
+      "holiday/gift-tall": 2,
+      "air": 2
+    },
+    "holiday/stocking": {
+      "air": 29.5,
+      "holiday/stocking-onyx": 0.3,
+      "holiday/stocking": 80
+    },
+    "holiday/gift-small": [
+      "holiday/gift-small",
+      "air"
+    ],
+    "holiday/stocking-onyx": {
+      "holiday/stocking-onyx": 0.3,
+      "holiday/stocking": 80,
+      "air": 29.5
+    },
+    "furniture/head-deer": {
+      "air": 80,
+      "furniture/head-deer": 30,
+      "furniture/painting-landscape": 2,
+      "furniture/head-bear": 7.5,
+      "furniture/head-cthulhu": 4
+    }
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

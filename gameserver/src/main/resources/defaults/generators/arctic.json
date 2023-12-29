@@ -41,7 +41,8 @@
     "dungeons/generic_large_2",
     "dungeons/generic_large_3",
     "dungeons/generic_large_4",
-    "dungeons/generic_large_5"
+    "dungeons/generic_large_5",
+    "dungeons/generic_large_6"
   ],
   "special_structures": [
     {
@@ -237,6 +238,11 @@
             "ruins/arctic_surface_building_2",
             "ruins/arctic_surface_building_3",
             "ruins/arctic_surface_building_4",
+            "ruins/arctic_surface_building_5",
+            "ruins/arctic_surface_building_6",
+            "ruins/arctic_surface_building_7",
+            "ruins/arctic_surface_building_8",
+            "ruins/arctic_surface_building_9",
             "dungeons/arctic_surface_1"
           ]
         },
@@ -387,7 +393,10 @@
             "ruins/generic_wood_5": 8,
             "ruins/generic_buried_house_1": 4,
             "ruins/generic_buried_house_2": 4,
-            "ruins/generic_buried_house_3": 4
+            "ruins/generic_buried_house_3": 4,
+            "misc/gift_bunker_wood": 6,
+            "misc/gift_bunker_iron": 4,
+            "misc/gift_bunker_brass": 4
           }
         }
       ]

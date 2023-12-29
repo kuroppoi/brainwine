@@ -1,0 +1,53 @@
+{
+  "dungeon": true,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "building/brick": [
+      "building/brick",
+      "building/brick-tan",
+      "building/brick-mixed",
+      "building/brick-blue"
+    ],
+    "building/roof-brown": [
+      "building/roof-brown",
+      "building/roof"
+    ],
+    "building/trapdoor-wood": [
+      "building/trapdoor-wood",
+      "building/trapdoor-brass"
+    ]
+  },
+  "corresponding_replace": {
+    "back/brick": {
+      "key": "building/brick",
+      "values": {
+        "building/brick": "back/brick",
+        "building/brick-tan": "back/brick-tan",
+        "building/brick-mixed": "back/brick-mixed",
+        "building/brick-blue": "back/brick-blue"
+      }
+    },
+    "building/roof-brown-edge-large": {
+      "key": "building/roof-brown",
+      "values": {
+        "building/roof-brown": "building/roof-brown-edge-large",
+        "building/roof": "building/roof-edge-large"
+      }
+    }
+  },
+  "metadata": {
+    "2163": {
+      "cd": true,
+      "m": "",
+      ">": [
+        [
+          31,
+          32
+        ]
+      ]
+    }
+  }
+}

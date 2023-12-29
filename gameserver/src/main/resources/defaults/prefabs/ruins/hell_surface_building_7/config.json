@@ -1,0 +1,10 @@
+{
+  "dungeon": false,
+  "ruin": false,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {},
+  "corresponding_replace": {},
+  "metadata": {}
+}

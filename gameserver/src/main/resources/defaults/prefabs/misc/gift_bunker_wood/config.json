@@ -1,0 +1,35 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "holiday/gift-small": {
+      "holiday/gift-small": 400,
+      "air": 250
+    },
+    "holiday/gift-large": {
+      "holiday/gift-large": 400,
+      "air": 250
+    },
+    "holiday/gift-tall": {
+      "holiday/gift-tall": 400,
+      "air": 250
+    },
+    "ground/crystal-blue-1": {
+      "holiday/gift-small": 400,
+      "air": 250
+    },
+    "ground/crystal-green-small": {
+      "holiday/gift-small": 400,
+      "air": 250
+    },
+    "ground/crystal-purple-1": {
+      "holiday/gift-small": 400,
+      "air": 250
+    }
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}

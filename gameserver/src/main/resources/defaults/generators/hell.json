@@ -41,6 +41,7 @@
     "dungeons/generic_large_3",
     "dungeons/generic_large_4",
     "dungeons/generic_large_5",
+    "dungeons/generic_large_6",
     "dungeons/hell_small_1"
   ],
   "special_structures": [
@@ -187,6 +188,7 @@
             "ruins/hell_surface_building_4",
             "ruins/hell_surface_building_5",
             "ruins/hell_surface_building_6",
+            "ruins/hell_surface_building_7",
             "dungeons/hell_surface_1"
           ]
         },

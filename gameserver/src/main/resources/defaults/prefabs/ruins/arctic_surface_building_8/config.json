@@ -1,0 +1,27 @@
+{
+  "dungeon": false,
+  "ruin": true,
+  "loot": true,
+  "decay": true,
+  "mirrorable": true,
+  "replace": {
+    "holiday/gift-small": {
+      "air": 1,
+      "holiday/gift-small": 1
+    },
+    "holiday/gift-tall": {
+      "air": 1,
+      "holiday/gift-tall": 1
+    },
+    "vegetation/pine-tree-festive": {
+      "air": 5,
+      "vegetation/pine-tree-festive": 1
+    },
+    "ground/crystal-green-small": {
+      "air": 1,
+      "holiday/gift-small": 1
+    }
+  },
+  "corresponding_replace": {},
+  "metadata": {}
+}
