@@ -75,7 +75,7 @@ public class GeneratorContext {
         int width = prefab.getWidth();
         int height = prefab.getHeight();
         int highestPoint = surface[x];
-        int lowestPoint = surface[x];
+        int lowestPoint = highestPoint;
         int startX = -1;
         int endX = x;
         
@@ -89,6 +89,7 @@ public class GeneratorContext {
             if(prefab.getBlocks()[(height - 1) * width + x1].getFrontItem().isWhole()) {
                 if(startX == -1) {
                     startX = x + x1;
+                    highestPoint = lowestPoint = surface[startX];
                 }
                 
                 endX = x + x1;
@@ -105,7 +106,9 @@ public class GeneratorContext {
             
             if(currentSurface < highestPoint) {
                 highestPoint = currentSurface;
-            } else if(currentSurface > lowestPoint) {
+            }
+            
+            if(currentSurface > lowestPoint) {
                 lowestPoint = currentSurface;
             }
         }
