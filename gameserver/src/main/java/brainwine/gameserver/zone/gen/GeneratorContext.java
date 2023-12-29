@@ -74,16 +74,33 @@ public class GeneratorContext {
         int[] surface = zone.getSurface();
         int width = prefab.getWidth();
         int height = prefab.getHeight();
-        
-        // Find highest and lowest points
         int highestPoint = surface[x];
         int lowestPoint = surface[x];
+        int startX = -1;
+        int endX = x;
         
-        for(int x1 = x; x1 < x + width; x1++) {
-            if(x1 >= surface.length) {
+        // Find foundation start and end
+        for(int x1 = 0; x1 < width; x1++) {
+            if(x + x1 >= surface.length) {
                 return false; // Might as well return here as it won't place the prefab anyway.
             }
             
+            // Shitty foundation check, doesn't take potential replacements into account. Oh well!
+            if(prefab.getBlocks()[(height - 1) * width + x1].getFrontItem().isWhole()) {
+                if(startX == -1) {
+                    startX = x + x1;
+                }
+                
+                endX = x + x1;
+            }
+        }
+        
+        if(startX == -1) {
+            startX = x;
+        }
+        
+        // Find highest and lowest points in the terrain across the foundation's area
+        for(int x1 = startX; x1 < endX; x1++) {
             int currentSurface = surface[x1];
             
             if(currentSurface < highestPoint) {
@@ -99,17 +116,14 @@ public class GeneratorContext {
         
         // Place the prefab and generate scaffolding if successful
         if(placePrefab(prefab, x, y)) {
-            placeScaffolding(prefab, x, y + height);
+            placeScaffolding(startX, y + height, endX - startX + 1, prefab.isRuin());
             return true;
         }
         
         return false;
     }
     
-    private void placeScaffolding(Prefab prefab, int x, int y) {
-        boolean ruin = prefab.isRuin();
-        int width = prefab.getWidth();
-        
+    private void placeScaffolding(int x, int y, int width, boolean ruin) {
         for(int i = x; i < x + width; i++) {
             // Don't place scaffolding unless there is a block right above it
             if(getBlock(i, y - 1).getFrontItem().isAir()) {
