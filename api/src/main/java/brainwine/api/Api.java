@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import brainwine.api.config.ApiConfig;
 import brainwine.api.config.NewsEntry;
 import brainwine.shared.JsonHelper;
+import io.javalin.core.LoomUtil;
 
 public class Api {
     
@@ -31,6 +32,7 @@ public class Api {
         logger.info(SERVER_MARKER, "Using data fetcher {}", dataFetcher.getClass().getName());
         logger.info(SERVER_MARKER, "Loading configuration ...");
         config = loadConfig();
+        LoomUtil.useLoomThreadPool = false;
         gatewayService = new GatewayService(this, config.getGatewayPort());
         portalService = new PortalService(this, config.getPortalPort());
         logger.info(SERVER_MARKER, "All done! API startup took {} milliseconds", System.currentTimeMillis() - startTime);
