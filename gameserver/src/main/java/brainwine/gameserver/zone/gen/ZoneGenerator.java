@@ -159,6 +159,8 @@ public class ZoneGenerator {
     public Zone generateZone(Biome biome, int width, int height, int seed) {
         String id = generateDocumentId(seed);
         String name = getRandomName();
+        
+        /*
         int retryCount = 0;
         
         while(GameServer.getInstance().getZoneManager().getZoneByName(name) != null) {
@@ -170,7 +172,7 @@ public class ZoneGenerator {
             
             name = getRandomName();
             retryCount++;
-        }
+        }*/
         
         Zone zone = new Zone(id, name, biome, width, height);
         GeneratorContext ctx = new GeneratorContext(zone, seed);
