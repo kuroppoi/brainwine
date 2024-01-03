@@ -52,6 +52,7 @@ public class GameServer implements CommandExecutor {
         prefabManager = new PrefabManager();
         ZoneGenerator.init();
         zoneManager = new ZoneManager();
+        zoneManager.tryGenerateDefaultZone();
         playerManager = new PlayerManager();
         NetworkRegistry.init();
         server = new Server();
