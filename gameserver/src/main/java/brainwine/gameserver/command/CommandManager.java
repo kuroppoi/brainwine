@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import brainwine.gameserver.command.commands.AcidityCommand;
 import brainwine.gameserver.command.commands.AdminCommand;
 import brainwine.gameserver.command.commands.BanCommand;
 import brainwine.gameserver.command.commands.BroadcastCommand;
@@ -39,8 +40,10 @@ import brainwine.gameserver.command.commands.SkillPointsCommand;
 import brainwine.gameserver.command.commands.StopCommand;
 import brainwine.gameserver.command.commands.TeleportCommand;
 import brainwine.gameserver.command.commands.ThinkCommand;
+import brainwine.gameserver.command.commands.TimeCommand;
 import brainwine.gameserver.command.commands.UnbanCommand;
 import brainwine.gameserver.command.commands.UnmuteCommand;
+import brainwine.gameserver.command.commands.WeatherCommand;
 import brainwine.gameserver.command.commands.ZoneIdCommand;
 import brainwine.gameserver.entity.player.Player;
 
@@ -93,6 +96,9 @@ public class CommandManager {
         registerCommand(new LevelCommand());
         registerCommand(new SkillPointsCommand());
         registerCommand(new SettleLiquidsCommand());
+        registerCommand(new WeatherCommand());
+        registerCommand(new AcidityCommand());
+        registerCommand(new TimeCommand());
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {

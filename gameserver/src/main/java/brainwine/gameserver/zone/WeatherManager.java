@@ -47,6 +47,22 @@ public class WeatherManager {
         }
     }
     
+    public boolean isRaining() {
+        return rainPower > 0;
+    }
+    
+    public long getRainStart() {
+        return rainStart;
+    }
+    
+    public long getRainDuration() {
+        return rainDuration;
+    }
+    
+    public float getRainPower() {
+        return rainPower;
+    }
+    
     public float getPrecipitation() {
         return precipitation;
     }

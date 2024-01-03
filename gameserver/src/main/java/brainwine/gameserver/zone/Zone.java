@@ -1068,6 +1068,10 @@ public class Zone {
         return chunkManager;
     }
     
+    public WeatherManager getWeatherManager() {
+        return weatherManager;
+    }
+    
     public void setSurface(int x, int surface) {
         if(areCoordinatesInBounds(x, surface)) {
             this.surface[x] = surface;
@@ -1235,6 +1239,14 @@ public class Zone {
     
     public int getChunkCount() {
         return numChunksWidth * numChunksHeight;
+    }
+    
+    public void setTime(float time) {
+        this.time = time;
+    }
+    
+    public float getTime() {
+        return time;
     }
     
     public void setAcidity(float acidity) {
