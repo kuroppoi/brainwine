@@ -47,20 +47,24 @@ public class ZoneManager {
             }
         }
         
-        if(zones.isEmpty()) {
-            logger.info(SERVER_MARKER, "No zones were loaded. Generating default zone ...");
-            ZoneGenerator generator = ZoneGenerator.getZoneGenerator(Biome.PLAIN);
-            
-            if(generator == null) {
-                logger.warn(SERVER_MARKER, "No generator for plain biomes was found! The default generator will be used.");
-                generator = ZoneGenerator.getDefaultZoneGenerator();
-            }
-            
-            Zone zone = generator.generateZone(Biome.PLAIN, 2000, 600);
-            addZone(zone);
-        } else {
-            logger.info(SERVER_MARKER, "Successfully loaded {} zone(s)", zonesByName.size());
+        logger.info(SERVER_MARKER, "Successfully loaded {} zone(s)", zonesByName.size());
+    }
+    
+    public void tryGenerateDefaultZone() {
+        if(!zones.isEmpty()) {
+            return;
         }
+        
+        logger.info(SERVER_MARKER, "No zones were loaded. Generating default zone ...");
+        ZoneGenerator generator = ZoneGenerator.getZoneGenerator(Biome.PLAIN);
+        
+        if(generator == null) {
+            logger.warn(SERVER_MARKER, "No generator for plain biomes was found! The default generator will be used.");
+            generator = ZoneGenerator.getDefaultZoneGenerator();
+        }
+        
+        Zone zone = generator.generateZone(Biome.PLAIN, 2000, 600);
+        addZone(zone);
     }
     
     public void tick(float deltaTime) {
@@ -211,6 +215,10 @@ public class ZoneManager {
         }
         
         return result;
+    }
+    
+    public int getZoneCount() {
+        return zones.size();
     }
     
     public Collection<Zone> getZones() {
