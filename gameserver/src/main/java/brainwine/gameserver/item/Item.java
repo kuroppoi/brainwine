@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -16,6 +17,7 @@ import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
 
+// TODO I don't like some parts of this, maybe they can be reworked.
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Item {
     
@@ -152,6 +154,9 @@ public class Item {
     
     @JsonProperty("use")
     private Map<ItemUseType, Object> useConfigs = new HashMap<>();
+    
+    @JsonProperty("convert")
+    private Map<LazyItemGetter, LazyItemGetter> conversions = new HashMap<>();
     
     @JsonCreator
     private Item(@JsonProperty(value = "id", required = true) String id,
@@ -455,5 +460,9 @@ public class Item {
     
     public Map<ItemUseType, Object> getUses() {
         return useConfigs;
+    }
+    
+    public Map<Item, Item> getConversions() {
+    	return conversions.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().get(), entry -> entry.getValue().get()));
     }
 }

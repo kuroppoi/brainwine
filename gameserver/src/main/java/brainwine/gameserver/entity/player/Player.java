@@ -29,14 +29,13 @@ import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
-import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
+import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.AchievementMessage;
@@ -985,18 +984,11 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void consume(Item item) {
-        Action action = item.getAction();
-        
-        // TODO some kind of abstraction for things like this would be pretty cool
-        switch(action) {
-            case HEAL: heal(item.getPower()); break;
-            default: break;
-        }
-        
-        // (Temporary?) measure to prevent consuming unimplemented consumables
-        if(action != Action.NONE) {
-            inventory.removeItem(item);
-        }
+    	Consumable consumable = item.getAction().getConsumable();
+    	
+    	if(consumable != null) {
+    		consumable.consume(item, this);
+    	}
     }
     
     public void awardLoot(Loot loot) {
