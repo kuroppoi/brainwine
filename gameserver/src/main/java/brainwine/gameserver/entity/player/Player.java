@@ -157,6 +157,7 @@ public class Player extends Entity implements CommandExecutor {
         this.achievements = new HashSet<>();
         this.ignoredHints = new HashMap<>();
         this.skills = new HashMap<>();
+        this.bumpedSkills = new HashMap<>();
         this.equippedClothing = new HashMap<>();
         this.equippedColors = new HashMap<>();
     }
