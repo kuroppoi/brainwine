@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.Timer;
 import brainwine.gameserver.achievements.Achievement;
 import brainwine.gameserver.achievements.AchievementManager;
 import brainwine.gameserver.achievements.JourneymanAchievement;
@@ -106,6 +107,7 @@ public class Player extends Entity implements CommandExecutor {
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
+    private final List<Timer<String>> timers = new ArrayList<>();
     private final List<Entity> trackedEntities = new ArrayList<>();
     private String clientVersion;
     private Placement lastPlacement;
@@ -113,6 +115,7 @@ public class Player extends Entity implements CommandExecutor {
     private Vector2i spawnPoint = new Vector2i(0, 0);
     private int teleportX;
     private int teleportY;
+    private boolean stealth;
     private boolean godMode;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
@@ -187,6 +190,9 @@ public class Player extends Entity implements CommandExecutor {
             heal(BASE_REGEN_AMOUNT * deltaTime);
         }
         
+        // Process timers
+        timers.removeIf(Timer::process);
+        
         // Update tracked entities
         if(now - lastTrackedEntityUpdate >= TRACKED_ENTITY_UPDATE_INTERVAL) {
             updateTrackedEntities();
@@ -226,6 +232,15 @@ public class Player extends Entity implements CommandExecutor {
     public void setHealth(float health) {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
+    }
+    
+    @Override
+    public void setProperties(Map<String, Object> properties, boolean sendMessage) {
+        super.setProperties(properties, sendMessage);
+        
+        if(sendMessage) {
+            sendMessage(new EntityChangeMessage(id, properties));
+        }
     }
     
     /**
@@ -327,6 +342,8 @@ public class Player extends Entity implements CommandExecutor {
     
     /**
      * Called from {@link Connection} when the channel becomes inactive.
+     * 
+     * TODO Should we force process all timers on disconnect?
      */
     public void onDisconnect() {
         lastHeartbeat = 0;
@@ -434,6 +451,15 @@ public class Player extends Entity implements CommandExecutor {
         }
     }
     
+    public void addTimer(String key, long delay, Runnable action) {
+        removeTimer(key);
+        timers.add(new Timer<>(key, delay, action));
+    }
+    
+    public void removeTimer(String key) {
+        timers.removeIf(timer -> timer.getKey().equals(key));
+    }
+    
     public void checkRegistration() {
         if(!isRegistered()) {
             sendMessage(new EventMessage("playerRegistered", false));
@@ -507,6 +533,15 @@ public class Player extends Entity implements CommandExecutor {
     
     public int getTeleportY() {
         return teleportY;
+    }
+    
+    public void setStealth(boolean stealth) {
+        this.stealth = stealth;
+        setProperty("xs", stealth ? 1 : 0, true);
+    }
+    
+    public boolean isStealthy() {
+        return stealth;
     }
     
     public void setGodMode(boolean godMode) {

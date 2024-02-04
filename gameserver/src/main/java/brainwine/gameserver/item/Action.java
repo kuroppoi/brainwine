@@ -10,6 +10,7 @@ import brainwine.gameserver.item.consumables.NameChangeConsumable;
 import brainwine.gameserver.item.consumables.RefillConsumable;
 import brainwine.gameserver.item.consumables.SkillConsumable;
 import brainwine.gameserver.item.consumables.SkillResetConsumable;
+import brainwine.gameserver.item.consumables.StealthConsumable;
 import brainwine.gameserver.item.consumables.TeleportConsumable;
 
 /**
@@ -27,6 +28,7 @@ public enum Action {
     REFILL(new RefillConsumable()),
     SKILL(new SkillConsumable()),
     SKILL_RESET(new SkillResetConsumable()),
+    STEALTH(new StealthConsumable()),
     TELEPORT(new TeleportConsumable()),
     
     @JsonEnumDefaultValue

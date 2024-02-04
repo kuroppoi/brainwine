@@ -134,6 +134,9 @@ public class Item {
     @JsonProperty("skill_bonuses")
     private Map<Skill, Integer> skillBonuses = new HashMap<>();
     
+    @JsonProperty("power_bonus")
+    private Pair<Skill, Float> powerBonus;
+    
     @JsonProperty("mining skill")
     private Pair<Skill, Integer> miningSkill;
     
@@ -362,6 +365,14 @@ public class Item {
     
     public Map<Skill, Integer> getSkillBonuses() {
         return skillBonuses;
+    }
+    
+    public boolean hasPowerBonus() {
+        return powerBonus != null;
+    }
+    
+    public Pair<Skill, Float> getPowerBonus() {
+        return powerBonus;
     }
     
     public boolean requiresMiningSkill() {
