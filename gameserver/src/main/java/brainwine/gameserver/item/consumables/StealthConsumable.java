@@ -12,15 +12,15 @@ public class StealthConsumable implements Consumable {
     public void consume(Item item, Player player, Object details) {
         player.getInventory().removeItem(item);
         player.setStealth(true);
-        float ticks = item.getPower();
+        float seconds = item.getPower();
         
         // Apply skill power bonus
         if(item.hasPowerBonus()) {
-            ticks += player.getTotalSkillLevel(item.getPowerBonus().getFirst()) * item.getPowerBonus().getLast();
+            seconds += player.getTotalSkillLevel(item.getPowerBonus().getFirst()) * item.getPowerBonus().getLast();
         }
         
         // Create timer
-        long delay = (long)(ticks / 8 * 1000);
+        long delay = (long)(seconds * 1000);
         player.addTimer("end stealth", delay, () -> player.setStealth(false));
     }
 }
