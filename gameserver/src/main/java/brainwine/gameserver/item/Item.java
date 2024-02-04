@@ -463,6 +463,6 @@ public class Item {
     }
     
     public Map<Item, Item> getConversions() {
-    	return conversions.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().get(), entry -> entry.getValue().get()));
+        return conversions.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().get(), entry -> entry.getValue().get()));
     }
 }
