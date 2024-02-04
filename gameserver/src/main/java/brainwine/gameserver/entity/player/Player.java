@@ -415,14 +415,16 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void handleDialogInput(int id, Object[] input) {
-        if(id == 0 || (input.length == 1 && input[0].equals("cancel"))) {
+        if(id == 0) {
             return;
         }
         
         Consumer<Object[]> handler = dialogs.remove(id);
         
         if(handler == null) {
-            notify("Sorry, the request has expired.");
+            if(!(input.length == 1 && input[0].equals("cancel"))) {
+                notify("Sorry, the request has expired.");
+            }
         } else {
             // TODO since we're dealing with user input, should we just try-catch this?
             handler.accept(input);

@@ -2,7 +2,9 @@ package brainwine.gameserver.item.consumables;
 
 import java.util.Map.Entry;
 
+import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
+import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Item;
@@ -15,7 +17,20 @@ public class SkillResetConsumable implements Consumable {
     
     @Override
     public void consume(Item item, Player player, Object details) {
-        player.showDialog(DialogHelper.messageDialog("Are you sure that you want to reset all of your skills back to level 1?"), data -> {
+        // Create dialog
+        Dialog dialog = new Dialog()
+                .setActions("yesno")
+                .addSection(new DialogSection()
+                        .setTitle("Confirm skill reset")
+                        .setText("Are you sure that you want to reset all of your skills back to level 1?"));
+                
+        player.showDialog(dialog, data -> {
+            // Handle cancellation
+            if(data.length == 1 && data[0].equals("cancel")) {
+                player.sendMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
+                return;
+            }
+            
             // Check if there are any skills to reset
             if(!player.getSkills().values().stream().anyMatch(level -> level > 1)) {
                 player.showDialog(DialogHelper.messageDialog("You don't have any skills to reset."));

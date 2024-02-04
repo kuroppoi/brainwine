@@ -54,9 +54,16 @@ public class SkillConsumable implements Consumable {
                 .setTitle("Which skill would you like to increase?")
                 .setInput(new DialogSelectInput()
                         .setOptions(upgradeableSkillNames)
+                        .setMaxColumns(3)
                         .setKey("skill")));
         
         player.showDialog(dialog, data -> {
+            // Handle cancellation
+            if(data.length == 1 && data[0].equals("cancel")) {
+                player.sendMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
+                return;
+            }
+            
             // Verify data
             if(data.length != 1) {
                 fail(item, player);
@@ -66,7 +73,7 @@ public class SkillConsumable implements Consumable {
             Skill skill = Skill.fromId("" + data[0]);
             
             // Make sure that the skill is still eligible for upgrading
-            if(player.hasSkillBeenBumped(item, skill) || player.getSkillLevel(skill) >= 10) {
+            if(skill == null || player.hasSkillBeenBumped(item, skill) || player.getSkillLevel(skill) >= 10) {
                 fail(item, player);
                 return;
             }

@@ -41,9 +41,16 @@ public class ConvertConsumable implements Consumable {
                 .setTitle("Which item would you like to upgrade?")
                 .setInput(new DialogSelectInput()
                         .setOptions(convertables.stream().map(Item::getTitle).collect(Collectors.toList()))
+                        .setMaxColumns(3)
                         .setKey("item")));
         
         player.showDialog(dialog, data -> {
+            // Handle cancellation
+            if(data.length == 1 && data[0].equals("cancel")) {
+                player.sendMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
+                return;
+            }
+            
             // Fail if there is no data
             if(data.length == 0) {
                 fail(item, player);
