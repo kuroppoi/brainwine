@@ -14,4 +14,3 @@ public class RefillConsumable implements Consumable {
         player.getInventory().removeItem(item);
     }
 }
-
