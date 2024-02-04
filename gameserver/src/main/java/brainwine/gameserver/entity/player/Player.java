@@ -990,9 +990,13 @@ public class Player extends Entity implements CommandExecutor {
     public void consume(Item item, Object details) {
     	Consumable consumable = item.getAction().getConsumable();
     	
-    	if(consumable != null) {
-    		consumable.consume(item, this, details);
+    	if(consumable == null) {
+    		sendMessage(new InventoryMessage(inventory.getClientConfig(item)));
+    		notify("Sorry, this action hasn't been implemented yet.");
+    		return;
     	}
+    	
+    	consumable.consume(item, this, details);
     }
     
     public void awardLoot(Loot loot) {
