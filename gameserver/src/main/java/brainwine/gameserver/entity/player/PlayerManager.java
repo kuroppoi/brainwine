@@ -139,6 +139,19 @@ public class PlayerManager {
         return false;
     }
     
+    public void changePlayerName(Player player, String name) {
+        if(playersByName.containsKey(name)) {
+            logger.warn("Tried to rename player {} to already existing name {}", player.getDocumentId(), name);
+            return;
+        }
+        
+        // Track name change and re-index the player
+        playersByName.remove(player.getName().toLowerCase());
+        player.trackNameChange(name);
+        player.setName(name);
+        playersByName.put(name.toLowerCase(), player);
+    }
+    
     public void onPlayerConnect(Player player) {
         Connection connection = player.getConnection();
         playersByConnection.put(connection, player);

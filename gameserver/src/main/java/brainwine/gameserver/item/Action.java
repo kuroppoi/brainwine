@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.item.consumables.ConvertConsumable;
 import brainwine.gameserver.item.consumables.HealConsumable;
+import brainwine.gameserver.item.consumables.NameChangeConsumable;
 import brainwine.gameserver.item.consumables.RefillConsumable;
 import brainwine.gameserver.item.consumables.SkillConsumable;
 import brainwine.gameserver.item.consumables.SkillResetConsumable;
@@ -22,6 +23,7 @@ public enum Action {
     CONVERT(new ConvertConsumable()),
     DIG,
     HEAL(new HealConsumable()),
+    NAME_CHANGE(new NameChangeConsumable()),
     REFILL(new RefillConsumable()),
     SKILL(new SkillConsumable()),
     SKILL_RESET(new SkillResetConsumable()),

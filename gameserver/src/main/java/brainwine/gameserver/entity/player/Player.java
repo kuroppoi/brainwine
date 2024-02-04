@@ -94,6 +94,7 @@ public class Player extends Entity implements CommandExecutor {
     private Inventory inventory;
     private PlayerStatistics statistics;
     private List<String> authTokens;
+    private List<NameChange> nameChanges;
     private List<PlayerRestriction> mutes;
     private List<PlayerRestriction> bans;
     private Set<Achievement> achievements;
@@ -132,6 +133,7 @@ public class Player extends Entity implements CommandExecutor {
         this.inventory = config.getInventory();
         this.statistics = config.getStatistics();
         this.authTokens = config.getAuthTokens();
+        this.nameChanges = config.getNameChanges();
         this.mutes = config.getMutes();
         this.bans = config.getBans();
         this.achievements = config.getAchievements();
@@ -152,6 +154,7 @@ public class Player extends Entity implements CommandExecutor {
         this.inventory = new Inventory(this);
         this.statistics = new PlayerStatistics(this);
         this.authTokens = new ArrayList<>();
+        this.nameChanges = new ArrayList<>();
         this.mutes = new ArrayList<>();
         this.bans = new ArrayList<>();
         this.achievements = new HashSet<>();
@@ -659,6 +662,14 @@ public class Player extends Entity implements CommandExecutor {
     
     protected List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    public void trackNameChange(String newName) {
+        nameChanges.add(new NameChange(newName, name));
+    }
+    
+    public List<NameChange> getNameChanges() {
+        return nameChanges;
     }
     
     public void mute(String reason, OffsetDateTime until) {
