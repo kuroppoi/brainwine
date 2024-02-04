@@ -1,5 +1,6 @@
 package brainwine.gameserver.item;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
 import brainwine.gameserver.item.consumables.Consumable;
@@ -7,6 +8,7 @@ import brainwine.gameserver.item.consumables.ConvertConsumable;
 import brainwine.gameserver.item.consumables.HealConsumable;
 import brainwine.gameserver.item.consumables.RefillConsumable;
 import brainwine.gameserver.item.consumables.SkillConsumable;
+import brainwine.gameserver.item.consumables.SkillResetConsumable;
 import brainwine.gameserver.item.consumables.TeleportConsumable;
 
 /**
@@ -22,6 +24,7 @@ public enum Action {
     HEAL(new HealConsumable()),
     REFILL(new RefillConsumable()),
     SKILL(new SkillConsumable()),
+    SKILL_RESET(new SkillResetConsumable()),
     TELEPORT(new TeleportConsumable()),
     
     @JsonEnumDefaultValue
@@ -35,6 +38,19 @@ public enum Action {
     
     private Action() {
         this(null);
+    }
+    
+    @JsonCreator
+    public static Action fromId(String id) {
+        String formatted = id.toUpperCase().replace(" ", "_");
+        
+        for(Action value : values()) {
+            if(value.toString().equals(formatted)) {
+                return value;
+            }
+        }
+        
+        return NONE;
     }
     
     public Consumable getConsumable() {
