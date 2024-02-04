@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.item.consumables.ConvertConsumable;
+import brainwine.gameserver.item.consumables.HealConsumable;
+import brainwine.gameserver.item.consumables.RefillConsumable;
 
 /**
  * Action types for items.
@@ -15,8 +17,8 @@ public enum Action {
     
 	CONVERT(new ConvertConsumable()),
     DIG,
-    HEAL,
-    REFILL,
+    HEAL(new HealConsumable()),
+    REFILL(new RefillConsumable()),
     
     @JsonEnumDefaultValue
     NONE;
