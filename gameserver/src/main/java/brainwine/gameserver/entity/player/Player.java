@@ -99,6 +99,7 @@ public class Player extends Entity implements CommandExecutor {
     private Set<Achievement> achievements;
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
+    private Map<Item, List<Skill>> bumpedSkills;
     private Map<ClothingSlot, Item> equippedClothing;
     private Map<ColorSlot, String> equippedColors;
     private final Map<String, Object> settings = new HashMap<>();
@@ -136,6 +137,7 @@ public class Player extends Entity implements CommandExecutor {
         this.achievements = config.getAchievements();
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
+        this.bumpedSkills = config.getBumpedSkills();
         this.equippedClothing = config.getEquippedClothing();
         this.equippedColors = config.getEquippedColors();
         health = getMaxHealth();
@@ -983,20 +985,39 @@ public class Player extends Entity implements CommandExecutor {
         return Collections.unmodifiableMap(skills);
     }
     
+    public void trackSkillBump(Item item, Skill skill) {
+        List<Skill> skills = bumpedSkills.get(item);
+        
+        if(skills == null) {
+            skills = new ArrayList<>();
+            bumpedSkills.put(item, skills);
+        }
+        
+        skills.add(skill);
+    }
+    
+    public boolean hasSkillBeenBumped(Item item, Skill skill) {
+        return bumpedSkills.getOrDefault(item, Collections.emptyList()).contains(skill);
+    }
+    
+    public Map<Item, List<Skill>> getBumpedSkills() {
+        return bumpedSkills;
+    }
+    
     public void consume(Item item) {
-    	consume(item, null);
+        consume(item, null);
     }
     
     public void consume(Item item, Object details) {
-    	Consumable consumable = item.getAction().getConsumable();
-    	
-    	if(consumable == null) {
-    		sendMessage(new InventoryMessage(inventory.getClientConfig(item)));
-    		notify("Sorry, this action hasn't been implemented yet.");
-    		return;
-    	}
-    	
-    	consumable.consume(item, this, details);
+        Consumable consumable = item.getAction().getConsumable();
+        
+        if(consumable == null) {
+            sendMessage(new InventoryMessage(inventory.getClientConfig(item)));
+            notify("Sorry, this action hasn't been implemented yet.");
+            return;
+        }
+        
+        consumable.consume(item, this, details);
     }
     
     public void awardLoot(Loot loot) {

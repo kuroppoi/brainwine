@@ -36,6 +36,7 @@ public class PlayerConfigFile {
     private Set<Achievement> achievements = new HashSet<>();
     private Map<String, Float> ignoredHints = new HashMap<>();
     private Map<Skill, Integer> skills = new HashMap<>();
+    private Map<Item, List<Skill>> bumpedSkills = new HashMap<>();
     private Map<ClothingSlot, Item> equippedClothing = new HashMap<>();
     private Map<ColorSlot, String> equippedColors  = new HashMap<>();
     
@@ -57,6 +58,7 @@ public class PlayerConfigFile {
         this.achievements = player.getAchievements();
         this.ignoredHints = player.getIgnoredHints();
         this.skills = player.getSkills();
+        this.bumpedSkills = player.getBumpedSkills();
         this.equippedClothing = player.getEquippedClothing();
         this.equippedColors = player.getEquippedColors();
     }
@@ -139,6 +141,11 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public Map<Skill, Integer> getSkills() {
         return skills;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<Item, List<Skill>> getBumpedSkills() {
+        return bumpedSkills;
     }
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)

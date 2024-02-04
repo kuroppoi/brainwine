@@ -6,6 +6,7 @@ import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.item.consumables.ConvertConsumable;
 import brainwine.gameserver.item.consumables.HealConsumable;
 import brainwine.gameserver.item.consumables.RefillConsumable;
+import brainwine.gameserver.item.consumables.SkillConsumable;
 import brainwine.gameserver.item.consumables.TeleportConsumable;
 
 /**
@@ -16,10 +17,11 @@ import brainwine.gameserver.item.consumables.TeleportConsumable;
  */
 public enum Action {
     
-	CONVERT(new ConvertConsumable()),
+    CONVERT(new ConvertConsumable()),
     DIG,
     HEAL(new HealConsumable()),
     REFILL(new RefillConsumable()),
+    SKILL(new SkillConsumable()),
     TELEPORT(new TeleportConsumable()),
     
     @JsonEnumDefaultValue
@@ -28,14 +30,14 @@ public enum Action {
     private final Consumable consumable;
     
     private Action(Consumable consumable) {
-    	this.consumable = consumable;
+        this.consumable = consumable;
     }
     
     private Action() {
-    	this(null);
+        this(null);
     }
     
     public Consumable getConsumable() {
-    	return consumable;
+        return consumable;
     }
 }
