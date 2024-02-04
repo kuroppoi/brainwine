@@ -19,7 +19,7 @@ import brainwine.gameserver.server.messages.InventoryMessage;
 public class ConvertConsumable implements Consumable {
 
 	@Override
-	public void consume(Item item, Player player) {
+	public void consume(Item item, Player player, Object details) {
 		Map<Item, Item> conversions = item.getConversions();
 		Inventory inventory = player.getInventory();
 		

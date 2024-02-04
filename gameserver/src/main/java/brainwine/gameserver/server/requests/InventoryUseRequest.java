@@ -36,7 +36,7 @@ public class InventoryUseRequest extends PlayerRequest {
         // Try to consume item if it is a consumable
         if(item.isConsumable()) {
             if(status == 1) {
-                player.consume(item);
+                player.consume(item, details);
             }
         } else {
             // Set current held item if applicable

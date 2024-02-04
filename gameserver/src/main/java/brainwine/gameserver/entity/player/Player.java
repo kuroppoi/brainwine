@@ -984,10 +984,14 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void consume(Item item) {
+    	consume(item, null);
+    }
+    
+    public void consume(Item item, Object details) {
     	Consumable consumable = item.getAction().getConsumable();
     	
     	if(consumable != null) {
-    		consumable.consume(item, this);
+    		consumable.consume(item, this, details);
     	}
     }
     

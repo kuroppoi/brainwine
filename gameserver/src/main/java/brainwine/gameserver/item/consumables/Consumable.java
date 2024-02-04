@@ -5,5 +5,5 @@ import brainwine.gameserver.item.Item;
 
 public interface Consumable {
 	
-	public void consume(Item item, Player player);
+	public void consume(Item item, Player player, Object details);
 }

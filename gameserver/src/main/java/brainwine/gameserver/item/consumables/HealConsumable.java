@@ -9,7 +9,7 @@ import brainwine.gameserver.item.Item;
 public class HealConsumable implements Consumable {
 
 	@Override
-	public void consume(Item item, Player player) {
+	public void consume(Item item, Player player, Object details) {
 		player.heal(item.getPower());
 		player.getInventory().removeItem(item);
 	}
