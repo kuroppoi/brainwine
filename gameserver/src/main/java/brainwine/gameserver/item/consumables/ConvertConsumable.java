@@ -34,7 +34,7 @@ public class ConvertConsumable implements Consumable {
         }
         
         // Map item titles to their id
-        Map<String, String> keyMap = convertables.stream().collect(Collectors.toMap(Item::getTitle, Item::getId));
+        Map<String, String> keyMap = convertables.stream().collect(Collectors.toMap(Item::getTitle, Item::getId, (a, b) -> a));
         
         // Create upgrade dialog
         Dialog dialog = new Dialog().addSection(new DialogSection()
