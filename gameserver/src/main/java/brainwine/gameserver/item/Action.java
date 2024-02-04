@@ -6,6 +6,7 @@ import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.item.consumables.ConvertConsumable;
 import brainwine.gameserver.item.consumables.HealConsumable;
 import brainwine.gameserver.item.consumables.RefillConsumable;
+import brainwine.gameserver.item.consumables.TeleportConsumable;
 
 /**
  * Action types for items.
@@ -19,6 +20,7 @@ public enum Action {
     DIG,
     HEAL(new HealConsumable()),
     REFILL(new RefillConsumable()),
+    TELEPORT(new TeleportConsumable()),
     
     @JsonEnumDefaultValue
     NONE;
