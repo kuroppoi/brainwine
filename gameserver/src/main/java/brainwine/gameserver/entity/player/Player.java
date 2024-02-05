@@ -296,14 +296,15 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
         sendMessage(new PlayerPositionMessage((int)x, (int)y));
         sendMessage(new HealthMessage(health));
-        sendMessage(new InventoryMessage(inventory));
-        sendMessage(new WardrobeMessage(inventory.getWardrobe()));
-        sendMessage(new BlockMetaMessage(zone.getGlobalMetaBlocks()));
         
         // Send skill data
         for(Skill skill : skills.keySet()) {
             sendMessage(new SkillMessage(skill, skills.get(skill)));
         }
+        
+        sendMessage(new InventoryMessage(inventory));
+        sendMessage(new WardrobeMessage(inventory.getWardrobe()));
+        sendMessage(new BlockMetaMessage(zone.getGlobalMetaBlocks()));
         
         // Send peer data
         Collection<Player> peers = zone.getPlayers();
