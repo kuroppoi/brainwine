@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.Timer;
 import brainwine.gameserver.achievements.Achievement;
 import brainwine.gameserver.achievements.AchievementManager;
 import brainwine.gameserver.achievements.JourneymanAchievement;
@@ -29,14 +30,13 @@ import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
-import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
+import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.AchievementMessage;
@@ -95,16 +95,19 @@ public class Player extends Entity implements CommandExecutor {
     private Inventory inventory;
     private PlayerStatistics statistics;
     private List<String> authTokens;
+    private List<NameChange> nameChanges;
     private List<PlayerRestriction> mutes;
     private List<PlayerRestriction> bans;
     private Set<Achievement> achievements;
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
+    private Map<Item, List<Skill>> bumpedSkills;
     private Map<ClothingSlot, Item> equippedClothing;
     private Map<ColorSlot, String> equippedColors;
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
+    private final List<Timer<String>> timers = new ArrayList<>();
     private final List<Entity> trackedEntities = new ArrayList<>();
     private String clientVersion;
     private Placement lastPlacement;
@@ -112,6 +115,7 @@ public class Player extends Entity implements CommandExecutor {
     private Vector2i spawnPoint = new Vector2i(0, 0);
     private int teleportX;
     private int teleportY;
+    private boolean stealth;
     private boolean godMode;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
@@ -132,11 +136,13 @@ public class Player extends Entity implements CommandExecutor {
         this.inventory = config.getInventory();
         this.statistics = config.getStatistics();
         this.authTokens = config.getAuthTokens();
+        this.nameChanges = config.getNameChanges();
         this.mutes = config.getMutes();
         this.bans = config.getBans();
         this.achievements = config.getAchievements();
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
+        this.bumpedSkills = config.getBumpedSkills();
         this.equippedClothing = config.getEquippedClothing();
         this.equippedColors = config.getEquippedColors();
         health = getMaxHealth();
@@ -151,11 +157,13 @@ public class Player extends Entity implements CommandExecutor {
         this.inventory = new Inventory(this);
         this.statistics = new PlayerStatistics(this);
         this.authTokens = new ArrayList<>();
+        this.nameChanges = new ArrayList<>();
         this.mutes = new ArrayList<>();
         this.bans = new ArrayList<>();
         this.achievements = new HashSet<>();
         this.ignoredHints = new HashMap<>();
         this.skills = new HashMap<>();
+        this.bumpedSkills = new HashMap<>();
         this.equippedClothing = new HashMap<>();
         this.equippedColors = new HashMap<>();
     }
@@ -181,6 +189,9 @@ public class Player extends Entity implements CommandExecutor {
         if(!isDead() && now >= lastDamagedAt + REGEN_NO_DAMAGE_TIME) {
             heal(BASE_REGEN_AMOUNT * deltaTime);
         }
+        
+        // Process timers
+        timers.removeIf(Timer::process);
         
         // Update tracked entities
         if(now - lastTrackedEntityUpdate >= TRACKED_ENTITY_UPDATE_INTERVAL) {
@@ -221,6 +232,15 @@ public class Player extends Entity implements CommandExecutor {
     public void setHealth(float health) {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
+    }
+    
+    @Override
+    public void setProperties(Map<String, Object> properties, boolean sendMessage) {
+        super.setProperties(properties, sendMessage);
+        
+        if(sendMessage) {
+            sendMessage(new EntityChangeMessage(id, properties));
+        }
     }
     
     /**
@@ -322,6 +342,8 @@ public class Player extends Entity implements CommandExecutor {
     
     /**
      * Called from {@link Connection} when the channel becomes inactive.
+     * 
+     * TODO Should we force process all timers on disconnect?
      */
     public void onDisconnect() {
         lastHeartbeat = 0;
@@ -413,18 +435,29 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void handleDialogInput(int id, Object[] input) {
-        if(id == 0 || (input.length == 1 && input[0].equals("cancel"))) {
+        if(id == 0) {
             return;
         }
         
         Consumer<Object[]> handler = dialogs.remove(id);
         
         if(handler == null) {
-            notify("Sorry, the request has expired.");
+            if(!(input.length == 1 && input[0].equals("cancel"))) {
+                notify("Sorry, the request has expired.");
+            }
         } else {
             // TODO since we're dealing with user input, should we just try-catch this?
             handler.accept(input);
         }
+    }
+    
+    public void addTimer(String key, long delay, Runnable action) {
+        removeTimer(key);
+        timers.add(new Timer<>(key, delay, action));
+    }
+    
+    public void removeTimer(String key) {
+        timers.removeIf(timer -> timer.getKey().equals(key));
     }
     
     public void checkRegistration() {
@@ -500,6 +533,15 @@ public class Player extends Entity implements CommandExecutor {
     
     public int getTeleportY() {
         return teleportY;
+    }
+    
+    public void setStealth(boolean stealth) {
+        this.stealth = stealth;
+        setProperty("xs", stealth ? 1 : 0, true);
+    }
+    
+    public boolean isStealthy() {
+        return stealth;
     }
     
     public void setGodMode(boolean godMode) {
@@ -655,6 +697,14 @@ public class Player extends Entity implements CommandExecutor {
     
     protected List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    public void trackNameChange(String newName) {
+        nameChanges.add(new NameChange(newName, name));
+    }
+    
+    public List<NameChange> getNameChanges() {
+        return nameChanges;
     }
     
     public void mute(String reason, OffsetDateTime until) {
@@ -984,19 +1034,39 @@ public class Player extends Entity implements CommandExecutor {
         return Collections.unmodifiableMap(skills);
     }
     
+    public void trackSkillBump(Item item, Skill skill) {
+        List<Skill> skills = bumpedSkills.get(item);
+        
+        if(skills == null) {
+            skills = new ArrayList<>();
+            bumpedSkills.put(item, skills);
+        }
+        
+        skills.add(skill);
+    }
+    
+    public boolean hasSkillBeenBumped(Item item, Skill skill) {
+        return bumpedSkills.getOrDefault(item, Collections.emptyList()).contains(skill);
+    }
+    
+    public Map<Item, List<Skill>> getBumpedSkills() {
+        return bumpedSkills;
+    }
+    
     public void consume(Item item) {
-        Action action = item.getAction();
+        consume(item, null);
+    }
+    
+    public void consume(Item item, Object details) {
+        Consumable consumable = item.getAction().getConsumable();
         
-        // TODO some kind of abstraction for things like this would be pretty cool
-        switch(action) {
-            case HEAL: heal(item.getPower()); break;
-            default: break;
+        if(consumable == null) {
+            sendMessage(new InventoryMessage(inventory.getClientConfig(item)));
+            notify("Sorry, this action hasn't been implemented yet.");
+            return;
         }
         
-        // (Temporary?) measure to prevent consuming unimplemented consumables
-        if(action != Action.NONE) {
-            inventory.removeItem(item);
-        }
+        consumable.consume(item, this, details);
     }
     
     public void awardLoot(Loot loot) {

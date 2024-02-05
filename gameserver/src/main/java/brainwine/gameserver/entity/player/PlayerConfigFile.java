@@ -31,11 +31,13 @@ public class PlayerConfigFile {
     private Inventory inventory = new Inventory();
     private PlayerStatistics statistics = new PlayerStatistics();
     private List<String> authTokens = new ArrayList<>();
+    private List<NameChange> nameChanges = new ArrayList<>();
     private List<PlayerRestriction> mutes = new ArrayList<>();
     private List<PlayerRestriction> bans = new ArrayList<>();
     private Set<Achievement> achievements = new HashSet<>();
     private Map<String, Float> ignoredHints = new HashMap<>();
     private Map<Skill, Integer> skills = new HashMap<>();
+    private Map<Item, List<Skill>> bumpedSkills = new HashMap<>();
     private Map<ClothingSlot, Item> equippedClothing = new HashMap<>();
     private Map<ColorSlot, String> equippedColors  = new HashMap<>();
     
@@ -52,11 +54,13 @@ public class PlayerConfigFile {
         this.inventory = player.getInventory();
         this.statistics = player.getStatistics();
         this.authTokens = player.getAuthTokens();
+        this.nameChanges = player.getNameChanges();
         this.mutes = player.getMutes();
         this.bans = player.getBans();
         this.achievements = player.getAchievements();
         this.ignoredHints = player.getIgnoredHints();
         this.skills = player.getSkills();
+        this.bumpedSkills = player.getBumpedSkills();
         this.equippedClothing = player.getEquippedClothing();
         this.equippedColors = player.getEquippedColors();
     }
@@ -88,6 +92,11 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<NameChange> getNameChanges() {
+        return nameChanges;
     }
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
@@ -139,6 +148,11 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public Map<Skill, Integer> getSkills() {
         return skills;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<Item, List<Skill>> getBumpedSkills() {
+        return bumpedSkills;
     }
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
