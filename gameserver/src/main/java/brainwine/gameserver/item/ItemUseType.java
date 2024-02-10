@@ -3,27 +3,47 @@ package brainwine.gameserver.item;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
+import brainwine.gameserver.item.interactions.ChangeInteraction;
+import brainwine.gameserver.item.interactions.ContainerInteraction;
+import brainwine.gameserver.item.interactions.DialogInteraction;
+import brainwine.gameserver.item.interactions.ItemInteraction;
+import brainwine.gameserver.item.interactions.SwitchInteraction;
+import brainwine.gameserver.item.interactions.TeleportInteraction;
+
+/**
+ * Much like with {@link Action}, block interactions depend on their use type.
+ */
 public enum ItemUseType {
     
     AFTERBURNER,
-    CONTAINER,
-    CREATE_DIALOG,
-    DIALOG,
+    CONTAINER(new ContainerInteraction()),
+    CREATE_DIALOG(new DialogInteraction(true)),
+    DIALOG(new DialogInteraction(false)),
     GUARD,
-    CHANGE,
+    CHANGE(new ChangeInteraction()),
     FIELDABLE,
     FLY,
     MULTI,
     PROTECTED,
     PUBLIC,
-    SWITCH,
+    SWITCH(new SwitchInteraction()),
     SWITCHED,
-    TELEPORT,
+    TELEPORT(new TeleportInteraction()),
     ZONE_TELEPORT,
     
     @JsonEnumDefaultValue
     UNKNOWN;
-        
+    
+    private final ItemInteraction interaction;
+    
+    private ItemUseType(ItemInteraction interaction) {
+        this.interaction = interaction;
+    }
+    
+    private ItemUseType() {
+        this(null);
+    }
+    
     @JsonCreator
     public static ItemUseType fromId(String id) {
         String formatted = id.toUpperCase().replace(" ", "_");
@@ -35,5 +55,9 @@ public enum ItemUseType {
         }
         
         return UNKNOWN;
+    }
+    
+    public ItemInteraction getInteraction() {
+        return interaction;
     }
 }

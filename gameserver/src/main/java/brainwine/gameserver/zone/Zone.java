@@ -2,7 +2,6 @@ package brainwine.gameserver.zone;
 
 import java.io.File;
 import java.time.OffsetDateTime;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -24,6 +22,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.Timer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.ChatType;
@@ -76,8 +75,8 @@ public class Zone {
     private final WeatherManager weatherManager = new WeatherManager();
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
-    private final Queue<DugBlock> digQueue = new ArrayDeque<>();
     private final List<BlockChangeData> blockChanges = new ArrayList<>();
+    private final List<Timer<Integer>> blockTimers = new ArrayList<>();
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
@@ -143,19 +142,11 @@ public class Zone {
             }
         }
         
-        if(!digQueue.isEmpty()) {
-            DugBlock dugBlock = digQueue.peek();
-            
-            if(now >= dugBlock.getTime()) {
-                digQueue.poll();
-                int x = dugBlock.getX();
-                int y = dugBlock.getY();
-                Block block = getBlock(x, y);
-                
-                if(block != null && block.getFrontItem().hasId("ground/earth-dug")) {
-                    updateBlock(x, y, Layer.FRONT, dugBlock.getItem(), dugBlock.getMod());
-                }
-            }
+        // Process block timers
+        if(!blockTimers.isEmpty()) {
+            List<Timer<Integer>> readyTimers = blockTimers.stream().filter(timer -> now >= timer.getTime()).collect(Collectors.toList());
+            blockTimers.removeAll(readyTimers);
+            readyTimers.forEach(Timer::process);
         }
         
         // Send block changes to players who they are relevant to
@@ -661,8 +652,23 @@ public class Zone {
         }
         
         Block block = getBlock(x, y);
-        digQueue.add(new DugBlock(x, y, block.getFrontItem(), block.getFrontMod(), System.currentTimeMillis() + 10000));
+        Item item = block.getFrontItem();
+        int mod = block.getFrontMod();
         updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
+        addBlockTimer(x, y, 10000, () -> {
+            if(block.getFrontItem().hasId("ground/earth-dug")) {
+                updateBlock(x, y, Layer.FRONT, item, mod);
+            }
+        });
+    }
+    
+    public void addBlockTimer(int x, int y, long delay, Runnable task) {
+        removeBlockTimer(x, y);
+        blockTimers.add(new Timer<>(getBlockIndex(x, y), delay, task));
+    }
+    
+    public void removeBlockTimer(int x, int y) {
+        blockTimers.removeIf(timer -> timer.getKey() == getBlockIndex(x, y));
     }
     
     public void updateBlock(int x, int y, Layer layer, int item) {
@@ -739,6 +745,7 @@ public class Zone {
                 removeMetaBlock(x, y);
             }
             
+            removeBlockTimer(x, y);
             entityManager.trySpawnBlockEntity(x, y);
             
             if(item.isWhole() && y < sunlight[x]) {
