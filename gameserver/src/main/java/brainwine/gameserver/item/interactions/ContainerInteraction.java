@@ -17,8 +17,8 @@ public class ContainerInteraction implements ItemInteraction {
     @Override
     public void interact(Zone zone, Player player, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
-        // Do nothing if metadata is not present
-        if(metaBlock == null) {
+        // Check if the right data is present
+        if(metaBlock == null || data != null) {
             return;
         }
         
@@ -30,28 +30,51 @@ public class ContainerInteraction implements ItemInteraction {
             return;
         }
         
-        Player owner = GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner());
+        boolean plenty = item.hasUse(ItemUseType.PLENTY);
+        String lootCode = metaBlock.getStringProperty("y");
+        
+        // Check loot code
+        if(plenty) {
+            if(lootCode == null) {
+                player.notify("This chest cannot be plundered.");
+                return;
+            }
+            
+            if(player.hasLootCode(lootCode)) {
+                player.notify("You've already plundered this chest.");
+                return;
+            }
+        }
+        
         String specialItem = metaBlock.getStringProperty("$");
         
         // Award loot
         if(specialItem != null) {
             if(specialItem.equals("?")) {
-                Loot loot = GameServer.getInstance().getLootManager().getRandomLoot(player, item.getLootCategories());
+                Loot loot = metaBlock.hasProperty("l") ? new Loot(Item.get(metaBlock.getStringProperty("l")), metaBlock.getIntProperty("q"))
+                        : GameServer.getInstance().getLootManager().getRandomLoot(player, item.getLootCategories());
+                int experience = metaBlock.getIntProperty("xp");
                 
-                if(loot == null) {
-                    player.notify("No eligible loot could be found for this container.");
-                } else {
-                    metaBlock.removeProperty("$");
+                if(loot != null) {
+                    if(plenty) {
+                        player.addLootCode(lootCode);
+                    } else {
+                        metaBlock.removeProperty("$");
+                        metaBlock.removeProperty("xp"); 
+                    }
+                    
                     player.awardLoot(loot, item.getLootGraphic());
+                    player.addExperience(experience);
                     player.getStatistics().trackContainerLooted(item);
+                } else {
+                    player.notify("No eligible loot could be found for this container.");
                 }
             }
-        } else {
-            player.notify("Sorry, this container can't be looted right now.");
         }
         
         // Update container mod
-        if(!metaBlock.hasProperty("$")) {
+        if(!plenty && !metaBlock.hasProperty("$")) {
+            Player owner = GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner());
             zone.updateBlock(x, y, Layer.FRONT, item, 0, owner, metaBlock.getMetadata());
         }
     }

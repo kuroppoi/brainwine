@@ -24,6 +24,7 @@ public enum ItemUseType {
     FIELDABLE,
     FLY,
     MULTI,
+    PLENTY,
     PROTECTED,
     PUBLIC,
     SWITCH(new SwitchInteraction()),

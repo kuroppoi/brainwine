@@ -1,5 +1,7 @@
 package brainwine.gameserver.server.requests;
 
+import java.util.UUID;
+
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
@@ -12,6 +14,7 @@ import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.zone.Block;
+import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
 @RequestInfo(id = 12)
@@ -110,8 +113,8 @@ public class BlockPlaceRequest extends PlayerRequest {
         Zone zone = player.getZone();
         
         switch(item.getId()) {
-            // See if we can plug a maw or pipe
             case "building/plug":
+                // See if we can plug a maw or pipe
                 Item baseItem = zone.getBlock(x, y).getBaseItem();
                 String plugged = baseItem.hasId("base/maw") ? "base/maw-plugged"
                         : baseItem.hasId("base/pipe") ? "base/pipe-plugged" : null;
@@ -122,6 +125,16 @@ public class BlockPlaceRequest extends PlayerRequest {
                     player.getStatistics().trackMawPlugged();
                 }
                 
+                break;
+            case "containers/chest-plenty":
+            case "containers/sack-plenty":
+                // Create additional metadata for chests o' plenty
+                MetaBlock metaBlock = zone.getMetaBlock(x, y);
+                
+                if(metaBlock != null) {
+                    metaBlock.setProperty("y", UUID.randomUUID().toString()); // Generate random loot code
+                    metaBlock.setProperty("$", "?");
+                }
                 break;
             // No valid item; do nothing
             default: break;

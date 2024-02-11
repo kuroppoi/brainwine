@@ -98,6 +98,7 @@ public class Player extends Entity implements CommandExecutor {
     private List<NameChange> nameChanges;
     private List<PlayerRestriction> mutes;
     private List<PlayerRestriction> bans;
+    private Set<String> lootCodes;
     private Set<Achievement> achievements;
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
@@ -139,6 +140,7 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = config.getNameChanges();
         this.mutes = config.getMutes();
         this.bans = config.getBans();
+        this.lootCodes = config.getLootCodes();
         this.achievements = config.getAchievements();
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
@@ -160,6 +162,7 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = new ArrayList<>();
         this.mutes = new ArrayList<>();
         this.bans = new ArrayList<>();
+        this.lootCodes = new HashSet<>();
         this.achievements = new HashSet<>();
         this.ignoredHints = new HashMap<>();
         this.skills = new HashMap<>();
@@ -698,6 +701,18 @@ public class Player extends Entity implements CommandExecutor {
     
     protected List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    public void addLootCode(String lootCode) {
+        lootCodes.add(lootCode);
+    }
+    
+    public boolean hasLootCode(String lootCode) {
+        return lootCodes.contains(lootCode);
+    }
+    
+    public Set<String> getLootCodes() {
+        return Collections.unmodifiableSet(lootCodes);
     }
     
     public void trackNameChange(String newName) {

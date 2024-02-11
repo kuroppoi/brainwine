@@ -34,6 +34,7 @@ public class PlayerConfigFile {
     private List<NameChange> nameChanges = new ArrayList<>();
     private List<PlayerRestriction> mutes = new ArrayList<>();
     private List<PlayerRestriction> bans = new ArrayList<>();
+    private Set<String> lootCodes = new HashSet<>();
     private Set<Achievement> achievements = new HashSet<>();
     private Map<String, Float> ignoredHints = new HashMap<>();
     private Map<Skill, Integer> skills = new HashMap<>();
@@ -57,6 +58,7 @@ public class PlayerConfigFile {
         this.nameChanges = player.getNameChanges();
         this.mutes = player.getMutes();
         this.bans = player.getBans();
+        this.lootCodes = player.getLootCodes();
         this.achievements = player.getAchievements();
         this.ignoredHints = player.getIgnoredHints();
         this.skills = player.getSkills();
@@ -133,6 +135,11 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP)
     public PlayerStatistics getStatistics() {
         return statistics;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Set<String> getLootCodes() {
+        return lootCodes;
     }
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
