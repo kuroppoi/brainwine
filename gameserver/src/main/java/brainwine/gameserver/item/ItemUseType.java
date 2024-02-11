@@ -7,8 +7,10 @@ import brainwine.gameserver.item.interactions.ChangeInteraction;
 import brainwine.gameserver.item.interactions.ContainerInteraction;
 import brainwine.gameserver.item.interactions.DialogInteraction;
 import brainwine.gameserver.item.interactions.ItemInteraction;
+import brainwine.gameserver.item.interactions.SpawnTeleportInteraction;
 import brainwine.gameserver.item.interactions.SwitchInteraction;
 import brainwine.gameserver.item.interactions.TeleportInteraction;
+import brainwine.gameserver.item.interactions.TransmitInteraction;
 
 /**
  * Much like with {@link Action}, block interactions depend on their use type.
@@ -27,9 +29,12 @@ public enum ItemUseType {
     PLENTY,
     PROTECTED,
     PUBLIC,
+    SPAWN_TELEPORT(new SpawnTeleportInteraction()),
     SWITCH(new SwitchInteraction()),
     SWITCHED,
     TELEPORT(new TeleportInteraction()),
+    TRANSMIT(new TransmitInteraction()),
+    TRANSMITTED,
     ZONE_TELEPORT,
     
     @JsonEnumDefaultValue

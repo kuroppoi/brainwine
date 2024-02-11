@@ -608,6 +608,8 @@ public class Player extends Entity implements CommandExecutor {
         if(lastPlacement != null) {
             if(item.hasUse(ItemUseType.SWITCHED) && !item.hasUse(ItemUseType.SWITCH)) {
                 linked = tryLinkSwitchedItem(x, y, item);
+            } else if(item.hasUse(ItemUseType.TRANSMITTED)) {
+                linked = tryLinkTransmittedItem(x, y, item);
             }
         }
         
@@ -643,6 +645,39 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         return linked;
+    }
+    
+    private boolean tryLinkTransmittedItem(int x, int y, Item item) {
+        int pX = lastPlacement.getX();
+        int pY = lastPlacement.getY();
+        Item pItem = lastPlacement.getItem();
+        
+        // Do nothing if the last placed item is not a transmitter
+        if(!pItem.hasUse(ItemUseType.TRANSMIT)) {
+            return false;
+        }
+        
+        int maxTransmitDistance = getTotalSkillLevel(Skill.ENGINEERING) * 10;
+        
+        // Notify the player if the distance is beyond the maximum transmit distance
+        if(!MathUtils.inRange(x, y, pX, pY, maxTransmitDistance)) {
+            notify(String.format("You can only transmit %s blocks at your current engineering level.", maxTransmitDistance));
+            return false;
+        }
+        
+        MetaBlock metaBlock = zone.getMetaBlock(pX, pY);
+        Map<String, Object> metadata = metaBlock == null ? null : metaBlock.getMetadata();
+        
+        // Do nothing if metadata is null for whatever reason
+        if(metadata == null) {
+            return false;
+        }
+        
+        // Link transmitter to beacon
+        MapHelper.appendList(metadata, ">", Arrays.asList(x, y)); // Make it a list for compatibility reasons
+        zone.updateBlock(pX, pY, Layer.FRONT, pItem, 1, null, metadata);
+        lastPlacement = null;
+        return true;
     }
     
     public double getMiningRange() {
