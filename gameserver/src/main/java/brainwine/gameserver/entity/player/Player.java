@@ -660,7 +660,7 @@ public class Player extends Entity implements CommandExecutor {
         int maxTransmitDistance = getTotalSkillLevel(Skill.ENGINEERING) * 10;
         
         // Notify the player if the distance is beyond the maximum transmit distance
-        if(!godMode && !MathUtils.inRange(x, y, pX, pY, maxTransmitDistance)) {
+        if(!isGodMode() && !MathUtils.inRange(x, y, pX, pY, maxTransmitDistance)) {
             notify(String.format("You can only transmit %s blocks at your current engineering level.", maxTransmitDistance));
             return false;
         }
