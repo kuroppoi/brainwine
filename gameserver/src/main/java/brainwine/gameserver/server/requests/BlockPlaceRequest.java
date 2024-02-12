@@ -5,6 +5,7 @@ import java.util.UUID;
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
+import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
@@ -59,7 +60,7 @@ public class BlockPlaceRequest extends PlayerRequest {
             return;
         }
         
-        if(!player.isGodMode() && zone.isBlockProtected(x, y, player)) {
+        if(!player.isGodMode() && !item.canPlaceInField() && zone.isBlockProtected(x, y, player)) {
             fail(player, "This block is protected.");
             return;
         }
@@ -103,15 +104,57 @@ public class BlockPlaceRequest extends PlayerRequest {
         player.getStatistics().trackItemPlaced();
         player.trackPlacement(x, y, item);
         
+        // Create block timer if applicable
+        if(item.hasTimer()) {
+            createBlockTimer(zone, player);
+        }
+        
         // Process custom place if applicable
         if(item.hasCustomPlace()) {
-            processCustomPlace(player);
+            processCustomPlace(zone, player);
         }
     }
     
-    private void processCustomPlace(Player player) {
-        Zone zone = player.getZone();
+    private void createBlockTimer(Zone zone, Player player) {
+        String type = item.getTimerType();
+        int value = item.getTimerValue();
+        Runnable task = null;
         
+        // TODO implement more block timers
+        switch(type) {
+        case "bomb":
+            task = () -> zone.explode(x, y, value, player, true, value, DamageType.FIRE, "bomb");
+            break;
+        case "bomb-fire":
+            task = () -> zone.explode(x, y, value, player, false, value, DamageType.FIRE, "bomb-fire");
+            break;
+        case "bomb-electric":
+            task = () -> zone.explode(x, y, value, player, false, value, DamageType.ENERGY, "bomb-electric");
+            break;
+        case "bomb-frost":
+            task = () -> zone.explode(x, y, value, player, false, value, DamageType.COLD, "bomb-frost");
+            break;
+        case "bomb-dig":
+            task = () -> {
+                zone.explode(x, y, value, player, "bomb-fire");
+                int distance = value * 10;
+                
+                // Dig until we reach the maximum distance or hit a solid block
+                for(int i = 1; i <= distance; i++) {
+                    if(!zone.digBlock(x, y + i)) {
+                        break;
+                    }
+                }
+            };
+            break;
+        }
+        
+        if(task != null) {
+            zone.addBlockTimer(x, y, item.getTimerDelay() * 1000, task);
+        }
+    }
+    
+    private void processCustomPlace(Zone zone, Player player) {        
         switch(item.getId()) {
             case "building/plug":
                 // See if we can plug a maw or pipe

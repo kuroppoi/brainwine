@@ -28,6 +28,8 @@ import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.ChatType;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.item.DamageType;
+import brainwine.gameserver.item.Fieldability;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
@@ -40,6 +42,7 @@ import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.ChatMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
+import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.LightMessage;
 import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
@@ -288,6 +291,76 @@ public class Zone {
         }
         
         return all ? coords : null;
+    }
+    
+    public void explode(int x, int y, float radius, Entity cause, String effect) {
+        explode(x, y, radius, cause, false, 0, null, effect);
+    }
+    
+    // TODO we can use ray casting to achieve a more accurate result, but this will do just fine for now.
+    public void explode(int x, int y, float radius, Entity cause, boolean destructive, float damage, DamageType damageType, String effect) {
+        // Do nothing if the chunk at the target location isn't loaded
+        if(!isChunkLoaded(x, y)) {
+            return;
+        }
+        
+        sendMessageToChunk(new EffectMessage(x + 0.5f, y + 0.5f, effect, 1), getChunk(x, y));
+        Player player = cause instanceof Player ? (Player)cause : null;
+        List<Entity> nearbyEntities = getEntitiesInRange(x, y, radius);
+        
+        // Damage nearby entities based on their distance from the explosion
+        for(Entity entity : nearbyEntities) {
+            double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
+            entity.damage((float)(damage - distance), player);
+            
+            // TODO generic entity damaging is not very intuitive and needs to be worked on.
+        }
+        
+        // Try to destroy the block at the source of the explosion
+        if(getBlock(x, y).getFrontItem().getFieldability() == Fieldability.FALSE) {
+            updateBlock(x, y, Layer.FRONT, 0);
+            
+            if(!isBlockProtected(x, y, player)) {
+                updateBlock(x, y, Layer.BACK, 0);
+            }
+        }
+        
+        // Destroy blocks within range if the explosion is destructive
+        if(destructive) {
+            int range = (int)Math.ceil(radius);
+            
+            for(int i = x - range; i <= x + range; i++) {
+                for(int j = y - range; j <= y + range; j++) {
+                    // Skip if not in bounds
+                    if(!areCoordinatesInBounds(i, j)) {
+                        continue;
+                    }
+                    
+                    Item frontItem = getBlock(i, j).getFrontItem();
+                    double distance = MathUtils.distance(x, y, i, j);
+                    double power = radius - distance;
+                    
+                    // Do not destroy block if it invulnerable or too tough
+                    if(!frontItem.isAir() && (frontItem.isInvulnerable() || frontItem.getToughness() >= power)) {
+                        continue;
+                    }
+                    
+                    // Do not destroy block if it is protected
+                    if(isBlockProtected(i, j, player) || frontItem.hasField()) {
+                        continue;
+                    }
+                                                            
+                    // Do not destroy block if it is not within range
+                    if(distance > radius * (Math.random() * 0.2F + 0.8F)) {
+                        continue;
+                    }
+                    
+                    // Destroy block
+                    updateBlock(i, j, Layer.FRONT, 0);
+                    updateBlock(i, j, Layer.BACK, 0);
+                }
+            }
+        }
     }
     
     public boolean isBlockSolid(int x, int y) {
@@ -646,13 +719,18 @@ public class Zone {
         return dungeons.containsKey(id);
     }
     
-    public void digBlock(int x, int y) {
+    public boolean digBlock(int x, int y) {
         if(!areCoordinatesInBounds(x, y)) {
-            return;
+            return false;
         }
         
         Block block = getBlock(x, y);
         Item item = block.getFrontItem();
+        
+        if(!item.isDiggable()) {
+            return !item.isWhole();
+        }
+        
         int mod = block.getFrontMod();
         updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
         addBlockTimer(x, y, 10000, () -> {
@@ -660,6 +738,8 @@ public class Zone {
                 updateBlock(x, y, Layer.FRONT, item, mod);
             }
         });
+        
+        return true;
     }
     
     public void addBlockTimer(int x, int y, long delay, Runnable task) {
@@ -669,6 +749,14 @@ public class Zone {
     
     public void removeBlockTimer(int x, int y) {
         blockTimers.removeIf(timer -> timer.getKey() == getBlockIndex(x, y));
+    }
+    
+    public void processBlockTimer(int x, int y) {
+        Timer<Integer> timer = blockTimers.stream().filter(t -> t.getKey() == getBlockIndex(x, y)).findFirst().orElse(null);
+        
+        if(timer != null) {
+            timer.process(true);
+        }
     }
     
     public void updateBlock(int x, int y, Layer layer, int item) {

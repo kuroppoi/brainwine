@@ -125,6 +125,10 @@ public class BlockMineRequest extends PlayerRequest {
             }
         }
         
+        if(item.shouldProcessTimerOnBreak()) {
+            zone.processBlockTimer(x, y);
+        }
+        
         zone.updateBlock(x, y, layer, 0, 0, player);
         player.getStatistics().trackItemMined(item);
         Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
