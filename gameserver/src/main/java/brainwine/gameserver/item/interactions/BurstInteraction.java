@@ -35,7 +35,7 @@ public class BurstInteraction implements ItemInteraction {
         }
 
         boolean natural = MapHelper.getBoolean(configMap, "natural");
-        boolean enemy = !MapHelper.getBoolean(configMap, "enemy");
+        boolean enemy = MapHelper.getBoolean(configMap, "enemy");
         Block block = zone.getBlock(x, y);
         
         // Check if the block has to be be natural or triggered by an enemy
