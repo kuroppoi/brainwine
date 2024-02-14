@@ -123,7 +123,7 @@ public class BlockPlaceRequest extends PlayerRequest {
         // TODO implement more block timers
         switch(type) {
         case "bomb":
-            task = () -> zone.explode(x, y, value, player, true, value, DamageType.FIRE, "bomb");
+            task = () -> zone.explode(x, y, value, player, true, value, DamageType.FIRE, value >= 6 ? "bomb-large" : "bomb");
             break;
         case "bomb-fire":
             task = () -> zone.explode(x, y, value, player, false, value, DamageType.FIRE, "bomb-fire");

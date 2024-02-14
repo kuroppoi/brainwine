@@ -297,24 +297,14 @@ public class Zone {
         explode(x, y, radius, cause, false, 0, null, effect);
     }
     
-    // TODO we can use ray casting to achieve a more accurate result, but this will do just fine for now.
     public void explode(int x, int y, float radius, Entity cause, boolean destructive, float damage, DamageType damageType, String effect) {
         // Do nothing if the chunk at the target location isn't loaded
         if(!isChunkLoaded(x, y)) {
             return;
         }
         
-        sendMessageToChunk(new EffectMessage(x + 0.5f, y + 0.5f, effect, 1), getChunk(x, y));
+        sendMessageToChunk(new EffectMessage(x + 0.5f, y + 0.5f, effect, radius), getChunk(x, y));
         Player player = cause instanceof Player ? (Player)cause : null;
-        List<Entity> nearbyEntities = getEntitiesInRange(x, y, radius);
-        
-        // Damage nearby entities based on their distance from the explosion
-        for(Entity entity : nearbyEntities) {
-            double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
-            entity.damage((float)(damage - distance), player);
-            
-            // TODO generic entity damaging is not very intuitive and needs to be worked on.
-        }
         
         // Try to destroy the block at the source of the explosion
         if(getBlock(x, y).getFrontItem().getFieldability() == Fieldability.FALSE) {
@@ -327,39 +317,92 @@ public class Zone {
         
         // Destroy blocks within range if the explosion is destructive
         if(destructive) {
-            int range = (int)Math.ceil(radius);
+            int rayCount = (int)Math.ceil(radius * 8);
+            List<List<Vector2i>> rays = new ArrayList<>();
+            List<Vector2i> affectedBlocks = new ArrayList<>();
+            Set<Integer> processed = new HashSet<>();
             
-            for(int i = x - range; i <= x + range; i++) {
-                for(int j = y - range; j <= y + range; j++) {
-                    // Skip if not in bounds
-                    if(!areCoordinatesInBounds(i, j)) {
+            // Determine the outer points of the blast circle and cast rays to them
+            for(int i = 0; i < rayCount; i++) {
+                float rayDistance = (float)(radius * (Math.random() * 0.4F + 0.8F));
+                float angle = (float)Math.toRadians(i * (360.0F / rayCount));
+                int targetX = (int)(x + rayDistance * Math.sin(angle));
+                int targetY = (int)(y + rayDistance * Math.cos(angle));
+                rays.add(raycast(x, y, targetX, targetY, true, true, false));
+            }
+            
+            // Fetch list of field blocks that are within range of the explosion (drastically speeds up the protection check)
+            Collection<MetaBlock> fieldBlocksInRange = fieldBlocks.values().stream()
+                    .filter(metaBlock -> MathUtils.inRange(x, y, metaBlock.getX(), metaBlock.getY(), metaBlock.getItem().getField() + radius * 2))
+                    .collect(Collectors.toList());
+            
+            // Determine which blocks to destroy by figuring out where each ray should stop
+            for(List<Vector2i> ray : rays) {
+                for(Vector2i position : ray) {
+                    int positionX = position.getX();
+                    int positionY = position.getY();
+                    int index = positionY * width + positionX;
+                    
+                    // Skip if block has been processed
+                    if(processed.contains(index)) {
                         continue;
                     }
+                                        
+                    // Skip if not in bounds
+                    if(!areCoordinatesInBounds(positionX, positionY)) {
+                        break;
+                    }
                     
-                    Item frontItem = getBlock(i, j).getFrontItem();
-                    double distance = MathUtils.distance(x, y, i, j);
+                    Item frontItem = getBlock(positionX, positionY).getFrontItem();
+                    double distance = MathUtils.distance(x, y, positionX, positionY);
                     double power = radius - distance;
                     
                     // Do not destroy block if it invulnerable or too tough
                     if(!frontItem.isAir() && (frontItem.isInvulnerable() || frontItem.getToughness() >= power)) {
-                        continue;
+                        break;
                     }
                     
                     // Do not destroy block if it is protected
-                    if(isBlockProtected(i, j, player) || frontItem.hasField()) {
-                        continue;
-                    }
-                                                            
-                    // Do not destroy block if it is not within range
-                    if(distance > radius * (Math.random() * 0.2F + 0.8F)) {
-                        continue;
+                    if(isBlockProtected(positionX, positionY, null, fieldBlocksInRange) || frontItem.hasField()) {
+                        // Keep following this ray if the block isn't occupied
+                        if(!frontItem.isWhole()) {
+                            continue;
+                        }
+                        
+                        break;
                     }
                     
-                    // Destroy block
-                    updateBlock(i, j, Layer.FRONT, 0);
-                    updateBlock(i, j, Layer.BACK, 0);
+                    affectedBlocks.add(position);
+                    processed.add(index);
                 }
             }
+
+            // Sort affected blocks by their distance from the explosion center
+            affectedBlocks.sort((a, b) -> {
+                double distanceA = MathUtils.distance(x, y, a.getX(), a.getY());
+                double distanceB = MathUtils.distance(x, y, b.getX(), b.getY());
+                return distanceA > distanceB ? 1 : distanceB > distanceA ? -1 : 0;
+            });
+            
+            // Destroy affected blocks
+            for(Vector2i position : affectedBlocks) {
+                updateBlock(position.getX(), position.getY(), Layer.FRONT, 0);
+                updateBlock(position.getX(), position.getY(), Layer.BACK, 0);
+            }
+        }
+        
+        // Fetch list of nearby entities
+        List<Entity> nearbyEntities = getEntitiesInRange(x, y, radius);
+        
+        // Damage nearby entities based on their distance from the explosion
+        for(Entity entity : nearbyEntities) {
+            // Cast a ray from the explosion to the entity and damage it if it reaches it
+            if(entity.canSee(x, y)) {
+                double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
+                entity.damage((float)(damage - distance), player);
+            }
+            
+            // TODO generic entity damaging is not very intuitive and needs to be worked on.
         }
     }
     
@@ -421,7 +464,11 @@ public class Zone {
     }
     
     public boolean isBlockProtected(int x, int y, Player from) {
-        for(MetaBlock fieldBlock : fieldBlocks.values()) {
+        return isBlockProtected(x, y, from, fieldBlocks.values());
+    }
+    
+    public boolean isBlockProtected(int x, int y, Player from, Collection<MetaBlock> fieldBlocks) {
+        for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
             int fX = fieldBlock.getX();
             int fY = fieldBlock.getY();
