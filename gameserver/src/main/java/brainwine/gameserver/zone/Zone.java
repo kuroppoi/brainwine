@@ -363,7 +363,7 @@ public class Zone {
                     }
                     
                     // Do not destroy block if it is protected
-                    if(isBlockProtected(positionX, positionY, null, fieldBlocksInRange) || frontItem.hasField()) {
+                    if(isBlockProtected(positionX, positionY, player, fieldBlocksInRange) || frontItem.hasField()) {
                         // Keep following this ray if the block isn't occupied
                         if(!frontItem.isWhole()) {
                             continue;
