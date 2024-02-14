@@ -16,6 +16,7 @@ import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
+import brainwine.gameserver.util.WeightedMap;
 
 // TODO I don't like some parts of this, maybe they can be reworked.
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -175,6 +176,9 @@ public class Item {
     
     @JsonProperty("convert")
     private Map<LazyItemGetter, LazyItemGetter> conversions = new HashMap<>();
+    
+    @JsonProperty("spawn_entity")
+    private WeightedMap<String> entitySpawns = new WeightedMap<>();
     
     @JsonCreator
     private Item(@JsonProperty(value = "id", required = true) String id,
@@ -518,5 +522,13 @@ public class Item {
     
     public Map<Item, Item> getConversions() {
         return conversions.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().get(), entry -> entry.getValue().get()));
+    }
+    
+    public boolean hasEntitySpawns() {
+        return !entitySpawns.isEmpty();
+    }
+    
+    public WeightedMap<String> getEntitySpawns() {
+        return entitySpawns;
     }
 }

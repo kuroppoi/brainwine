@@ -3,10 +3,12 @@ package brainwine.gameserver.item;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
+import brainwine.gameserver.item.interactions.BurstInteraction;
 import brainwine.gameserver.item.interactions.ChangeInteraction;
 import brainwine.gameserver.item.interactions.ContainerInteraction;
 import brainwine.gameserver.item.interactions.DialogInteraction;
 import brainwine.gameserver.item.interactions.ItemInteraction;
+import brainwine.gameserver.item.interactions.SpawnInteraction;
 import brainwine.gameserver.item.interactions.SpawnTeleportInteraction;
 import brainwine.gameserver.item.interactions.SwitchInteraction;
 import brainwine.gameserver.item.interactions.TeleportInteraction;
@@ -18,6 +20,7 @@ import brainwine.gameserver.item.interactions.TransmitInteraction;
 public enum ItemUseType {
     
     AFTERBURNER,
+    BURST(new BurstInteraction()),
     CONTAINER(new ContainerInteraction()),
     CREATE_DIALOG(new DialogInteraction(true)),
     DIALOG(new DialogInteraction(false)),
@@ -29,6 +32,7 @@ public enum ItemUseType {
     PLENTY,
     PROTECTED,
     PUBLIC,
+    SPAWN(new SpawnInteraction()),
     SPAWN_TELEPORT(new SpawnTeleportInteraction()),
     SWITCH(new SwitchInteraction()),
     SWITCHED,

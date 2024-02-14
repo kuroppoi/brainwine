@@ -80,7 +80,7 @@ public abstract class Entity {
         return inRange(other.getX(), other.getY(), range);
     }
     
-    public boolean inRange(float x, float y, float range) {
+    public boolean inRange(float x, float y, double range) {
         return MathUtils.inRange(this.x, this.y, x, y, range);
     }
     

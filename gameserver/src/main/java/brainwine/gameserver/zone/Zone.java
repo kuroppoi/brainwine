@@ -310,7 +310,7 @@ public class Zone {
         if(getBlock(x, y).getFrontItem().getFieldability() == Fieldability.FALSE) {
             updateBlock(x, y, Layer.FRONT, 0);
             
-            if(!isBlockProtected(x, y, player)) {
+            if(destructive && !isBlockProtected(x, y, player)) {
                 updateBlock(x, y, Layer.BACK, 0);
             }
         }
@@ -404,6 +404,10 @@ public class Zone {
             
             // TODO generic entity damaging is not very intuitive and needs to be worked on.
         }
+    }
+    
+    public boolean isBlockNatural(int x, int y) {
+        return areCoordinatesInBounds(x, y) && getBlock(x, y).isNatural();
     }
     
     public boolean isBlockSolid(int x, int y) {
@@ -516,7 +520,7 @@ public class Zone {
             for(int j = 0; j < height; j++) {
                 int index = j * width + i;
                 Block block = getBlock(x + i, y + j);
-                blocks[index] = new Block(block.getBaseItem(), block.getBackItem(), block.getBackMod(), block.getFrontItem(), block.getFrontMod(), block.getLiquidItem(), block.getLiquidMod());
+                blocks[index] = new Block(block.getBaseItem(), block.getBackItem(), block.getBackMod(), block.getFrontItem(), block.getFrontMod(), block.getLiquidItem(), block.getLiquidMod(), 0);
                 MetaBlock metaBlock = metaBlocks.get(getBlockIndex(x + i, j + y));
                 
                 if(metaBlock != null) {
@@ -856,7 +860,7 @@ public class Zone {
         }
         
         Chunk chunk = getChunk(x, y);        
-        chunk.getBlock(x, y).updateLayer(layer, item, mod);
+        chunk.getBlock(x, y).updateLayer(layer, item, mod, owner == null ? 0 : owner.getBlockHash()); // TODO owner hash should get updated on place only!!
         chunk.setModified(true);
         
         // Queue block update if there are players in this zone.

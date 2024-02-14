@@ -700,6 +700,13 @@ public class Player extends Entity implements CommandExecutor {
         return bonus.getChance() * (getTotalSkillLevel(bonus.getSkill()) / (double)MAX_SKILL_LEVEL) * heldItem.getToolBonus();
     }
     
+    /**
+     * @return The hash to be stored in blocks placed by this player.
+     */
+    public int getBlockHash() {
+        return 1 + ((documentId.hashCode() & 2047) % 2047);
+    }
+    
     public String getDocumentId() {
         return documentId;
     }

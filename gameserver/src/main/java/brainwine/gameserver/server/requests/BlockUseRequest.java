@@ -34,6 +34,11 @@ public class BlockUseRequest extends PlayerRequest {
             return;
         }
         
+        // Do nothing if player is too far away
+        if(!player.isGodMode() && !player.inRange(x, y, player.getMiningRange())) {
+            return;
+        }
+        
         // Transform usage data if necessary
         if(data != null && data.length == 1 && data[0] instanceof Map) {
             data = ((Map<?, ?>)data[0]).values().toArray();
