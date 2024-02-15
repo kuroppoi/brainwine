@@ -39,7 +39,7 @@ public class BurstInteraction implements ItemInteraction {
         Block block = zone.getBlock(x, y);
         
         // Check if the block has to be be natural or triggered by an enemy
-        if((natural && !block.isNatural()) || (enemy && block.getOwnerHash() == player.getBlockHash())) {
+        if((natural && !block.isNatural()) || (enemy && (player.isStealthy() || block.getOwnerHash() == player.getBlockHash()))) {
             return;
         }
 
