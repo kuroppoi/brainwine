@@ -123,7 +123,6 @@ public class BlockPlaceRequest extends PlayerRequest {
         int value = item.getTimerValue();
         Runnable task = null;
         
-        // TODO implement more block timers
         switch(type) {
         case "front mod":
             task = () -> zone.updateBlock(x, y, layer, item, value);
@@ -164,6 +163,35 @@ public class BlockPlaceRequest extends PlayerRequest {
                     if(entityType != null) {
                         Npc npc = new Npc(zone, entityType);
                         zone.spawnEntity(npc, x, y);
+                    }
+                }
+            };
+            break;
+        case "bomb-water":
+        case "bomb-acid":
+        case "bomb-lava":
+            task = () -> {
+                zone.explode(x, y, value, player, false, value, DamageType.FIRE, "bomb-large");
+                Item liquid = Item.get(String.format("liquid/%s", type.replace("bomb-", "")));
+                int range = 4;
+                
+                // Do nothing if there is no liquid to place
+                if(liquid.isAir()) {
+                    return;
+                }
+                
+                // Place liquid blocks around the explosion
+                for(int i = x - range; i <= x + range; i++) {
+                    for(int j = y - range; j <= y + range; j++) {
+                        // Skip if not in range
+                        if(!MathUtils.inRange(x, y, i, j, range)) {
+                            continue;
+                        }
+                        
+                        // Place liquid if target block isn't solid
+                        if(!zone.isBlockSolid(i, j, true)) {
+                            zone.updateBlock(i, j, Layer.LIQUID, liquid, 5);
+                        }
                     }
                 }
             };
