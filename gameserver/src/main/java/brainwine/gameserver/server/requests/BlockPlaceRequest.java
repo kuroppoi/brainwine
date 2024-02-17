@@ -122,6 +122,9 @@ public class BlockPlaceRequest extends PlayerRequest {
         
         // TODO implement more block timers
         switch(type) {
+        case "front mod":
+            task = () -> zone.updateBlock(x, y, layer, item, value);
+            break;
         case "bomb":
             task = () -> zone.explode(x, y, value, player, true, value, DamageType.FIRE, value >= 6 ? "bomb-large" : "bomb");
             break;
