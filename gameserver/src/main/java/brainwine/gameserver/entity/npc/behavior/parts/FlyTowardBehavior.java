@@ -1,4 +1,4 @@
-package brainwine.gameserver.behavior.parts;
+package brainwine.gameserver.entity.npc.behavior.parts;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;

@@ -1,4 +1,4 @@
-package brainwine.gameserver.behavior;
+package brainwine.gameserver.entity.npc.behavior;
 
 import java.util.Map;
 

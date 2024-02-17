@@ -1,17 +1,17 @@
-package brainwine.gameserver.behavior.composed;
+package brainwine.gameserver.entity.npc.behavior.composed;
 
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import brainwine.gameserver.behavior.SelectorBehavior;
-import brainwine.gameserver.behavior.parts.ClimbBehavior;
-import brainwine.gameserver.behavior.parts.FallBehavior;
-import brainwine.gameserver.behavior.parts.IdleBehavior;
-import brainwine.gameserver.behavior.parts.TurnBehavior;
-import brainwine.gameserver.behavior.parts.WalkBehavior;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.npc.behavior.SelectorBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.ClimbBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.FallBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.IdleBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.TurnBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.WalkBehavior;
 import brainwine.gameserver.util.MapHelper;
 
 public class CrawlerBehavior extends SelectorBehavior {

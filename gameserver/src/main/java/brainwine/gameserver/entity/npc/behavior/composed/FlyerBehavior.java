@@ -1,15 +1,15 @@
-package brainwine.gameserver.behavior.composed;
+package brainwine.gameserver.entity.npc.behavior.composed;
 
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import brainwine.gameserver.behavior.SelectorBehavior;
-import brainwine.gameserver.behavior.parts.FlyBehavior;
-import brainwine.gameserver.behavior.parts.FlyTowardBehavior;
-import brainwine.gameserver.behavior.parts.IdleBehavior;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.npc.behavior.SelectorBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.FlyBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.FlyTowardBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.IdleBehavior;
 import brainwine.gameserver.util.MapHelper;
 
 public class FlyerBehavior extends SelectorBehavior {

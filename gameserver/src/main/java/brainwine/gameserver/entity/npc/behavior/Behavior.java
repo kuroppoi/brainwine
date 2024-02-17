@@ -1,4 +1,4 @@
-package brainwine.gameserver.behavior;
+package brainwine.gameserver.entity.npc.behavior;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -7,26 +7,26 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
-import brainwine.gameserver.behavior.composed.CrawlerBehavior;
-import brainwine.gameserver.behavior.composed.DiggerBehavior;
-import brainwine.gameserver.behavior.composed.FlyerBehavior;
-import brainwine.gameserver.behavior.composed.WalkerBehavior;
-import brainwine.gameserver.behavior.parts.ClimbBehavior;
-import brainwine.gameserver.behavior.parts.DigBehavior;
-import brainwine.gameserver.behavior.parts.EruptionAttackBehavior;
-import brainwine.gameserver.behavior.parts.FallBehavior;
-import brainwine.gameserver.behavior.parts.FlyBehavior;
-import brainwine.gameserver.behavior.parts.FlyTowardBehavior;
-import brainwine.gameserver.behavior.parts.FollowBehavior;
-import brainwine.gameserver.behavior.parts.IdleBehavior;
-import brainwine.gameserver.behavior.parts.RandomlyTargetBehavior;
-import brainwine.gameserver.behavior.parts.ReporterBehavior;
-import brainwine.gameserver.behavior.parts.ShielderBehavior;
-import brainwine.gameserver.behavior.parts.SpawnAttackBehavior;
-import brainwine.gameserver.behavior.parts.TurnBehavior;
-import brainwine.gameserver.behavior.parts.UnblockBehavior;
-import brainwine.gameserver.behavior.parts.WalkBehavior;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.npc.behavior.composed.CrawlerBehavior;
+import brainwine.gameserver.entity.npc.behavior.composed.DiggerBehavior;
+import brainwine.gameserver.entity.npc.behavior.composed.FlyerBehavior;
+import brainwine.gameserver.entity.npc.behavior.composed.WalkerBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.ClimbBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.DigBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.EruptionAttackBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.FallBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.FlyBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.FlyTowardBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.FollowBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.IdleBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.RandomlyTargetBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.ReporterBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.ShielderBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.SpawnAttackBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.TurnBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.UnblockBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.WalkBehavior;
 
 /**
  * Heavily based on Deepworld's original "rubyhave" (ha ha very punny) behavior system.

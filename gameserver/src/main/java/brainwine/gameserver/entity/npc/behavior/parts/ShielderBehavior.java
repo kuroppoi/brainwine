@@ -1,4 +1,4 @@
-package brainwine.gameserver.behavior.parts;
+package brainwine.gameserver.entity.npc.behavior.parts;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -9,8 +9,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import brainwine.gameserver.behavior.Behavior;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.npc.behavior.Behavior;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.util.Pair;

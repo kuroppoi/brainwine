@@ -1,4 +1,4 @@
-package brainwine.gameserver.behavior.parts;
+package brainwine.gameserver.entity.npc.behavior.parts;
 
 import java.util.Map;
 
@@ -6,10 +6,10 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
-import brainwine.gameserver.behavior.Behavior;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.npc.behavior.Behavior;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.Vector2i;

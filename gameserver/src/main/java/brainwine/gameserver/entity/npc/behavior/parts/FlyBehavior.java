@@ -1,12 +1,12 @@
-package brainwine.gameserver.behavior.parts;
+package brainwine.gameserver.entity.npc.behavior.parts;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import brainwine.gameserver.behavior.Behavior;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.npc.behavior.Behavior;
 import brainwine.gameserver.util.Vector2i;
 
 public class FlyBehavior extends Behavior {
