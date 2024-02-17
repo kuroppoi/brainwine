@@ -164,7 +164,7 @@ public class SwitchInteraction implements ItemInteraction {
     
     private void switchSign(Zone zone, Entity entity, MetaBlock metaBlock, MetaBlock switchMeta) {
         String message = switchMeta.hasProperty("m") ? switchMeta.getStringProperty("m").trim() : "";
-        boolean lock = metaBlock.getStringProperty("lock").equalsIgnoreCase("yes");
+        boolean lock = metaBlock.hasProperty("lock") && metaBlock.getStringProperty("lock").equalsIgnoreCase("yes");
         Item item = metaBlock.getItem();
         
         // Check and update lock status
