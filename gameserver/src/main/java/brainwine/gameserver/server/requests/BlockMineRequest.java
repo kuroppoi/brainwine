@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.annotations.RequestInfo;
+import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.EntityConfig;
+import brainwine.gameserver.entity.EntityRegistry;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
@@ -17,6 +21,7 @@ import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
+import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
@@ -125,6 +130,34 @@ public class BlockMineRequest extends PlayerRequest {
             }
         }
         
+        if(item.shouldProcessTimerOnBreak()) {
+            zone.processBlockTimer(x, y);
+        }
+        
+        // Pretty much only used for spawners
+        if(item.hasUse(ItemUseType.DESTROY)) {
+            Object config = item.getUse(ItemUseType.DESTROY);
+            
+            if(config instanceof String) {
+                String type = (String)config;
+                
+                switch(type.toLowerCase()) {
+                case "spawner": destroySpawner(zone, metaBlock); break;
+                default: break;
+                }
+            }
+        }
+        
+        // Check for entity spawns
+        if(item.hasEntitySpawns() && block.getMod(layer) == 0 && !item.hasTimer() && !item.hasUse(ItemUseType.SPAWN)) {
+            EntityConfig type = EntityRegistry.getEntityConfig(item.getEntitySpawns().next());
+            
+            if(type != null) {
+                Npc npc = new Npc(zone, type);
+                zone.spawnEntity(npc, x, y);
+            }
+        }
+        
         zone.updateBlock(x, y, layer, 0, 0, player);
         player.getStatistics().trackItemMined(item);
         Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
@@ -148,6 +181,21 @@ public class BlockMineRequest extends PlayerRequest {
         
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem, quantity, true);
+        }
+    }
+    
+    private void destroySpawner(Zone zone, MetaBlock metaBlock) {
+        // Do nothing if spawner doesn't have an entity
+        if(!metaBlock.hasProperty("eid")) {
+            return;
+        }
+        
+        Entity entity = zone.getEntity(metaBlock.getIntProperty("eid"));
+        
+        // Kill entity if it exists
+        if(entity != null && !entity.isDead()) {
+            entity.setHealth(0);
+            zone.sendMessageToChunk(new EffectMessage(entity.getX(), entity.getY(), "bomb-teleport", 4), zone.getChunk(metaBlock.getX(), metaBlock.getY()));
         }
     }
     

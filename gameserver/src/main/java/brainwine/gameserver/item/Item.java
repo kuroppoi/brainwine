@@ -16,6 +16,7 @@ import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
+import brainwine.gameserver.util.WeightedMap;
 
 // TODO I don't like some parts of this, maybe they can be reworked.
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -77,6 +78,9 @@ public class Item {
     @JsonProperty("power")
     private float power;
     
+    @JsonProperty("toughness")
+    private float toughness;
+    
     @JsonProperty("earthy")
     private boolean earthy;
     
@@ -94,6 +98,9 @@ public class Item {
     
     @JsonProperty("custom_place")
     private boolean customPlace;
+    
+    @JsonProperty("field_place")
+    private boolean fieldPlace;
     
     @JsonProperty("base")
     private boolean base;
@@ -149,6 +156,15 @@ public class Item {
     @JsonProperty("damage")
     private Pair<DamageType, Float> damageInfo;
     
+    @JsonProperty("timer")
+    private Pair<String, Integer> timer;
+    
+    @JsonProperty("timer_delay")
+    private int timerDelay;
+    
+    @JsonProperty("timer_mine")
+    private boolean processTimerOnBreak;
+    
     @JsonProperty("ingredients")
     private List<CraftingRequirement> craftingIngredients = new ArrayList<>();
     
@@ -160,6 +176,9 @@ public class Item {
     
     @JsonProperty("convert")
     private Map<LazyItemGetter, LazyItemGetter> conversions = new HashMap<>();
+    
+    @JsonProperty("spawn_entity")
+    private WeightedMap<String> entitySpawns = new WeightedMap<>();
     
     @JsonCreator
     private Item(@JsonProperty(value = "id", required = true) String id,
@@ -315,6 +334,10 @@ public class Item {
         return power;
     }
     
+    public float getToughness() {
+        return toughness;
+    }
+    
     public boolean isEarthy() {
         return earthy;
     }
@@ -341,6 +364,10 @@ public class Item {
     
     public boolean hasCustomPlace() {
         return customPlace;
+    }
+    
+    public boolean canPlaceInField() {
+        return fieldPlace;
     }
     
     public boolean isWhole() {
@@ -439,6 +466,26 @@ public class Item {
         return isWeapon() ? damageInfo.getLast() : 0;
     }
     
+    public boolean hasTimer() {
+        return timer != null;
+    }
+    
+    public String getTimerType() {
+        return hasTimer() ? timer.getFirst() : null;
+    }
+    
+    public int getTimerValue() {
+        return hasTimer() ? timer.getLast() : 0;
+    }
+    
+    public int getTimerDelay() {
+        return timerDelay;
+    }
+    
+    public boolean shouldProcessTimerOnBreak() {
+        return processTimerOnBreak;
+    }
+    
     public boolean isCraftable() {
         return !craftingIngredients.isEmpty();
     }
@@ -475,5 +522,13 @@ public class Item {
     
     public Map<Item, Item> getConversions() {
         return conversions.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().get(), entry -> entry.getValue().get()));
+    }
+    
+    public boolean hasEntitySpawns() {
+        return !entitySpawns.isEmpty();
+    }
+    
+    public WeightedMap<String> getEntitySpawns() {
+        return entitySpawns;
     }
 }

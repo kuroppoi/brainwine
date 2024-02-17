@@ -6,11 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemUseType;
+import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.zone.Block;
+import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
 public abstract class Entity {
@@ -29,6 +34,10 @@ public abstract class Entity {
     protected float y;
     protected float velocityX;
     protected float velocityY;
+    protected int blockX;
+    protected int blockY;
+    protected int lastBlockX;
+    protected int lastBlockY;
     protected int targetX;
     protected int targetY;
     protected FacingDirection direction = FacingDirection.WEST;
@@ -40,7 +49,16 @@ public abstract class Entity {
     }
     
     public void tick(float deltaTime) {
-        // Override
+        // Update block position
+        lastBlockX = blockX;
+        lastBlockY = blockY;
+        blockX = (int)x;
+        blockY = (int)y;
+        
+        // Check if block position has changed
+        if(lastBlockX != blockX || lastBlockY != blockY) {
+            blockPositionChanged();
+        }
     }
     
     public void die(Player killer) {
@@ -67,6 +85,21 @@ public abstract class Entity {
         lastDamagedAt = System.currentTimeMillis();
     }
     
+    public void blockPositionChanged() {
+        // Check for touchplates
+        if(zone != null && zone.isChunkLoaded(blockX, blockY)) {
+            MetaBlock metaBlock = zone.getMetaBlock(blockX, blockY);
+            Block block = zone.getBlock(blockX, blockY);
+            Item item = block.getFrontItem();
+            int mod = block.getFrontMod();
+            
+            // Trigger a switch interaction if the entity stepped on a touchplate
+            if(item.hasUse(ItemUseType.TRIGGER)) {
+                ItemUseType.SWITCH.getInteraction().interact(zone, this, blockX, blockY, Layer.FRONT, item, mod, metaBlock, null, null);
+            }
+        }
+    }
+    
     public boolean canSee(Entity other) {
         return canSee((int)other.getX(), (int)other.getY());
     }
@@ -80,7 +113,7 @@ public abstract class Entity {
         return inRange(other.getX(), other.getY(), range);
     }
     
-    public boolean inRange(float x, float y, float range) {
+    public boolean inRange(float x, float y, double range) {
         return MathUtils.inRange(this.x, this.y, x, y, range);
     }
     
@@ -204,6 +237,14 @@ public abstract class Entity {
         return targetY;
     }
     
+    public int getBlockX() {
+        return blockX;
+    }
+    
+    public int getBlockY() {
+        return blockY;
+    }
+    
     public void setDirection(FacingDirection direction) {
         this.direction = direction;
     }
@@ -226,6 +267,10 @@ public abstract class Entity {
     
     public Zone getZone() {
         return zone;
+    }
+    
+    public final boolean isPlayer() {
+        return this instanceof Player; // Not very OOP
     }
     
     /**

@@ -52,6 +52,7 @@ public class Npc extends Entity {
     private Vector2i mountBlock;
     private Entity owner;
     private Entity target;
+    private boolean artificial;
     private long lastBehavedAt = System.currentTimeMillis();
     private long lastTrackedAt = System.currentTimeMillis();
     
@@ -120,6 +121,7 @@ public class Npc extends Entity {
     
     @Override
     public void tick(float deltaTime) {
+        super.tick(deltaTime);
         long now = System.currentTimeMillis();
         
         // Clear expired recent attacks
@@ -148,7 +150,7 @@ public class Npc extends Entity {
     @Override
     public void die(Player killer) {
         // Grant loot & track kill
-        if(killer != null) {
+        if(!artificial && killer != null) {
             if(!isPlayerPlaced()) {
                 // Track assists
                 for(Player attacker : recentAttacks.keySet()) {
@@ -176,7 +178,11 @@ public class Npc extends Entity {
             MetaBlock metaBlock = zone.getMetaBlock(guardBlock.getX(), guardBlock.getY());
             
             if(metaBlock != null) {
-                MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList()).remove(typeName);
+                List<String> guards = MapHelper.getList(metaBlock.getMetadata(), "!");
+                
+                if(guards != null) {
+                    guards.remove(typeName);
+                }
             }
         }
         
@@ -370,6 +376,14 @@ public class Npc extends Entity {
     
     public Entity getTarget() {
         return target;
+    }
+    
+    public void setArtificial(boolean artificial) {
+        this.artificial = artificial;
+    }
+    
+    public boolean isArtificial() {
+        return artificial;
     }
     
     public void setSpeed(float speed) {

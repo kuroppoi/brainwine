@@ -10,12 +10,12 @@ public class EffectMessage extends Message {
     public int x;
     public int y;
     public String name;
-    public int count;
+    public Object data;
     
-    public EffectMessage(float x, float y, String name, int count) {
+    public EffectMessage(float x, float y, String name, Object data) {
         this.x = (int)(x * Entity.POSITION_MODIFIER);
         this.y = (int)(y * Entity.POSITION_MODIFIER);
         this.name = name;
-        this.count = count;
+        this.data = data;
     }
 }

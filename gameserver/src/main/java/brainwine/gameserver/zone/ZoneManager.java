@@ -178,8 +178,11 @@ public class ZoneManager {
     }
     
     public Zone getRandomZone() {
-        List<Zone> zones = new ArrayList<>();
-        zones.addAll(getZones());
+        return getRandomZone(null);
+    }
+    
+    public Zone getRandomZone(Predicate<Zone> predicate) {
+        List<Zone> zones = searchZones(predicate);
         return zones.get((int)(Math.random() * zones.size()));
     }
     

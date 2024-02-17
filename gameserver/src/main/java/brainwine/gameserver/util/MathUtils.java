@@ -34,7 +34,11 @@ public class MathUtils {
         return clamp(value, 0.0F, 1.0F);
     }
     
+    public static double distance(double x, double y, double x2, double y2) {
+        return Math.hypot(x - x2, y - y2);
+    }
+    
     public static boolean inRange(double x, double y, double x2, double y2, double range) {
-        return Math.hypot(x - x2, y - y2) <= range;
+        return distance(x, y, x2, y2) <= range;
     }
 }

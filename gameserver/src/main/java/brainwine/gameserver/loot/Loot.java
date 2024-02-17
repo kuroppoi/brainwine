@@ -28,6 +28,13 @@ public class Loot {
     @JsonCreator
     private Loot() {}
     
+    /**
+     * Arbitrary constructor for chests o' plenty
+     */
+    public Loot(Item item, int quantity) {
+        this.items.put(item, quantity);
+    }
+    
     public Map<Item, Integer> getItems() {
         return items;
     }

@@ -2,7 +2,6 @@ package brainwine.gameserver.zone;
 
 import java.io.File;
 import java.time.OffsetDateTime;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -24,11 +22,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.Timer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.ChatType;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.item.DamageType;
+import brainwine.gameserver.item.Fieldability;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
@@ -41,6 +42,7 @@ import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.ChatMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
+import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.LightMessage;
 import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
@@ -76,8 +78,8 @@ public class Zone {
     private final WeatherManager weatherManager = new WeatherManager();
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
-    private final Queue<DugBlock> digQueue = new ArrayDeque<>();
     private final List<BlockChangeData> blockChanges = new ArrayList<>();
+    private final List<Timer<Integer>> blockTimers = new ArrayList<>();
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
@@ -143,19 +145,11 @@ public class Zone {
             }
         }
         
-        if(!digQueue.isEmpty()) {
-            DugBlock dugBlock = digQueue.peek();
-            
-            if(now >= dugBlock.getTime()) {
-                digQueue.poll();
-                int x = dugBlock.getX();
-                int y = dugBlock.getY();
-                Block block = getBlock(x, y);
-                
-                if(block != null && block.getFrontItem().hasId("ground/earth-dug")) {
-                    updateBlock(x, y, Layer.FRONT, dugBlock.getItem(), dugBlock.getMod());
-                }
-            }
+        // Process block timers
+        if(!blockTimers.isEmpty()) {
+            List<Timer<Integer>> readyTimers = blockTimers.stream().filter(timer -> now >= timer.getTime()).collect(Collectors.toList());
+            blockTimers.removeAll(readyTimers);
+            readyTimers.forEach(Timer::process);
         }
         
         // Send block changes to players who they are relevant to
@@ -299,6 +293,123 @@ public class Zone {
         return all ? coords : null;
     }
     
+    public void explode(int x, int y, float radius, Entity cause, String effect) {
+        explode(x, y, radius, cause, false, 0, null, effect);
+    }
+    
+    public void explode(int x, int y, float radius, Entity cause, boolean destructive, float damage, DamageType damageType, String effect) {
+        // Do nothing if the chunk at the target location isn't loaded
+        if(!isChunkLoaded(x, y)) {
+            return;
+        }
+        
+        sendMessageToChunk(new EffectMessage(x + 0.5f, y + 0.5f, effect, radius), getChunk(x, y));
+        Player player = cause instanceof Player ? (Player)cause : null;
+        
+        // Try to destroy the block at the source of the explosion
+        if(getBlock(x, y).getFrontItem().getFieldability() == Fieldability.FALSE) {
+            updateBlock(x, y, Layer.FRONT, 0);
+            
+            if(destructive && !isBlockProtected(x, y, player)) {
+                updateBlock(x, y, Layer.BACK, 0);
+            }
+        }
+        
+        // Destroy blocks within range if the explosion is destructive
+        if(destructive) {
+            int rayCount = (int)Math.ceil(radius * 8);
+            List<List<Vector2i>> rays = new ArrayList<>();
+            List<Vector2i> affectedBlocks = new ArrayList<>();
+            Set<Integer> processed = new HashSet<>();
+            
+            // Determine the outer points of the blast circle and cast rays to them
+            for(int i = 0; i < rayCount; i++) {
+                float rayDistance = (float)(radius * (Math.random() * 0.4F + 0.8F));
+                float angle = (float)Math.toRadians(i * (360.0F / rayCount));
+                int targetX = (int)(x + rayDistance * Math.sin(angle));
+                int targetY = (int)(y + rayDistance * Math.cos(angle));
+                rays.add(raycast(x, y, targetX, targetY, true, true, false));
+            }
+            
+            // Fetch list of field blocks that are within range of the explosion (drastically speeds up the protection check)
+            Collection<MetaBlock> fieldBlocksInRange = fieldBlocks.values().stream()
+                    .filter(metaBlock -> MathUtils.inRange(x, y, metaBlock.getX(), metaBlock.getY(), metaBlock.getItem().getField() + radius * 2))
+                    .collect(Collectors.toList());
+            
+            // Determine which blocks to destroy by figuring out where each ray should stop
+            for(List<Vector2i> ray : rays) {
+                for(Vector2i position : ray) {
+                    int positionX = position.getX();
+                    int positionY = position.getY();
+                    int index = positionY * width + positionX;
+                    
+                    // Skip if block has been processed
+                    if(processed.contains(index)) {
+                        continue;
+                    }
+                                        
+                    // Skip if not in bounds
+                    if(!areCoordinatesInBounds(positionX, positionY)) {
+                        break;
+                    }
+                    
+                    Item frontItem = getBlock(positionX, positionY).getFrontItem();
+                    double distance = MathUtils.distance(x, y, positionX, positionY);
+                    double power = radius - distance;
+                    
+                    // Do not destroy block if it invulnerable or too tough
+                    if(!frontItem.isAir() && (frontItem.isInvulnerable() || frontItem.getToughness() >= power)) {
+                        break;
+                    }
+                    
+                    // Do not destroy block if it is protected
+                    if(isBlockProtected(positionX, positionY, player, fieldBlocksInRange) || frontItem.hasField()) {
+                        // Keep following this ray if the block isn't occupied
+                        if(!frontItem.isWhole()) {
+                            continue;
+                        }
+                        
+                        break;
+                    }
+                    
+                    affectedBlocks.add(position);
+                    processed.add(index);
+                }
+            }
+
+            // Sort affected blocks by their distance from the explosion center
+            affectedBlocks.sort((a, b) -> {
+                double distanceA = MathUtils.distance(x, y, a.getX(), a.getY());
+                double distanceB = MathUtils.distance(x, y, b.getX(), b.getY());
+                return distanceA > distanceB ? 1 : distanceB > distanceA ? -1 : 0;
+            });
+            
+            // Destroy affected blocks
+            for(Vector2i position : affectedBlocks) {
+                updateBlock(position.getX(), position.getY(), Layer.FRONT, 0);
+                updateBlock(position.getX(), position.getY(), Layer.BACK, 0);
+            }
+        }
+        
+        // Fetch list of nearby entities
+        List<Entity> nearbyEntities = getEntitiesInRange(x, y, radius);
+        
+        // Damage nearby entities based on their distance from the explosion
+        for(Entity entity : nearbyEntities) {
+            // Cast a ray from the explosion to the entity and damage it if it reaches it
+            if(entity.canSee(x, y)) {
+                double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
+                entity.damage((float)(damage - distance), player);
+            }
+            
+            // TODO generic entity damaging is not very intuitive and needs to be worked on.
+        }
+    }
+    
+    public boolean isBlockNatural(int x, int y) {
+        return areCoordinatesInBounds(x, y) && getBlock(x, y).isNatural();
+    }
+    
     public boolean isBlockSolid(int x, int y) {
         return isBlockSolid(x, y, true);
     }
@@ -357,7 +468,11 @@ public class Zone {
     }
     
     public boolean isBlockProtected(int x, int y, Player from) {
-        for(MetaBlock fieldBlock : fieldBlocks.values()) {
+        return isBlockProtected(x, y, from, fieldBlocks.values());
+    }
+    
+    public boolean isBlockProtected(int x, int y, Player from, Collection<MetaBlock> fieldBlocks) {
+        for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
             int fX = fieldBlock.getX();
             int fY = fieldBlock.getY();
@@ -405,7 +520,7 @@ public class Zone {
             for(int j = 0; j < height; j++) {
                 int index = j * width + i;
                 Block block = getBlock(x + i, y + j);
-                blocks[index] = new Block(block.getBaseItem(), block.getBackItem(), block.getBackMod(), block.getFrontItem(), block.getFrontMod(), block.getLiquidItem(), block.getLiquidMod());
+                blocks[index] = new Block(block.getBaseItem(), block.getBackItem(), block.getBackMod(), block.getFrontItem(), block.getFrontMod(), block.getLiquidItem(), block.getLiquidMod(), 0);
                 MetaBlock metaBlock = metaBlocks.get(getBlockIndex(x + i, j + y));
                 
                 if(metaBlock != null) {
@@ -655,14 +770,44 @@ public class Zone {
         return dungeons.containsKey(id);
     }
     
-    public void digBlock(int x, int y) {
+    public boolean digBlock(int x, int y) {
         if(!areCoordinatesInBounds(x, y)) {
-            return;
+            return false;
         }
         
         Block block = getBlock(x, y);
-        digQueue.add(new DugBlock(x, y, block.getFrontItem(), block.getFrontMod(), System.currentTimeMillis() + 10000));
+        Item item = block.getFrontItem();
+        
+        if(!item.isDiggable()) {
+            return !item.isWhole();
+        }
+        
+        int mod = block.getFrontMod();
         updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
+        addBlockTimer(x, y, 10000, () -> {
+            if(block.getFrontItem().hasId("ground/earth-dug")) {
+                updateBlock(x, y, Layer.FRONT, item, mod);
+            }
+        });
+        
+        return true;
+    }
+    
+    public void addBlockTimer(int x, int y, long delay, Runnable task) {
+        removeBlockTimer(x, y);
+        blockTimers.add(new Timer<>(getBlockIndex(x, y), delay, task));
+    }
+    
+    public void removeBlockTimer(int x, int y) {
+        blockTimers.removeIf(timer -> timer.getKey() == getBlockIndex(x, y));
+    }
+    
+    public void processBlockTimer(int x, int y) {
+        Timer<Integer> timer = blockTimers.stream().filter(t -> t.getKey() == getBlockIndex(x, y)).findFirst().orElse(null);
+        
+        if(timer != null) {
+            timer.process(true);
+        }
     }
     
     public void updateBlock(int x, int y, Layer layer, int item) {
@@ -715,7 +860,7 @@ public class Zone {
         }
         
         Chunk chunk = getChunk(x, y);        
-        chunk.getBlock(x, y).updateLayer(layer, item, mod);
+        chunk.getBlock(x, y).updateLayer(layer, item, mod, owner == null ? 0 : owner.getBlockHash()); // TODO owner hash should get updated on place only!!
         chunk.setModified(true);
         
         // Queue block update if there are players in this zone.
@@ -739,6 +884,7 @@ public class Zone {
                 removeMetaBlock(x, y);
             }
             
+            removeBlockTimer(x, y);
             entityManager.trySpawnBlockEntity(x, y);
             
             if(item.isWhole() && y < sunlight[x]) {
@@ -1163,6 +1309,10 @@ public class Zone {
         
         sendMessage(new ZoneExploredMessage(chunkIndex));
         return chunksExplored[chunkIndex] = true;
+    }
+    
+    public boolean isAreaExplored(int x, int y) {
+        return areCoordinatesInBounds(x, y) && chunksExplored[getChunkIndex(x, y)];
     }
     
     public File getDirectory() {

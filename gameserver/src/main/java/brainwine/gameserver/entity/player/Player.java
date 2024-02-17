@@ -98,6 +98,7 @@ public class Player extends Entity implements CommandExecutor {
     private List<NameChange> nameChanges;
     private List<PlayerRestriction> mutes;
     private List<PlayerRestriction> bans;
+    private Set<String> lootCodes;
     private Set<Achievement> achievements;
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
@@ -112,11 +113,13 @@ public class Player extends Entity implements CommandExecutor {
     private String clientVersion;
     private Placement lastPlacement;
     private Item heldItem = Item.AIR;
-    private Vector2i spawnPoint = new Vector2i(0, 0);
+    private int spawnX;
+    private int spawnY;
     private int teleportX;
     private int teleportY;
     private boolean stealth;
     private boolean godMode;
+    private boolean customSpawn;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private Zone nextZone;
@@ -139,6 +142,7 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = config.getNameChanges();
         this.mutes = config.getMutes();
         this.bans = config.getBans();
+        this.lootCodes = config.getLootCodes();
         this.achievements = config.getAchievements();
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
@@ -160,6 +164,7 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = new ArrayList<>();
         this.mutes = new ArrayList<>();
         this.bans = new ArrayList<>();
+        this.lootCodes = new HashSet<>();
         this.achievements = new HashSet<>();
         this.ignoredHints = new HashMap<>();
         this.skills = new HashMap<>();
@@ -175,6 +180,7 @@ public class Player extends Entity implements CommandExecutor {
     
     @Override
     public void tick(float deltaTime) {
+        super.tick(deltaTime);
         long now = System.currentTimeMillis();
         statistics.trackPlayTime(deltaTime);
         
@@ -258,16 +264,28 @@ public class Player extends Entity implements CommandExecutor {
      * Called by {@link Zone#addEntity(Entity)} when the player is added to it.
      */
     public void onZoneChanged() {
-        // TODO handle spawns better
+        // Set spawn location        
+        if(customSpawn) {
+            x = spawnX;
+            y = spawnY;
+        }
+        
         MetaBlock spawn = zone.getRandomSpawnBlock();
         
         if(spawn == null) {
-            x = zone.getWidth() / 2;
-            y = 2;
+            spawnX = zone.getWidth() / 2;
+            spawnY = 2;
         } else {
-            x = spawn.getX() + 1;
-            y = spawn.getY();
+            spawnX = spawn.getX() + 1;
+            spawnY = spawn.getY();
         }
+        
+        if(!customSpawn) {
+            x = spawnX;
+            y = spawnY;
+        }
+        
+        customSpawn = false;
         
         // Set skills for new players
         for(Skill skill : Skill.values()) {
@@ -289,8 +307,6 @@ public class Player extends Entity implements CommandExecutor {
             inventory.moveItemToContainer(jetpack, ContainerType.ACCESSORIES, 0);
         }
         
-        spawnPoint.setX((int)x);
-        spawnPoint.setY((int)y);
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
@@ -416,7 +432,14 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void changeZone(Zone zone) {
+        changeZone(zone, -1, -1);
+    }
+    
+    public void changeZone(Zone zone, int x, int y) {
         nextZone = zone;
+        spawnX = x;
+        spawnY = y;
+        customSpawn = x != -1 && y != -1;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
     }
@@ -506,11 +529,9 @@ public class Player extends Entity implements CommandExecutor {
             setHealth(getMaxHealth());
         }
         
-        int x = spawnPoint.getX();
-        int y = spawnPoint.getY();
-        sendMessage(new PlayerPositionMessage(x, y));
+        sendMessage(new PlayerPositionMessage(spawnX, spawnY));
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.REVIVED));
-        zone.sendMessage(new EffectMessage(x, y, "spawn", 20));
+        zone.sendMessage(new EffectMessage(spawnX, spawnY, "spawn", 20));
     }
     
     /**
@@ -605,6 +626,8 @@ public class Player extends Entity implements CommandExecutor {
         if(lastPlacement != null) {
             if(item.hasUse(ItemUseType.SWITCHED) && !item.hasUse(ItemUseType.SWITCH)) {
                 linked = tryLinkSwitchedItem(x, y, item);
+            } else if(item.hasUse(ItemUseType.TRANSMITTED)) {
+                linked = tryLinkTransmittedItem(x, y, item);
             }
         }
         
@@ -619,7 +642,7 @@ public class Player extends Entity implements CommandExecutor {
         Item pItem = lastPlacement.getItem();
         boolean linked = false;
         
-        if(pItem.hasUse(ItemUseType.SWITCH)) {
+        if(pItem.hasUse(ItemUseType.SWITCH, ItemUseType.TRIGGER)) {
             MetaBlock metaBlock = zone.getMetaBlock(pX, pY);
             Map<String, Object> metadata = metaBlock == null ? null : metaBlock.getMetadata();
             
@@ -642,6 +665,39 @@ public class Player extends Entity implements CommandExecutor {
         return linked;
     }
     
+    private boolean tryLinkTransmittedItem(int x, int y, Item item) {
+        int pX = lastPlacement.getX();
+        int pY = lastPlacement.getY();
+        Item pItem = lastPlacement.getItem();
+        
+        // Do nothing if the last placed item is not a transmitter
+        if(!pItem.hasUse(ItemUseType.TRANSMIT)) {
+            return false;
+        }
+        
+        int maxTransmitDistance = getTotalSkillLevel(Skill.ENGINEERING) * 10;
+        
+        // Notify the player if the distance is beyond the maximum transmit distance
+        if(!isGodMode() && !MathUtils.inRange(x, y, pX, pY, maxTransmitDistance)) {
+            notify(String.format("You can only transmit %s blocks at your current engineering level.", maxTransmitDistance));
+            return false;
+        }
+        
+        MetaBlock metaBlock = zone.getMetaBlock(pX, pY);
+        Map<String, Object> metadata = metaBlock == null ? null : metaBlock.getMetadata();
+        
+        // Do nothing if metadata is null for whatever reason
+        if(metadata == null) {
+            return false;
+        }
+        
+        // Link transmitter to beacon
+        MapHelper.appendList(metadata, ">", Arrays.asList(x, y)); // Make it a list for compatibility reasons
+        zone.updateBlock(pX, pY, Layer.FRONT, pItem, 1, null, metadata);
+        lastPlacement = null;
+        return true;
+    }
+    
     public double getMiningRange() {
         return 5 + getTotalSkillLevel(Skill.MINING) / 3.0;
     }
@@ -660,6 +716,13 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         return bonus.getChance() * (getTotalSkillLevel(bonus.getSkill()) / (double)MAX_SKILL_LEVEL) * heldItem.getToolBonus();
+    }
+    
+    /**
+     * @return The hash to be stored in blocks placed by this player.
+     */
+    public int getBlockHash() {
+        return 1 + ((documentId.hashCode() & 2047) % 2047);
     }
     
     public String getDocumentId() {
@@ -698,6 +761,18 @@ public class Player extends Entity implements CommandExecutor {
     
     protected List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    public void addLootCode(String lootCode) {
+        lootCodes.add(lootCode);
+    }
+    
+    public boolean hasLootCode(String lootCode) {
+        return lootCodes.contains(lootCode);
+    }
+    
+    public Set<String> getLootCodes() {
+        return Collections.unmodifiableSet(lootCodes);
     }
     
     public void trackNameChange(String newName) {

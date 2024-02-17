@@ -16,7 +16,11 @@ public class Timer<T> {
     }
     
     public boolean process() {
-        if(System.currentTimeMillis() >= time) {
+        return process(false);
+    }
+    
+    public boolean process(boolean force) {
+        if(force || System.currentTimeMillis() >= time) {
             action.run();
             return true;
         }
