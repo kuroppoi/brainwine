@@ -99,11 +99,11 @@ public class CaveGeneratorTask implements GeneratorTask {
                 // Generate a cave wall with a thickness depending on the size of the cave
                 if(asteroids || stoneType != StoneType.DEFAULT) {
                     ctx.updateBlock(x, y, Layer.BASE, stoneType.getBaseItem());
-                    int checkDistance = asteroids? 5 : 3;
+                    int checkDistance = asteroids ? 5 : 3;
                     
                     for(int i = x - checkDistance; i <= x + checkDistance; i++) {
                         for(int j = y - checkDistance; j <= y + checkDistance; j++) {
-                            if(ctx.inBounds(i, j) && !cells[i][j]) {
+                            if((asteroids ? ctx.isAir(i, j, Layer.FRONT) : ctx.isEarthy(i, j)) && !cells[i][j]) {
                                 double maxDistance = asteroids ? 4.5 + ctx.nextDouble() - 1 :
                                         MathUtils.clamp(cave.getSize() / 16.0, 1.8, checkDistance) + (ctx.nextDouble() - 0.5);
                                 double distance = Math.hypot(i - x, j - y);
@@ -169,7 +169,8 @@ public class CaveGeneratorTask implements GeneratorTask {
         
         for(int x = 0; x < width; x++) {
             for(int y = 0; y < height; y++) {
-                if((y >= ctx.getSurface(x) + ctx.nextInt(3)) && ctx.nextDouble() <= cellRate) {
+                if((terrainType == TerrainType.ASTEROIDS ? ctx.isAir(x, y, Layer.FRONT) : ctx.isEarthy(x, y)) 
+                        && (y >= ctx.getSurface(x) + ctx.nextInt(3)) && ctx.nextDouble() <= cellRate) {
                     cells[x][y] = true;
                 }
             }

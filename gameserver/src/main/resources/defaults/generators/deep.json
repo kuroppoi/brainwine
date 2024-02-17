@@ -4,6 +4,13 @@
   "dungeon_chance": 0.4,
   "background_accent_chance": 0.033,
   "background_drawing_chance": 0.001,
+  "layer_separator": {
+    "item": "ground/blackrock",
+    "min_thickness": 3,
+    "max_thickness": 6,
+    "min_amplitude": 20,
+    "max_amplitude": 20
+  },
   "stone_types": {
     "default": 17,
     "limestone": 4
