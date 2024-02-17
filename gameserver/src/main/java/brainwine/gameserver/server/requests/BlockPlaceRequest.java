@@ -3,6 +3,9 @@ package brainwine.gameserver.server.requests;
 import java.util.UUID;
 
 import brainwine.gameserver.annotations.RequestInfo;
+import brainwine.gameserver.entity.EntityConfig;
+import brainwine.gameserver.entity.EntityRegistry;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.DamageType;
@@ -149,6 +152,23 @@ public class BlockPlaceRequest extends PlayerRequest {
                     }
                 }
             };
+            break;
+        case "bomb-spawner":
+            task = () -> {
+                zone.explode(x, y, value, player, false, value, DamageType.FIRE, "bomb-fire");
+                
+                // Spawn a bunch of entities
+                for(int i = 0; i < value; i++) {
+                    EntityConfig entityType = EntityRegistry.getEntityConfig(item.getEntitySpawns().next());
+                    
+                    if(entityType != null) {
+                        Npc npc = new Npc(zone, entityType);
+                        zone.spawnEntity(npc, x, y);
+                    }
+                }
+            };
+            break;
+        default:
             break;
         }
         
