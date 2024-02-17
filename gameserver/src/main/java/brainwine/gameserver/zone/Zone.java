@@ -1311,6 +1311,10 @@ public class Zone {
         return chunksExplored[chunkIndex] = true;
     }
     
+    public boolean isAreaExplored(int x, int y) {
+        return areCoordinatesInBounds(x, y) && chunksExplored[getChunkIndex(x, y)];
+    }
+    
     public File getDirectory() {
     	return new File("zones", documentId);
     }

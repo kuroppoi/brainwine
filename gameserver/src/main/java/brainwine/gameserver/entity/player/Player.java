@@ -113,11 +113,13 @@ public class Player extends Entity implements CommandExecutor {
     private String clientVersion;
     private Placement lastPlacement;
     private Item heldItem = Item.AIR;
-    private Vector2i spawnPoint = new Vector2i(0, 0);
+    private int spawnX;
+    private int spawnY;
     private int teleportX;
     private int teleportY;
     private boolean stealth;
     private boolean godMode;
+    private boolean customSpawn;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private Zone nextZone;
@@ -262,16 +264,28 @@ public class Player extends Entity implements CommandExecutor {
      * Called by {@link Zone#addEntity(Entity)} when the player is added to it.
      */
     public void onZoneChanged() {
-        // TODO handle spawns better
+        // Set spawn location        
+        if(customSpawn) {
+            x = spawnX;
+            y = spawnY;
+        }
+        
         MetaBlock spawn = zone.getRandomSpawnBlock();
         
         if(spawn == null) {
-            x = zone.getWidth() / 2;
-            y = 2;
+            spawnX = zone.getWidth() / 2;
+            spawnY = 2;
         } else {
-            x = spawn.getX() + 1;
-            y = spawn.getY();
+            spawnX = spawn.getX() + 1;
+            spawnY = spawn.getY();
         }
+        
+        if(!customSpawn) {
+            x = spawnX;
+            y = spawnY;
+        }
+        
+        customSpawn = false;
         
         // Set skills for new players
         for(Skill skill : Skill.values()) {
@@ -293,8 +307,6 @@ public class Player extends Entity implements CommandExecutor {
             inventory.moveItemToContainer(jetpack, ContainerType.ACCESSORIES, 0);
         }
         
-        spawnPoint.setX((int)x);
-        spawnPoint.setY((int)y);
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
@@ -420,7 +432,14 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void changeZone(Zone zone) {
+        changeZone(zone, -1, -1);
+    }
+    
+    public void changeZone(Zone zone, int x, int y) {
         nextZone = zone;
+        spawnX = x;
+        spawnY = y;
+        customSpawn = x != -1 && y != -1;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
     }
@@ -510,11 +529,9 @@ public class Player extends Entity implements CommandExecutor {
             setHealth(getMaxHealth());
         }
         
-        int x = spawnPoint.getX();
-        int y = spawnPoint.getY();
-        sendMessage(new PlayerPositionMessage(x, y));
+        sendMessage(new PlayerPositionMessage(spawnX, spawnY));
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.REVIVED));
-        zone.sendMessage(new EffectMessage(x, y, "spawn", 20));
+        zone.sendMessage(new EffectMessage(spawnX, spawnY, "spawn", 20));
     }
     
     /**

@@ -11,6 +11,7 @@ import brainwine.gameserver.item.interactions.ItemInteraction;
 import brainwine.gameserver.item.interactions.SpawnInteraction;
 import brainwine.gameserver.item.interactions.SpawnTeleportInteraction;
 import brainwine.gameserver.item.interactions.SwitchInteraction;
+import brainwine.gameserver.item.interactions.TargetTeleportInteraction;
 import brainwine.gameserver.item.interactions.TeleportInteraction;
 import brainwine.gameserver.item.interactions.TransmitInteraction;
 
@@ -37,6 +38,7 @@ public enum ItemUseType {
     SPAWN_TELEPORT(new SpawnTeleportInteraction()),
     SWITCH(new SwitchInteraction()),
     SWITCHED,
+    TARGET_TELEPORT(new TargetTeleportInteraction()),
     TELEPORT(new TeleportInteraction()),
     TRIGGER,
     TRANSMIT(new TransmitInteraction()),
