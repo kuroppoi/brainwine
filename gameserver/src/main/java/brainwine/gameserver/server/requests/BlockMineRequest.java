@@ -6,6 +6,9 @@ import java.util.Map;
 
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.EntityConfig;
+import brainwine.gameserver.entity.EntityRegistry;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
@@ -144,7 +147,17 @@ public class BlockMineRequest extends PlayerRequest {
                 }
             }
         }
-
+        
+        // Check for entity spawns
+        if(item.hasEntitySpawns() && block.getMod(layer) == 0 && !item.hasTimer() && !item.hasUse(ItemUseType.SPAWN)) {
+            EntityConfig type = EntityRegistry.getEntityConfig(item.getEntitySpawns().next());
+            
+            if(type != null) {
+                Npc npc = new Npc(zone, type);
+                zone.spawnEntity(npc, x, y);
+            }
+        }
+        
         zone.updateBlock(x, y, layer, 0, 0, player);
         player.getStatistics().trackItemMined(item);
         Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
