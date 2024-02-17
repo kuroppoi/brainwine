@@ -178,6 +178,7 @@ public class Player extends Entity implements CommandExecutor {
     
     @Override
     public void tick(float deltaTime) {
+        super.tick(deltaTime);
         long now = System.currentTimeMillis();
         statistics.trackPlayTime(deltaTime);
         
@@ -624,7 +625,7 @@ public class Player extends Entity implements CommandExecutor {
         Item pItem = lastPlacement.getItem();
         boolean linked = false;
         
-        if(pItem.hasUse(ItemUseType.SWITCH)) {
+        if(pItem.hasUse(ItemUseType.SWITCH, ItemUseType.TRIGGER)) {
             MetaBlock metaBlock = zone.getMetaBlock(pX, pY);
             Map<String, Object> metadata = metaBlock == null ? null : metaBlock.getMetadata();
             

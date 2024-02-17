@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
@@ -24,8 +25,13 @@ public class DialogInteraction implements ItemInteraction {
     }
     
     @Override
-    public void interact(Zone zone, Player player, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
+    public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
+        // Do nothing if entity is not a player
+        if(!entity.isPlayer()) {
+            return;
+        }
+        
         // Do nothing if the required data isn't present
         if(data == null || !(config instanceof Map)) {
             return;
@@ -36,6 +42,7 @@ public class DialogInteraction implements ItemInteraction {
             return;
         }
         
+        Player player = (Player)entity;
         Map<String, Object> configMap = (Map<String, Object>)config;
         String target = MapHelper.getString(configMap, "target", "none");
         

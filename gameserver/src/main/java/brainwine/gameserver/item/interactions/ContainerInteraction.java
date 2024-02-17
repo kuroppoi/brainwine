@@ -1,6 +1,7 @@
 package brainwine.gameserver.item.interactions;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
@@ -15,13 +16,19 @@ import brainwine.gameserver.zone.Zone;
 public class ContainerInteraction implements ItemInteraction {
     
     @Override
-    public void interact(Zone zone, Player player, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
+    public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
+        // Do nothing if entity is not a player
+        if(!entity.isPlayer()) {
+            return;
+        }
+        
         // Check if the right data is present
         if(metaBlock == null || data != null) {
             return;
         }
         
+        Player player = (Player)entity;
         String dungeonId = metaBlock.getStringProperty("@");
         
         // Check if container is protected by a dungeon

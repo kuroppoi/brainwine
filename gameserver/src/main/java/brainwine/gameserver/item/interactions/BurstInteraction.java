@@ -2,6 +2,7 @@ package brainwine.gameserver.item.interactions;
 
 import java.util.Map;
 
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.DamageType;
@@ -19,13 +20,19 @@ import brainwine.gameserver.zone.Zone;
 public class BurstInteraction implements ItemInteraction {
 
     @Override
-    public void interact(Zone zone, Player player, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
+    public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
+        // Do nothing if entity is not a player
+        if(!entity.isPlayer()) {
+            return;
+        }
+        
         // Do nothing if data is invalid
         if(!(config instanceof Map)) {
             return;
         }
         
+        Player player = (Player)entity;
         Map<String, Object> configMap = (Map<String, Object>)config;
         boolean dodge = MapHelper.getBoolean(configMap, "dodge");
 

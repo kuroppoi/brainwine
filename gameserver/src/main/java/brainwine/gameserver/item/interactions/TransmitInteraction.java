@@ -3,6 +3,7 @@ package brainwine.gameserver.item.interactions;
 import java.util.Collections;
 import java.util.List;
 
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
@@ -17,13 +18,19 @@ import brainwine.gameserver.zone.Zone;
 public class TransmitInteraction implements ItemInteraction {
     
     @Override
-    public void interact(Zone zone, Player player, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
+    public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
+        // Do nothing if entity is not a player
+        if(!entity.isPlayer()) {
+            return;
+        }
+        
         // Do nothing if the required data isn't present
         if(data != null || metaBlock == null) {
             return;
         }
         
+        Player player = (Player)entity;
         List<List<Integer>> positions = MapHelper.getList(metaBlock.getMetadata(), ">", Collections.emptyList());
         
         // Do nothing if there is no linked position

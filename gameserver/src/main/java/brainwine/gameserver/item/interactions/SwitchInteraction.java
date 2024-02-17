@@ -5,15 +5,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.text.WordUtils;
+
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.EntityConfig;
+import brainwine.gameserver.entity.EntityRegistry;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.Vector2i;
-import brainwine.gameserver.zone.Block;
+import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
@@ -23,7 +31,7 @@ import brainwine.gameserver.zone.Zone;
 public class SwitchInteraction implements ItemInteraction {
     
     @Override
-    public void interact(Zone zone, Player player, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
+    public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
         // Do nothing if the required data isn't present
         if(data != null || metaBlock == null) {
@@ -55,7 +63,7 @@ public class SwitchInteraction implements ItemInteraction {
         
         // Switch all target blocks
         for(Vector2i target : targets) {
-            switchBlock(zone, target.getX(), target.getY(), switchedMod);
+            switchBlock(zone, entity, target.getX(), target.getY(), switchedMod, metaBlock);
         }
         
         // Create block timer if this is a timed switch
@@ -64,27 +72,144 @@ public class SwitchInteraction implements ItemInteraction {
             
             zone.addBlockTimer(x, y, timer * 1000, () -> {
                 for(Vector2i target : targets) {
-                    switchBlock(zone, target.getX(), target.getY(), unswitchedMod);
+                    switchBlock(zone, entity, target.getX(), target.getY(), unswitchedMod, metaBlock);
                 }
             });
         }
     }
     
-    private void switchBlock(Zone zone, int x, int y, int mod) {
+    private void switchBlock(Zone zone, Entity entity, int x, int y, int mod, MetaBlock switchMeta) {
         // Do nothing if the target chunk isn't loaded
         if(!zone.isChunkLoaded(x, y)) {
             return;
         }
         
         MetaBlock metaBlock = zone.getMetaBlock(x, y);
+        
+        // Do nothing if there is no metadata
+        if(metaBlock == null) {
+            return;
+        }
+        
         Player owner = metaBlock == null ? null : GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner());
         Map<String, Object> metadata = metaBlock == null ? null : metaBlock.getMetadata();
-        Block block = zone.getBlock(x, y);
-        Item item = block.getFrontItem();
+        Item item = metaBlock.getItem();
+        Object config = item.getUse(ItemUseType.SWITCHED);
         
-        // Switch this block if it is a valid switch or door or something similar
-        if(item.hasUse(ItemUseType.SWITCH) || (item.hasUse(ItemUseType.SWITCHED) && !(item.getUse(ItemUseType.SWITCHED) instanceof String))) {
+        if(config instanceof String) {
+            String type = (String)config;
+            
+            // Not the prettiest way to do this but it will have to do.
+            switch(type.toLowerCase()) {
+            case "spawner": switchSpawner(zone, metaBlock); break;
+            case "exploder": switchExploder(zone, entity, metaBlock); break;
+            case "messagesign": switchSign(zone, entity, metaBlock, switchMeta); break;
+            default: break;
+            }
+        } else if(item.hasUse(ItemUseType.SWITCH, ItemUseType.SWITCHED, ItemUseType.TRIGGER)) {
             zone.updateBlock(x, y, Layer.FRONT, item, mod, owner, metadata);
         }
+    }
+    
+    private void switchSpawner(Zone zone, MetaBlock metaBlock) {
+        // Kill existing entity
+        if(metaBlock.hasProperty("eid")) {
+            Entity entity = zone.getEntity(metaBlock.getIntProperty("eid"));
+            
+            if(entity != null && !entity.isDead()) {
+                entity.setHealth(0);
+                zone.sendMessageToChunk(new EffectMessage(entity.getX(), entity.getY(), "bomb-teleport", 4), zone.getChunk(metaBlock.getX(), metaBlock.getY()));
+            }
+        }
+        
+        Object config = metaBlock.getItem().getUse(ItemUseType.SPAWN);
+        
+        // Do nothing if use config data is invalid
+        if(!(config instanceof Map)) {
+            return;
+        }
+        
+        // Determine entity type
+        String entityType = MapHelper.getString((Map<?, ?>)config, metaBlock.getStringProperty("e"));
+        EntityConfig entityConfig = EntityRegistry.getEntityConfig(entityType);
+        
+        // Do nothing if entity config doesn't exist
+        if(entityConfig == null) {
+            return;
+        }
+        
+        // Create & spawn the entity
+        Npc npc = new Npc(zone, entityConfig);
+        npc.setArtificial(true);
+        zone.spawnEntity(npc, metaBlock.getX(), metaBlock.getY(), true);
+        
+        // Track entity id in spawner metadata
+        metaBlock.setProperty("eid", npc.getId());
+    }
+    
+    // TODO exploders were used to create lag machines back in the day, so maybe we should put a cooldown on this
+    private void switchExploder(Zone zone, Entity entity, MetaBlock metaBlock) {
+        String type = metaBlock.getStringProperty("e");
+        
+        // Do nothing if explosion type doesn't exist in block metadata
+        if(type == null) {
+            return;
+        }
+        
+        // Create explosion
+        DamageType damageType = DamageType.fromName(type);
+        String effect = String.format("bomb-%s", type.toLowerCase());
+        zone.explode(metaBlock.getX(), metaBlock.getY(), 6, entity, false, 6, damageType, effect);
+    }
+    
+    private void switchSign(Zone zone, Entity entity, MetaBlock metaBlock, MetaBlock switchMeta) {
+        String message = switchMeta.hasProperty("m") ? switchMeta.getStringProperty("m").trim() : "";
+        boolean lock = metaBlock.getStringProperty("lock").equalsIgnoreCase("yes");
+        Item item = metaBlock.getItem();
+        
+        // Check and update lock status
+        if(lock) {
+            boolean locked = metaBlock.getBooleanProperty("locked");
+            
+            if(!message.isEmpty()) {
+                if(locked) {
+                    return;
+                }
+                
+                metaBlock.setProperty("locked", true);
+            } else if(locked) {
+                metaBlock.removeProperty("locked");
+            }
+        }
+        
+        // Update sign text
+        String name = entity.getName();
+        
+        if(name != null) {
+            message = message.replaceAll("%t%", name);
+        }
+        
+        String separator = "\n";
+        String[] keys = {"t1", "t2", "t3", "t4"};
+        String[] segments = WordUtils.wrap(message, 20, separator, true).split(separator, 4);
+       
+        for(int i = 0; i < keys.length; i++) {
+            String key = keys[i];
+            String text = i < segments.length ? segments[i] : "";
+            int separatorIndex = text.lastIndexOf(separator);
+            
+            if(separatorIndex != -1) {
+                text = text.substring(0, separatorIndex);
+            }
+            
+            metaBlock.setProperty(key, text);
+        }
+        
+        // Send data to players
+        float effectX = metaBlock.getX() + (float)item.getBlockWidth() / 2;
+        float effectY = metaBlock.getY() - (float)item.getBlockHeight() / 2 + 1;
+        Chunk chunk = zone.getChunk(metaBlock.getX(), metaBlock.getY());
+        zone.sendMessageToChunk(new EffectMessage(effectX, effectY, "area steam", 10), chunk);
+        zone.sendMessageToChunk(new BlockMetaMessage(metaBlock), chunk);
     }
 }

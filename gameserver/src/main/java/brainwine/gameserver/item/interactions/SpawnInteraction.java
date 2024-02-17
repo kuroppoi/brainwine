@@ -1,9 +1,9 @@
 package brainwine.gameserver.item.interactions;
 
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.zone.MetaBlock;
@@ -15,7 +15,7 @@ import brainwine.gameserver.zone.Zone;
 public class SpawnInteraction implements ItemInteraction {
 
     @Override
-    public void interact(Zone zone, Player player, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
+    public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
         // Do nothing if item can't spawn entities
         if(!item.hasEntitySpawns() || mod != 0) {
@@ -30,8 +30,8 @@ public class SpawnInteraction implements ItemInteraction {
         }
         
         // Spawn the entity
-        Npc entity = new Npc(zone, entityConfig);
-        zone.spawnEntity(entity, x, y);
+        Npc npc = new Npc(zone, entityConfig);
+        zone.spawnEntity(npc, x, y);
         
         // Update block mod
         zone.updateBlock(x, y, layer, item, 1);

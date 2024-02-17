@@ -1,5 +1,6 @@
 package brainwine.gameserver.item.interactions;
 
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
@@ -14,8 +15,15 @@ import brainwine.gameserver.zone.Zone;
 public class TeleportInteraction implements ItemInteraction {
     
     @Override
-    public void interact(Zone zone, Player player, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
+    public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
+        // Do nothing if entity is not a player
+        if(!entity.isPlayer()) {
+            return;
+        }
+        
+        Player player = (Player)entity;
+        
         // Try to repair teleporter
         if(mod == 0) {
             zone.updateBlock(x, y, layer, item, 1);
