@@ -30,7 +30,7 @@ public class InventoryUseRequest extends PlayerRequest {
     @Override
     public void process(Player player) {
         // Don't do anything if the player is dead or doesn't own this item
-        if(player.isDead() || !player.getInventory().hasItem(item)) {
+        if(player.isDead() || (!item.isAir() && !player.getInventory().hasItem(item))) {
             return;
         }
         
@@ -46,7 +46,7 @@ public class InventoryUseRequest extends PlayerRequest {
             }
             
             // Send item use data to other players in the zone
-            player.sendMessageToPeers(new EntityItemUseMessage(player.getId(), type, item, status));
+            player.sendMessageToTrackers(new EntityItemUseMessage(player.getId(), type, item, status));
             
             // Lovely type ambiguity. Always nice.
             if(item.isWeapon() && status == 1) {
