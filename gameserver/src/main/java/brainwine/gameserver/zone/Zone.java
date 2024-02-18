@@ -405,6 +405,36 @@ public class Zone {
         }
     }
     
+    public void explodeLiquid(int x, int y, int range, int liquid) {
+        explodeLiquid(x, y, range, ItemRegistry.getItem(liquid));
+    }
+    
+    public void explodeLiquid(int x, int y, int range, String liquid) {
+        explodeLiquid(x, y, range, ItemRegistry.getItem(liquid));
+    }
+    
+    public void explodeLiquid(int x, int y, int range, Item liquid) {
+        // Do nothing if liquid isn't actually a liquid
+        if(liquid.getLayer() != Layer.LIQUID) {
+            return;
+        }
+        
+        // Place liquid blocks around the explosion
+        for(int i = x - range; i <= x + range; i++) {
+            for(int j = y - range; j <= y + range; j++) {
+                // Skip if not in range
+                if(!MathUtils.inRange(x, y, i, j, range)) {
+                    continue;
+                }
+                
+                // Place liquid if target block isn't solid
+                if(!isBlockSolid(i, j, true)) {
+                    updateBlock(i, j, Layer.LIQUID, liquid, 5);
+                }
+            }
+        }
+    }
+    
     public boolean isBlockNatural(int x, int y) {
         return areCoordinatesInBounds(x, y) && getBlock(x, y).isNatural();
     }

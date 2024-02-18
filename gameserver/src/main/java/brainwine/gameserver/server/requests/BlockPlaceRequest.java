@@ -168,32 +168,21 @@ public class BlockPlaceRequest extends PlayerRequest {
             };
             break;
         case "bomb-water":
+            task = () -> {
+                zone.explode(x, y, value, player, false, value, DamageType.COLD, "bomb-large");
+                zone.explodeLiquid(x, y, 4, "liquid/water");
+            };
+            break;
         case "bomb-acid":
+            task = () -> {
+                zone.explode(x, y, value, player, false, value, DamageType.ACID, "bomb-large");
+                zone.explodeLiquid(x, y, 4, "liquid/acid");
+            };
+            break;
         case "bomb-lava":
             task = () -> {
                 zone.explode(x, y, value, player, false, value, DamageType.FIRE, "bomb-large");
-                Item liquid = Item.get(String.format("liquid/%s", type.replace("bomb-", "")));
-                int range = 4;
-                
-                // Do nothing if there is no liquid to place
-                if(liquid.isAir()) {
-                    return;
-                }
-                
-                // Place liquid blocks around the explosion
-                for(int i = x - range; i <= x + range; i++) {
-                    for(int j = y - range; j <= y + range; j++) {
-                        // Skip if not in range
-                        if(!MathUtils.inRange(x, y, i, j, range)) {
-                            continue;
-                        }
-                        
-                        // Place liquid if target block isn't solid
-                        if(!zone.isBlockSolid(i, j, true)) {
-                            zone.updateBlock(i, j, Layer.LIQUID, liquid, 5);
-                        }
-                    }
-                }
+                zone.explodeLiquid(x, y, 4, "liquid/magma");
             };
             break;
         default:
