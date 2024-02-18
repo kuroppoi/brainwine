@@ -496,18 +496,18 @@ public class Zone {
         return isBlockProtected(x, y, null);
     }
     
-    public boolean isBlockProtected(int x, int y, Player from) {
-        return isBlockProtected(x, y, from, fieldBlocks.values());
+    public boolean isBlockProtected(int x, int y, Player player) {
+        return isBlockProtected(x, y, player, fieldBlocks.values());
     }
     
-    public boolean isBlockProtected(int x, int y, Player from, Collection<MetaBlock> fieldBlocks) {
+    public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
         for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
             int fX = fieldBlock.getX();
             int fY = fieldBlock.getY();
             int field = fieldBlock.getItem().getField();
             
-            if(from == null || !ownsMetaBlock(fieldBlock, from)) {
+            if(player == null || !fieldBlock.isOwnedBy(player)) {
                 if(item.isDish()) {
                     if(MathUtils.inRange(x, y, fX, fY, field)) {
                         return true;
@@ -529,7 +529,7 @@ public class Zone {
             int fY = fieldBlock.getY();
             int fField = fieldBlock.getItem().getField();
             
-            if(MathUtils.inRange(x, y, fX, fY, field + fField) && !ownsMetaBlock(fieldBlock, player)) {
+            if(MathUtils.inRange(x, y, fX, fY, field + fField) && !fieldBlock.isOwnedBy(player)) {
                 return true;
             }
         }
@@ -1035,14 +1035,6 @@ public class Zone {
         indexDungeons();
     }
     
-    private boolean ownsMetaBlock(MetaBlock metaBlock, Player player) {
-        if(!metaBlock.hasOwner()) {
-            return false;
-        }
-        
-        return player.getDocumentId().equals(metaBlock.getOwner());
-    }
-    
     public MetaBlock getMetaBlock(int x, int y) {
         return metaBlocks.get(getBlockIndex(x, y));
     }
@@ -1160,6 +1152,20 @@ public class Zone {
     
     public int settleLiquids() {
         return liquidManager.settleLiquids();
+    }
+    
+    /**
+     * @return The specified coordinates in a player-readable format
+     * For example, {@code x: 200 y: 300} in a plain biome becomes {@code 800 west, 100 below}
+     */
+    public String getReadableCoordinates(int x, int y) {
+        int center = width / 2;
+        int surface = biome == Biome.DEEP ? -1000 : 200;
+        String directionX = x < center ? "west" : x > center ? "east" : "central";
+        String directionY = y > surface ? "below" : "above";
+        String coordX = String.format("%s %s", Math.abs(x - center), directionX);
+        String coordY = String.format("%s %s", Math.abs(y - surface), directionY);
+        return String.format("%s, %s", coordX, coordY);
     }
     
     public boolean areCoordinatesInBounds(int x, int y) {

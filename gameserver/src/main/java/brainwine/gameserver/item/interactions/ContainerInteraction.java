@@ -81,8 +81,7 @@ public class ContainerInteraction implements ItemInteraction {
         
         // Update container mod
         if(!plenty && !metaBlock.hasProperty("$")) {
-            Player owner = GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner());
-            zone.updateBlock(x, y, Layer.FRONT, item, 0, owner, metaBlock.getMetadata());
+            zone.updateBlock(x, y, Layer.FRONT, item, 0, metaBlock.getOwner(), metaBlock.getMetadata());
         }
     }
 }

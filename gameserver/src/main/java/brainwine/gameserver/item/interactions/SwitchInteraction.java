@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.apache.commons.text.WordUtils;
 
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityRegistry;
@@ -91,7 +90,7 @@ public class SwitchInteraction implements ItemInteraction {
             return;
         }
         
-        Player owner = metaBlock == null ? null : GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner());
+        Player owner = metaBlock == null ? null : metaBlock.getOwner();
         Map<String, Object> metadata = metaBlock == null ? null : metaBlock.getMetadata();
         Item item = metaBlock.getItem();
         Object config = item.getUse(ItemUseType.SWITCHED);

@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 
@@ -71,7 +72,17 @@ public class MetaBlock {
         return owner != null;
     }
     
-    public String getOwner() {
+    public boolean isOwnedBy(Player player) {
+        return player != null && player.getDocumentId().equals(owner);
+    }
+    
+    @JsonIgnore
+    public Player getOwner() {
+        return GameServer.getInstance().getPlayerManager().getPlayerById(owner);
+    }
+    
+    @JsonProperty("owner")
+    private String getOwnerId() {
         return owner;
     }
     

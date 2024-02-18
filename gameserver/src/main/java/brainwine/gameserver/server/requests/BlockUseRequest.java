@@ -2,7 +2,6 @@ package brainwine.gameserver.server.requests;
 
 import java.util.Map;
 
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
@@ -51,7 +50,7 @@ public class BlockUseRequest extends PlayerRequest {
         
         // Check if block is owned by another player
         if(metaBlock != null && item.hasUse(ItemUseType.PROTECTED)) {
-            Player owner = GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner());
+            Player owner = metaBlock.getOwner();
             
             if(player != owner) {
                 if(item.hasUse(ItemUseType.PUBLIC)) {
@@ -59,10 +58,14 @@ public class BlockUseRequest extends PlayerRequest {
                     
                     // TODO implement other cases
                     switch(publicUse) {
-                        case "owner":
-                            player.notify(String.format("This %s is owned by %s.", 
-                                    item.getTitle().toLowerCase(), owner == null ? "somebody else" : owner.getName()));
-                            break;
+                    case "owner":
+                        player.notify(String.format("This %s is owned by %s.", 
+                                item.getTitle().toLowerCase(), owner == null ? "somebody else" : owner.getName()));
+                        break;
+                    case "note":
+                        ItemUseType.NOTE.getInteraction().interact(zone, player, x, y, layer, item, mod, metaBlock, null, data);
+                        break;
+                    default: break;
                     }
                 } else {
                     player.notify("Sorry, that belongs to somebody else.");

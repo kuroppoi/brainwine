@@ -239,7 +239,7 @@ public class EntityManager {
                 
                 // Set owner entity if it has one
                 if(metaBlock != null && metaBlock.hasOwner()) {
-                    entity.setOwner(GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner()));
+                    entity.setOwner(metaBlock.getOwner());
                 }
                 
                 entity.setMountBlock(x, y);

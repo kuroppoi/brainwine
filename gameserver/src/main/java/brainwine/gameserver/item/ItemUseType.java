@@ -8,6 +8,7 @@ import brainwine.gameserver.item.interactions.ChangeInteraction;
 import brainwine.gameserver.item.interactions.ContainerInteraction;
 import brainwine.gameserver.item.interactions.DialogInteraction;
 import brainwine.gameserver.item.interactions.ItemInteraction;
+import brainwine.gameserver.item.interactions.NoteInteraction;
 import brainwine.gameserver.item.interactions.SpawnInteraction;
 import brainwine.gameserver.item.interactions.SpawnTeleportInteraction;
 import brainwine.gameserver.item.interactions.SwitchInteraction;
@@ -31,6 +32,7 @@ public enum ItemUseType {
     FIELDABLE,
     FLY,
     MULTI,
+    NOTE(new NoteInteraction()),
     PLENTY,
     PROTECTED,
     PUBLIC,
