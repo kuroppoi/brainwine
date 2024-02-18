@@ -86,9 +86,15 @@ public abstract class Entity {
     }
     
     public void damage(float amount, Entity attacker) {
+        // Do nothing if entity is already dead
+        if(isDead()) {
+            return;
+        }
+        
         setHealth(health - amount);
         
-        if(health <= 0) {
+        // Handle entity death if it died as a result of taking this damage
+        if(isDead()) {
             die(attacker);
         }
         
@@ -96,6 +102,11 @@ public abstract class Entity {
     }
     
     public void attack(Entity attacker, Item weapon, float baseDamage, DamageType damageType) {
+        // Ignore attack if entity is already dead
+        if(isDead()) {
+            return;
+        }
+        
         EntityAttack attack = new EntityAttack(attacker, weapon, baseDamage, damageType);
         boolean ignoreDefense = attacker != null && attacker.isPlayer() && ((Player)attacker).isGodMode();
         float attackMultiplier = attacker != null ? Math.max(0.0F, attacker.getAttackMultiplier(attack)) : 1.0F;
