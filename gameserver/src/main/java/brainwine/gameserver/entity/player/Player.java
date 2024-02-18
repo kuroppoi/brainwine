@@ -546,7 +546,7 @@ public class Player extends Entity implements CommandExecutor {
         
         sendMessage(new PlayerPositionMessage(spawnX, spawnY));
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.REVIVED));
-        zone.sendMessage(new EffectMessage(spawnX, spawnY, "spawn", 20));
+        zone.spawnEffect(spawnX, spawnY, "spawn", 20);
     }
     
     /**
@@ -561,7 +561,7 @@ public class Player extends Entity implements CommandExecutor {
         teleportY = y;
         sendMessage(new TeleportMessage(x, y));
         sendMessage(new PlayerPositionMessage(x, y));
-        zone.sendMessage(new EffectMessage(x, y, "teleport", 20));
+        zone.spawnEffect(x, y, "teleport", 20);
     }
     
     public int getTeleportX() {

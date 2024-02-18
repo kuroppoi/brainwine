@@ -12,6 +12,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.util.MapHelper;
@@ -45,6 +46,8 @@ public abstract class Entity {
     protected int lastBlockY;
     protected int targetX;
     protected int targetY;
+    protected int sizeX = 1;
+    protected int sizeY = 1;
     protected FacingDirection direction = FacingDirection.WEST;
     protected int animation;
     protected boolean invulnerable;
@@ -119,6 +122,22 @@ public abstract class Entity {
     
     public float getDefense(EntityAttack attack) {
         return 1.0F; // Override
+    }
+    
+    public void spawnEffect(String type) {
+        spawnEffect(type, 1);
+    }
+    
+    public void spawnEffect(String type, Object data) {
+        float effectX = x + sizeX / 2.0F;
+        float effectY = y + sizeY / 2.0F;
+        sendMessageToTrackers(new EffectMessage(effectX, effectY, type, data));
+    }
+    
+    public void emote(String message) {
+        float effectX = x + sizeX / 2.0F;
+        float effectY = y - sizeY + 1;
+        sendMessageToTrackers(new EffectMessage(effectX, effectY, "emote", message));
     }
     
     public void updateBlockPosition() {
@@ -312,6 +331,14 @@ public abstract class Entity {
         return blockY;
     }
     
+    public int getSizeX() {
+        return sizeX;
+    }
+    
+    public int getSizeY() {
+        return sizeY;
+    }
+        
     public void setDirection(FacingDirection direction) {
         this.direction = direction;
     }

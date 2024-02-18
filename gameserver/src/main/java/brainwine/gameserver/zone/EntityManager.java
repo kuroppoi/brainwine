@@ -30,7 +30,6 @@ import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
-import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.util.MapHelper;
@@ -270,7 +269,7 @@ public class EntityManager {
         entity.setPosition(x, y);
         
         if(effect && zone.isChunkLoaded(x, y)) {
-            zone.sendMessageToChunk(new EffectMessage(x + 0.5F, y + 0.5F, "bomb-teleport", 4), zone.getChunk(x, y));
+            zone.spawnEffect(x + 0.5F, y + 0.5F, "bomb-teleport", 4);
         }
     }
     

@@ -21,7 +21,6 @@ import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
-import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
@@ -194,8 +193,8 @@ public class BlockMineRequest extends PlayerRequest {
         
         // Kill entity if it exists
         if(entity != null && !entity.isDead()) {
+            entity.spawnEffect("bomb-teleport", 4);
             entity.setHealth(0);
-            zone.sendMessageToChunk(new EffectMessage(entity.getX(), entity.getY(), "bomb-teleport", 4), zone.getChunk(metaBlock.getX(), metaBlock.getY()));
         }
     }
     

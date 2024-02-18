@@ -16,11 +16,8 @@ import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.server.messages.BlockMetaMessage;
-import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.Vector2i;
-import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
@@ -50,7 +47,7 @@ public class SwitchInteraction implements ItemInteraction {
         if(message != null && !message.isEmpty()) {
             float effectX = x + item.getBlockWidth() / 2.0F;
             float effectY = y - item.getBlockHeight() + 1;
-            zone.sendMessageToChunk(new EffectMessage(effectX, effectY, "emote", message), zone.getChunk(x, y));
+            zone.spawnEffect(effectX, effectY, "emote", message);
         }
         
         // Prepare list of targets
@@ -116,8 +113,8 @@ public class SwitchInteraction implements ItemInteraction {
             Entity entity = zone.getEntity(metaBlock.getIntProperty("eid"));
             
             if(entity != null && !entity.isDead()) {
+                entity.spawnEffect("bomb-teleport", 4);
                 entity.setHealth(0);
-                zone.sendMessageToChunk(new EffectMessage(entity.getX(), entity.getY(), "bomb-teleport", 4), zone.getChunk(metaBlock.getX(), metaBlock.getY()));
             }
         }
         
@@ -207,8 +204,7 @@ public class SwitchInteraction implements ItemInteraction {
         // Send data to players
         float effectX = metaBlock.getX() + (float)item.getBlockWidth() / 2;
         float effectY = metaBlock.getY() - (float)item.getBlockHeight() / 2 + 1;
-        Chunk chunk = zone.getChunk(metaBlock.getX(), metaBlock.getY());
-        zone.sendMessageToChunk(new EffectMessage(effectX, effectY, "area steam", 10), chunk);
-        zone.sendMessageToChunk(new BlockMetaMessage(metaBlock), chunk);
+        zone.spawnEffect(effectX, effectY, "area steam", 10);
+        zone.sendBlockMetaUpdate(metaBlock);
     }
 }

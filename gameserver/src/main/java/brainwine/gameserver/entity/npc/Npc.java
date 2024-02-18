@@ -34,7 +34,6 @@ public class Npc extends Entity {
     private final float maxHealth;
     private final float baseSpeed;
     private final boolean persist;
-    private final Vector2i size;
     private final WeightedMap<EntityLoot> loot;
     private final WeightedMap<EntityLoot> placedLoot;
     private final Map<Item, WeightedMap<EntityLoot>> lootByWeapon;
@@ -111,7 +110,8 @@ public class Npc extends Entity {
         this.maxHealth = config.getMaxHealth();
         this.baseSpeed = config.getBaseSpeed();
         this.persist = config.isCharacter();
-        this.size = config.getSize();
+        this.sizeX = config.getSize().getX();
+        this.sizeY = config.getSize().getY();
         this.loot = config.getLoot();
         this.placedLoot = config.getPlacedLoot();
         this.lootByWeapon = config.getLootByWeapon();
@@ -262,10 +262,6 @@ public class Npc extends Entity {
         return config;
     }
     
-    public Vector2i getSize() {
-        return size;
-    }
-    
     public void setDefense(DamageType type, float amount) {
         if(amount == 0) {
             activeDefenses.remove(type);
@@ -411,15 +407,15 @@ public class Npc extends Entity {
         int tY = y + oY;
         boolean blocked = zone.isBlockSolid(tX, tY) || (oX != 0 && zone.isBlockSolid(tX, y)) || (oY != 0 && zone.isBlockSolid(x, tY));
         
-        if(size.getX() > 1) {
-            int additionalWidth = size.getX() - 1;
+        if(sizeX > 1) {
+            int additionalWidth = sizeX - 1;
             blocked = blocked || zone.isBlockSolid(tX + additionalWidth, tY) 
                     || (oX != 0 && zone.isBlockSolid(tX + additionalWidth, y)) 
                     || (oY != 0 && zone.isBlockSolid(x + additionalWidth, tY));
         }
         
-        if(size.getY() > 1) {
-            int additionalHeight = size.getY() - 1;
+        if(sizeY > 1) {
+            int additionalHeight = sizeY - 1;
             blocked = blocked || zone.isBlockSolid(tX, tY - additionalHeight) 
                     || (oX != 0 && zone.isBlockSolid(tX, y - additionalHeight)) 
                     || (oY != 0 && zone.isBlockSolid(x, tY - additionalHeight));

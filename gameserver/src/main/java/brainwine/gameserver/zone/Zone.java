@@ -186,12 +186,28 @@ public class Zone {
      * @param message The message to send.
      * @param chunk The chunk near which players must be.
      */
-    public void sendMessageToChunk(Message message, Chunk chunk) {
+    public void sendLocalMessage(Message message, Chunk chunk) {
         for(Player player : getPlayers()) {
             if(player.isChunkActive(chunk)) {
                 player.sendMessage(message);
             }
         }
+    }
+    
+    public void sendLocalMessage(Message message, float x, float y) {
+        sendLocalMessage(message, (int)x, (int)y);
+    }
+    
+    public void sendLocalMessage(Message message, int x, int y) {
+        if(!isChunkLoaded(x, y)) {
+            return;
+        }
+        
+        sendLocalMessage(message, getChunk(x, y));
+    }
+    
+    public void sendBlockMetaUpdate(MetaBlock metaBlock) {
+        sendLocalMessage(new BlockMetaMessage(metaBlock), metaBlock.getX(), metaBlock.getY());
     }
     
     public void sendChatMessage(Player sender, String text) {
@@ -208,6 +224,10 @@ public class Zone {
     public void sendChatMessage(Player sender, String text, ChatType type) {
         sendMessage(new ChatMessage(sender.getId(), text, type));
         GameServer.getInstance().notify(String.format("%s: %s", sender.getName(), text), NotificationType.CHAT);
+    }
+    
+    public void spawnEffect(float x, float y, String type, Object data) {
+        sendLocalMessage(new EffectMessage(x, y, type, data), x, y);
     }
     
     public boolean isPointVisibleFrom(int x1, int y1, int x2, int y2) {
@@ -304,7 +324,7 @@ public class Zone {
             return;
         }
         
-        sendMessageToChunk(new EffectMessage(x + 0.5f, y + 0.5f, effect, radius), getChunk(x, y));
+        spawnEffect(x + 0.5F, y + 0.5F, effect, radius);
         Player player = cause instanceof Player ? (Player)cause : null;
         Item item = getBlock(x, y).getFrontItem();
         
@@ -924,7 +944,7 @@ public class Zone {
                 recalculateSunlight(x, sunlight[x]);
             }
             
-            sendMessageToChunk(new LightMessage(x, getSunlight(x, 1)), chunk);
+            sendLocalMessage(new LightMessage(x, getSunlight(x, 1)), chunk);
         } else if(layer == Layer.LIQUID) {
             if(!item.isAir() && mod > 0) {
                 liquidManager.indexLiquidBlock(x, y);
@@ -990,8 +1010,7 @@ public class Zone {
         
         switch(meta) {
             case LOCAL:
-                sendMessageToChunk(metaBlock == null ? new BlockMetaMessage(x, y) 
-                        : new BlockMetaMessage(metaBlock), getChunk(x, y));
+                sendLocalMessage(metaBlock == null ? new BlockMetaMessage(x, y) : new BlockMetaMessage(metaBlock), x, y);
                 break;
             case GLOBAL:
                 sendMessage(new BlockMetaMessage(x, y)); // Send empty one first or it won't work for some reason
@@ -1190,7 +1209,7 @@ public class Zone {
             // Update pending sunlight
             if(pendingSunlight.contains(x)) {
                 recalculateSunlight(x, sunlight[x]);
-                sendMessageToChunk(new LightMessage(x, getSunlight(x, 1)), chunk);
+                sendLocalMessage(new LightMessage(x, getSunlight(x, 1)), chunk);
             }
             
             for(int y = chunkY; y < chunkY + chunk.getHeight(); y++) {

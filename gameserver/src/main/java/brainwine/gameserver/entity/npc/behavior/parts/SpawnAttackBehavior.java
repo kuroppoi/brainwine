@@ -12,7 +12,6 @@ import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.behavior.Behavior;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.util.MapHelper;
-import brainwine.gameserver.util.Vector2i;
 
 public class SpawnAttackBehavior extends Behavior {
     
@@ -41,9 +40,8 @@ public class SpawnAttackBehavior extends Behavior {
         
         if(npc) {
             // Spawn child at parent's location
-            Vector2i size = entity.getSize();
-            int spawnX = (int)(entity.getX() + (size.getX() / 2F));
-            int spawnY = (int)(entity.getY() + (size.getY() / 2F));
+            int spawnX = (int)(entity.getX() + (entity.getSizeX() / 2.0F));
+            int spawnY = (int)(entity.getY() + (entity.getSizeX() / 2.0F));
             Npc child = new Npc(entity.getZone(), entityConfig);
             child.setOwner(entity);
             entity.addChild(child);
