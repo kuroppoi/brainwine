@@ -107,6 +107,11 @@ public abstract class Entity {
             return;
         }
         
+        // Ignore attack if there is no damage to deal
+        if(baseDamage <= 0 || damageType == null || damageType == DamageType.NONE) {
+            return;
+        }
+        
         EntityAttack attack = new EntityAttack(attacker, weapon, baseDamage, damageType);
         boolean ignoreDefense = attacker != null && attacker.isPlayer() && ((Player)attacker).isGodMode();
         float attackMultiplier = attacker != null ? Math.max(0.0F, attacker.getAttackMultiplier(attack)) : 1.0F;
