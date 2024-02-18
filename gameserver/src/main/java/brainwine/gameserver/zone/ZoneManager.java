@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +25,7 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
+import brainwine.gameserver.entity.npc.NpcData;
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
 import brainwine.shared.JsonHelper;
@@ -84,6 +86,9 @@ public class ZoneManager {
         String id = file.getName();
         File dataFile = new File(file, "zone.dat");
         File legacyDataFile = new File(file, "shape.cmp");
+        File configFile = new File(file, "config.json");
+        File metaBlocksFile = new File(file, "metablocks.json");
+        File charactersFile = new File(file, "characters.json");
         
         try {
             ZoneDataFile data = null;
@@ -95,9 +100,19 @@ public class ZoneManager {
                 data = mapper.readValue(ZipUtils.inflateBytes(Files.readAllBytes(dataFile.toPath())), ZoneDataFile.class);
             }
             
-            ZoneConfigFile config = JsonHelper.readValue(new File(file, "config.json"), ZoneConfigFile.class);
+            ZoneConfigFile config = JsonHelper.readValue(configFile, ZoneConfigFile.class);
             Zone zone = new Zone(id, config, data);
-            zone.setMetaBlocks(JsonHelper.readList(new File(file, "metablocks.json"), MetaBlock.class));
+            
+            // Load meta blocks
+            if(metaBlocksFile.exists()) {
+                zone.setMetaBlocks(JsonHelper.readList(metaBlocksFile, MetaBlock.class));
+            }
+            
+            // Load characters
+            if(charactersFile.exists()) {
+                zone.spawnPersistentNpcs(JsonHelper.readList(charactersFile, NpcData.class));
+            }
+            
             addZone(zone);
         } catch (Exception e) {
             logger.error(SERVER_MARKER, "Zone load failure. id: {}", id, e);
@@ -147,10 +162,18 @@ public class ZoneManager {
         file.mkdirs();
         
         try {
+            // Serialize everything before writing to disk to minimize risk of data corruption if something goes wrong
+            byte[] charactersBytes = JsonHelper.writeValueAsBytes(zone.getPersistentNpcs().stream().map(NpcData::new).collect(Collectors.toList()));
+            byte[] metaBlocksBytes = JsonHelper.writeValueAsBytes(zone.getMetaBlocks());
+            byte[] configBytes = JsonHelper.writeValueAsBytes(new ZoneConfigFile(zone));
+            byte[] dataBytes = ZipUtils.deflateBytes(mapper.writeValueAsBytes(new ZoneDataFile(zone)));
+            
+            // Write data to files
             zone.saveChunks();
-            JsonHelper.writeValue(new File(file, "metablocks.json"), zone.getMetaBlocks());
-            JsonHelper.writeValue(new File(file, "config.json"), new ZoneConfigFile(zone));
-            Files.write(new File(file, "zone.dat").toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(new ZoneDataFile(zone))));
+            Files.write(new File(file, "characters.json").toPath(), charactersBytes);
+            Files.write(new File(file, "metablocks.json").toPath(), metaBlocksBytes);
+            Files.write(new File(file, "config.json").toPath(), configBytes);
+            Files.write(new File(file, "zone.dat").toPath(), dataBytes);
         } catch(Exception e) {
             logger.error(SERVER_MARKER, "Zone save failure. id: {}", zone.getDocumentId(), e);
         }

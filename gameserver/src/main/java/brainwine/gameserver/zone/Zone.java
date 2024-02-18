@@ -25,6 +25,7 @@ import brainwine.gameserver.GameServer;
 import brainwine.gameserver.Timer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.npc.NpcData;
 import brainwine.gameserver.entity.player.ChatType;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
@@ -1095,6 +1096,10 @@ public class Zone {
         return entityManager.getPlayersInRange(x, y, range);
     }
     
+    public void spawnPersistentNpcs(Collection<NpcData> data) {
+        entityManager.spawnPersistentNpcs(data);
+    }
+    
     public void spawnEntity(Entity entity, int x, int y) {
         entityManager.spawnEntity(entity, x, y);
     }
@@ -1133,6 +1138,10 @@ public class Zone {
     
     public Collection<Npc> getNpcs() {
         return entityManager.getNpcs();
+    }
+    
+    public List<Npc> getPersistentNpcs() {
+        return entityManager.getPersistentNpcs();
     }
     
     public Player getPlayer(int entityId) {

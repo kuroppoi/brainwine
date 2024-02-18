@@ -29,6 +29,8 @@ public class EntityConfig {
     private int experienceYield;
     private float maxHealth = Entity.DEFAULT_HEALTH;
     private float baseSpeed = 3;
+    private boolean character;
+    private boolean named;
     private Vector2i size = new Vector2i(1, 1);
     private EntityGroup group = EntityGroup.NONE;
     private WeightedMap<EntityLoot> loot = new WeightedMap<>();
@@ -77,6 +79,14 @@ public class EntityConfig {
     @JsonProperty("speed")
     public float getBaseSpeed() {
         return baseSpeed;
+    }
+    
+    public boolean isCharacter() {
+        return character;
+    }
+    
+    public boolean isNamed() {
+        return named;
     }
     
     @JsonSetter(nulls = Nulls.SKIP)

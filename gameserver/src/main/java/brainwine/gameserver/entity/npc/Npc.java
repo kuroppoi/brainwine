@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 
+import brainwine.gameserver.Naming;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityAttack;
 import brainwine.gameserver.entity.EntityConfig;
@@ -32,6 +33,7 @@ public class Npc extends Entity {
     private final String typeName;
     private final float maxHealth;
     private final float baseSpeed;
+    private final boolean persist;
     private final Vector2i size;
     private final WeightedMap<EntityLoot> loot;
     private final WeightedMap<EntityLoot> placedLoot;
@@ -98,11 +100,17 @@ public class Npc extends Entity {
             properties.put("sl", slots);
         }
         
+        // Generate random name
+        if(config.isNamed()) {
+            this.name = Naming.getRandomEntityName();
+        }
+        
         this.config = config;
         this.typeName = config.getName();
         this.type = config.getType();
         this.maxHealth = config.getMaxHealth();
         this.baseSpeed = config.getBaseSpeed();
+        this.persist = config.isCharacter();
         this.size = config.getSize();
         this.loot = config.getLoot();
         this.placedLoot = config.getPlacedLoot();
@@ -267,7 +275,7 @@ public class Npc extends Entity {
     }
     
     public boolean isTransient() {
-        return !isGuard() && !isMounted();
+        return !isGuard() && !isMounted() && !persist;
     }
     
     public EntityLoot getRandomLoot(Player awardee, Item weapon) {        
@@ -366,6 +374,10 @@ public class Npc extends Entity {
     
     public boolean isArtificial() {
         return artificial;
+    }
+    
+    public boolean isPersistent() {
+        return persist;
     }
     
     public void setSpeed(float speed) {

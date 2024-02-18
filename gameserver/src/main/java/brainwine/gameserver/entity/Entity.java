@@ -59,15 +59,7 @@ public abstract class Entity {
         long now = System.currentTimeMillis();
         
         // Update block position
-        lastBlockX = blockX;
-        lastBlockY = blockY;
-        blockX = (int)x;
-        blockY = (int)y;
-        
-        // Check if block position has changed
-        if(lastBlockX != blockX || lastBlockY != blockY) {
-            blockPositionChanged();
-        }
+        updateBlockPosition();
         
         // Clear expired recent attacks
         recentAttacks.removeIf(attack -> now >= attack.getTime() + ATTACK_RETENTION_TIME);
@@ -127,6 +119,18 @@ public abstract class Entity {
     
     public float getDefense(EntityAttack attack) {
         return 1.0F; // Override
+    }
+    
+    public void updateBlockPosition() {
+        lastBlockX = blockX;
+        lastBlockY = blockY;
+        blockX = (int)x;
+        blockY = (int)y;
+        
+        // Check if block position has changed
+        if(lastBlockX != blockX || lastBlockY != blockY) {
+            blockPositionChanged();
+        }
     }
     
     public void blockPositionChanged() {
@@ -263,6 +267,7 @@ public abstract class Entity {
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
+        updateBlockPosition();
     }
     
     public float getX() {

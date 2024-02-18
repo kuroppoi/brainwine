@@ -20,12 +20,12 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.npc.NpcData;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
@@ -175,8 +175,8 @@ public class EntityManager {
     
     private void clearEntities() {
         npcs.values().stream()
-            .filter(npc -> npc.isDead() || !zone.isChunkLoaded((int)npc.getX(), (int)npc.getY()) ||
-                    (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME))
+            .filter(npc -> npc.isDead() || (!npc.isPersistent() && (!zone.isChunkLoaded(npc.getBlockX(), npc.getBlockY()) ||
+                    (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME))))
             .collect(Collectors.toList())
             .forEach(this::removeEntity);
     }
@@ -249,18 +249,28 @@ public class EntityManager {
         }
     }
     
+    public void spawnPersistentNpcs(Collection<NpcData> data) {
+        for(NpcData entry : data) {
+            if(entry.getType() == null) {
+                continue;
+            }
+            
+            Npc npc = new Npc(zone, entry.getType());
+            npc.setName(entry.getName());
+            spawnEntity(npc, entry.getX(), entry.getY());
+        }
+    }
+    
     public void spawnEntity(Entity entity, int x, int y) {
         spawnEntity(entity, x, y, false);
     }
     
     public void spawnEntity(Entity entity, int x, int y, boolean effect) {
-        if(zone.isChunkLoaded(x, y)) {
-            addEntity(entity);
-            entity.setPosition(x, y);
-            
-            if(effect) {
-                zone.sendMessageToChunk(new EffectMessage(x + 0.5F, y + 0.5F, "bomb-teleport", 4), zone.getChunk(x, y));
-            }
+        addEntity(entity);
+        entity.setPosition(x, y);
+        
+        if(effect && zone.isChunkLoaded(x, y)) {
+            zone.sendMessageToChunk(new EffectMessage(x + 0.5F, y + 0.5F, "bomb-teleport", 4), zone.getChunk(x, y));
         }
     }
     
@@ -332,11 +342,15 @@ public class EntityManager {
     }
     
     public int getTransientNpcCount() {
-        return (int)npcs.values().stream().filter(npc -> npc.isTransient()).count();
+        return (int)npcs.values().stream().filter(Npc::isTransient).count();
     }
     
     public Collection<Npc> getNpcs() {
         return Collections.unmodifiableCollection(npcs.values());
+    }
+    
+    public List<Npc> getPersistentNpcs() {
+        return npcs.values().stream().filter(Npc::isPersistent).collect(Collectors.toList());
     }
     
     public Player getPlayer(int entityId) {
