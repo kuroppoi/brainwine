@@ -297,7 +297,7 @@ public class Zone {
         explode(x, y, radius, cause, false, 0, null, effect);
     }
     
-    public void explode(int x, int y, float radius, Entity cause, boolean destructive, float damage, DamageType damageType, String effect) {
+    public void explode(int x, int y, float radius, Entity cause, boolean destructive, float baseDamage, DamageType damageType, String effect) {
         // Do nothing if the chunk at the target location isn't loaded
         if(!isChunkLoaded(x, y)) {
             return;
@@ -399,10 +399,9 @@ public class Zone {
             // Cast a ray from the explosion to the entity and damage it if it reaches it
             if(entity.canSee(x, y)) {
                 double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
-                entity.damage((float)(damage - distance), player);
+                float damage = (float)(baseDamage - distance);
+                entity.attack(player, null, damage, damageType); // TODO maybe track the bomb used to damage the entity
             }
-            
-            // TODO generic entity damaging is not very intuitive and needs to be worked on.
         }
     }
     

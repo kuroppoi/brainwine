@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
@@ -63,8 +64,8 @@ public class InventoryUseRequest extends PlayerRequest {
                     if(id instanceof Integer) {
                         Npc npc = player.getZone().getNpc((int)id);
                         
-                        if(npc != null && (player.isGodMode() || player.canSee(npc))) {
-                            npc.attack(player, item);
+                        if(npc != null && (player.isGodMode() || (player.canSee(npc) && !npc.wasAttackedRecently(player, Entity.ATTACK_INVINCIBLE_TIME)))) {
+                            npc.attack(player, item, item.getDamage(), item.getDamageType());
                         }
                     }
                     

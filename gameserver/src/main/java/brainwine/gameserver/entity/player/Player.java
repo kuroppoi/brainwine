@@ -29,8 +29,10 @@ import brainwine.gameserver.dialog.DialogListItem;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.EntityAttack;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
@@ -66,7 +68,6 @@ import brainwine.gameserver.server.models.EntityStatusData;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
-import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
@@ -208,7 +209,7 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     @Override
-    public void die(Player killer) {
+    public void die(Entity killer) {
         statistics.trackDeath();
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.DEAD)); // TODO killer id
         GameServer.getInstance().notify(String.format("%s died", name), NotificationType.CHAT);
@@ -238,6 +239,21 @@ public class Player extends Entity implements CommandExecutor {
     public void setHealth(float health) {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
+    }
+    
+    @Override
+    public void attack(Entity attacker, Item weapon, float baseDamage, DamageType damageType) {
+        super.attack(attacker, weapon, isGodMode() ? 0.0F : baseDamage, damageType);
+    }
+    
+    @Override
+    public float getAttackMultiplier(EntityAttack attack) {
+        return isGodMode() ? 9999.0F : 1.0F;
+    }
+    
+    @Override
+    public float getDefense(EntityAttack attack) {
+        return getNormalizedSkill(Skill.SURVIVAL) * 0.5F;
     }
     
     @Override
@@ -1088,6 +1104,10 @@ public class Player extends Entity implements CommandExecutor {
         
         // TODO account for exoskeleton bonuses
         return getSkillLevel(skill) + accessorySkillLevel;
+    }
+    
+    public float getNormalizedSkill(Skill skill) {
+        return getTotalSkillLevel(skill) / (float)MAX_SKILL_LEVEL;
     }
     
     public int getSkillLevel(Skill skill) {

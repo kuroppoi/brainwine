@@ -1,11 +1,13 @@
 package brainwine.gameserver.entity;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
@@ -23,8 +25,11 @@ public abstract class Entity {
     public static final float DEFAULT_HEALTH = 5;
     public static final float POSITION_MODIFIER = 100F;
     public static final int VELOCITY_MODIFIER = (int)POSITION_MODIFIER;
+    public static final int ATTACK_RETENTION_TIME = 2000;
+    public static final int ATTACK_INVINCIBLE_TIME = 333;
     protected final Map<String, Object> properties = new HashMap<>();
     protected final List<Player> trackers = new ArrayList<>();
+    protected final List<EntityAttack> recentAttacks = new ArrayList<>();
     protected int type;
     protected String name;
     protected float health = DEFAULT_HEALTH;
@@ -49,6 +54,8 @@ public abstract class Entity {
     }
     
     public void tick(float deltaTime) {
+        long now = System.currentTimeMillis();
+        
         // Update block position
         lastBlockX = blockX;
         lastBlockY = blockY;
@@ -59,9 +66,12 @@ public abstract class Entity {
         if(lastBlockX != blockX || lastBlockY != blockY) {
             blockPositionChanged();
         }
+        
+        // Clear expired recent attacks
+        recentAttacks.removeIf(attack -> now >= attack.getTime() + ATTACK_RETENTION_TIME);
     }
     
-    public void die(Player killer) {
+    public void die(Entity killer) {
         // Override
     }
     
@@ -75,7 +85,7 @@ public abstract class Entity {
         damage(amount, null);
     }
     
-    public void damage(float amount, Player attacker) {
+    public void damage(float amount, Entity attacker) {
         setHealth(health - amount);
         
         if(health <= 0) {
@@ -83,6 +93,24 @@ public abstract class Entity {
         }
         
         lastDamagedAt = System.currentTimeMillis();
+    }
+    
+    public void attack(Entity attacker, Item weapon, float baseDamage, DamageType damageType) {
+        EntityAttack attack = new EntityAttack(attacker, weapon, baseDamage, damageType);
+        boolean ignoreDefense = attacker != null && attacker.isPlayer() && ((Player)attacker).isGodMode();
+        float attackMultiplier = attacker != null ? Math.max(0.0F, attacker.getAttackMultiplier(attack)) : 1.0F;
+        float defense = Math.max(0.0F, 1.0F - getDefense(attack));
+        float damage = baseDamage * attackMultiplier * (ignoreDefense ? 1.0F : defense);
+        damage(damage, attacker);
+        recentAttacks.add(attack);
+    }
+    
+    public float getAttackMultiplier(EntityAttack attack) {
+        return 1.0F; // Override
+    }
+    
+    public float getDefense(EntityAttack attack) {
+        return 1.0F; // Override
     }
     
     public void blockPositionChanged() {
@@ -159,6 +187,14 @@ public abstract class Entity {
     
     public List<Player> getTrackers() {
         return trackers;
+    }
+    
+    public boolean wasAttackedRecently(Entity entity, int delay) {
+        return recentAttacks.stream().filter(attack -> attack.getAttacker() == entity && System.currentTimeMillis() < attack.getTime() + delay).findFirst().isPresent();
+    }
+    
+    public List<EntityAttack> getRecentAttacks() {
+        return Collections.unmodifiableList(recentAttacks);
     }
     
     public void setId(int id) {

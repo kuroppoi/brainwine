@@ -1,19 +1,18 @@
 package brainwine.gameserver.entity.npc.behavior.parts;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import brainwine.gameserver.entity.EntityAttack;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.behavior.Behavior;
 import brainwine.gameserver.item.DamageType;
-import brainwine.gameserver.item.Item;
-import brainwine.gameserver.util.Pair;
 
 public class ShielderBehavior extends Behavior {
     
@@ -32,11 +31,12 @@ public class ShielderBehavior extends Behavior {
     @Override
     public boolean behave() {
         long now = System.currentTimeMillis();
-        Collection<Pair<Item, Long>> recentAttacks = entity.getRecentAttacks();
+        List<EntityAttack> recentAttacks = entity.getRecentAttacks();
         
         if(!recentAttacks.isEmpty()) {
             lastAttackedAt = now;
-            DamageType type = recentAttacks.stream().findFirst().get().getFirst().getDamageType();
+            DamageType type = recentAttacks.get(recentAttacks.size() - 1).getDamageType();
+            
             if(currentShield == null && now >= shieldStart + (recharge * 1000)) {
                 if(defenses.contains(type)) {
                     setShield(type);

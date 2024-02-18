@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 
 import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.EntityAttack;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityLoot;
 import brainwine.gameserver.entity.EntityRegistry;
@@ -20,7 +21,6 @@ import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.util.MapHelper;
-import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.MetaBlock;
@@ -28,8 +28,6 @@ import brainwine.gameserver.zone.Zone;
 
 public class Npc extends Entity {
     
-    public static final int ATTACK_RETENTION_TIME = 2000;
-    public static final int ATTACK_INVINCIBLE_TIME = 333;
     private final EntityConfig config;
     private final String typeName;
     private final float maxHealth;
@@ -43,7 +41,6 @@ public class Npc extends Entity {
     private final List<String> animations;
     private final SequenceBehavior behaviorTree;
     private final Map<DamageType, Float> activeDefenses = new HashMap<>();
-    private final Map<Player, Pair<Item, Long>> recentAttacks = new HashMap<>();
     private final List<Npc> children = new ArrayList<>();
     private float speed;
     private int moveX;
@@ -124,9 +121,6 @@ public class Npc extends Entity {
         super.tick(deltaTime);
         long now = System.currentTimeMillis();
         
-        // Clear expired recent attacks
-        recentAttacks.values().removeIf(attack -> now >= attack.getLast() + ATTACK_RETENTION_TIME);
-        
         // Tick behavior when it is ready
         if(now >= lastBehavedAt + (int)(1000 / speed)) {
             lastBehavedAt = now;
@@ -148,27 +142,31 @@ public class Npc extends Entity {
     }
     
     @Override
-    public void die(Player killer) {
+    public void die(Entity killer) {
         // Grant loot & track kill
-        if(!artificial && killer != null) {
+        if(!artificial && killer != null && killer.isPlayer()) {
+            Player player = (Player)killer;
+            
             if(!isPlayerPlaced()) {
                 // Track assists
-                for(Player attacker : recentAttacks.keySet()) {
-                    if(attacker != killer) {
-                        attacker.getStatistics().trackAssist(config);
+                for(EntityAttack attack : recentAttacks) {
+                    Entity attacker = attack.getAttacker();
+                    
+                    if(attacker != killer && attacker.isPlayer()) {
+                        ((Player)attacker).getStatistics().trackAssist(config);
                     }
                 }
                 
-                killer.getStatistics().trackKill(config);
+                player.getStatistics().trackKill(config);
             }
             
-            EntityLoot loot = getRandomLoot(killer);
+            EntityLoot loot = getRandomLoot(player);
             
             if(loot != null) {
                 Item item = loot.getItem();
                 
                 if(!item.isAir()) {
-                    killer.getInventory().addItem(item, loot.getQuantity(), true);
+                    player.getInventory().addItem(item, loot.getQuantity(), true);
                 }
             }
         }
@@ -195,6 +193,20 @@ public class Npc extends Entity {
     @Override
     public float getMaxHealth() {
         return maxHealth;
+    }
+    
+    @Override
+    public float getDefense(EntityAttack attack) {
+        Entity attacker = attack.getAttacker();
+        Player player = attacker != null && attacker.isPlayer() ? (Player)attacker : null;
+        
+        // Full defense if block is mounted and is protected
+        if(isMounted() && zone.isBlockProtected(mountBlock.getX(), mountBlock.getY(), player)) {
+            return 1.0F;
+        }
+        
+        // Otherwise, calculate defense
+        return getBaseDefense(attack.getDamageType()) + activeDefenses.getOrDefault(attack.getBaseDamage(), 0F);
     }
     
     @Override
@@ -239,47 +251,12 @@ public class Npc extends Entity {
         return size;
     }
     
-    public void attack(Player attacker, Item weapon) {
-        // Prevent damage if this entity is mounted and its mount is protected
-        if(!attacker.isGodMode() && isMounted() && zone.isBlockProtected(mountBlock.getX(), mountBlock.getY(), attacker)) {
-            return;
-        }
-        
-        Pair<Item, Long> recentAttack = recentAttacks.get(attacker);
-        long now = System.currentTimeMillis();
-        
-        // Reject the attack if the player already attacked this entity recently
-        if(!attacker.isGodMode() && recentAttack != null && now < recentAttack.getLast() + ATTACK_INVINCIBLE_TIME) {
-            return;
-        }
-        
-        float damage = attacker.isGodMode() ? 9999 : calculateDamage(weapon.getDamage(), weapon.getDamageType());
-        damage(damage, attacker);
-        recentAttacks.put(attacker, new Pair<>(weapon, now));
-    }
-    
-    public float calculateDamage(float baseDamage, DamageType type) {
-        return baseDamage * (1 - getDefense(type));
-    }
-    
-    public Collection<Pair<Item, Long>> getRecentAttacks() {
-        return Collections.unmodifiableCollection(recentAttacks.values());
-    }
-    
     public void setDefense(DamageType type, float amount) {
         if(amount == 0) {
             activeDefenses.remove(type);
         } else {
             activeDefenses.put(type, amount);
         }
-    }
-    
-    public float getDefense(DamageType type) {
-        return getDefense(type, true);
-    }
-    
-    public float getDefense(DamageType type, boolean includeBaseDefense) {
-        return (includeBaseDefense ? getBaseDefense(type) : 0) + activeDefenses.getOrDefault(type, 0F);
     }
     
     public boolean isTransient() {
