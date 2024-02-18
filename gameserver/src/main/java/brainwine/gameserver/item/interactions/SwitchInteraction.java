@@ -156,7 +156,7 @@ public class SwitchInteraction implements ItemInteraction {
         }
         
         // Create explosion
-        DamageType damageType = DamageType.fromName(type);
+        DamageType damageType = type.equalsIgnoreCase("electric") ? DamageType.ENERGY : DamageType.fromName(type);
         String effect = String.format("bomb-%s", type.toLowerCase());
         zone.explode(metaBlock.getX(), metaBlock.getY(), 6, entity, false, 6, damageType, effect);
     }

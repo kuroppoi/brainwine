@@ -142,35 +142,7 @@ public class Npc extends Entity {
     }
     
     @Override
-    public void die(Entity killer) {
-        // Grant loot & track kill
-        if(!artificial && killer != null && killer.isPlayer()) {
-            Player player = (Player)killer;
-            
-            if(!isPlayerPlaced()) {
-                // Track assists
-                for(EntityAttack attack : recentAttacks) {
-                    Entity attacker = attack.getAttacker();
-                    
-                    if(attacker != killer && attacker.isPlayer()) {
-                        ((Player)attacker).getStatistics().trackAssist(config);
-                    }
-                }
-                
-                player.getStatistics().trackKill(config);
-            }
-            
-            EntityLoot loot = getRandomLoot(player);
-            
-            if(loot != null) {
-                Item item = loot.getItem();
-                
-                if(!item.isAir()) {
-                    player.getInventory().addItem(item, loot.getQuantity(), true);
-                }
-            }
-        }
-        
+    public void die(EntityAttack cause) {        
         // Remove itself from the guard block metadata if it was guarding one
         if(isGuard()) {
             MetaBlock metaBlock = zone.getMetaBlock(guardBlock.getX(), guardBlock.getY());
@@ -187,6 +159,41 @@ public class Npc extends Entity {
         // Destroy mount block if it has one
         if(isMounted()) {
             zone.updateBlock(mountBlock.getX(), mountBlock.getY(), Layer.FRONT, 0);
+        }
+        
+        // Do nothing else if cause data isn't present
+        if(cause == null) {
+            return;
+        }
+        
+        Entity killer = cause.getAttacker();
+        
+        // Grant loot & track kill
+        if(!artificial && killer != null && killer.isPlayer()) {
+            Player player = (Player)killer;
+            
+            if(!isPlayerPlaced()) {
+                // Track assists
+                for(EntityAttack recentAttack : recentAttacks) {
+                    Entity attacker = recentAttack.getAttacker();
+                    
+                    if(attacker != player && attacker.isPlayer()) {
+                        ((Player)attacker).getStatistics().trackAssist(config);
+                    }
+                }
+                
+                player.getStatistics().trackKill(config);
+            }
+            
+            EntityLoot loot = getRandomLoot(player, cause.getWeapon());
+            
+            if(loot != null) {
+                Item item = loot.getItem();
+                
+                if(!item.isAir()) {
+                    player.getInventory().addItem(item, loot.getQuantity(), true);
+                }
+            }
         }
     }
     
@@ -206,7 +213,7 @@ public class Npc extends Entity {
         }
         
         // Otherwise, calculate defense
-        return getBaseDefense(attack.getDamageType()) + activeDefenses.getOrDefault(attack.getBaseDamage(), 0F);
+        return getBaseDefense(attack.getDamageType()) + activeDefenses.getOrDefault(attack.getDamageType(), 0F);
     }
     
     @Override
@@ -263,9 +270,7 @@ public class Npc extends Entity {
         return !isGuard() && !isMounted();
     }
     
-    public EntityLoot getRandomLoot(Player awardee) {
-        Item weapon = awardee.getHeldItem();
-        
+    public EntityLoot getRandomLoot(Player awardee, Item weapon) {        
         if(isOwnedBy(awardee)) {
             return placedLoot.next();
         } else if(lootByWeapon.containsKey(weapon)) {

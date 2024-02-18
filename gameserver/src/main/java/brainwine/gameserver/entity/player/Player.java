@@ -32,7 +32,6 @@ import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityAttack;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
@@ -209,7 +208,7 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     @Override
-    public void die(Entity killer) {
+    public void die(EntityAttack cause) {
         statistics.trackDeath();
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.DEAD)); // TODO killer id
         GameServer.getInstance().notify(String.format("%s died", name), NotificationType.CHAT);
@@ -242,11 +241,6 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     @Override
-    public void attack(Entity attacker, Item weapon, float baseDamage, DamageType damageType) {
-        super.attack(attacker, weapon, isGodMode() ? 0.0F : baseDamage, damageType);
-    }
-    
-    @Override
     public float getAttackMultiplier(EntityAttack attack) {
         return isGodMode() ? 9999.0F : 1.0F;
     }
@@ -254,6 +248,11 @@ public class Player extends Entity implements CommandExecutor {
     @Override
     public float getDefense(EntityAttack attack) {
         return getNormalizedSkill(Skill.SURVIVAL) * 0.5F;
+    }
+    
+    @Override
+    public boolean isInvulnerable() {
+        return invulnerable || isGodMode();
     }
     
     @Override

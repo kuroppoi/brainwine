@@ -31,11 +31,11 @@ public class ShielderBehavior extends Behavior {
     @Override
     public boolean behave() {
         long now = System.currentTimeMillis();
-        List<EntityAttack> recentAttacks = entity.getRecentAttacks();
+        EntityAttack attack = entity.getMostRecentAttack();
         
-        if(!recentAttacks.isEmpty()) {
+        if(attack != null) {
             lastAttackedAt = now;
-            DamageType type = recentAttacks.get(recentAttacks.size() - 1).getDamageType();
+            DamageType type = attack.getDamageType();
             
             if(currentShield == null && now >= shieldStart + (recharge * 1000)) {
                 if(defenses.contains(type)) {

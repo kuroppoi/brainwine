@@ -305,9 +305,10 @@ public class Zone {
         
         sendMessageToChunk(new EffectMessage(x + 0.5f, y + 0.5f, effect, radius), getChunk(x, y));
         Player player = cause instanceof Player ? (Player)cause : null;
+        Item item = getBlock(x, y).getFrontItem();
         
         // Try to destroy the block at the source of the explosion
-        if(getBlock(x, y).getFrontItem().getFieldability() == Fieldability.FALSE) {
+        if(item.getFieldability() == Fieldability.FALSE) {
             updateBlock(x, y, Layer.FRONT, 0);
             
             if(destructive && !isBlockProtected(x, y, player)) {
@@ -400,7 +401,7 @@ public class Zone {
             if(entity.canSee(x, y)) {
                 double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
                 float damage = (float)(baseDamage - distance);
-                entity.attack(player, null, damage, damageType); // TODO maybe track the bomb used to damage the entity
+                entity.attack(cause, item, damage, damageType);
             }
         }
     }

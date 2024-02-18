@@ -47,6 +47,8 @@ public abstract class Entity {
     protected int targetY;
     protected FacingDirection direction = FacingDirection.WEST;
     protected int animation;
+    protected boolean invulnerable;
+    protected EntityAttack lastAttack; // Used for tracking in entity deaths -- do not use this for anything else!
     protected long lastDamagedAt;
     
     public Entity(Zone zone) {
@@ -71,7 +73,7 @@ public abstract class Entity {
         recentAttacks.removeIf(attack -> now >= attack.getTime() + ATTACK_RETENTION_TIME);
     }
     
-    public void die(Entity killer) {
+    public void die(EntityAttack cause) {
         // Override
     }
     
@@ -81,29 +83,13 @@ public abstract class Entity {
         }
     }
     
-    public void damage(float amount) {
-        damage(amount, null);
-    }
-    
-    public void damage(float amount, Entity attacker) {
-        // Do nothing if entity is already dead
-        if(isDead()) {
-            return;
-        }
-        
-        setHealth(health - amount);
-        
-        // Handle entity death if it died as a result of taking this damage
-        if(isDead()) {
-            die(attacker);
-        }
-        
-        lastDamagedAt = System.currentTimeMillis();
-    }
-    
     public void attack(Entity attacker, Item weapon, float baseDamage, DamageType damageType) {
-        // Ignore attack if entity is already dead
-        if(isDead()) {
+        attack(attacker, weapon, baseDamage, damageType, false);
+    }
+    
+    public void attack(Entity attacker, Item weapon, float baseDamage, DamageType damageType, boolean trueDamage) {
+        // Ignore attack if entity is dead or invulnerable
+        if(isDead() || isInvulnerable()) {
             return;
         }
         
@@ -113,12 +99,26 @@ public abstract class Entity {
         }
         
         EntityAttack attack = new EntityAttack(attacker, weapon, baseDamage, damageType);
-        boolean ignoreDefense = attacker != null && attacker.isPlayer() && ((Player)attacker).isGodMode();
+        recentAttacks.add(attack);
+        lastAttack = attack;
+        lastDamagedAt = System.currentTimeMillis();
+        
+        // Kill entity if attacker is a player in god mode
+        if(attacker != null && attacker.isPlayer() && ((Player)attacker).isGodMode()) {
+            setHealth(0.0F);
+            return;
+        }
+        
+        // Ignore multipliers if true damage should be dealt
+        if(trueDamage) {
+            setHealth(health - baseDamage);
+            return;
+        }
+        
         float attackMultiplier = attacker != null ? Math.max(0.0F, attacker.getAttackMultiplier(attack)) : 1.0F;
         float defense = Math.max(0.0F, 1.0F - getDefense(attack));
-        float damage = baseDamage * attackMultiplier * (ignoreDefense ? 1.0F : defense);
-        damage(damage, attacker);
-        recentAttacks.add(attack);
+        float damage = baseDamage * attackMultiplier * defense;
+        setHealth(health - damage);
     }
     
     public float getAttackMultiplier(EntityAttack attack) {
@@ -209,6 +209,10 @@ public abstract class Entity {
         return recentAttacks.stream().filter(attack -> attack.getAttacker() == entity && System.currentTimeMillis() < attack.getTime() + delay).findFirst().isPresent();
     }
     
+    public EntityAttack getMostRecentAttack() {
+        return recentAttacks.isEmpty() ? null : recentAttacks.get(recentAttacks.size() - 1);
+    }
+    
     public List<EntityAttack> getRecentAttacks() {
         return Collections.unmodifiableList(recentAttacks);
     }
@@ -244,6 +248,12 @@ public abstract class Entity {
     public void setHealth(float health) {
         float maxHealth = getMaxHealth();
         this.health = health < 0 ? 0 : health > maxHealth ? maxHealth : health;
+        
+        if(this.health <= 0.0F) {
+            die(lastAttack);
+        }
+        
+        lastAttack = null;
     }
     
     public float getHealth() {
@@ -311,6 +321,14 @@ public abstract class Entity {
     
     public int getAnimation() {
         return animation;
+    }
+    
+    public void setInvulnerable(boolean invulnerable) {
+        this.invulnerable = invulnerable;
+    }
+    
+    public boolean isInvulnerable() {
+        return invulnerable;
     }
     
     public void setZone(Zone zone) {
