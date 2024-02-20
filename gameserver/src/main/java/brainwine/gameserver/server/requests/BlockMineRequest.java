@@ -174,10 +174,10 @@ public class BlockMineRequest extends PlayerRequest {
             }
         }
         
-        zone.updateBlock(x, y, layer, 0, 0, player);
-        player.getStatistics().trackItemMined(item);
         Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
         int quantity = 1;
+        player.getStatistics().trackItemMined(item);
+        zone.updateBlock(x, y, layer, 0, 0, player);
         
         // Apply mining bonus if there is one
         if(item.hasMiningBonus()) {
