@@ -146,7 +146,7 @@ public class ZoneManager {
             chunksExplored[i] = unpacker.unpackBoolean();
         }
         
-        ZoneDataFile data = new ZoneDataFile(surface, sunlight, null, pendingSunlight, chunksExplored);
+        ZoneDataFile data = new ZoneDataFile(surface, sunlight, null, pendingSunlight, chunksExplored, null);
         Files.write(outputFile.toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(data)));
         return data;
     }

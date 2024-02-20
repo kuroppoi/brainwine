@@ -26,16 +26,20 @@ public class ZoneDataFile {
     @JsonSetter(nulls = Nulls.AS_EMPTY)
     private boolean[] chunksExplored = {};
     
+    @JsonSetter(nulls = Nulls.AS_EMPTY)
+    private byte[] steamData = {};
+    
     public ZoneDataFile(Zone zone) {
-        this(zone.getSurface(), zone.getSunlight(), zone.getDepths(), zone.getPendingSunlight(), zone.getChunksExplored());
+        this(zone.getSurface(), zone.getSunlight(), zone.getDepths(), zone.getPendingSunlight(), zone.getChunksExplored(), zone.getSteamData());
     }
     
-    public ZoneDataFile(int[] surface, int[] sunlight, int[] depths, Collection<Integer> pendingSunlight, boolean[] chunksExplored) {
+    public ZoneDataFile(int[] surface, int[] sunlight, int[] depths, Collection<Integer> pendingSunlight, boolean[] chunksExplored, byte[] steamData) {
         this.surface = surface;
         this.sunlight = sunlight;
         this.depths = depths;
         this.pendingSunlight = pendingSunlight;
         this.chunksExplored = chunksExplored;
+        this.steamData = steamData;
     }
     
     @JsonCreator
@@ -59,5 +63,9 @@ public class ZoneDataFile {
     
     public boolean[] getChunksExplored() {
         return chunksExplored;
+    }
+    
+    public byte[] getSteamData() {
+        return steamData;
     }
 }

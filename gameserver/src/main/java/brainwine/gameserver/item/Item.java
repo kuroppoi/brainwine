@@ -120,6 +120,9 @@ public class Item {
     @JsonProperty("entity")
     private boolean entity;
     
+    @JsonProperty("steam")
+    private boolean steam;
+    
     @JsonProperty("inventory")
     private LazyItemGetter inventoryItem;
     
@@ -388,6 +391,10 @@ public class Item {
     
     public boolean isEntity() {
         return entity;
+    }
+    
+    public boolean usesSteam() {
+        return steam;
     }
     
     public Map<Skill, Integer> getSkillBonuses() {

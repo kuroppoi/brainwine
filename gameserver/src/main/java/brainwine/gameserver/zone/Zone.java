@@ -76,6 +76,7 @@ public class Zone {
     private float temperature;
     private float acidity;
     private final ChunkManager chunkManager;
+    private final SteamManager steamManager;
     private final WeatherManager weatherManager = new WeatherManager();
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
@@ -98,6 +99,7 @@ public class Zone {
         this.sunlight = sunlight != null && sunlight.length == width ? sunlight : this.sunlight;
         this.depths = depths != null && depths.length == 3 ? depths : this.depths;
         this.chunksExplored = chunksExplored != null && chunksExplored.length == getChunkCount() ? chunksExplored : this.chunksExplored;
+        steamManager.setData(data.getSteamData());
         pendingSunlight.addAll(data.getPendingSunlight());
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
         creationDate = config.getCreationDate();
@@ -116,6 +118,7 @@ public class Zone {
         sunlight = new int[width];
         chunksExplored = new boolean[numChunksWidth * numChunksHeight];
         chunkManager = new ChunkManager(this);
+        steamManager = new SteamManager(this);
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : 1;
         Arrays.fill(surface, height);
         Arrays.fill(sunlight, height);
@@ -131,6 +134,7 @@ public class Zone {
         weatherManager.tick(deltaTime);
         entityManager.tick(deltaTime);
         liquidManager.tick(deltaTime);
+        steamManager.tick(deltaTime);
         
         // One full cycle = 1200 seconds = 20 minutes
         time += deltaTime * (1.0F / 1200.0F);
@@ -937,6 +941,7 @@ public class Zone {
             
             removeBlockTimer(x, y);
             entityManager.trySpawnBlockEntity(x, y);
+            steamManager.indexBlock(x, y, item);
             
             if(item.isWhole() && y < sunlight[x]) {
                 sunlight[x] = y;
@@ -1215,10 +1220,12 @@ public class Zone {
             for(int y = chunkY; y < chunkY + chunk.getHeight(); y++) {
                 // Spawn block-related entities
                 entityManager.trySpawnBlockEntity(x, y);
-                
-                // Index liquids
                 Block block = chunk.getBlock(x, y);
                 
+                // Index steam blocks
+                steamManager.indexBlock(x, y, block.getFrontItem());
+                
+                // Index liquids
                 if(!block.getLiquidItem().isAir() && block.getLiquidMod() > 0) {
                     liquidManager.indexLiquidBlock(x, y);
                 }
@@ -1377,6 +1384,10 @@ public class Zone {
     
     public boolean isAreaExplored(int x, int y) {
         return areCoordinatesInBounds(x, y) && chunksExplored[getChunkIndex(x, y)];
+    }
+    
+    protected byte[] getSteamData() {
+        return steamManager.getData();
     }
     
     public File getDirectory() {
