@@ -28,6 +28,7 @@ public enum Action {
     REFILL(new RefillConsumable()),
     SKILL(new SkillConsumable()),
     SKILL_RESET(new SkillResetConsumable()),
+    SMASH,
     STEALTH(new StealthConsumable()),
     TELEPORT(new TeleportConsumable()),
     

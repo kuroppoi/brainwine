@@ -95,6 +95,23 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
+        // Apply decay if block is being mined with a hatchet
+        if(item.getMod() == ModType.DECAY && player.getHeldItem().getAction() == Action.SMASH) {
+            int nextMod = Math.min(4, block.getMod(layer) + 1);
+            zone.updateBlock(x, y, layer, item, nextMod);
+            
+            // Send inventory message for v3 players
+            if(player.isV3()) {
+                Item decayItem = item.getDecayInventoryItem();
+                
+                if(!decayItem.isAir()) {
+                    player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(decayItem)));
+                }
+            }
+            
+            return;
+        }
+        
         if(metaBlock != null) {
             Map<String, Object> metadata = metaBlock.getMetadata();
             
