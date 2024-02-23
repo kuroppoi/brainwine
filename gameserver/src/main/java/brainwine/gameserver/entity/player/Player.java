@@ -338,11 +338,7 @@ public class Player extends Entity implements CommandExecutor {
         Collection<Player> peers = zone.getPlayers();
         sendMessage(new EntityStatusMessage(peers, EntityStatus.ENTERING));
         sendMessage(new EntityPositionMessage(peers));
-        
-        // TODO prepack this as well
-        for(Player peer : peers) {
-            sendMessage(new EntityItemUseMessage(peer.getId(), 0, peer.getHeldItem(), 0));
-        }
+        sendMessage(new EntityItemUseMessage(peers));
         
         // Send achievement data
         for(Achievement achievement : AchievementManager.getAchievements()) {
