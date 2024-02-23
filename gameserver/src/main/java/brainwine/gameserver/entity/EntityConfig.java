@@ -30,6 +30,7 @@ public class EntityConfig {
     private float maxHealth = Entity.DEFAULT_HEALTH;
     private float baseSpeed = 3;
     private boolean character;
+    private boolean human;
     private boolean named;
     private Vector2i size = new Vector2i(1, 1);
     private EntityGroup group = EntityGroup.NONE;
@@ -83,6 +84,10 @@ public class EntityConfig {
     
     public boolean isCharacter() {
         return character;
+    }
+    
+    public boolean isHuman() {
+        return human;
     }
     
     public boolean isNamed() {

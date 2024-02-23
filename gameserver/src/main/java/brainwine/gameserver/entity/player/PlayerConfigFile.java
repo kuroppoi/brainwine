@@ -39,8 +39,7 @@ public class PlayerConfigFile {
     private Map<String, Float> ignoredHints = new HashMap<>();
     private Map<Skill, Integer> skills = new HashMap<>();
     private Map<Item, List<Skill>> bumpedSkills = new HashMap<>();
-    private Map<ClothingSlot, Item> equippedClothing = new HashMap<>();
-    private Map<ColorSlot, String> equippedColors  = new HashMap<>();
+    private Map<String, Object> appearance = new HashMap<>();
     
     public PlayerConfigFile(Player player) {
         this.name = player.getName();
@@ -63,8 +62,7 @@ public class PlayerConfigFile {
         this.ignoredHints = player.getIgnoredHints();
         this.skills = player.getSkills();
         this.bumpedSkills = player.getBumpedSkills();
-        this.equippedClothing = player.getEquippedClothing();
-        this.equippedColors = player.getEquippedColors();
+        this.appearance = player.getAppearance();
     }
     
     @JsonCreator
@@ -163,12 +161,7 @@ public class PlayerConfigFile {
     }
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
-    public Map<ClothingSlot, Item> getEquippedClothing() {
-        return equippedClothing;
-    }
-    
-    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
-    public Map<ColorSlot, String> getEquippedColors() {
-        return equippedColors;
+    public Map<String, Object> getAppearance() {
+        return appearance;
     }
 }

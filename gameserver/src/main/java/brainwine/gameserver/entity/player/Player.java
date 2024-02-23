@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -103,8 +102,7 @@ public class Player extends Entity implements CommandExecutor {
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
     private Map<Item, List<Skill>> bumpedSkills;
-    private Map<ClothingSlot, Item> equippedClothing;
-    private Map<ColorSlot, String> equippedColors;
+    private Map<String, Object> appearance;
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
@@ -147,8 +145,7 @@ public class Player extends Entity implements CommandExecutor {
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
         this.bumpedSkills = config.getBumpedSkills();
-        this.equippedClothing = config.getEquippedClothing();
-        this.equippedColors = config.getEquippedColors();
+        this.appearance = config.getAppearance();
         health = getMaxHealth();
         inventory.setPlayer(this);
         statistics.setPlayer(this);
@@ -169,8 +166,7 @@ public class Player extends Entity implements CommandExecutor {
         this.ignoredHints = new HashMap<>();
         this.skills = new HashMap<>();
         this.bumpedSkills = new HashMap<>();
-        this.equippedClothing = new HashMap<>();
-        this.equippedColors = new HashMap<>();
+        this.appearance = Appearance.getRandomAppearance();
     }
     
     @JsonCreator
@@ -271,7 +267,8 @@ public class Player extends Entity implements CommandExecutor {
     public Map<String, Object> getStatusConfig() {
         Map<String, Object> config = super.getStatusConfig();
         config.put("id", documentId);
-        config.putAll(getAppearanceConfig());
+        config.putAll(appearance);
+        config.put("u", inventory.findJetpack().getCode());
         return config;
     }
     
@@ -1061,27 +1058,18 @@ public class Player extends Entity implements CommandExecutor {
         return Collections.unmodifiableSet(achievements);
     }
     
-    public void setClothing(ClothingSlot slot, Item item) {
-        if(!item.isClothing()) {
-            return;
-        }
-        
-        equippedClothing.put(slot, item);
-        zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
+    public void randomizeAppearance() {
+        appearance.putAll(Appearance.getRandomAppearance(this));
+        zone.sendMessage(new EntityChangeMessage(id, appearance));
     }
     
-    public Map<ClothingSlot, Item> getEquippedClothing() {
-        return Collections.unmodifiableMap(equippedClothing);
+    public void updateAppearance(Map<String, Object> appearance) {
+        this.appearance = appearance;
+        zone.sendMessage(new EntityChangeMessage(id, appearance));
     }
     
-    public void setColor(ColorSlot slot, String hex) {
-        // TODO check if the string is actually a valid hex color
-        equippedColors.put(slot, hex);
-        zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
-    }
-    
-    public Map<ColorSlot, String> getEquippedColors() {
-        return Collections.unmodifiableMap(equippedColors);
+    public Map<String, Object> getAppearance() {
+        return Collections.unmodifiableMap(appearance);
     }
     
     public void setSkillLevel(Skill skill, int level) {
@@ -1309,21 +1297,6 @@ public class Player extends Entity implements CommandExecutor {
         return connection != null && connection.isOpen();
     }
     
-    private Map<String, Object> getAppearanceConfig() {
-        Map<String, Object> appearance = new HashMap<>();
-        
-        for(Entry<ClothingSlot, Item> entry : equippedClothing.entrySet()) {
-            appearance.put(entry.getKey().getId(), entry.getValue().getCode());
-        }
-        
-        for(Entry<ColorSlot, String> entry : equippedColors.entrySet()) {
-            appearance.put(entry.getKey().getId(), entry.getValue());
-        }
-        
-        appearance.put(ClothingSlot.SUIT.getId(), inventory.findJetpack().getCode()); // Jetpack
-        return appearance;
-    }
-    
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link ConfigurationMessage}.
      */
@@ -1345,7 +1318,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("items_crafted", statistics.getTotalItemsCrafted());
         config.put("play_time", (int)(statistics.getPlayTime()));
         config.put("deaths", statistics.getDeaths());
-        config.put("appearance", getAppearanceConfig());
+        config.put("appearance", appearance);
         config.put("settings", settings);
         return config;
     }

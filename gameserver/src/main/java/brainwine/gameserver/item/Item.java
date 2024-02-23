@@ -30,6 +30,9 @@ public class Item {
     @JsonProperty("code")
     private int code;
     
+    @JsonProperty("category")
+    private String category;
+    
     @JsonProperty("title")
     private String title;
     
@@ -235,6 +238,15 @@ public class Item {
     
     public int getCode() {
         return code;
+    }
+    
+    public String getCategory() {
+        if(category != null) {
+            return category;
+        }
+        
+        int index = id.indexOf('/');
+        return index > 1 ? id.substring(0, index) : null;
     }
     
     public String getTitle() {

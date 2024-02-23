@@ -17,6 +17,7 @@ import brainwine.gameserver.entity.EntityLoot;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.npc.behavior.SequenceBehavior;
+import brainwine.gameserver.entity.player.Appearance;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
@@ -102,6 +103,11 @@ public class Npc extends Entity {
         // Generate random name
         if(config.isNamed()) {
             this.name = Naming.getRandomEntityName();
+        }
+        
+        // Generate random appearance
+        if(config.isHuman()) {
+           properties.putAll(Appearance.getRandomAppearance());
         }
         
         this.config = config;
