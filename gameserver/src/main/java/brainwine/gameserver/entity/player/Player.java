@@ -1068,7 +1068,7 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void updateAppearance(Map<String, Object> appearance) {
-        this.appearance = appearance;
+        this.appearance.putAll(appearance);
         zone.sendMessage(new EntityChangeMessage(id, appearance));
     }
     
