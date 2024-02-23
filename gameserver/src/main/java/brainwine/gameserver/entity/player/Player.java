@@ -66,6 +66,7 @@ import brainwine.gameserver.server.models.EntityStatusData;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.VersionUtils;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
@@ -320,8 +321,7 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
-        sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
-        sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
+        sendMessage(new ZoneStatusMessage(zone.getStatusConfig(this)));
         sendMessage(new PlayerPositionMessage((int)x, (int)y));
         sendMessage(new HealthMessage(health));
         
@@ -525,8 +525,12 @@ public class Player extends Entity implements CommandExecutor {
         return clientVersion;
     }
     
+    public boolean hasClientVersion(String version) {
+        return clientVersion != null && VersionUtils.isGreaterOrEqualTo(clientVersion, version);
+    }
+    
     public boolean isV3() {
-        return clientVersion != null && clientVersion.startsWith("3");
+        return hasClientVersion("3.0.0");
     }
     
     /**

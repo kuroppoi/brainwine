@@ -143,9 +143,13 @@ public class Zone {
             time -= 1.0F;
         }
         
+        // Send zone status update
         if(!getPlayers().isEmpty()) {
             if(now >= lastStatusUpdate + 4000) {
-                sendMessage(new ZoneStatusMessage(getStatusConfig()));
+                for(Player player : getPlayers()) {
+                    sendMessage(new ZoneStatusMessage(getStatusConfig(player)));
+                }
+                
                 lastStatusUpdate = now;
             }
         }
@@ -1522,16 +1526,16 @@ public class Zone {
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link ZoneStatusMessage}.
      */
-    public Map<String, Object> getStatusConfig() {
-        Map<String, Object> config = new HashMap<>();
-        config.put("w", new int[] {
-                (int)(time * 10000), 
-                (int)(temperature * 10000), 
-                (int)(weatherManager.getPrecipitation() * 10000), 
-                (int)(weatherManager.getPrecipitation() * 10000), 
-                (int)(weatherManager.getPrecipitation() * 10000), 
-                (int)(acidity * 10000)
-        });
-        return config;
+    public Object getStatusConfig(Player player) {
+        int[] status = {
+            (int)(time * 10000), 
+            (int)(temperature * 10000), 
+            (int)(weatherManager.getPrecipitation() * 10000), 
+            (int)(weatherManager.getPrecipitation() * 10000), 
+            (int)(weatherManager.getPrecipitation() * 10000), 
+            (int)(acidity * 10000)
+        };
+        
+        return player.hasClientVersion("2.1.0") ? MapHelper.map("w", status) : status;
     }
 }
