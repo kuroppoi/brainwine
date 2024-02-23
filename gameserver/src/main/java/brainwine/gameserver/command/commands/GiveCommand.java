@@ -35,7 +35,7 @@ public class GiveCommand extends Command {
             title = "of every item";
             
             for(Item item : ItemRegistry.getItems()) {
-                if(!item.isClothing() && !item.isAir()) {
+                if(!item.isAir()) {
                     items.add(item);
                 }
             }
