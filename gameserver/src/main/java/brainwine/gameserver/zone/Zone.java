@@ -402,6 +402,18 @@ public class Zone {
                         break;
                     }
                     
+                    // Metadata check
+                    MetaBlock metaBlock = getMetaBlock(positionX, positionY);
+                    
+                    if(metaBlock != null) {
+                        // Do not destroy block if it is a container with loot
+                        if(frontItem.hasUse(ItemUseType.CONTAINER) && metaBlock.hasProperty("$")) {
+                            continue;
+                        }
+                        
+                        // TODO dungeon switch check
+                    }
+                    
                     affectedBlocks.add(position);
                     processed.add(index);
                 }
