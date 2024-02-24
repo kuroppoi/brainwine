@@ -18,20 +18,20 @@ public class GenerateZoneCommand extends Command {
     
     @Override
     public void execute(CommandExecutor executor, String[] args) {
-        Biome biome = Biome.getRandomBiome();
+        Biome biome = args.length > 0 ? Biome.fromName(args[0]) : Biome.getRandomBiome();
         int width = biome == Biome.DEEP ? 1200 : 2000;
         int height = biome == Biome.DEEP ? 1000 : 600;
         int seed = (int)(Math.random() * Integer.MAX_VALUE);
         
-        if(args.length > 0 && args.length < 2) {
+        if(args.length > 1 && args.length < 3) {
             executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
         
-        if(args.length >= 2) {
+        if(args.length >= 3) {
             try {
-                width = Integer.parseInt(args[0]);
-                height = Integer.parseInt(args[1]);
+                width = Integer.parseInt(args[1]);
+                height = Integer.parseInt(args[2]);
             } catch(NumberFormatException e) {
                 executor.notify("Zone width and height must be valid numbers.", SYSTEM);
                 return;
@@ -45,10 +45,6 @@ public class GenerateZoneCommand extends Command {
                 executor.notify(String.format("Zone size must be a multiple of %s", Zone.DEFAULT_CHUNK_WIDTH), SYSTEM);
                 return;
             }
-        }
-        
-        if(args.length >= 3) {
-            biome = Biome.fromName(args[2]);
         }
         
         ZoneGenerator generator = null;
@@ -106,7 +102,7 @@ public class GenerateZoneCommand extends Command {
     
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/genzone [<width> <height>] [biome] [generator] [seed]";
+        return "/genzone [biome] [<width> <height>] [generator] [seed]";
     }
     
     @Override
