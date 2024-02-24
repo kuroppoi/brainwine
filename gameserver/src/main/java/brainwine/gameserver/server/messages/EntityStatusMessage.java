@@ -28,6 +28,10 @@ public class EntityStatusMessage extends Message {
         this(Arrays.asList(new EntityStatusData(entity, status)));
     }
     
+    public EntityStatusMessage(Entity entity, EntityStatus status, Map<String, Object> details) {
+        this(Arrays.asList(new EntityStatusData(entity, status, details)));
+    }
+    
     public EntityStatusMessage(int id, int type, String name, EntityStatus status, Map<String, Object> details) {
         this(Arrays.asList(new EntityStatusData(id, type, name, status, details)));
     }

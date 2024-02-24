@@ -18,7 +18,11 @@ public class EntityStatusData {
     private final Map<String, Object> details;
     
     public EntityStatusData(Entity entity, EntityStatus status) {
-        this(entity.getId(), entity.getType(), entity.getName(), status, entity.getStatusConfig());
+        this(entity, status, entity.getStatusConfig());
+    }
+    
+    public EntityStatusData(Entity entity, EntityStatus status, Map<String, Object> details) {
+        this(entity.getId(), entity.getType(), entity.getName(), status, details);
     }
     
     public EntityStatusData(int id, int type, String name, EntityStatus status, Map<String, Object> details) {

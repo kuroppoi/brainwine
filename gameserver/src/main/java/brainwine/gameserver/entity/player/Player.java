@@ -206,9 +206,22 @@ public class Player extends Entity implements CommandExecutor {
     
     @Override
     public void die(EntityAttack cause) {
+        Entity killer = cause == null ? null : cause.getAttacker();
+        String serverMessage = String.format("%s died.", name);
+        Map<String, Object> details = new HashMap<>();
+        
+        if(killer != null) {
+            details.put("<", killer.getId());
+            
+            if(killer.isPlayer()) {
+                // TODO track kill for killer achievement in pvp zones
+                serverMessage = String.format("%s killed %s.", killer.getName(), name);
+            }
+        }
+        
+        sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.DEAD, details));
+        GameServer.getInstance().notify(serverMessage, NotificationType.CHAT);
         statistics.trackDeath();
-        sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.DEAD)); // TODO killer id
-        GameServer.getInstance().notify(String.format("%s died", name), NotificationType.CHAT);
     }
     
     @Override
