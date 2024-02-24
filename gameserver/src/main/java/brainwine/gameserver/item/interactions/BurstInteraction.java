@@ -57,7 +57,7 @@ public class BurstInteraction implements ItemInteraction {
         boolean destructive = MapHelper.getBoolean(configMap, "destructive");
         
         // Create explosion and destroy block
-        zone.explode(x, y, range, player, destructive, damage, damageType, effect);
+        zone.explode(x, y, range, null, destructive, damage, damageType, effect);
         zone.updateBlock(x, y, layer, 0);
     }
 }
