@@ -213,11 +213,8 @@ public class Player extends Entity implements CommandExecutor {
     
     @Override
     public void notify(Object message, NotificationType type) {
-        if(type == NotificationType.SYSTEM && isV3()) {
-            sendMessage(new NotificationMessage(message, NotificationType.PEER_ACCOMPLISHMENT));
-        } else {
-            sendMessage(new NotificationMessage(message, type));
-        }
+        // TODO type SYSTEM (2) apparently plays the karma warning sound on v2 clients, so I guess we'll be mapping all of them to PEER_ACCOMPLISHMENT (11).
+        sendMessage(new NotificationMessage(message, type == NotificationType.SYSTEM ? NotificationType.PEER_ACCOMPLISHMENT : type));
     }
     
     @Override
