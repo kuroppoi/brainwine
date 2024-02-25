@@ -21,6 +21,7 @@ import brainwine.gameserver.achievements.RaiderAchievement;
 import brainwine.gameserver.achievements.ScavengingAchievement;
 import brainwine.gameserver.achievements.SidekickAchievement;
 import brainwine.gameserver.achievements.SpawnerStoppageAchievement;
+import brainwine.gameserver.achievements.TrappingAchievement;
 import brainwine.gameserver.achievements.UndertakerAchievement;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.item.Item;
@@ -34,6 +35,7 @@ public class PlayerStatistics {
     private Map<Item, Integer> discoveries = new HashMap<>();
     private Map<EntityConfig, Integer> kills = new HashMap<>();
     private Map<EntityConfig, Integer> assists = new HashMap<>();
+    private Map<EntityConfig, Integer> trappings = new HashMap<>();
     private float playTime;
     private int itemsPlaced;
     private int areasExplored;
@@ -222,6 +224,30 @@ public class PlayerStatistics {
     
     public Map<EntityConfig, Integer> getAssists() {
         return Collections.unmodifiableMap(assists);
+    }
+    
+    public void trackTrapping(EntityConfig entity) {
+        trappings.put(entity, getTrappings(entity) + 1);
+        player.addExperience(5);
+        player.updateAchievementProgress(TrappingAchievement.class);
+    }
+    
+    public void setTrappings(Map<EntityConfig, Integer> trappings) {
+        this.trappings = trappings;
+    }
+    
+    public int getTotalTrappings() {
+        return trappings.values().stream()
+                .reduce(Integer::sum)
+                .orElse(0);
+    }
+    
+    public int getTrappings(EntityConfig entity) {
+        return trappings.getOrDefault(entity, 0);
+    }
+    
+    public Map<EntityConfig, Integer> getTrappings() {
+        return Collections.unmodifiableMap(trappings);
     }
     
     public void trackPlayTime(float deltaTime) {

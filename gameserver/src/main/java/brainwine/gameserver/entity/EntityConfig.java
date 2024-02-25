@@ -32,6 +32,8 @@ public class EntityConfig {
     private boolean character;
     private boolean human;
     private boolean named;
+    private boolean trappable;
+    private Item trappablePetItem;
     private Vector2i size = new Vector2i(1, 1);
     private EntityGroup group = EntityGroup.NONE;
     private WeightedMap<EntityLoot> loot = new WeightedMap<>();
@@ -92,6 +94,18 @@ public class EntityConfig {
     
     public boolean isNamed() {
         return named;
+    }
+    
+    public boolean isTrappable() {
+        return trappable;
+    }
+    
+    public boolean hasTrappablePetItem() {
+        return trappablePetItem != null && !trappablePetItem.isAir();
+    }
+    
+    public Item getTrappablePetItem() {
+        return trappablePetItem;
     }
     
     @JsonSetter(nulls = Nulls.SKIP)

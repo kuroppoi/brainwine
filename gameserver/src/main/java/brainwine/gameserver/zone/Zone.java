@@ -477,6 +477,10 @@ public class Zone {
         }
     }
     
+    public boolean isBlockWhole(int x, int y) {
+        return areCoordinatesInBounds(x, y) && getBlock(x, y).getFrontItem().isWhole();
+    }
+    
     public boolean isBlockEarthy(int x, int y) {
         return areCoordinatesInBounds(x, y) && getBlock(x, y).getFrontItem().isEarthy();
     }

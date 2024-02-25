@@ -11,6 +11,7 @@ import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemGroup;
+import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.server.PlayerRequest;
@@ -118,15 +119,63 @@ public class BlockPlaceRequest extends PlayerRequest {
             processCustomPlace(zone, player);
         }
         
-        // Process burial if item placed is a gravestone
+        // Misc processing
         if(item.getGroup() == ItemGroup.GRAVESTONE) {
             processBurial(zone, player);
+        } else if(item.getGroup() == ItemGroup.CAGE) {
+            processTrapping(zone, player);
         }
+    }
+    
+    private void processTrapping(Zone zone, Player player) {
+        // Check bounds
+        if(x <= 0 || x + 1 >= zone.getWidth() || y <= 0 || y + 1 >= zone.getHeight()) {
+            return;
+        }
+        
+        // Do nothing if cage is not surrounded by whole blocks
+        if(!zone.isBlockWhole(x - 1, y - 1) || !zone.isBlockWhole(x, y - 1) || !zone.isBlockWhole(x + 1, y - 1) || !zone.isBlockWhole(x - 1, y) || !zone.isBlockWhole(x + 1, y)
+                || !zone.isBlockWhole(x - 1, y + 1) || !zone.isBlockWhole(x, y + 1) || !zone.isBlockWhole(x + 1, y + 1)) {
+            return;
+        }
+        
+        // Find random trappable entity at this location
+        // TODO we have to do an isDead() check here because dead NPCs aren't always cleared immediately
+        Npc entity = zone.getNpcs().stream()
+                .filter(npc -> !npc.isDead() && !npc.isArtificial() && npc.getBlockX() == x && npc.getBlockY() == y && npc.getConfig().isTrappable())
+                .findFirst().orElse(null);
+        
+        // Do nothing if no eligible entity was found
+        if(entity == null) {
+            return;
+        }
+        
+        EntityConfig config = entity.getConfig();
+        
+        // Try to turn entity into a pet cage
+        if(item.hasUse(ItemUseType.PET)) {
+            // Don't waste it if entity has no pet variant
+            if(!config.hasTrappablePetItem()) {
+                return;
+            }
+            
+            entity.setHealth(0.0F);
+            zone.updateBlock(x, y, layer, 0);
+            player.getInventory().addItem(config.getTrappablePetItem(), true);
+            player.getStatistics().trackTrapping(config);
+            return;
+        }
+        
+        // Otherwise, kill the entity and place some fur
+        // TODO v2 stores the quantity in the mod of "piled" items, but this functionality is not implemented here at all!
+        entity.attack(player, item, entity.getHealth(), DamageType.ACID, true);
+        zone.updateBlock(x, y, Layer.FRONT, "ground/fur");
+        player.getStatistics().trackTrapping(config);
     }
     
     private void processBurial(Zone zone, Player player) {
         // Check bounds
-        if(x <= 0 || x + 2 > zone.getWidth() || y + 2 > zone.getHeight()) {
+        if(x <= 0 || x + 2 >= zone.getWidth() || y + 2 >= zone.getHeight()) {
             return;
         }
         

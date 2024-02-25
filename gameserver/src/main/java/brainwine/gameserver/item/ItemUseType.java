@@ -33,6 +33,7 @@ public enum ItemUseType {
     FLY,
     MULTI,
     NOTE(new NoteInteraction()),
+    PET,
     PLENTY,
     PROTECTED,
     PUBLIC,
