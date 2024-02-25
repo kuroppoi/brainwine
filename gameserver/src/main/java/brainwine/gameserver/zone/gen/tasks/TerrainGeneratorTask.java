@@ -33,7 +33,7 @@ public class TerrainGeneratorTask implements GeneratorTask {
     public void generate(GeneratorContext ctx) {
         int width = ctx.getWidth();
         int height = ctx.getHeight();
-        int surfaceLevel = height < 600 ? height / 3 : 200;
+        int surfaceLevel = type == TerrainType.ASTEROIDS ? (height < 600 ? height / 6 : 100) : (height < 600 ? height / 3 : 200);
         int lowestSurfaceLevel = 0;
         
         // Determine surface first, then start placing blocks.
