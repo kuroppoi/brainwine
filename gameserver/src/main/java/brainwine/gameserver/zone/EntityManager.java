@@ -260,6 +260,22 @@ public class EntityManager {
         }
     }
     
+    public Npc spawnEntity(String type, int x, int y) {
+        return spawnEntity(type, x, y, false);
+    }
+    
+    public Npc spawnEntity(String type, int x, int y, boolean effect) {
+        EntityConfig config = EntityRegistry.getEntityConfig(type);
+        
+        if(config == null) {
+            return null;
+        }
+        
+        Npc entity = new Npc(zone, config);
+        spawnEntity(entity, x, y, effect);
+        return entity;
+    }
+    
     public void spawnEntity(Entity entity, int x, int y) {
         spawnEntity(entity, x, y, false);
     }

@@ -477,6 +477,10 @@ public class Zone {
         }
     }
     
+    public boolean isBlockEarthy(int x, int y) {
+        return areCoordinatesInBounds(x, y) && getBlock(x, y).getFrontItem().isEarthy();
+    }
+    
     public boolean isBlockNatural(int x, int y) {
         return areCoordinatesInBounds(x, y) && getBlock(x, y).isNatural();
     }
@@ -1140,6 +1144,14 @@ public class Zone {
         entityManager.spawnPersistentNpcs(data);
     }
     
+    public Npc spawnEntity(String type, int x, int y) {
+        return entityManager.spawnEntity(type, x, y);
+    }
+    
+    public Npc spawnEntity(String type, int x, int y, boolean effect) {
+        return entityManager.spawnEntity(type, x, y, effect);
+    }
+    
     public void spawnEntity(Entity entity, int x, int y) {
         entityManager.spawnEntity(entity, x, y);
     }
@@ -1303,6 +1315,10 @@ public class Zone {
     
     public WeatherManager getWeatherManager() {
         return weatherManager;
+    }
+    
+    public boolean isUnderground(int x, int y) {
+        return areCoordinatesInBounds(x, y) && y >= surface[x];
     }
     
     public void setSurface(int x, int surface) {

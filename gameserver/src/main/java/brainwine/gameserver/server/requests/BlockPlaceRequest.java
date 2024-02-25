@@ -10,6 +10,7 @@ import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemGroup;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.server.PlayerRequest;
@@ -116,6 +117,56 @@ public class BlockPlaceRequest extends PlayerRequest {
         if(item.hasCustomPlace()) {
             processCustomPlace(zone, player);
         }
+        
+        // Process burial if item placed is a gravestone
+        if(item.getGroup() == ItemGroup.GRAVESTONE) {
+            processBurial(zone, player);
+        }
+    }
+    
+    private void processBurial(Zone zone, Player player) {
+        // Check bounds
+        if(x <= 0 || x + 2 > zone.getWidth() || y + 2 > zone.getHeight()) {
+            return;
+        }
+        
+        // Do nothing if there is no skeleton underneath the gravestone
+        if(!zone.getBlock(x, y + 1).getFrontItem().hasId("rubble/skeleton")) {
+            return;
+        }
+        
+        // Do nothing if the skeleton is obstructed
+        if(zone.isBlockOccupied(x + 1, y + 1, Layer.FRONT)) {
+            return;
+        }
+        
+        // Do nothing if the skeleton isn't underground
+        if(!zone.isUnderground(x, y + 1) || !zone.isUnderground(x + 1, y + 1)) {
+            return;
+        }
+        
+        // Do nothing if the gravestone isn't above ground
+        if(zone.isUnderground(x, y) || zone.isUnderground(x + 1, y)) {
+            return;
+        }
+        
+        // Do nothing if the skeleton isn't surrounded by earth
+        if(!zone.isBlockEarthy(x - 1, y + 1) || !zone.isBlockEarthy(x + 2, y + 1) || !zone.isBlockEarthy(x, y + 2) || !zone.isBlockEarthy(x + 1, y + 2)) {
+            return;
+        }
+        
+        // Everything checks out -- fill the grave!
+        zone.updateBlock(x, y + 1, Layer.FRONT, "ground/earth");
+        zone.updateBlock(x + 1, y + 1, Layer.FRONT, "ground/earth");
+        zone.spawnEffect(x + 1.0F, y + 0.5F, "expiate", 20);
+        zone.spawnEffect(x + 1.0F, y + 0.5F, "sparkle up", 20);
+        
+        // ~33% chance to spawn a ghost
+        if(Math.random() < 0.334) {
+            zone.spawnEntity("ghost", x + 1, y);
+        }
+        
+        player.getStatistics().trackUndertaking();
     }
     
     private void createBlockTimer(Zone zone, Player player) {
