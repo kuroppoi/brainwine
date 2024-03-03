@@ -100,12 +100,13 @@ public class ChunkManager {
                 if(chunksFileV2.exists()) {
                     logger.info(SERVER_MARKER, "Updating chunk data for zone {} ...", zone.getDocumentId());
                     int chunkCount = zone.getChunkCount();
+                    long now = System.currentTimeMillis();
                     
-                    try(DataInputStream inputStream = new DataInputStream(new FileInputStream(chunksFileV2))) {
-                        long now = System.currentTimeMillis();
-                        
+                    try(DataInputStream inputStream = new DataInputStream(new FileInputStream(chunksFileV2))) {                        
                         for(int i = 0; i < chunkCount; i++) {
-                            byte[] chunkBytes = inputStream.readNBytes(inputStream.readShort());
+                            // Read chunk data
+                            byte[] chunkBytes = new byte[inputStream.readShort()];
+                            inputStream.read(chunkBytes);
                             inputStream.skip(DEFAULT_CHUNK_ALLOC_SIZE - chunkBytes.length - 2); // Skip reserved chunk space
                             
                             // Write chunk header
