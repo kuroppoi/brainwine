@@ -16,6 +16,7 @@ public class Chunk {
     private final int width;
     private final int height;
     private final Block[] blocks;
+    private long saveTime;
     private boolean modified;
     
     @ConstructorProperties({"x", "y", "width", "height", "blocks"})
@@ -82,5 +83,14 @@ public class Chunk {
     
     public Block[] getBlocks() {
         return blocks;
+    }
+    
+    public void setSaveTime(long saveTime) {
+        this.saveTime = saveTime;
+    }
+    
+    @JsonIgnore
+    public long getSaveTime() {
+        return saveTime;
     }
 }

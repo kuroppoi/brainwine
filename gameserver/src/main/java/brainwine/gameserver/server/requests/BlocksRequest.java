@@ -47,6 +47,13 @@ public class BlocksRequest extends PlayerRequest {
             }
             
             Chunk chunk = zone.getChunk(index);
+            
+            // Kick player if chunk is null (load failure)
+            if(chunk == null) {
+                player.kick("Chunk load failure.");
+                return;
+            }
+            
             chunks.add(chunk);
             metaBlocks.addAll(zone.getLocalMetaBlocksInChunk(index));
             player.addActiveChunk(index);
