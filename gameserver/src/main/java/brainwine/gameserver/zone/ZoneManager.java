@@ -38,6 +38,8 @@ public class ZoneManager {
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
+    int generateZoneAttemptCounter = 0;
+    boolean generatingZone = false;
         
     public ZoneManager() {
         logger.info(SERVER_MARKER, "Loading zone data ...");
@@ -72,6 +74,23 @@ public class ZoneManager {
     public void tick(float deltaTime) {
         for(Zone zone : getZones()) {
             zone.tick(deltaTime);
+        }
+
+        if (++generateZoneAttemptCounter == 20) {
+
+            if (shouldGenerateUnexploredZone() && !generatingZone) {
+                generatingZone = true;
+                Biome biome = Biome.getRandomBiome();
+                ZoneGenerator generator = ZoneGenerator.getZoneGenerator(biome);
+                int width = biome == Biome.DEEP ? 1200 : 2000;
+                int height = biome == Biome.DEEP ? 1000 : 600;
+                int seed = (int)(Math.random() * Integer.MAX_VALUE);
+                generator.generateZoneAsync(biome, width, height, seed, zone -> {
+                    this.addZone(zone);
+                    generatingZone = false;
+                });
+            }
+            generateZoneAttemptCounter = 0;
         }
     }
     
@@ -190,6 +209,14 @@ public class ZoneManager {
         
         zones.put(id, zone);
         zonesByName.put(name.toLowerCase(), zone);
+    }
+
+    /**Should the game create a new world because all the worlds are established?
+     *
+     * @return true iff the game should create a new world at next opportunity
+     */
+    public boolean shouldGenerateUnexploredZone() {
+        return getZones().stream().allMatch(zone -> zone.getExplorationProgress() >= 0.4);
     }
     
     public Zone getZone(String id) {

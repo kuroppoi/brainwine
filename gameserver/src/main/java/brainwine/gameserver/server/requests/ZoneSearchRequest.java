@@ -71,10 +71,10 @@ public class ZoneSearchRequest extends PlayerRequest {
             zones.addAll(manager.searchZones(zone -> zone.getBiome() == Biome.SPACE));
             break;
         case "Unexplored":
-            zones.addAll(manager.searchZones(zone -> zone.getExplorationProgress() < 0.7, (a, b) -> Float.compare(a.getExplorationProgress(), b.getExplorationProgress())));
+            zones.addAll(manager.searchZones(Zone::isUnexplored, (a, b) -> Float.compare(a.getExplorationProgress(), b.getExplorationProgress())));
             break;
         case "Popular":
-            zones.addAll(manager.searchZones(zone -> zone.getPlayers().size() > 0, (a, b) -> Integer.compare(b.getPlayers().size(), a.getPlayers().size())));
+            zones.addAll(manager.searchZones(Zone::isPopular, (a, b) -> Integer.compare(b.getPlayers().size(), a.getPlayers().size())));
             break;
         default:
             zones.addAll(manager.searchZones(zone -> zone.getName().toLowerCase().contains(type.toLowerCase())));
