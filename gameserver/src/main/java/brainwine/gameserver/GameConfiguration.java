@@ -24,7 +24,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 
-import brainwine.gameserver.command.CommandManager;
+import brainwine.gameserver.commands.CommandManager;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Item;

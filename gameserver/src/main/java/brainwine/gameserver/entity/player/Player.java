@@ -22,7 +22,7 @@ import brainwine.gameserver.Timer;
 import brainwine.gameserver.achievements.Achievement;
 import brainwine.gameserver.achievements.AchievementManager;
 import brainwine.gameserver.achievements.JourneymanAchievement;
-import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.commands.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogListItem;
 import brainwine.gameserver.dialog.DialogSection;
