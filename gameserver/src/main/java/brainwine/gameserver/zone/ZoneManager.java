@@ -65,7 +65,7 @@ public class ZoneManager {
             generator = ZoneGenerator.getDefaultZoneGenerator();
         }
         
-        Zone zone = generator.generateZone(Biome.PLAIN, 2000, 600);
+        Zone zone = generator.generateZone(Biome.PLAIN);
         addZone(zone);
     }
     

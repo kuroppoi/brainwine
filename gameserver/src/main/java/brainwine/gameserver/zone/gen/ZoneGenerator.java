@@ -122,7 +122,7 @@ public class ZoneGenerator {
     }
     
     public Zone generateZone(Biome biome) {
-        return generateZone(biome, 2000, 600);
+        return generateZone(biome, biome == Biome.DEEP ? 1200 : 2000, biome == Biome.DEEP ? 1000 : 600);
     }
     
     public Zone generateZone(Biome biome, int width, int height) {
@@ -165,7 +165,7 @@ public class ZoneGenerator {
     }
     
     public void generateZoneAsync(Biome biome, Consumer<Zone> callback) {
-        generateZoneAsync(biome, 2000, 600, callback);
+        generateZoneAsync(biome, biome == Biome.DEEP ? 1200 : 2000, biome == Biome.DEEP ? 1000 : 600, callback);
     }
     
     public void generateZoneAsync(Biome biome, int width, int height, Consumer<Zone> callback) {
