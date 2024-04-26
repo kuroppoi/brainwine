@@ -1,13 +1,9 @@
 package brainwine.gameserver.server.requests;
 
-import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.server.PlayerRequest;
-import brainwine.gameserver.util.MapHelper;
-import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
 
 @RequestInfo(id = 24)
@@ -28,6 +24,7 @@ public class ZoneChangeRequest extends PlayerRequest {
         }
         
         // Check survival requirement unless player has god mode enabled
+        /*
         if(!player.isGodMode()) {
             Biome biome = zone.getBiome();
             int survival = MapHelper.getInt(GameConfiguration.getBaseConfig(), String.format("biomes.%s.survival_requirement", biome.getId()));
@@ -36,7 +33,7 @@ public class ZoneChangeRequest extends PlayerRequest {
                 player.notify(String.format("Your survival skill needs to be at least level %s to enter %s worlds.", survival, biome.getId()));
                 return;
             }
-        }
+        }*/
         
         player.changeZone(zone);
     }
