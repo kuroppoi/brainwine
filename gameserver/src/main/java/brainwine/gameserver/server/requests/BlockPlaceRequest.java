@@ -258,12 +258,7 @@ public class BlockPlaceRequest extends PlayerRequest {
                 
                 // Spawn a bunch of entities
                 for(int i = 0; i < value; i++) {
-                    EntityConfig entityType = EntityRegistry.getEntityConfig(item.getEntitySpawns().next());
-                    
-                    if(entityType != null) {
-                        Npc npc = new Npc(zone, entityType);
-                        zone.spawnEntity(npc, x, y);
-                    }
+                    zone.spawnEntity(item.getEntitySpawns().next(), x, y);
                 }
             };
             break;

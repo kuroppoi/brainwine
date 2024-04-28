@@ -125,21 +125,16 @@ public class SwitchInteraction implements ItemInteraction {
             return;
         }
         
-        // Determine entity type
+        // Try to spawn entity
         String entityType = MapHelper.getString((Map<?, ?>)config, metaBlock.getStringProperty("e"));
-        EntityConfig entityConfig = EntityRegistry.getEntityConfig(entityType);
+        Npc npc = zone.spawnEntity(entityType, metaBlock.getX(), metaBlock.getY(), true);
         
-        // Do nothing if entity config doesn't exist
-        if(entityConfig == null) {
+        // Do nothing if entity failed to spawn
+        if(npc == null) {
             return;
         }
         
-        // Create & spawn the entity
-        Npc npc = new Npc(zone, entityConfig);
         npc.setArtificial(true);
-        zone.spawnEntity(npc, metaBlock.getX(), metaBlock.getY(), true);
-        
-        // Track entity id in spawner metadata
         metaBlock.setProperty("eid", npc.getId());
     }
     

@@ -166,12 +166,7 @@ public class BlockMineRequest extends PlayerRequest {
         
         // Check for entity spawns
         if(item.hasEntitySpawns() && block.getMod(layer) == 0 && !item.hasTimer() && !item.hasUse(ItemUseType.SPAWN)) {
-            EntityConfig type = EntityRegistry.getEntityConfig(item.getEntitySpawns().next());
-            
-            if(type != null) {
-                Npc npc = new Npc(zone, type);
-                zone.spawnEntity(npc, x, y);
-            }
+            zone.spawnEntity(item.getEntitySpawns().next(), x, y);
         }
         
         Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();

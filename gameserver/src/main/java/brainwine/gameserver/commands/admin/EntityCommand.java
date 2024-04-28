@@ -5,12 +5,8 @@ import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.commands.Command;
 import brainwine.gameserver.commands.CommandExecutor;
-import brainwine.gameserver.entity.EntityConfig;
-import brainwine.gameserver.entity.EntityRegistry;
-import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.zone.Zone;
 
 @CommandInfo(name = "entity", description = "Spawns an entity at your current location.")
 public class EntityCommand extends Command {
@@ -23,21 +19,17 @@ public class EntityCommand extends Command {
         }
         
         Player player = (Player)executor;
-        String name = args[0];
-        EntityConfig config = EntityRegistry.getEntityConfig(name);
+        String type = args[0];
         
-        if(config == null) {
-            executor.notify(String.format("Entity with name '%s' does not exist.", name), NotificationType.SYSTEM);
+        if(player.getZone().spawnEntity(type, player.getBlockX(), player.getBlockY(), true) == null) {
+            executor.notify(String.format("Entity type '%s' does not exist.", type), NotificationType.SYSTEM);
             return;
         }
-        
-        Zone zone = player.getZone();
-        zone.spawnEntity(new Npc(zone, config), (int)player.getX(), (int)player.getY(), true);
     }
     
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/entity <name>";
+        return "/entity <type>";
     }
     
     @Override

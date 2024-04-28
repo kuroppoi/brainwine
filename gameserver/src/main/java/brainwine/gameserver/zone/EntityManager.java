@@ -209,12 +209,10 @@ public class EntityManager {
                 List<String> guardians = MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList());
                 
                 for(String guardian : guardians) {
-                    EntityConfig config = EntityRegistry.getEntityConfig(guardian);
+                    Npc entity = spawnEntity(guardian, x, y);
                     
-                    if(config != null) {
-                        Npc entity = new Npc(zone, config);
+                    if(entity != null) {
                         entity.setGuardBlock(x, y);
-                        spawnEntity(entity, x, y);
                     }
                 }
             }
@@ -230,10 +228,9 @@ public class EntityManager {
         
         // Check for mounted entity (turrets & geysers)
         if(item.isEntity()) {
-            EntityConfig config = EntityRegistry.getEntityConfig(item.getId());
+            Npc entity = spawnEntity(item.getId(), x, y);
             
-            if(config != null) {
-                Npc entity = new Npc(zone, config);
+            if(entity != null) {
                 MetaBlock metaBlock = zone.getMetaBlock(x, y);
                 
                 // Set owner entity if it has one
@@ -242,7 +239,6 @@ public class EntityManager {
                 }
                 
                 entity.setMountBlock(x, y);
-                spawnEntity(entity, x, y);
                 mountedNpcs.put(index, entity);
             }
         }

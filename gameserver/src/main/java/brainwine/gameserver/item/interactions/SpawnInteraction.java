@@ -1,9 +1,6 @@
 package brainwine.gameserver.item.interactions;
 
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.EntityConfig;
-import brainwine.gameserver.entity.EntityRegistry;
-import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.zone.MetaBlock;
@@ -22,18 +19,9 @@ public class SpawnInteraction implements ItemInteraction {
             return;
         }
         
-        EntityConfig entityConfig = EntityRegistry.getEntityConfig(item.getEntitySpawns().next());
-        
-        // Do nothing if type is invalid
-        if(entityConfig == null) {
-            return;
+        // Try to spawn the entity and update block mod
+        if(zone.spawnEntity(item.getEntitySpawns().next(), x, y) != null) {
+            zone.updateBlock(x, y, layer, item, 1);
         }
-        
-        // Spawn the entity
-        Npc npc = new Npc(zone, entityConfig);
-        zone.spawnEntity(npc, x, y);
-        
-        // Update block mod
-        zone.updateBlock(x, y, layer, item, 1);
     }
 }
