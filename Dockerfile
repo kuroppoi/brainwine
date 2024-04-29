@@ -16,7 +16,7 @@ COPY --from=builder /src/build/libs /app
 ARG GATEWAY_PORT=5001
 ARG SERVER_PORT=5002
 ARG PORTAL_PORT=5003
-ENV PORT $GATEWAY_PORT $SERVER_PORT $PORTAL_PORT
+EXPOSE $GATEWAY_PORT $SERVER_PORT $PORTAL_PORT
 CMD ["sh", "-c", "java -jar /app/brainwine.jar"]
 
 LABEL org.opencontainers.image.title="Brainwine"
