@@ -33,6 +33,32 @@ and run `gradlew dist` in the root directory of the repository.\
 After the build has finished, the output jar will be located in `build/libs`.\
 You may then start the server through the gui, or start it directly by running the jar with the `disablegui` flag.
 
+#### Using docker
+
+To host brainwine using a docker you first need to build the image. On your server run the following:
+
+```sh
+git clone https://github.com/kuroppoi/brainwine && cd brainwine
+docker buildx build -t brainwine:latest .
+```
+
+If you want to change the default ports exposed by the image use the `--build-arg` flag (e.g. `--build-arg="GATEWAY_PORT=3000"`).
+
+
+Now run the image in a container:
+
+```sh
+docker run --name "brainwine" --volume $PWD:/data brainwine:latest
+```
+
+If you want to use docker compose run this instead:
+
+```sh
+docker compose up
+```
+
+The server configuration files and the world data is saved in a docker volume and will accessible from `/data/` in the container. Feel free to add or remove options passed to docker or edit the compose file.
+
 #### Configurations
 
 On first-time startup, configuration files will be generated which you may modify however you like:
