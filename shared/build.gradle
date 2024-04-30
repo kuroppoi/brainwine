@@ -15,7 +15,3 @@ dependencies {
     api 'commons-validator:commons-validator:1.7'
     api 'org.apache.commons:commons-text:1.9'
 }
-
-jar {
-    archiveBaseName = 'brainwine-shared'
-}

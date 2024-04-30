@@ -13,14 +13,14 @@ import brainwine.gameserver.commands.CommandManager;
 public class ServerThread extends Thread {
     
     private static Logger logger = LogManager.getLogger();
-    private final Bootstrap bootstrap;
+    private final Main main;
     private GameServer gameServer;
     private Api api;
     private boolean running;
     
-    public ServerThread(Bootstrap bootstrap) {
+    public ServerThread(Main main) {
         super("server");
-        this.bootstrap = bootstrap;
+        this.main = main;
     }
     
     @Override
@@ -36,7 +36,7 @@ public class ServerThread extends Thread {
             
             logger.info(SERVER_MARKER, "Server has started");
             running = true;
-            bootstrap.onServerStarted();
+            main.onServerStarted();
             
             while(!gameServer.shouldStop()) {
                 tickLoop.update();
@@ -80,7 +80,7 @@ public class ServerThread extends Thread {
             logger.error(SERVER_MARKER, "An unexpected exception occured whilst shutting down", e);
         } finally {
             running = false;
-            bootstrap.onServerStopped();
+            main.onServerStopped();
         }
     }
     

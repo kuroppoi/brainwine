@@ -1,0 +1,14 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+gradlePlugin {
+    plugins {
+        distributionPlugin {
+            id = "brainwine.distribution"
+            implementationClass = "brainwine.gradle.DistributionPlugin"
+        }
+    }
+}
+
+version = '1.0.0-SNAPSHOT'
