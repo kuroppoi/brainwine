@@ -1,53 +1,49 @@
-# Brainwine
-[![build](https://github.com/kuroppoi/brainwine/actions/workflows/build.yml/badge.svg)](https://github.com/kuroppoi/brainwine/actions)
+<h1 align="center">Brainwine</h1>
+<p align="center">
+  <a href="https://github.com/kuroppoi/brainwine/actions"><img src="https://github.com/kuroppoi/brainwine/actions/workflows/build.yml/badge.svg" alt="build"/></a>
+  <a href="https://github.com/kuroppoi/brainwine/releases/latest"><img src="https://img.shields.io/github/v/release/kuroppoi/brainwine?labelColor=30373D&label=Release&logoColor=959DA5&logo=github" alt="release"/></a>
+</p>
 
-Brainwine is a Deepworld private server written in Java, made with user-friendliness and portability in mind.
-Due to the time it will take for this project to be complete (and my inconsistent working on it), brainwine has been prematurely open-sourced
-and is free for all to use.\
-Keep in mind, though, that this server is not finished yet. Expect to encounter bad code, bugs and missing features!\
-Brainwine is currently compatible with the following versions of Deepworld:
-- Steam: `v3.13.1`
+Brainwine is a Deepworld private server written in Java, designed to be portable and easy to use.\
+It's still a work in progress, so keep in mind that it's not yet feature-complete. (A to-do list can be found [here](https://github.com/kuroppoi/brainwine/projects/1).)\
+Brainwine currently supports the following versions of Deepworld:
+
+- Windows: `v3.13.1`
 - iOS: `v2.11.0.1`
 - MacOS: `v2.11.1`
 
-## Features
-A list of all planned, in-progress and finished features can be found [here.](https://github.com/kuroppoi/brainwine/projects/1)
+## Quick Local Setup
 
-## Setup
+- Install [Java 8](https://adoptium.net/temurin/releases/?package=jdk&version=8).
+- Download the [latest Brainwine release](https://github.com/kuroppoi/brainwine/releases/latest).
+- Run Brainwine, go to the server tab and start the server.
+- Go to the game tab and start the game.
+  - If this isn't available for you, download a [patching kit](https://github.com/kuroppoi/brainwine/releases/tag/patching-kits-1.0) for your platform and follow the instructions there.
+- Register a new account and play the game.
 
-### Setting up the client
-
-Before you can connect to a server, a few modifications need to be made to the Deepworld game client.\
-The exact process of this differs per platform.\
-You may download an installation package for your desired platform [here.](https://github.com/kuroppoi/brainwine/releases/tag/patching-kits-1.0)
-
-### Setting up the server
+## Building
 
 #### Prerequisites
 
-- Java 8 or newer
+- Java 8 Development Kit
 
-You can download the latest release [here.](https://github.com/kuroppoi/brainwine/releases/latest)\
-Alternatively, if you wish to build from source, clone this repository with the `--recurse-submodules` flag\
-and run `gradlew dist` in the root directory of the repository.\
-After the build has finished, the output jar will be located in `build/libs`.\
-You may then start the server through the gui, or start it directly by running the jar with the `disablegui` flag.
+```sh
+git clone --recurse-submodules https://github.com/kuroppoi/brainwine.git
+cd brainwine
+./gradlew dist
+```
 
-#### Configurations
+The output will be located in the `/build/dist` directory.
 
-On first-time startup, configuration files will be generated which you may modify however you like:
-- `api.json` Configuration file for news & API connectivity information.
-- `loottables.json` Configuration file for which loot may be obtained from containers.
-- `spawning.json` Configuration file for entity spawns per biome.
-- `generators` Folder containing configuration files for zone generators.
+## Usage
 
-## Contributions
+Execute `brainwine.jar` to start the program. Navigate to the server tab and press the button to start the server.\
+It is also possible to start the server immediately with no user interface:
 
-Disagree with how I did something? Found a potential error? See some room for improvement? Or just want to add a feature?
-Glad to hear it! Feel free to make a pull request anytime. Just make sure you follow the code style!
-And, apologies in advance for the lack of documentation. Haven't gotten around to do it yet. Sorry!
+```sh
+# This behavior is the default on platforms that do not support Java's Desktop API.
+java -jar brainwine.jar disablegui
+```
 
-## Issues
-
-Found a bug? Before posting an issue, make sure your build is up-to-date and your issue has not already been posted before.
-Provide a detailed explanation of the issue, and how to reproduce it. I'll get to it ASAP!
+To connect to a local or remote server, download a [patching kit](https://github.com/kuroppoi/brainwine/releases/tag/patching-kits-1.0) for your desired platform.\
+Alternatively, Windows users may use the program's user interface to configure the host settings and start the game.
