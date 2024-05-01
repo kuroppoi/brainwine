@@ -12,7 +12,7 @@ FROM --platform=$BUILDPLATFORM amazoncorretto:22-alpine-jdk as runner
 RUN apk update && apk upgrade
 VOLUME ["/data"]
 WORKDIR /data
-COPY --from=builder /src/build/libs /app
+COPY --from=builder /src/build/dist /app
 ARG GATEWAY_PORT=5001
 ARG SERVER_PORT=5002
 ARG PORTAL_PORT=5003
