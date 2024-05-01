@@ -38,8 +38,8 @@ public class ZoneManager {
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
-    int generateZoneAttemptCounter = 0;
-    boolean generatingZone = false;
+    private float timeSinceLastGeneration = 0.0f;
+    private boolean generatingZone = false;
         
     public ZoneManager() {
         logger.info(SERVER_MARKER, "Loading zone data ...");
@@ -76,21 +76,36 @@ public class ZoneManager {
             zone.tick(deltaTime);
         }
 
-        if (++generateZoneAttemptCounter == 20) {
+        timeSinceLastGeneration += deltaTime;
 
-            if (shouldGenerateUnexploredZone() && !generatingZone) {
-                generatingZone = true;
-                Biome biome = Biome.getRandomBiome();
-                ZoneGenerator generator = ZoneGenerator.getZoneGenerator(biome);
-                int width = biome == Biome.DEEP ? 1200 : 2000;
-                int height = biome == Biome.DEEP ? 1000 : 600;
-                int seed = (int)(Math.random() * Integer.MAX_VALUE);
-                generator.generateZoneAsync(biome, width, height, seed, zone -> {
-                    this.addZone(zone);
-                    generatingZone = false;
-                });
+        final float MIN_GENERATION_INTERVAL_SECONDS = 30.0f * 60.0f;
+        final float GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 120.0f * 60.0f;
+        final float PLAYER_COUNT_INFLUENCE = 16.0f;
+
+        if (!generatingZone && timeSinceLastGeneration > GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS) {
+            int playerCount = zones.values().stream().map(Zone::getPlayerCount).reduce(Integer::sum).get();
+            float requiredInterval = 
+                GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - (playerCount - 1) * (GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - MIN_GENERATION_INTERVAL_SECONDS) / PLAYER_COUNT_INFLUENCE;
+
+            if (timeSinceLastGeneration > requiredInterval) {
+                if (shouldGenerateUnexploredZone() && !generatingZone) {
+                    generatingZone = true;
+                    Biome biome = Biome.getRandomBiome();
+                    ZoneGenerator generator = ZoneGenerator.getZoneGenerator(biome);
+                    int width = biome == Biome.DEEP ? 1200 : 2000;
+                    int height = biome == Biome.DEEP ? 1000 : 600;
+                    int seed = (int)(Math.random() * Integer.MAX_VALUE);
+                    generator.generateZoneAsync(biome, width, height, seed, zone -> {
+                        if (zone != null) {
+                            this.addZone(zone);
+                        } else {
+                            logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");
+                        }
+                        generatingZone = false;
+                    });
+                }
+                timeSinceLastGeneration = 0.0f;
             }
-            generateZoneAttemptCounter = 0;
         }
     }
     
