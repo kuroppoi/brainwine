@@ -17,11 +17,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.DataFormatException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.msgpack.core.MessagePack;
-import org.msgpack.core.MessageUnpacker;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,66 +33,102 @@ import brainwine.gameserver.util.ZipUtils;
 
 public class ChunkManager {
 
+    public static final int FILE_SIGNATURE = 0x44574344;
+    public static final int FILE_HEADER_SIZE = 64;
+    public static final int LATEST_FILE_VERSION = 0x00000001;
+    public static final int DEFAULT_CHUNK_ALLOC_SIZE = 2048;
+    public static final int CHUNK_HEADER_SIZE = 32;
+    public static final byte[] FILE_HEADER_PADDING = new byte[FILE_HEADER_SIZE - 12];
+    public static final byte[] CHUNK_HEADER_PADDING = new byte[CHUNK_HEADER_SIZE - 12];
     private static final Logger logger = LogManager.getLogger();
-    private static final int allocSize = 2048;
     private static final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory())
             .registerModule(new SimpleModule()
                     .addDeserializer(Block.class, BlockDeserializer.INSTANCE)
                     .addSerializer(BlockSerializer.INSTANCE));
     private final Map<Integer, Chunk> chunks = new HashMap<>();
     private final Zone zone;
-    private final File blocksFile;
     private RandomAccessFile file;
-    private int dataOffset;
+    private int allocSize;
     
     public ChunkManager(Zone zone) {
         this.zone = zone;
-        blocksFile = new File(zone.getDirectory(), "blocks.dat");
-        File legacyBlocksFile = new File(zone.getDirectory(), "blocks");
+    }
+    
+    private void initialize() throws IOException, DataFormatException {
+        // Do nothing if already initialized
+        if(file != null) {
+            return;
+        }
         
-        if(!blocksFile.exists() && legacyBlocksFile.exists()) {
-            logger.info(SERVER_MARKER, "Updating blocks file for zone {} ...", zone.getDocumentId());
-            DataInputStream inputStream = null;
-            DataOutputStream outputStream = null;
-            
-            try {
-                inputStream = new DataInputStream(new FileInputStream(legacyBlocksFile));
-                outputStream = new DataOutputStream(new FileOutputStream(blocksFile));
-                int chunkCount = zone.getChunkCount();
-                
-                for(int i = 0; i < chunkCount; i++) {
-                    short length = inputStream.readShort();
-                    byte[] chunkBytes = new byte[length];
-                    inputStream.read(chunkBytes);
-                    inputStream.skipBytes(2048 - length - 2);
-                    chunkBytes = ZipUtils.inflateBytes(chunkBytes); 
-                    MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(chunkBytes);
-                    unpacker.unpackArrayHeader();
-                    int x = unpacker.unpackInt();
-                    int y = unpacker.unpackInt();
-                    int width = unpacker.unpackInt();
-                    int height = unpacker.unpackInt();
-                    Block[] blocks = new Block[unpacker.unpackArrayHeader() / 3];
-                    
-                    for(int j = 0; j < blocks.length; j++) {
-                        blocks[j] = new Block(unpacker.unpackInt(), unpacker.unpackInt(), unpacker.unpackInt());
-                    }
-                    
-                    unpacker.close();
-                    byte[] bytes = ZipUtils.deflateBytes(mapper.writeValueAsBytes(new Chunk(x, y, width, height, blocks)));
-                    outputStream.writeShort(bytes.length);
-                    outputStream.write(bytes);
-                    outputStream.write(new byte[allocSize - bytes.length - 2]);
+        File dataDirectory = zone.getDirectory();
+        File chunksFileV1 = new File(dataDirectory, "blocks"); // Legacy version (no longer supported)
+        File chunksFileV2 = new File(dataDirectory, "blocks.dat"); // Previous version
+        File chunksFile = new File(dataDirectory, "chunks.bin"); // Latest version
+        
+        // Check outdated legacy format
+        if(!chunksFileV2.exists() && chunksFileV1.exists()) {
+            throw new IOException("Chunk data is outdated. Please try to load this zone with an older server version to update it.");
+        }
+        
+        // Load or initialize header data
+        if(chunksFile.exists()) {
+            try(DataInputStream inputStream = new DataInputStream(new FileInputStream(chunksFile))) {
+                // Check file signature
+                if(inputStream.readInt() != FILE_SIGNATURE) {
+                    throw new IOException("Invalid file signature");
                 }
                 
-                inputStream.close();
-                outputStream.close();
-            } catch(Exception e) {
-                logger.error(SERVER_MARKER, "Could not update blocks file for zone {}", zone.getDocumentId(), e);
+                int fileVersion = inputStream.readInt();
+                allocSize = inputStream.readInt();
+                inputStream.skip(FILE_HEADER_PADDING.length);
+                
+                // Update chunk data if necessary
+                if(fileVersion != LATEST_FILE_VERSION) {
+                    throw new IOException("Invalid file version"); // Throw exception for now since there is only one version
+                }
             }
+        } else {
+            allocSize = DEFAULT_CHUNK_ALLOC_SIZE;
             
-            legacyBlocksFile.delete();
+            try(DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(chunksFile))) {
+                outputStream.writeInt(FILE_SIGNATURE);
+                outputStream.writeInt(LATEST_FILE_VERSION);
+                outputStream.writeInt(allocSize);
+                outputStream.write(FILE_HEADER_PADDING);
+                
+                // Update chunk data from previous version if it is present
+                if(chunksFileV2.exists()) {
+                    logger.info(SERVER_MARKER, "Updating chunk data for zone {} ...", zone.getDocumentId());
+                    int chunkCount = zone.getChunkCount();
+                    long now = System.currentTimeMillis();
+                    
+                    try(DataInputStream inputStream = new DataInputStream(new FileInputStream(chunksFileV2))) {                        
+                        for(int i = 0; i < chunkCount; i++) {
+                            // Read chunk data
+                            byte[] chunkBytes = new byte[inputStream.readShort()];
+                            inputStream.read(chunkBytes);
+                            inputStream.skip(DEFAULT_CHUNK_ALLOC_SIZE - chunkBytes.length - 2); // Skip reserved chunk space
+                            
+                            // Write chunk header
+                            outputStream.writeLong(now); // Save time
+                            outputStream.writeInt(chunkBytes.length);
+                            outputStream.write(CHUNK_HEADER_PADDING);
+                            
+                            // Write chunk data
+                            outputStream.write(chunkBytes);
+                            
+                            // Write chunk padding
+                            if(i + 1 < chunkCount) {
+                                outputStream.write(new byte[allocSize - chunkBytes.length - CHUNK_HEADER_SIZE]);
+                            }
+                        }
+                    }
+                }
+            }
         }
+        
+        // Create random access file stream
+        file = new RandomAccessFile(chunksFile, "rw");
     }
     
     protected void closeStream() {
@@ -112,10 +147,7 @@ public class ChunkManager {
         List<Chunk> inactiveChunks = new ArrayList<>();
         
         for(Chunk chunk : chunks.values()) {
-            if(chunk.isModified()) {
-                saveChunk(chunk);
-            }
-            
+            saveChunk(chunk);
             boolean active = false;
             
             for(Player player : zone.getPlayers()) {
@@ -140,35 +172,40 @@ public class ChunkManager {
         int index = zone.getChunkIndex(chunk.getX(), chunk.getY());
         
         try {
-            if(file == null) {
-                file = new RandomAccessFile(blocksFile, "rw");
+            initialize();
+            file.seek(FILE_HEADER_SIZE + index * allocSize);
+            file.writeLong(System.currentTimeMillis()); // Write save time
+            
+            // Write block data if chunk has been modified
+            if(chunk.isModified()) {
+                byte[] bytes = ZipUtils.deflateBytes(mapper.writeValueAsBytes(chunk));
+                
+                // TODO reformat entire file with bigger alloc size
+                if(bytes.length > allocSize - CHUNK_HEADER_SIZE) {
+                    throw new IOException("WARNING: bigger than alloc size: " + bytes.length);
+                }
+                
+                file.writeInt(bytes.length);
+                file.write(CHUNK_HEADER_PADDING);
+                file.write(bytes);
+                chunk.setModified(false);
             }
-            
-            byte[] bytes = ZipUtils.deflateBytes(mapper.writeValueAsBytes(chunk));
-            
-            if(bytes.length > allocSize) {
-                throw new IOException("WARNING: bigger than alloc size: " + bytes.length);
-            }
-            
-            file.seek(dataOffset + index * allocSize);
-            file.writeShort(bytes.length);
-            file.write(bytes);
-            chunk.setModified(false);
-        } catch (IOException e) {
+        } catch(Exception e) {
             logger.error(SERVER_MARKER, "Could not save chunk {} of zone {}", index, zone.getDocumentId(), e);
         }
     }
     
     private Chunk loadChunk(int index) {
         try {
-            if(file == null) {
-                file = new RandomAccessFile(blocksFile, "rw");
-            }
-            
-            file.seek(dataOffset + index * allocSize);
-            byte[] bytes = new byte[file.readShort()];
+            initialize();
+            file.seek(FILE_HEADER_SIZE + index * allocSize);
+            long saveTime = file.readLong();
+            byte[] bytes = new byte[file.readInt()];
+            file.skipBytes(CHUNK_HEADER_PADDING.length);
             file.read(bytes);
-            return mapper.readValue(ZipUtils.inflateBytes(bytes), Chunk.class);
+            Chunk chunk = mapper.readValue(ZipUtils.inflateBytes(bytes), Chunk.class);
+            chunk.setSaveTime(saveTime);
+            return chunk;
         } catch(Exception e) {
             logger.error(SERVER_MARKER, "Could not load chunk {} of zone {}", index, zone.getDocumentId(), e);
         }
@@ -237,10 +274,15 @@ public class ChunkManager {
         
         Chunk chunk = chunks.get(index);
         
+        // Load chunk if it isn't cached
         if(chunk == null) {
             chunk = loadChunk(index);
-            chunks.put(index, chunk);
-            zone.onChunkLoaded(chunk);
+            
+            // Index chunk if it was loaded successfully
+            if(chunk != null) {
+                chunks.put(index, chunk);
+                zone.onChunkLoaded(chunk);
+            }
         }
         
         return chunk;

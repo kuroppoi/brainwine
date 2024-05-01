@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
@@ -29,14 +30,14 @@ public class InventoryUseRequest extends PlayerRequest {
     @Override
     public void process(Player player) {
         // Don't do anything if the player is dead or doesn't own this item
-        if(player.isDead() || !player.getInventory().hasItem(item)) {
+        if(player.isDead() || (!item.isAir() && !player.getInventory().hasItem(item))) {
             return;
         }
         
         // Try to consume item if it is a consumable
         if(item.isConsumable()) {
             if(status == 1) {
-                player.consume(item);
+                player.consume(item, details);
             }
         } else {
             // Set current held item if applicable
@@ -45,7 +46,7 @@ public class InventoryUseRequest extends PlayerRequest {
             }
             
             // Send item use data to other players in the zone
-            player.sendMessageToPeers(new EntityItemUseMessage(player.getId(), type, item, status));
+            player.sendMessageToTrackers(new EntityItemUseMessage(player.getId(), type, item, status));
             
             // Lovely type ambiguity. Always nice.
             if(item.isWeapon() && status == 1) {
@@ -63,8 +64,8 @@ public class InventoryUseRequest extends PlayerRequest {
                     if(id instanceof Integer) {
                         Npc npc = player.getZone().getNpc((int)id);
                         
-                        if(npc != null && (player.isGodMode() || player.canSee(npc))) {
-                            npc.attack(player, item);
+                        if(npc != null && (player.isGodMode() || (player.canSee(npc) && !npc.wasAttackedRecently(player, Entity.ATTACK_INVINCIBLE_TIME)))) {
+                            npc.attack(player, item, item.getDamage(), item.getDamageType());
                         }
                     }
                     

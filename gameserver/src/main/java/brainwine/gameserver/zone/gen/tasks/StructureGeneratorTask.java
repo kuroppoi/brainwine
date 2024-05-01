@@ -152,7 +152,8 @@ public class StructureGeneratorTask implements GeneratorTask {
         Prefab spawnBuilding = spawnBuildings.next(ctx.getRandom());
         
         if(filled) {
-            int y = ctx.getHeight() / 8 + ctx.nextInt(Math.max(1, ctx.nextInt(ctx.getHeight() / 8)));
+            int min = ctx.getHeight() / 32;
+            int y = min + ctx.nextInt(Math.max(1, ctx.nextInt(min)));
             ctx.placePrefab(spawnBuilding, x, y);
         } else {
             ctx.placePrefabSurface(spawnBuilding, x);

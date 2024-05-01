@@ -24,6 +24,11 @@ public class DefaultDataFetcher implements DataFetcher {
     }
     
     @Override
+    public String fetchPlayerName(String name) {
+        throw exception;
+    }
+    
+    @Override
     public boolean verifyAuthToken(String name, String token) {
         throw exception;
     }

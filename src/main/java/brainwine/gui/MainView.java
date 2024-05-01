@@ -25,10 +25,11 @@ import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 import com.formdev.flatlaf.extras.components.FlatTabbedPane.TabAlignment;
 
-import brainwine.Bootstrap;
+import brainwine.Main;
 import brainwine.util.DesktopUtils;
 import brainwine.util.OperatingSystem;
 import brainwine.util.ProcessResult;
+import brainwine.util.ProcessUtils;
 import brainwine.util.RegistryKey;
 import brainwine.util.RegistryUtils;
 import brainwine.util.SwingUtils;
@@ -42,7 +43,7 @@ public class MainView {
     private final ServerPanel serverPanel;
     private final SettingsPanel settingsPanel;
     
-    public MainView(Bootstrap bootstrap) {
+    public MainView(Main main) {
         logger.info(GUI_MARKER, "Creating main view ...");
         
         // Panel
@@ -58,18 +59,14 @@ public class MainView {
             tabbedPane.addTab("Play Game", UIManager.getIcon("Brainwine.playIcon"), new GamePanel(this));
         }
         
-        tabbedPane.addTab("Server", UIManager.getIcon("Brainwine.serverIcon"), serverPanel = new ServerPanel(bootstrap));
+        tabbedPane.addTab("Server", UIManager.getIcon("Brainwine.serverIcon"), serverPanel = new ServerPanel(main));
         tabbedPane.addTab("Settings", UIManager.getIcon("Brainwine.settingsIcon"), settingsPanel = new SettingsPanel(this));
         panel.add(tabbedPane);
         
         // Menu
         JMenuBar menuBar = new JMenuBar();
         JMenu helpMenu = new JMenu("Help");
-        
-        if(OperatingSystem.isWindows()) {
-            helpMenu.add(SwingUtils.createAction("Clear Account Lock", this::showAccountLockPrompt));
-        }
-        
+        helpMenu.add(SwingUtils.createAction("Clear Account Lock", this::showAccountLockPrompt));
         helpMenu.add(SwingUtils.createAction("GitHub", () -> DesktopUtils.browseUrl(GITHUB_REPOSITORY_URL)));
         menuBar.add(helpMenu);
                 
@@ -82,7 +79,7 @@ public class MainView {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
-                bootstrap.closeApplication();
+                main.closeApplication();
             }
         });
         frame.setJMenuBar(menuBar);
@@ -135,12 +132,16 @@ public class MainView {
             if(clearAccountLock()) {
                 JOptionPane.showMessageDialog(frame, "Account lock removed. Register your account next time.");
             } else {
-                JOptionPane.showMessageDialog(frame, "Failed to remove account lock.", "Error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(frame, "Could not remove account lock.\nEither there is no account lock, or an error has occured.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         }
     }
     
     private boolean clearAccountLock() {
+        return OperatingSystem.isWindows() ? clearAccountLockWindows() : OperatingSystem.isMacOS() ? clearAccountLockMacOS() : false;
+    }
+    
+    private boolean clearAccountLockWindows() {
         ProcessResult queryResult = RegistryUtils.query(DEEPWORLD_PLAYERPREFS, "playerLock*");
         
         if(queryResult.wasSuccessful()) {
@@ -151,11 +152,15 @@ public class MainView {
                 ProcessResult deleteResult = RegistryUtils.delete(DEEPWORLD_PLAYERPREFS, name);
                 return deleteResult.wasSuccessful();
             } else {
-                // Might as well.
-                return true;
+                return false;
             }
         }
         
         return false;
+    }
+    
+    // A bit simpler but it should to the trick just fine.
+    private boolean clearAccountLockMacOS() {
+        return ProcessUtils.executeCommand("defaults delete com.bytebin.deepworld playerLocked").wasSuccessful();
     }
 }

@@ -32,5 +32,5 @@ jobs:
       uses: actions/upload-artifact@v3.1.1
       with:
         name: brainwine
-        path: build/libs/brainwine.jar
+        path: build/dist/brainwine.jar
         retention-days: 7

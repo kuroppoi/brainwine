@@ -5,6 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.annotations.RequestInfo;
+import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.EntityConfig;
+import brainwine.gameserver.entity.EntityRegistry;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
@@ -91,6 +95,23 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
+        // Apply decay if block is being mined with a hatchet
+        if(item.getMod() == ModType.DECAY && player.getHeldItem().getAction() == Action.SMASH) {
+            int nextMod = Math.min(4, block.getMod(layer) + 1);
+            zone.updateBlock(x, y, layer, item, nextMod);
+            
+            // Send inventory message for v3 players
+            if(player.isV3()) {
+                Item decayItem = item.getDecayInventoryItem();
+                
+                if(!decayItem.isAir()) {
+                    player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(decayItem)));
+                }
+            }
+            
+            return;
+        }
+        
         if(metaBlock != null) {
             Map<String, Object> metadata = metaBlock.getMetadata();
             
@@ -125,10 +146,33 @@ public class BlockMineRequest extends PlayerRequest {
             }
         }
         
-        zone.updateBlock(x, y, layer, 0, 0, player);
-        player.getStatistics().trackItemMined(item);
+        if(item.shouldProcessTimerOnBreak()) {
+            zone.processBlockTimer(x, y);
+        }
+        
+        // Pretty much only used for spawners
+        if(item.hasUse(ItemUseType.DESTROY)) {
+            Object config = item.getUse(ItemUseType.DESTROY);
+            
+            if(config instanceof String) {
+                String type = (String)config;
+                
+                switch(type.toLowerCase()) {
+                case "spawner": destroySpawner(zone, metaBlock); break;
+                default: break;
+                }
+            }
+        }
+        
+        // Check for entity spawns
+        if(item.hasEntitySpawns() && block.getMod(layer) == 0 && !item.hasTimer() && !item.hasUse(ItemUseType.SPAWN)) {
+            zone.spawnEntity(item.getEntitySpawns().next(), x, y);
+        }
+        
         Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
         int quantity = 1;
+        player.getStatistics().trackItemMined(item);
+        zone.updateBlock(x, y, layer, 0, 0, player);
         
         // Apply mining bonus if there is one
         if(item.hasMiningBonus()) {
@@ -148,6 +192,21 @@ public class BlockMineRequest extends PlayerRequest {
         
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem, quantity, true);
+        }
+    }
+    
+    private void destroySpawner(Zone zone, MetaBlock metaBlock) {
+        // Do nothing if spawner doesn't have an entity
+        if(!metaBlock.hasProperty("eid")) {
+            return;
+        }
+        
+        Entity entity = zone.getEntity(metaBlock.getIntProperty("eid"));
+        
+        // Kill entity if it exists
+        if(entity != null && !entity.isDead()) {
+            entity.spawnEffect("bomb-teleport", 4);
+            entity.setHealth(0);
         }
     }
     

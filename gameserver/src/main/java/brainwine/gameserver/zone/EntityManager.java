@@ -20,17 +20,16 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.entity.npc.NpcData;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
-import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.util.MapHelper;
@@ -175,8 +174,8 @@ public class EntityManager {
     
     private void clearEntities() {
         npcs.values().stream()
-            .filter(npc -> npc.isDead() || !zone.isChunkLoaded((int)npc.getX(), (int)npc.getY()) ||
-                    (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME))
+            .filter(npc -> npc.isDead() || (!npc.isPersistent() && (!zone.isChunkLoaded(npc.getBlockX(), npc.getBlockY()) ||
+                    (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME))))
             .collect(Collectors.toList())
             .forEach(this::removeEntity);
     }
@@ -210,12 +209,10 @@ public class EntityManager {
                 List<String> guardians = MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList());
                 
                 for(String guardian : guardians) {
-                    EntityConfig config = EntityRegistry.getEntityConfig(guardian);
+                    Npc entity = spawnEntity(guardian, x, y);
                     
-                    if(config != null) {
-                        Npc entity = new Npc(zone, config);
+                    if(entity != null) {
                         entity.setGuardBlock(x, y);
-                        spawnEntity(entity, x, y);
                     }
                 }
             }
@@ -231,22 +228,48 @@ public class EntityManager {
         
         // Check for mounted entity (turrets & geysers)
         if(item.isEntity()) {
-            EntityConfig config = EntityRegistry.getEntityConfig(item.getId());
+            Npc entity = spawnEntity(item.getId(), x, y);
             
-            if(config != null) {
-                Npc entity = new Npc(zone, config);
+            if(entity != null) {
                 MetaBlock metaBlock = zone.getMetaBlock(x, y);
                 
                 // Set owner entity if it has one
                 if(metaBlock != null && metaBlock.hasOwner()) {
-                    entity.setOwner(GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner()));
+                    entity.setOwner(metaBlock.getOwner());
                 }
                 
                 entity.setMountBlock(x, y);
-                spawnEntity(entity, x, y);
                 mountedNpcs.put(index, entity);
             }
         }
+    }
+    
+    public void spawnPersistentNpcs(Collection<NpcData> data) {
+        for(NpcData entry : data) {
+            if(entry.getType() == null) {
+                continue;
+            }
+            
+            Npc npc = new Npc(zone, entry.getType());
+            npc.setName(entry.getName());
+            spawnEntity(npc, entry.getX(), entry.getY());
+        }
+    }
+    
+    public Npc spawnEntity(String type, int x, int y) {
+        return spawnEntity(type, x, y, false);
+    }
+    
+    public Npc spawnEntity(String type, int x, int y, boolean effect) {
+        EntityConfig config = EntityRegistry.getEntityConfig(type);
+        
+        if(config == null) {
+            return null;
+        }
+        
+        Npc entity = new Npc(zone, config);
+        spawnEntity(entity, x, y, effect);
+        return entity;
     }
     
     public void spawnEntity(Entity entity, int x, int y) {
@@ -254,13 +277,11 @@ public class EntityManager {
     }
     
     public void spawnEntity(Entity entity, int x, int y, boolean effect) {
-        if(zone.isChunkLoaded(x, y)) {
-            addEntity(entity);
-            entity.setPosition(x, y);
-            
-            if(effect) {
-                zone.sendMessageToChunk(new EffectMessage(x + 0.5F, y + 0.5F, "bomb-teleport", 4), zone.getChunk(x, y));
-            }
+        addEntity(entity);
+        entity.setPosition(x, y);
+        
+        if(effect && zone.isChunkLoaded(x, y)) {
+            zone.spawnEffect(x + 0.5F, y + 0.5F, "bomb-teleport", 4);
         }
     }
     
@@ -332,11 +353,15 @@ public class EntityManager {
     }
     
     public int getTransientNpcCount() {
-        return (int)npcs.values().stream().filter(npc -> npc.isTransient()).count();
+        return (int)npcs.values().stream().filter(Npc::isTransient).count();
     }
     
     public Collection<Npc> getNpcs() {
         return Collections.unmodifiableCollection(npcs.values());
+    }
+    
+    public List<Npc> getPersistentNpcs() {
+        return npcs.values().stream().filter(Npc::isPersistent).collect(Collectors.toList());
     }
     
     public Player getPlayer(int entityId) {

@@ -73,10 +73,11 @@ public class DialogRequest extends PlayerRequest {
                                 "Note: Additional skills like Combat and Engineering are unlocked as you progress." : null)
                         .setInput(new DialogSelectInput()
                                 .setOptions(upgradeableSkillNames)
+                                .setMaxColumns(3)
                                 .setKey("skill")));
         
         player.showDialog(dialog, input -> {
-            if(input.length == 0) {
+            if(input.length == 0 || input[0].equals("cancel")) {
                 return;
             }
             

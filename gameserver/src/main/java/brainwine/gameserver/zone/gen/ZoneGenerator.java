@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.Naming;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.util.ResourceUtils;
 import brainwine.gameserver.zone.Biome;
@@ -25,34 +26,6 @@ import brainwine.gameserver.zone.gen.tasks.TerrainGeneratorTask;
 import brainwine.shared.JsonHelper;
 
 public class ZoneGenerator {
-    
-    // TODO Collect more names and create a name generator that's actually proper lmao
-    private static final String[] FIRST_NAMES = {
-        "Malvern", "Tralee", "Horncastle", "Old", "Westwood",
-        "Citta", "Tadley", "Mossley", "West", "East",
-        "North", "South", "Wadpen", "Githam", "Soatnust",
-        "Highworth", "Creakynip", "Upper", "Lower", "Cannock",
-        "Dovercourt", "Limerick", "Pickering", "Glumshed", "Crusthack",
-        "Osyltyr", "Aberstaple", "New", "Stroud", "Crumclum",
-        "Crumsidle", "Bankswund", "Fiddletrast", "Bournpan", "St.",
-        "Funderbost", "Bexwoddly", "Pilkingheld", "Wittlepen", "Rabbitbleaker",
-        "Griffingumby", "Guilthead", "Bigglelund", "Bunnymold", "Rosesidle",
-        "Crushthorn", "Tanlyward", "Ahncrace", "Pilkingking", "Dingstrath",
-        "Axebury", "Ginglingtap", "Ballybibby", "Shadehoven"
-    };
-    
-    private static final String[] LAST_NAMES = {
-        "Falls", "Alloa", "Glen", "Way", "Dolente",
-        "Peak", "Heights", "Creek", "Banffshire", "Chagford",
-        "Gorge", "Valley", "Catacombs", "Depths", "Mines",
-        "Crickbridge", "Guildbost", "Pits", "Vaults", "Ruins",
-        "Dell", "Keep", "Chatterdin", "Scrimmance", "Gitwick",
-        "Ridge", "Alresford", "Place", "Bridge", "Glade",
-        "Mill", "Court", "Dooftory", "Hills", "Specklewint",
-        "Grove", "Aylesbury", "Wagwouth", "Russetcumby", "Point",
-        "Canyon", "Cranwarry", "Bluff", "Passage", "Crantippy",
-        "Kerbodome", "Dale", "Cemetery"
-    };
     
     private static final Logger logger = LogManager.getLogger();
     private static final Map<String, ZoneGenerator> generators = new HashMap<>();
@@ -149,7 +122,7 @@ public class ZoneGenerator {
     }
     
     public Zone generateZone(Biome biome) {
-        return generateZone(biome, 2000, 600);
+        return generateZone(biome, biome == Biome.DEEP ? 1200 : 2000, biome == Biome.DEEP ? 1000 : 600);
     }
     
     public Zone generateZone(Biome biome, int width, int height) {
@@ -158,7 +131,7 @@ public class ZoneGenerator {
     
     public Zone generateZone(Biome biome, int width, int height, int seed) {
         String id = generateDocumentId(seed);
-        String name = getRandomName();
+        String name = Naming.getRandomZoneName();
         int retryCount = 0;
         
         while(GameServer.getInstance().getZoneManager().getZoneByName(name) != null) {
@@ -168,7 +141,7 @@ public class ZoneGenerator {
                 break;
             }
             
-            name = getRandomName();
+            name = Naming.getRandomZoneName();
             retryCount++;
         }
         
@@ -192,7 +165,7 @@ public class ZoneGenerator {
     }
     
     public void generateZoneAsync(Biome biome, Consumer<Zone> callback) {
-        generateZoneAsync(biome, 2000, 600, callback);
+        generateZoneAsync(biome, biome == Biome.DEEP ? 1200 : 2000, biome == Biome.DEEP ? 1000 : 600, callback);
     }
     
     public void generateZoneAsync(Biome biome, int width, int height, Consumer<Zone> callback) {
@@ -208,12 +181,6 @@ public class ZoneGenerator {
         long mostSigBits = (((long)seed) << 32) | (random.nextInt() & 0xFFFFFFFFL);
         long leastSigBits = random.nextLong();
         return new UUID(mostSigBits, leastSigBits).toString();
-    }
-    
-    private static String getRandomName() {
-        String firstName = FIRST_NAMES[(int)(Math.random() * FIRST_NAMES.length)];
-        String lastName = LAST_NAMES[(int)(Math.random() * LAST_NAMES.length)];
-        return firstName + " " + lastName;
     }
     
     private static int getRandomSeed() {

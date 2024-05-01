@@ -2,6 +2,7 @@ package brainwine.gameserver.zone;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -10,9 +11,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 
+/**
+ * I hate this class and everything in it.
+ */
 @JsonInclude(Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MetaBlock {
@@ -67,7 +72,17 @@ public class MetaBlock {
         return owner != null;
     }
     
-    public String getOwner() {
+    public boolean isOwnedBy(Player player) {
+        return player != null && player.getDocumentId().equals(owner);
+    }
+    
+    @JsonIgnore
+    public Player getOwner() {
+        return GameServer.getInstance().getPlayerManager().getPlayerById(owner);
+    }
+    
+    @JsonProperty("owner")
+    private String getOwnerId() {
         return owner;
     }
     
@@ -81,6 +96,60 @@ public class MetaBlock {
     
     public Item getItem() {
         return item;
+    }
+    
+    public void setProperty(String key, Object value) {
+        metadata.put(key, value);
+    }
+    
+    public void removeProperty(String key) {
+        metadata.remove(key);
+    }
+    
+    public boolean hasProperty(String key) {
+        return metadata.containsKey(key);
+    }
+    
+    public Object getProperty(String key) {
+        return metadata.get(key);
+    }
+    
+    public int getIntProperty(String key) {
+        return tryParse(key, Integer::parseInt, 0);
+    }
+        
+    public float getFloatProperty(String key) {
+        return tryParse(key, Float::parseFloat, 0.0f);
+    }
+    
+    public boolean getBooleanProperty(String key) {
+        return Boolean.parseBoolean(String.valueOf(getProperty(key)));
+    }
+    
+    public String getStringProperty(String key) {
+        Object value = metadata.get(key);
+        return value != null && value instanceof String ? (String)value : null;
+    }
+    
+    /**
+     * Generic function for parsing a number from a string.
+     */
+    private <T> T tryParse(String key, Function<String, T> parseFunction, T def) {
+        Object value = metadata.get(key);
+        
+        if(value == null) {
+            return def;
+        }
+        
+        T result = def;
+        
+        try {
+            result = parseFunction.apply(String.valueOf(value));
+        } catch(NumberFormatException e) {
+            // Discard silently
+        }
+        
+        return result;
     }
     
     public void setMetadata(Map<String, Object> metadata) {

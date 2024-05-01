@@ -3,13 +3,15 @@ package brainwine.gameserver.dialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
 import brainwine.gameserver.dialog.input.DialogInput;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+import brainwine.gameserver.util.Vector2i;
 
 @JsonInclude(Include.NON_DEFAULT)
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -20,6 +22,7 @@ public class DialogSection {
     private String text;
     private String textColor;
     private double textScale;
+    private Vector2i location;
     private DialogInput input;
     
     public DialogSection addItem(DialogListItem item) {
@@ -73,6 +76,20 @@ public class DialogSection {
     @JsonProperty("text-scale")
     public double getTextScale() {
         return textScale;
+    }
+    
+    /**
+     * v2 clients only!
+     */
+    public DialogSection setLocation(int x, int y) {
+        this.location = new Vector2i(x, y);
+        return this;
+    }
+    
+    @JsonProperty("map")
+    @JsonFormat(shape = Shape.ARRAY)
+    public Vector2i getLocation() {
+        return location;
     }
     
     public DialogSection setInput(DialogInput input) {

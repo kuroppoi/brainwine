@@ -27,20 +27,20 @@ import org.apache.logging.log4j.Level;
 import com.formdev.flatlaf.extras.components.FlatScrollPane;
 import com.formdev.flatlaf.extras.components.FlatTextField;
 
-import brainwine.Bootstrap;
+import brainwine.Main;
 import brainwine.ListenableAppender;
 import brainwine.gui.event.AutoScrollAdjustmentListener;
 
 @SuppressWarnings("serial")
 public class ServerPanel extends JPanel {
     
-    private final Bootstrap bootstrap;
+    private final Main main;
     private final JTextPane consoleOutput;
     private final FlatTextField consoleInput;
     private final JButton serverButton;
     
-    public ServerPanel(Bootstrap bootstrap) {
-        this.bootstrap = bootstrap;
+    public ServerPanel(Main main) {
+        this.main = main;
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(0, 3, 3, 3));
         
@@ -114,32 +114,32 @@ public class ServerPanel extends JPanel {
         
         if(!commandLine.isEmpty()) {
             appendConsoleOutput(String.format("> %s\n", commandLine), Color.GRAY);
-            bootstrap.executeCommand(commandLine);
+            main.executeCommand(commandLine);
             consoleInput.setText(null);
         }
     }
     
     private void toggleServer() {
-        if(bootstrap.isServerRunning()) {
+        if(main.isServerRunning()) {
             serverButton.setEnabled(false);
             consoleInput.setEditable(false);
             consoleInput.setText(null);
-            bootstrap.stopServer();
+            main.stopServer();
         } else {
             serverButton.setEnabled(false);
             consoleInput.setEditable(true);
             consoleOutput.setText(null);
-            bootstrap.startServer();
+            main.startServer();
         }
     }
     
     public void enableServerButton() {
-        if(!bootstrap.isServerRunning()) {
+        if(!main.isServerRunning()) {
             consoleInput.setEditable(false);
             consoleInput.setText(null);
         }
         
-        serverButton.setText(bootstrap.isServerRunning() ? "Stop Server" : "Start Server");
+        serverButton.setText(main.isServerRunning() ? "Stop Server" : "Start Server");
         serverButton.setEnabled(true);
     }
 }

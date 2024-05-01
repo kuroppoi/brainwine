@@ -29,6 +29,11 @@ public class EntityConfig {
     private int experienceYield;
     private float maxHealth = Entity.DEFAULT_HEALTH;
     private float baseSpeed = 3;
+    private boolean character;
+    private boolean human;
+    private boolean named;
+    private boolean trappable;
+    private Item trappablePetItem;
     private Vector2i size = new Vector2i(1, 1);
     private EntityGroup group = EntityGroup.NONE;
     private WeightedMap<EntityLoot> loot = new WeightedMap<>();
@@ -77,6 +82,30 @@ public class EntityConfig {
     @JsonProperty("speed")
     public float getBaseSpeed() {
         return baseSpeed;
+    }
+    
+    public boolean isCharacter() {
+        return character;
+    }
+    
+    public boolean isHuman() {
+        return human;
+    }
+    
+    public boolean isNamed() {
+        return named;
+    }
+    
+    public boolean isTrappable() {
+        return trappable;
+    }
+    
+    public boolean hasTrappablePetItem() {
+        return trappablePetItem != null && !trappablePetItem.isAir();
+    }
+    
+    public Item getTrappablePetItem() {
+        return trappablePetItem;
     }
     
     @JsonSetter(nulls = Nulls.SKIP)

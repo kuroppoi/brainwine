@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -19,24 +18,25 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.Timer;
 import brainwine.gameserver.achievements.Achievement;
 import brainwine.gameserver.achievements.AchievementManager;
 import brainwine.gameserver.achievements.JourneymanAchievement;
-import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.commands.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogListItem;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.EntityAttack;
 import brainwine.gameserver.entity.EntityStatus;
-import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
+import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.AchievementMessage;
@@ -66,7 +66,7 @@ import brainwine.gameserver.server.models.EntityStatusData;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
-import brainwine.gameserver.util.Vector2i;
+import brainwine.gameserver.util.VersionUtils;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
@@ -95,24 +95,30 @@ public class Player extends Entity implements CommandExecutor {
     private Inventory inventory;
     private PlayerStatistics statistics;
     private List<String> authTokens;
+    private List<NameChange> nameChanges;
     private List<PlayerRestriction> mutes;
     private List<PlayerRestriction> bans;
+    private Set<String> lootCodes;
     private Set<Achievement> achievements;
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
-    private Map<ClothingSlot, Item> equippedClothing;
-    private Map<ColorSlot, String> equippedColors;
+    private Map<Item, List<Skill>> bumpedSkills;
+    private Map<String, Object> appearance;
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
+    private final List<Timer<String>> timers = new ArrayList<>();
     private final List<Entity> trackedEntities = new ArrayList<>();
     private String clientVersion;
     private Placement lastPlacement;
     private Item heldItem = Item.AIR;
-    private Vector2i spawnPoint = new Vector2i(0, 0);
+    private int spawnX;
+    private int spawnY;
     private int teleportX;
     private int teleportY;
+    private boolean stealth;
     private boolean godMode;
+    private boolean customSpawn;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private Zone nextZone;
@@ -132,13 +138,15 @@ public class Player extends Entity implements CommandExecutor {
         this.inventory = config.getInventory();
         this.statistics = config.getStatistics();
         this.authTokens = config.getAuthTokens();
+        this.nameChanges = config.getNameChanges();
         this.mutes = config.getMutes();
         this.bans = config.getBans();
+        this.lootCodes = config.getLootCodes();
         this.achievements = config.getAchievements();
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
-        this.equippedClothing = config.getEquippedClothing();
-        this.equippedColors = config.getEquippedColors();
+        this.bumpedSkills = config.getBumpedSkills();
+        this.appearance = config.getAppearance();
         health = getMaxHealth();
         inventory.setPlayer(this);
         statistics.setPlayer(this);
@@ -151,13 +159,15 @@ public class Player extends Entity implements CommandExecutor {
         this.inventory = new Inventory(this);
         this.statistics = new PlayerStatistics(this);
         this.authTokens = new ArrayList<>();
+        this.nameChanges = new ArrayList<>();
         this.mutes = new ArrayList<>();
         this.bans = new ArrayList<>();
+        this.lootCodes = new HashSet<>();
         this.achievements = new HashSet<>();
         this.ignoredHints = new HashMap<>();
         this.skills = new HashMap<>();
-        this.equippedClothing = new HashMap<>();
-        this.equippedColors = new HashMap<>();
+        this.bumpedSkills = new HashMap<>();
+        this.appearance = Appearance.getRandomAppearance();
     }
     
     @JsonCreator
@@ -167,6 +177,7 @@ public class Player extends Entity implements CommandExecutor {
     
     @Override
     public void tick(float deltaTime) {
+        super.tick(deltaTime);
         long now = System.currentTimeMillis();
         statistics.trackPlayTime(deltaTime);
         
@@ -182,6 +193,9 @@ public class Player extends Entity implements CommandExecutor {
             heal(BASE_REGEN_AMOUNT * deltaTime);
         }
         
+        // Process timers
+        timers.removeIf(Timer::process);
+        
         // Update tracked entities
         if(now - lastTrackedEntityUpdate >= TRACKED_ENTITY_UPDATE_INTERVAL) {
             updateTrackedEntities();
@@ -191,19 +205,29 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     @Override
-    public void die(Player killer) {
+    public void die(EntityAttack cause) {
+        Entity killer = cause == null ? null : cause.getAttacker();
+        String serverMessage = String.format("%s died.", name);
+        Map<String, Object> details = new HashMap<>();
+        
+        if(killer != null) {
+            details.put("<", killer.getId());
+            
+            if(killer.isPlayer()) {
+                // TODO track kill for killer achievement in pvp zones
+                serverMessage = String.format("%s killed %s.", killer.getName(), name);
+            }
+        }
+        
+        sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.DEAD, details));
+        GameServer.getInstance().notify(serverMessage, NotificationType.CHAT);
         statistics.trackDeath();
-        sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.DEAD)); // TODO killer id
-        GameServer.getInstance().notify(String.format("%s died", name), NotificationType.CHAT);
     }
     
     @Override
     public void notify(Object message, NotificationType type) {
-        if(type == NotificationType.SYSTEM && isV3()) {
-            sendMessage(new NotificationMessage(message, NotificationType.PEER_ACCOMPLISHMENT));
-        } else {
-            sendMessage(new NotificationMessage(message, type));
-        }
+        // TODO type SYSTEM (2) apparently plays the karma warning sound on v2 clients, so I guess we'll be mapping all of them to PEER_ACCOMPLISHMENT (11).
+        sendMessage(new NotificationMessage(message, type == NotificationType.SYSTEM ? NotificationType.PEER_ACCOMPLISHMENT : type));
     }
     
     @Override
@@ -223,6 +247,30 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new HealthMessage(health));
     }
     
+    @Override
+    public float getAttackMultiplier(EntityAttack attack) {
+        return isGodMode() ? 9999.0F : 1.0F;
+    }
+    
+    @Override
+    public float getDefense(EntityAttack attack) {
+        return getNormalizedSkill(Skill.SURVIVAL) * 0.5F;
+    }
+    
+    @Override
+    public boolean isInvulnerable() {
+        return invulnerable || isGodMode();
+    }
+    
+    @Override
+    public void setProperties(Map<String, Object> properties, boolean sendMessage) {
+        super.setProperties(properties, sendMessage);
+        
+        if(sendMessage) {
+            sendMessage(new EntityChangeMessage(id, properties));
+        }
+    }
+    
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link EntityStatusMessage}.
      */
@@ -230,7 +278,8 @@ public class Player extends Entity implements CommandExecutor {
     public Map<String, Object> getStatusConfig() {
         Map<String, Object> config = super.getStatusConfig();
         config.put("id", documentId);
-        config.putAll(getAppearanceConfig());
+        config.putAll(appearance);
+        config.put("u", inventory.findJetpack().getCode());
         return config;
     }
     
@@ -238,16 +287,28 @@ public class Player extends Entity implements CommandExecutor {
      * Called by {@link Zone#addEntity(Entity)} when the player is added to it.
      */
     public void onZoneChanged() {
-        // TODO handle spawns better
+        // Set spawn location        
+        if(customSpawn) {
+            x = spawnX;
+            y = spawnY;
+        }
+        
         MetaBlock spawn = zone.getRandomSpawnBlock();
         
         if(spawn == null) {
-            x = zone.getWidth() / 2;
-            y = 2;
+            spawnX = zone.getWidth() / 2;
+            spawnY = 2;
         } else {
-            x = spawn.getX() + 1;
-            y = spawn.getY();
+            spawnX = spawn.getX() + 1;
+            spawnY = spawn.getY();
         }
+        
+        if(!customSpawn) {
+            x = spawnX;
+            y = spawnY;
+        }
+        
+        customSpawn = false;
         
         // Set skills for new players
         for(Skill skill : Skill.values()) {
@@ -269,31 +330,25 @@ public class Player extends Entity implements CommandExecutor {
             inventory.moveItemToContainer(jetpack, ContainerType.ACCESSORIES, 0);
         }
         
-        spawnPoint.setX((int)x);
-        spawnPoint.setY((int)y);
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
-        sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
-        sendMessage(new ZoneStatusMessage(zone.getStatusConfig()));
+        sendMessage(new ZoneStatusMessage(zone.getStatusConfig(this)));
         sendMessage(new PlayerPositionMessage((int)x, (int)y));
         sendMessage(new HealthMessage(health));
-        sendMessage(new InventoryMessage(inventory));
-        sendMessage(new WardrobeMessage(inventory.getWardrobe()));
-        sendMessage(new BlockMetaMessage(zone.getGlobalMetaBlocks()));
         
         // Send skill data
         for(Skill skill : skills.keySet()) {
             sendMessage(new SkillMessage(skill, skills.get(skill)));
         }
         
+        sendMessage(new InventoryMessage(inventory));
+        sendMessage(new WardrobeMessage(inventory.getWardrobe()));
+        sendMessage(new BlockMetaMessage(zone.getGlobalMetaBlocks()));
+        
         // Send peer data
         Collection<Player> peers = zone.getPlayers();
         sendMessage(new EntityStatusMessage(peers, EntityStatus.ENTERING));
         sendMessage(new EntityPositionMessage(peers));
-        
-        // TODO prepack this as well
-        for(Player peer : peers) {
-            sendMessage(new EntityItemUseMessage(peer.getId(), 0, peer.getHeldItem(), 0));
-        }
+        sendMessage(new EntityItemUseMessage(peers));
         
         // Send achievement data
         for(Achievement achievement : AchievementManager.getAchievements()) {
@@ -322,6 +377,8 @@ public class Player extends Entity implements CommandExecutor {
     
     /**
      * Called from {@link Connection} when the channel becomes inactive.
+     * 
+     * TODO Should we force process all timers on disconnect?
      */
     public void onDisconnect() {
         lastHeartbeat = 0;
@@ -393,7 +450,14 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void changeZone(Zone zone) {
+        changeZone(zone, -1, -1);
+    }
+    
+    public void changeZone(Zone zone, int x, int y) {
         nextZone = zone;
+        spawnX = x;
+        spawnY = y;
+        customSpawn = x != -1 && y != -1;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
     }
@@ -413,18 +477,29 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void handleDialogInput(int id, Object[] input) {
-        if(id == 0 || (input.length == 1 && input[0].equals("cancel"))) {
+        if(id == 0) {
             return;
         }
         
         Consumer<Object[]> handler = dialogs.remove(id);
         
         if(handler == null) {
-            notify("Sorry, the request has expired.");
+            if(!(input.length == 1 && input[0].equals("cancel"))) {
+                notify("Sorry, the request has expired.");
+            }
         } else {
             // TODO since we're dealing with user input, should we just try-catch this?
             handler.accept(input);
         }
+    }
+    
+    public void addTimer(String key, long delay, Runnable action) {
+        removeTimer(key);
+        timers.add(new Timer<>(key, delay, action));
+    }
+    
+    public void removeTimer(String key) {
+        timers.removeIf(timer -> timer.getKey().equals(key));
     }
     
     public void checkRegistration() {
@@ -456,8 +531,12 @@ public class Player extends Entity implements CommandExecutor {
         return clientVersion;
     }
     
+    public boolean hasClientVersion(String version) {
+        return clientVersion != null && VersionUtils.isGreaterOrEqualTo(clientVersion, version);
+    }
+    
     public boolean isV3() {
-        return clientVersion != null && clientVersion.startsWith("3");
+        return hasClientVersion("3.0.0");
     }
     
     /**
@@ -472,11 +551,9 @@ public class Player extends Entity implements CommandExecutor {
             setHealth(getMaxHealth());
         }
         
-        int x = spawnPoint.getX();
-        int y = spawnPoint.getY();
-        sendMessage(new PlayerPositionMessage(x, y));
+        sendMessage(new PlayerPositionMessage(spawnX, spawnY));
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.REVIVED));
-        zone.sendMessage(new EffectMessage(x, y, "spawn", 20));
+        zone.spawnEffect(spawnX, spawnY, "spawn", 20);
     }
     
     /**
@@ -491,7 +568,7 @@ public class Player extends Entity implements CommandExecutor {
         teleportY = y;
         sendMessage(new TeleportMessage(x, y));
         sendMessage(new PlayerPositionMessage(x, y));
-        zone.sendMessage(new EffectMessage(x, y, "teleport", 20));
+        zone.spawnEffect(x, y, "teleport", 20);
     }
     
     public int getTeleportX() {
@@ -500,6 +577,15 @@ public class Player extends Entity implements CommandExecutor {
     
     public int getTeleportY() {
         return teleportY;
+    }
+    
+    public void setStealth(boolean stealth) {
+        this.stealth = stealth;
+        setProperty("xs", stealth ? 1 : 0, true);
+    }
+    
+    public boolean isStealthy() {
+        return stealth;
     }
     
     public void setGodMode(boolean godMode) {
@@ -562,6 +648,8 @@ public class Player extends Entity implements CommandExecutor {
         if(lastPlacement != null) {
             if(item.hasUse(ItemUseType.SWITCHED) && !item.hasUse(ItemUseType.SWITCH)) {
                 linked = tryLinkSwitchedItem(x, y, item);
+            } else if(item.hasUse(ItemUseType.TRANSMITTED)) {
+                linked = tryLinkTransmittedItem(x, y, item);
             }
         }
         
@@ -576,7 +664,7 @@ public class Player extends Entity implements CommandExecutor {
         Item pItem = lastPlacement.getItem();
         boolean linked = false;
         
-        if(pItem.hasUse(ItemUseType.SWITCH)) {
+        if(pItem.hasUse(ItemUseType.SWITCH, ItemUseType.TRIGGER)) {
             MetaBlock metaBlock = zone.getMetaBlock(pX, pY);
             Map<String, Object> metadata = metaBlock == null ? null : metaBlock.getMetadata();
             
@@ -599,6 +687,39 @@ public class Player extends Entity implements CommandExecutor {
         return linked;
     }
     
+    private boolean tryLinkTransmittedItem(int x, int y, Item item) {
+        int pX = lastPlacement.getX();
+        int pY = lastPlacement.getY();
+        Item pItem = lastPlacement.getItem();
+        
+        // Do nothing if the last placed item is not a transmitter
+        if(!pItem.hasUse(ItemUseType.TRANSMIT)) {
+            return false;
+        }
+        
+        int maxTransmitDistance = getTotalSkillLevel(Skill.ENGINEERING) * 10;
+        
+        // Notify the player if the distance is beyond the maximum transmit distance
+        if(!isGodMode() && !MathUtils.inRange(x, y, pX, pY, maxTransmitDistance)) {
+            notify(String.format("You can only transmit %s blocks at your current engineering level.", maxTransmitDistance));
+            return false;
+        }
+        
+        MetaBlock metaBlock = zone.getMetaBlock(pX, pY);
+        Map<String, Object> metadata = metaBlock == null ? null : metaBlock.getMetadata();
+        
+        // Do nothing if metadata is null for whatever reason
+        if(metadata == null) {
+            return false;
+        }
+        
+        // Link transmitter to beacon
+        MapHelper.appendList(metadata, ">", Arrays.asList(x, y)); // Make it a list for compatibility reasons
+        zone.updateBlock(pX, pY, Layer.FRONT, pItem, 1, null, metadata);
+        lastPlacement = null;
+        return true;
+    }
+    
     public double getMiningRange() {
         return 5 + getTotalSkillLevel(Skill.MINING) / 3.0;
     }
@@ -617,6 +738,13 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         return bonus.getChance() * (getTotalSkillLevel(bonus.getSkill()) / (double)MAX_SKILL_LEVEL) * heldItem.getToolBonus();
+    }
+    
+    /**
+     * @return The hash to be stored in blocks placed by this player.
+     */
+    public int getBlockHash() {
+        return 1 + ((documentId.hashCode() & 2047) % 2047);
     }
     
     public String getDocumentId() {
@@ -655,6 +783,26 @@ public class Player extends Entity implements CommandExecutor {
     
     protected List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    public void addLootCode(String lootCode) {
+        lootCodes.add(lootCode);
+    }
+    
+    public boolean hasLootCode(String lootCode) {
+        return lootCodes.contains(lootCode);
+    }
+    
+    public Set<String> getLootCodes() {
+        return Collections.unmodifiableSet(lootCodes);
+    }
+    
+    public void trackNameChange(String newName) {
+        nameChanges.add(new NameChange(newName, name));
+    }
+    
+    public List<NameChange> getNameChanges() {
+        return nameChanges;
     }
     
     public void mute(String reason, OffsetDateTime until) {
@@ -920,27 +1068,18 @@ public class Player extends Entity implements CommandExecutor {
         return Collections.unmodifiableSet(achievements);
     }
     
-    public void setClothing(ClothingSlot slot, Item item) {
-        if(!item.isClothing()) {
-            return;
-        }
-        
-        equippedClothing.put(slot, item);
-        zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
+    public void randomizeAppearance() {
+        appearance.putAll(Appearance.getRandomAppearance(this));
+        zone.sendMessage(new EntityChangeMessage(id, appearance));
     }
     
-    public Map<ClothingSlot, Item> getEquippedClothing() {
-        return Collections.unmodifiableMap(equippedClothing);
+    public void updateAppearance(Map<String, Object> appearance) {
+        this.appearance.putAll(appearance);
+        zone.sendMessage(new EntityChangeMessage(id, appearance));
     }
     
-    public void setColor(ColorSlot slot, String hex) {
-        // TODO check if the string is actually a valid hex color
-        equippedColors.put(slot, hex);
-        zone.sendMessage(new EntityChangeMessage(id, getAppearanceConfig()));
-    }
-    
-    public Map<ColorSlot, String> getEquippedColors() {
-        return Collections.unmodifiableMap(equippedColors);
+    public Map<String, Object> getAppearance() {
+        return Collections.unmodifiableMap(appearance);
     }
     
     public void setSkillLevel(Skill skill, int level) {
@@ -964,6 +1103,10 @@ public class Player extends Entity implements CommandExecutor {
         return getSkillLevel(skill) + accessorySkillLevel;
     }
     
+    public float getNormalizedSkill(Skill skill) {
+        return getTotalSkillLevel(skill) / (float)MAX_SKILL_LEVEL;
+    }
+    
     public int getSkillLevel(Skill skill) {
         return skills.getOrDefault(skill, 1);
     }
@@ -984,19 +1127,39 @@ public class Player extends Entity implements CommandExecutor {
         return Collections.unmodifiableMap(skills);
     }
     
+    public void trackSkillBump(Item item, Skill skill) {
+        List<Skill> skills = bumpedSkills.get(item);
+        
+        if(skills == null) {
+            skills = new ArrayList<>();
+            bumpedSkills.put(item, skills);
+        }
+        
+        skills.add(skill);
+    }
+    
+    public boolean hasSkillBeenBumped(Item item, Skill skill) {
+        return bumpedSkills.getOrDefault(item, Collections.emptyList()).contains(skill);
+    }
+    
+    public Map<Item, List<Skill>> getBumpedSkills() {
+        return bumpedSkills;
+    }
+    
     public void consume(Item item) {
-        Action action = item.getAction();
+        consume(item, null);
+    }
+    
+    public void consume(Item item, Object details) {
+        Consumable consumable = item.getAction().getConsumable();
         
-        // TODO some kind of abstraction for things like this would be pretty cool
-        switch(action) {
-            case HEAL: heal(item.getPower()); break;
-            default: break;
+        if(consumable == null) {
+            sendMessage(new InventoryMessage(inventory.getClientConfig(item)));
+            notify("Sorry, this action hasn't been implemented yet.");
+            return;
         }
         
-        // (Temporary?) measure to prevent consuming unimplemented consumables
-        if(action != Action.NONE) {
-            inventory.removeItem(item);
-        }
+        consumable.consume(item, this, details);
     }
     
     public void awardLoot(Loot loot) {
@@ -1144,21 +1307,6 @@ public class Player extends Entity implements CommandExecutor {
         return connection != null && connection.isOpen();
     }
     
-    private Map<String, Object> getAppearanceConfig() {
-        Map<String, Object> appearance = new HashMap<>();
-        
-        for(Entry<ClothingSlot, Item> entry : equippedClothing.entrySet()) {
-            appearance.put(entry.getKey().getId(), entry.getValue().getCode());
-        }
-        
-        for(Entry<ColorSlot, String> entry : equippedColors.entrySet()) {
-            appearance.put(entry.getKey().getId(), entry.getValue());
-        }
-        
-        appearance.put(ClothingSlot.SUIT.getId(), inventory.findJetpack().getCode()); // Jetpack
-        return appearance;
-    }
-    
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link ConfigurationMessage}.
      */
@@ -1180,7 +1328,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("items_crafted", statistics.getTotalItemsCrafted());
         config.put("play_time", (int)(statistics.getPlayTime()));
         config.put("deaths", statistics.getDeaths());
-        config.put("appearance", getAppearanceConfig());
+        config.put("appearance", appearance);
         config.put("settings", settings);
         return config;
     }

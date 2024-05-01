@@ -9,18 +9,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ThreadLocalRandom;
 
-import brainwine.gameserver.behavior.SequenceBehavior;
+import brainwine.gameserver.Naming;
 import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.EntityAttack;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityLoot;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.FacingDirection;
+import brainwine.gameserver.entity.npc.behavior.SequenceBehavior;
+import brainwine.gameserver.entity.player.Appearance;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.util.MapHelper;
-import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.MetaBlock;
@@ -28,13 +30,11 @@ import brainwine.gameserver.zone.Zone;
 
 public class Npc extends Entity {
     
-    public static final int ATTACK_RETENTION_TIME = 2000;
-    public static final int ATTACK_INVINCIBLE_TIME = 333;
     private final EntityConfig config;
     private final String typeName;
     private final float maxHealth;
     private final float baseSpeed;
-    private final Vector2i size;
+    private final boolean persist;
     private final WeightedMap<EntityLoot> loot;
     private final WeightedMap<EntityLoot> placedLoot;
     private final Map<Item, WeightedMap<EntityLoot>> lootByWeapon;
@@ -43,7 +43,6 @@ public class Npc extends Entity {
     private final List<String> animations;
     private final SequenceBehavior behaviorTree;
     private final Map<DamageType, Float> activeDefenses = new HashMap<>();
-    private final Map<Player, Pair<Item, Long>> recentAttacks = new HashMap<>();
     private final List<Npc> children = new ArrayList<>();
     private float speed;
     private int moveX;
@@ -52,6 +51,7 @@ public class Npc extends Entity {
     private Vector2i mountBlock;
     private Entity owner;
     private Entity target;
+    private boolean artificial;
     private long lastBehavedAt = System.currentTimeMillis();
     private long lastTrackedAt = System.currentTimeMillis();
     
@@ -100,12 +100,24 @@ public class Npc extends Entity {
             properties.put("sl", slots);
         }
         
+        // Generate random name
+        if(config.isNamed()) {
+            this.name = Naming.getRandomEntityName();
+        }
+        
+        // Generate random appearance
+        if(config.isHuman()) {
+           properties.putAll(Appearance.getRandomAppearance());
+        }
+        
         this.config = config;
         this.typeName = config.getName();
         this.type = config.getType();
         this.maxHealth = config.getMaxHealth();
         this.baseSpeed = config.getBaseSpeed();
-        this.size = config.getSize();
+        this.persist = config.isCharacter();
+        this.sizeX = config.getSize().getX();
+        this.sizeY = config.getSize().getY();
         this.loot = config.getLoot();
         this.placedLoot = config.getPlacedLoot();
         this.lootByWeapon = config.getLootByWeapon();
@@ -120,10 +132,8 @@ public class Npc extends Entity {
     
     @Override
     public void tick(float deltaTime) {
+        super.tick(deltaTime);
         long now = System.currentTimeMillis();
-        
-        // Clear expired recent attacks
-        recentAttacks.values().removeIf(attack -> now >= attack.getLast() + ATTACK_RETENTION_TIME);
         
         // Tick behavior when it is ready
         if(now >= lastBehavedAt + (int)(1000 / speed)) {
@@ -146,37 +156,17 @@ public class Npc extends Entity {
     }
     
     @Override
-    public void die(Player killer) {
-        // Grant loot & track kill
-        if(killer != null) {
-            if(!isPlayerPlaced()) {
-                // Track assists
-                for(Player attacker : recentAttacks.keySet()) {
-                    if(attacker != killer) {
-                        attacker.getStatistics().trackAssist(config);
-                    }
-                }
-                
-                killer.getStatistics().trackKill(config);
-            }
-            
-            EntityLoot loot = getRandomLoot(killer);
-            
-            if(loot != null) {
-                Item item = loot.getItem();
-                
-                if(!item.isAir()) {
-                    killer.getInventory().addItem(item, loot.getQuantity(), true);
-                }
-            }
-        }
-        
+    public void die(EntityAttack cause) {        
         // Remove itself from the guard block metadata if it was guarding one
         if(isGuard()) {
             MetaBlock metaBlock = zone.getMetaBlock(guardBlock.getX(), guardBlock.getY());
             
             if(metaBlock != null) {
-                MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList()).remove(typeName);
+                List<String> guards = MapHelper.getList(metaBlock.getMetadata(), "!");
+                
+                if(guards != null) {
+                    guards.remove(typeName);
+                }
             }
         }
         
@@ -184,11 +174,60 @@ public class Npc extends Entity {
         if(isMounted()) {
             zone.updateBlock(mountBlock.getX(), mountBlock.getY(), Layer.FRONT, 0);
         }
+        
+        // Do nothing else if cause data isn't present
+        if(cause == null) {
+            return;
+        }
+        
+        Entity killer = cause.getAttacker();
+        
+        // Grant loot & track kill
+        if(!artificial && killer != null && killer.isPlayer()) {
+            Player player = (Player)killer;
+            
+            if(!isPlayerPlaced()) {
+                // Track assists
+                for(EntityAttack recentAttack : recentAttacks) {
+                    Entity attacker = recentAttack.getAttacker();
+                    
+                    if(attacker != player && attacker.isPlayer()) {
+                        ((Player)attacker).getStatistics().trackAssist(config);
+                    }
+                }
+                
+                player.getStatistics().trackKill(config);
+            }
+            
+            EntityLoot loot = getRandomLoot(player, cause.getWeapon());
+            
+            if(loot != null) {
+                Item item = loot.getItem();
+                
+                if(!item.isAir()) {
+                    player.getInventory().addItem(item, loot.getQuantity(), true);
+                }
+            }
+        }
     }
     
     @Override
     public float getMaxHealth() {
         return maxHealth;
+    }
+    
+    @Override
+    public float getDefense(EntityAttack attack) {
+        Entity attacker = attack.getAttacker();
+        Player player = attacker != null && attacker.isPlayer() ? (Player)attacker : null;
+        
+        // Full defense if block is mounted and is protected
+        if(isMounted() && zone.isBlockProtected(mountBlock.getX(), mountBlock.getY(), player)) {
+            return 1.0F;
+        }
+        
+        // Otherwise, calculate defense
+        return getBaseDefense(attack.getDamageType()) + activeDefenses.getOrDefault(attack.getDamageType(), 0F);
     }
     
     @Override
@@ -229,37 +268,6 @@ public class Npc extends Entity {
         return config;
     }
     
-    public Vector2i getSize() {
-        return size;
-    }
-    
-    public void attack(Player attacker, Item weapon) {
-        // Prevent damage if this entity is mounted and its mount is protected
-        if(!attacker.isGodMode() && isMounted() && zone.isBlockProtected(mountBlock.getX(), mountBlock.getY(), attacker)) {
-            return;
-        }
-        
-        Pair<Item, Long> recentAttack = recentAttacks.get(attacker);
-        long now = System.currentTimeMillis();
-        
-        // Reject the attack if the player already attacked this entity recently
-        if(!attacker.isGodMode() && recentAttack != null && now < recentAttack.getLast() + ATTACK_INVINCIBLE_TIME) {
-            return;
-        }
-        
-        float damage = attacker.isGodMode() ? 9999 : calculateDamage(weapon.getDamage(), weapon.getDamageType());
-        damage(damage, attacker);
-        recentAttacks.put(attacker, new Pair<>(weapon, now));
-    }
-    
-    public float calculateDamage(float baseDamage, DamageType type) {
-        return baseDamage * (1 - getDefense(type));
-    }
-    
-    public Collection<Pair<Item, Long>> getRecentAttacks() {
-        return Collections.unmodifiableCollection(recentAttacks.values());
-    }
-    
     public void setDefense(DamageType type, float amount) {
         if(amount == 0) {
             activeDefenses.remove(type);
@@ -268,21 +276,11 @@ public class Npc extends Entity {
         }
     }
     
-    public float getDefense(DamageType type) {
-        return getDefense(type, true);
-    }
-    
-    public float getDefense(DamageType type, boolean includeBaseDefense) {
-        return (includeBaseDefense ? getBaseDefense(type) : 0) + activeDefenses.getOrDefault(type, 0F);
-    }
-    
     public boolean isTransient() {
-        return !isGuard() && !isMounted();
+        return !isGuard() && !isMounted() && !persist;
     }
     
-    public EntityLoot getRandomLoot(Player awardee) {
-        Item weapon = awardee.getHeldItem();
-        
+    public EntityLoot getRandomLoot(Player awardee, Item weapon) {        
         if(isOwnedBy(awardee)) {
             return placedLoot.next();
         } else if(lootByWeapon.containsKey(weapon)) {
@@ -372,6 +370,18 @@ public class Npc extends Entity {
         return target;
     }
     
+    public void setArtificial(boolean artificial) {
+        this.artificial = artificial;
+    }
+    
+    public boolean isArtificial() {
+        return artificial;
+    }
+    
+    public boolean isPersistent() {
+        return persist;
+    }
+    
     public void setSpeed(float speed) {
         this.speed = speed;
     }
@@ -403,15 +413,15 @@ public class Npc extends Entity {
         int tY = y + oY;
         boolean blocked = zone.isBlockSolid(tX, tY) || (oX != 0 && zone.isBlockSolid(tX, y)) || (oY != 0 && zone.isBlockSolid(x, tY));
         
-        if(size.getX() > 1) {
-            int additionalWidth = size.getX() - 1;
+        if(sizeX > 1) {
+            int additionalWidth = sizeX - 1;
             blocked = blocked || zone.isBlockSolid(tX + additionalWidth, tY) 
                     || (oX != 0 && zone.isBlockSolid(tX + additionalWidth, y)) 
                     || (oY != 0 && zone.isBlockSolid(x + additionalWidth, tY));
         }
         
-        if(size.getY() > 1) {
-            int additionalHeight = size.getY() - 1;
+        if(sizeY > 1) {
+            int additionalHeight = sizeY - 1;
             blocked = blocked || zone.isBlockSolid(tX, tY - additionalHeight) 
                     || (oX != 0 && zone.isBlockSolid(tX, y - additionalHeight)) 
                     || (oY != 0 && zone.isBlockSolid(x, tY - additionalHeight));

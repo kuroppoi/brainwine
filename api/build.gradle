@@ -8,9 +8,5 @@ repositories {
 
 dependencies {
     implementation 'io.javalin:javalin:4.6.8'
-    implementation project(':shared')
-}
-
-jar {
-    archiveBaseName = 'brainwine-api'
+    implementation project(':brainwine-shared')
 }

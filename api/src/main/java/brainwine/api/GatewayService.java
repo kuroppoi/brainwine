@@ -111,7 +111,7 @@ public class GatewayService {
             return;
         }
         
-        ctx.json(new ServerConnectInfo(api.getGameServerHost(), name, token));
+        ctx.json(new ServerConnectInfo(api.getGameServerHost(), dataFetcher.fetchPlayerName(name), token));
     }
     
     /**

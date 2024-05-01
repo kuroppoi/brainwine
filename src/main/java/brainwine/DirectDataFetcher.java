@@ -6,6 +6,7 @@ import java.util.List;
 
 import brainwine.api.DataFetcher;
 import brainwine.api.models.ZoneInfo;
+import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.PlayerManager;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
@@ -33,6 +34,12 @@ public class DirectDataFetcher implements DataFetcher {
     @Override
     public String login(String name, String password) {
         return playerManager.login(name, password);
+    }
+    
+    @Override
+    public String fetchPlayerName(String name) {
+        Player player = playerManager.getPlayer(name);
+        return player == null ? null : player.getName();
     }
 
     @Override

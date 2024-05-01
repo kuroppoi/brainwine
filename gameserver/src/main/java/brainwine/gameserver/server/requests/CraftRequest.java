@@ -1,6 +1,7 @@
 package brainwine.gameserver.server.requests;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
@@ -13,10 +14,8 @@ import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.zone.MetaBlock;
+import brainwine.gameserver.zone.Zone;
 
-/**
- * TODO Account for skills, bonuses etc..
- */
 @RequestInfo(id = 19)
 public class CraftRequest extends PlayerRequest {
     
@@ -54,20 +53,42 @@ public class CraftRequest extends PlayerRequest {
                 return;
             }
         }
-        
+
         // Check if required crafting helpers are nearby
         if(!player.isGodMode() && item.requiresWorkshop()) {
-            List<MetaBlock> workshop = player.getZone().getMetaBlocks(metaBlock
-                    -> MathUtils.inRange(player.getX(), player.getY(), metaBlock.getX(), metaBlock.getY(), 10));
+            Zone zone = player.getZone();
             
+            // Fetch list of all meta blocks in the player's vicinity
+            List<MetaBlock> workshop = zone.getMetaBlocks(metaBlock -> zone.isChunkLoaded(metaBlock.getX(), metaBlock.getY())
+                    && MathUtils.inRange(player.getX(), player.getY(), metaBlock.getX(), metaBlock.getY(), 20));
+            
+            // Check for each crafting helper if it is present in the workshop and available for use
             for(CraftingRequirement craftingHelper : item.getCraftingHelpers()) {
-                int quantityMissing = craftingHelper.getQuantity() - (int)workshop.stream().filter(metaBlock
-                        -> metaBlock.getItem() == craftingHelper.getItem()).count();
+                int quantityRequired = craftingHelper.getQuantity();
                 
+                // Fetch list of crafting helpers of this type that are present in the workshop
+                List<MetaBlock> presentCraftingHelpers = workshop.stream()
+                        .filter(metaBlock -> metaBlock.getItem() == craftingHelper.getItem()).collect(Collectors.toList());
+                int quantityMissing = quantityRequired - presentCraftingHelpers.size();
+                
+                // Check if workshop is still missing crafting helpers of this type and notify the player if this is the case
                 if(quantityMissing > 0) {
-                    player.notify(String.format("You can't craft this item because your workshop is lacking %sx %s.",
+                    player.notify(String.format("You can't craft this item because your workshop is still lacking %sx %s.",
                             quantityMissing, craftingHelper.getItem().getTitle()));
                     return;
+                }
+
+                // Perform additional checks if the crafting helper requires steam to function
+                if(craftingHelper.getItem().usesSteam()) {
+                    quantityMissing = quantityRequired - (int)presentCraftingHelpers.stream()
+                            .filter(metaBlock -> zone.getBlock(metaBlock.getX(), metaBlock.getY()).getFrontMod() == 1).count();
+                    
+                    // Notify the player if not enough crafting helpers are powered
+                    if(quantityMissing > 0) {
+                        player.notify(String.format("You can't craft this item because your workshop still needs to provide steam power to %sx %s.",
+                                quantityMissing, craftingHelper.getItem().getTitle()));
+                        return;
+                    }
                 }
             }
         }

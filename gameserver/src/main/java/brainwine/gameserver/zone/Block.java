@@ -4,40 +4,35 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.Layer;
 
-/**
- * TODO store block owners.
- */
 public class Block {
     
     private Item baseItem;
     private Item backItem;
-    private int backMod;
+    private byte backMod;
     private Item frontItem;
-    private int frontMod;
+    private byte frontMod;
     private Item liquidItem;
-    private int liquidMod;
+    private byte liquidMod;
+    private short ownerHash;
     
     public Block() {
-        this(0, 0, 0, 0, 0, 0, 0);
+        this(0, 0, 0, 0, 0, 0, 0, 0);
     }
     
     public Block(int base, int back, int front) {
-        this(base & 15, back & 65535, back >> 16 & 31, front & 65535, front >> 16 & 31, base >> 8 & 255, base >> 16 & 31);
+        this(base & 15, back & 65535, back >> 16 & 31, front & 65535, front >> 16 & 31, base >> 8 & 255, base >> 16 & 31, front >> 21 & 2047);
     }
     
-    public Block(int baseItem, int backItem, int backMod, int frontItem, int frontMod, int liquidItem, int liquidMod) {
+    public Block(int baseItem, int backItem, int backMod, int frontItem, int frontMod, int liquidItem, int liquidMod, int ownerHash) {
         this(ItemRegistry.getItem(baseItem), ItemRegistry.getItem(backItem), backMod, 
-                ItemRegistry.getItem(frontItem), frontMod, ItemRegistry.getItem(liquidItem), liquidMod);
+                ItemRegistry.getItem(frontItem), frontMod, ItemRegistry.getItem(liquidItem), liquidMod, ownerHash);
     }
     
-    public Block(Item baseItem, Item backItem, int backMod, Item frontItem, int frontMod, Item liquidItem, int liquidMod) {
-        this.baseItem = baseItem;
-        this.backItem = backItem;
-        this.backMod = backMod;
-        this.frontItem = frontItem;
-        this.frontMod = frontMod;
-        this.liquidItem = liquidItem;
-        this.liquidMod = liquidMod;
+    public Block(Item baseItem, Item backItem, int backMod, Item frontItem, int frontMod, Item liquidItem, int liquidMod, int ownerHash) {
+        updateLayer(Layer.BASE, baseItem, 0, ownerHash);
+        updateLayer(Layer.BACK, backItem, backMod, ownerHash);
+        updateLayer(Layer.FRONT, frontItem, frontMod, ownerHash);
+        updateLayer(Layer.LIQUID, liquidItem, liquidMod, ownerHash);
     }
     
     public void updateLayer(Layer layer, int item) {
@@ -45,7 +40,11 @@ public class Block {
     }
     
     public void updateLayer(Layer layer, int item, int mod) {
-        updateLayer(layer, ItemRegistry.getItem(item), mod);
+        updateLayer(layer, item, mod, 0);
+    }
+    
+    public void updateLayer(Layer layer, int item, int mod, int owner) {
+        updateLayer(layer, ItemRegistry.getItem(item), mod, owner);
     }
     
     public void updateLayer(Layer layer, Item item) {
@@ -53,21 +52,26 @@ public class Block {
     }
     
     public void updateLayer(Layer layer, Item item, int mod) {
+        updateLayer(layer, item, mod, 0);
+    }
+    
+    public void updateLayer(Layer layer, Item item, int mod, int owner) {
         switch(layer) {
         case BASE:
             baseItem = item;
             break;
         case BACK:
             backItem = item;
-            backMod = mod;
+            backMod = (byte)(mod & 31);
             break;
         case FRONT:
             frontItem = item;
-            frontMod = mod;
+            frontMod = (byte)(mod & 31);
+            ownerHash = (short)(item.isAir() ? 0 : owner & 2047);
             break;
         case LIQUID:
             liquidItem = item;
-            liquidMod = mod;
+            liquidMod = (byte)(mod & 31);
             break;
         default:
             break;
@@ -115,13 +119,13 @@ public class Block {
     public void setMod(Layer layer, int mod) {
         switch(layer) {
         case BACK:
-            backMod = mod;
+            backMod = (byte)(mod & 31);
             break;
         case FRONT:
-            frontMod = mod;
+            frontMod = (byte)(mod & 31);
             break;
         case LIQUID:
-            liquidMod = mod;
+            liquidMod = (byte)(mod & 31);
             break;
         default:
             break;
@@ -170,7 +174,7 @@ public class Block {
     }
     
     public int getFront() {
-        return frontItem.getCode() | ((frontMod & 31) << 16);
+        return frontItem.getCode() | ((ownerHash & 2047) << 21) | ((frontMod & 31) << 16);
     }
     
     public Item getLiquidItem() {
@@ -179,5 +183,13 @@ public class Block {
     
     public int getLiquidMod() {
         return liquidMod;
+    }
+    
+    public boolean isNatural() {
+        return ownerHash == 0;
+    }
+    
+    public int getOwnerHash() {
+        return ownerHash;
     }
 }

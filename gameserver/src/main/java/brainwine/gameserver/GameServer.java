@@ -9,8 +9,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.achievements.AchievementManager;
-import brainwine.gameserver.command.CommandExecutor;
-import brainwine.gameserver.command.CommandManager;
+import brainwine.gameserver.commands.CommandExecutor;
+import brainwine.gameserver.commands.CommandManager;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.PlayerManager;

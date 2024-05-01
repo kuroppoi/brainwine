@@ -50,6 +50,10 @@ public class MapHelper {
     }
     
     public static void put(Map<?, ?> map, String path, Object value) {
+        if(path == null) {
+            return;
+        }
+        
         String[] segments = path.split("\\.");
         Map<Object, Object> current = (Map<Object, Object>)map;
         
@@ -76,6 +80,10 @@ public class MapHelper {
     }
     
     public static <T> T get(Map<?, ?> map, String path, Class<T> type, T def) {
+        if(path == null) {
+            return def;
+        }
+        
         String[] segments = path.split("\\.");
         Map<Object, Object> current = (Map<Object, Object>)map;
         
