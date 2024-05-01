@@ -23,11 +23,19 @@ Brainwine currently supports the following versions of Deepworld:
 
 ## Building
 
-#### Prerequisites
+### Prerequisites
 
 - Java 8 Development Kit
 
-#### Using docker
+```sh
+git clone --recurse-submodules https://github.com/kuroppoi/brainwine.git
+cd brainwine
+./gradlew dist
+```
+
+The output will be located in the `/build/dist` directory.
+
+### Using docker
 
 To host brainwine using a docker you first need to build the image. On your server run the following:
 
@@ -52,16 +60,6 @@ docker compose up
 ```
 
 The server configuration files and the world data is saved in a docker volume and will accessible from `/data/` in the container. Feel free to add or remove options passed to docker or edit the compose file.
-
-#### Configurations
-
-```sh
-git clone --recurse-submodules https://github.com/kuroppoi/brainwine.git
-cd brainwine
-./gradlew dist
-```
-
-The output will be located in the `/build/dist` directory.
 
 ## Usage
 
