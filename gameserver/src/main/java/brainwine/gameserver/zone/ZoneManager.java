@@ -78,8 +78,11 @@ public class ZoneManager {
 
         float timeSinceLastGeneration = 0.001f * (System.currentTimeMillis() - lastZoneGenerationTime);
 
+        // zero players interval has to be greater than the min generation interval
         final float MIN_GENERATION_INTERVAL_SECONDS = 30.0f * 60.0f;
         final float GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 120.0f * 60.0f;
+        // player count influence has to be positive and a greater value means
+        // more players are needed for a given increase in generation rate
         final float PLAYER_COUNT_INFLUENCE = 16.0f;
 
         if (!generatingZone && timeSinceLastGeneration > MIN_GENERATION_INTERVAL_SECONDS) {
