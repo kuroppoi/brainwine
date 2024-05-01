@@ -38,7 +38,7 @@ public class ZoneManager {
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
-    private float timeSinceLastGeneration = 0.0f;
+    private float lastZoneGenerationTime = System.currentTimeMillis();
     private boolean generatingZone = false;
         
     public ZoneManager() {
@@ -76,13 +76,13 @@ public class ZoneManager {
             zone.tick(deltaTime);
         }
 
-        timeSinceLastGeneration += deltaTime;
+        float timeSinceLastGeneration = 0.001f * (System.currentTimeMillis() - lastZoneGenerationTime);
 
         final float MIN_GENERATION_INTERVAL_SECONDS = 30.0f * 60.0f;
         final float GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 120.0f * 60.0f;
         final float PLAYER_COUNT_INFLUENCE = 16.0f;
 
-        if (!generatingZone && timeSinceLastGeneration > GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS) {
+        if (!generatingZone && timeSinceLastGeneration > MIN_GENERATION_INTERVAL_SECONDS) {
             int playerCount = zones.values().stream().map(Zone::getPlayerCount).reduce(Integer::sum).get();
             float requiredInterval = 
                 GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - (playerCount - 1) * (GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - MIN_GENERATION_INTERVAL_SECONDS) / PLAYER_COUNT_INFLUENCE;
@@ -92,10 +92,7 @@ public class ZoneManager {
                     generatingZone = true;
                     Biome biome = Biome.getRandomBiome();
                     ZoneGenerator generator = ZoneGenerator.getZoneGenerator(biome);
-                    int width = biome == Biome.DEEP ? 1200 : 2000;
-                    int height = biome == Biome.DEEP ? 1000 : 600;
-                    int seed = (int)(Math.random() * Integer.MAX_VALUE);
-                    generator.generateZoneAsync(biome, width, height, seed, zone -> {
+                    generator.generateZoneAsync(biome, zone -> {
                         if (zone != null) {
                             this.addZone(zone);
                         } else {
@@ -104,7 +101,7 @@ public class ZoneManager {
                         generatingZone = false;
                     });
                 }
-                timeSinceLastGeneration = 0.0f;
+                lastZoneGenerationTime = System.currentTimeMillis();
             }
         }
     }
