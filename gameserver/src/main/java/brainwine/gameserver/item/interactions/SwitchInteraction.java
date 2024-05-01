@@ -8,8 +8,6 @@ import java.util.Map;
 import org.apache.commons.text.WordUtils;
 
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.EntityConfig;
-import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.DamageType;

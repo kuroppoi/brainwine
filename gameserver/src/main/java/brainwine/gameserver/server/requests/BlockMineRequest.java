@@ -6,9 +6,6 @@ import java.util.Map;
 
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.EntityConfig;
-import brainwine.gameserver.entity.EntityRegistry;
-import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
