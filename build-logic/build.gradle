@@ -1,0 +1,28 @@
+plugins {
+    id 'java-gradle-plugin'
+}
+
+sourceSets {
+    boot {
+    
+    }
+    main {
+        compileClasspath += sourceSets.boot.output
+        runtimeClasspath += sourceSets.boot.output
+    }
+}
+
+gradlePlugin {
+    plugins {
+        distributionPlugin {
+            id = "brainwine.distribution"
+            implementationClass = "brainwine.build.DistributionPlugin"
+        }
+    }
+}
+
+jar {
+    from sourceSets.boot.output
+}
+
+version = '1.0.0-SNAPSHOT'

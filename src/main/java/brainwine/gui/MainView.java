@@ -25,7 +25,7 @@ import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 import com.formdev.flatlaf.extras.components.FlatTabbedPane.TabAlignment;
 
-import brainwine.Bootstrap;
+import brainwine.Main;
 import brainwine.util.DesktopUtils;
 import brainwine.util.OperatingSystem;
 import brainwine.util.ProcessResult;
@@ -43,7 +43,7 @@ public class MainView {
     private final ServerPanel serverPanel;
     private final SettingsPanel settingsPanel;
     
-    public MainView(Bootstrap bootstrap) {
+    public MainView(Main main) {
         logger.info(GUI_MARKER, "Creating main view ...");
         
         // Panel
@@ -59,7 +59,7 @@ public class MainView {
             tabbedPane.addTab("Play Game", UIManager.getIcon("Brainwine.playIcon"), new GamePanel(this));
         }
         
-        tabbedPane.addTab("Server", UIManager.getIcon("Brainwine.serverIcon"), serverPanel = new ServerPanel(bootstrap));
+        tabbedPane.addTab("Server", UIManager.getIcon("Brainwine.serverIcon"), serverPanel = new ServerPanel(main));
         tabbedPane.addTab("Settings", UIManager.getIcon("Brainwine.settingsIcon"), settingsPanel = new SettingsPanel(this));
         panel.add(tabbedPane);
         
@@ -79,7 +79,7 @@ public class MainView {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent event) {
-                bootstrap.closeApplication();
+                main.closeApplication();
             }
         });
         frame.setJMenuBar(menuBar);

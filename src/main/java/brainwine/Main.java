@@ -21,7 +21,7 @@ import brainwine.gui.MainView;
 import brainwine.gui.theme.ThemeManager;
 import brainwine.util.SwingUtils;
 
-public class Bootstrap {
+public class Main {
 
     private static Logger logger = LogManager.getLogger();
     private static boolean disableGui = false;
@@ -41,10 +41,10 @@ public class Bootstrap {
             }
         }
         
-        new Bootstrap();
+        new Main();
     }
     
-    public Bootstrap() {
+    public Main() {
         // Create gui or directly start server if gui is disabled or not supported
         if(!disableGui && (Desktop.isDesktopSupported() || forceGui)) {
             try {

@@ -24,11 +24,7 @@ dependencies {
     implementation 'org.reflections:reflections:0.10.2'
     implementation 'io.netty:netty-all:4.1.79.Final'
     implementation 'org.mindrot:jbcrypt:0.4'
-    implementation project(':shared')
-}
-
-jar {
-    archiveBaseName = 'brainwine-gameserver'
+    implementation project(':brainwine-shared')
 }
 
 processResources.includeEmptyDirs = false
