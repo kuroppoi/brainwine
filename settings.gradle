@@ -1,5 +1,5 @@
 rootProject.name = 'brainwine'
-includeBuild 'gradle-plugin'
+includeBuild 'build-logic'
 include('api', 'gameserver', 'shared')
 project(":api").name = 'brainwine-api'
 project(':gameserver').name = 'brainwine-gameserver'

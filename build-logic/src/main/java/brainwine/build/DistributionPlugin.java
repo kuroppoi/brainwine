@@ -1,4 +1,4 @@
-package brainwine.gradle;
+package brainwine.build;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -9,8 +9,6 @@ public class DistributionPlugin implements Plugin<Project> {
     @Override
     public void apply(Project project) {
         project.getPlugins().apply(JavaPlugin.class);
-        project.getTasks().register("dist", DistributionTask.class, task -> {
-            task.dependsOn("build");  
-        });
+        project.getTasks().register("dist", DistributionTask.class, task -> task.dependsOn("build"));
     }
 }

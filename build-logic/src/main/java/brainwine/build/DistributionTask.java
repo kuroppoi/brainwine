@@ -1,4 +1,4 @@
-package brainwine.gradle;
+package brainwine.build;
 
 import static brainwine.bootstrap.Constants.BOOT_CLASS_KEY;
 import static brainwine.bootstrap.Constants.CLASS_PATH_KEY;
@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -20,11 +19,15 @@ import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
 import java.util.stream.Collectors;
 
+import javax.inject.Inject;
+
 import org.gradle.api.DefaultTask;
+import org.gradle.api.GradleException;
 import org.gradle.api.artifacts.Configuration;
-import org.gradle.api.artifacts.ResolvedArtifact;
+import org.gradle.api.file.FileTree;
 import org.gradle.api.file.RegularFileProperty;
-import org.gradle.api.internal.file.collections.FileTreeAdapter;
+import org.gradle.api.initialization.IncludedBuild;
+import org.gradle.api.invocation.Gradle;
 import org.gradle.api.provider.Property;
 import org.gradle.api.tasks.Input;
 import org.gradle.api.tasks.Optional;
@@ -32,7 +35,9 @@ import org.gradle.api.tasks.TaskAction;
 import org.gradle.api.tasks.bundling.Jar;
 
 public abstract class DistributionTask extends DefaultTask {
-        
+    
+    private final FileTree bootCodeTree;
+    
     @Input
     public abstract Property<String> getMainClass();
     
@@ -44,11 +49,15 @@ public abstract class DistributionTask extends DefaultTask {
     @Optional
     public abstract RegularFileProperty getLicenseFile();
     
+    @Inject
+    public DistributionTask(Gradle gradle) {
+        IncludedBuild build = gradle.getIncludedBuilds().stream().filter(x -> x.getName().equals("build-logic")).findFirst().get();
+        bootCodeTree = getProject().fileTree(new File(build.getProjectDir(), "build/classes/java/boot"));
+    }
+    
     @TaskAction
     public void createDistributionArchive() throws IOException {
         Configuration config = getProject().getConfigurations().getByName("runtimeClasspath");
-        Configuration bootstrapConfig = getProject().getConfigurations().create("bootstrapClasspath");
-        getProject().getDependencies().add("bootstrapClasspath", ":gradle-plugin");
         Jar jarTask = (Jar)getProject().getTasks().getByName("jar");
         String archiveFileName = getArchiveFileName().getOrElse(jarTask.getArchiveFileName().get());
         File outputDirectory = new File(getProject().getBuildDir(), "dist");
@@ -79,15 +88,16 @@ public abstract class DistributionTask extends DefaultTask {
                 addFileToJar(outputStream, file, String.format("%s/%s", LIBRARY_PATH, file.getName()));
             }
             
-            // Add boot code
-            for(ResolvedArtifact artifact : bootstrapConfig.getResolvedConfiguration().getResolvedArtifacts()) {
-                FileTreeAdapter tree = (FileTreeAdapter)getProject().zipTree(artifact.getFile()).matching(
-                        filterable -> filterable.include(String.format("%s/**", MAIN_CLASS.getPackage().getName().replace('.', '/'))));
-                
-                for(Entry<String, File> entry : tree.getAsMap().entrySet()) {
-                    addFileToJar(outputStream, entry.getValue(), entry.getKey());
+            // Add boot code            
+            bootCodeTree.visit(details -> {
+                if(!details.isDirectory()) {
+                    try {
+                        addFileToJar(outputStream, details.getFile(), details.getPath());
+                     } catch(IOException e) {
+                         throw new GradleException(e.getMessage(), e);
+                     }
                 }
-            }
+            });
             
             // Add license
             RegularFileProperty licenseFile = getLicenseFile();
