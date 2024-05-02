@@ -35,6 +35,8 @@ cd brainwine
 
 The output will be located in the `/build/dist` directory.
 
+## Server setup
+
 ### Using docker
 
 To host brainwine using a docker you first need to build the image. On your server run the following:
@@ -50,7 +52,7 @@ If you want to change the default ports exposed by the image use the `--build-ar
 Now run the image in a container:
 
 ```sh
-docker run --name "brainwine" --volume $(pwd):/data brainwine:latest
+docker run --name "brainwine" --volume $PWD:/data brainwine:latest
 ```
 
 If you want to use docker compose run this instead:
