@@ -86,7 +86,7 @@ public class ZoneManager {
         final float PLAYER_COUNT_INFLUENCE = 16.0f;
 
         if (!generatingZone && timeSinceLastGeneration > MIN_GENERATION_INTERVAL_SECONDS) {
-            int playerCount = zones.values().stream().map(Zone::getPlayerCount).reduce(Integer::sum).get();
+            int playerCount = zones.values().stream().map(Zone::getPlayerCount).reduce(Integer::sum).orElse(0);
             float requiredInterval = 
                 GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - (playerCount - 1) * (GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - MIN_GENERATION_INTERVAL_SECONDS) / PLAYER_COUNT_INFLUENCE;
 
