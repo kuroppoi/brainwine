@@ -1,5 +1,5 @@
 #? Builder
-FROM --platform=$BUILDPLATFORM debian:bookworm-slim as builder
+FROM --platform=$BUILDPLATFORM debian:bookworm-slim AS builder
 RUN apt update -y && apt upgrade -y && apt autoremove -y
 RUN apt install -y git gradle
 WORKDIR /src
@@ -8,7 +8,7 @@ RUN git submodule init && git submodule update
 RUN chmod +x gradlew && ./gradlew dist
 
 #? Runner
-FROM --platform=$BUILDPLATFORM amazoncorretto:22-alpine-jdk as runner
+FROM --platform=$BUILDPLATFORM amazoncorretto:22-alpine-jdk AS runner
 RUN apk update && apk upgrade
 VOLUME ["/data"]
 WORKDIR /data
