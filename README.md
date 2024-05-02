@@ -35,6 +35,16 @@ cd brainwine
 
 The output will be located in the `/build/dist` directory.
 
+### Build using docker
+
+To build the project using docker only run the following in the root of the project:
+
+```sh
+docker buildx build -f jar.Dockerfile -o . -t brainwine:latest .
+```
+
+You can now find the `brainwine.jar` in the root of the project. This path can be changed using the `-o` flag.
+
 ## Server setup
 
 ### Using docker
