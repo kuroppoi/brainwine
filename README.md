@@ -27,61 +27,44 @@ Brainwine currently supports the following versions of Deepworld:
 
 - Java 8 Development Kit
 
+Run the following to build the program:
+
 ```sh
 git clone --recurse-submodules https://github.com/kuroppoi/brainwine.git
 cd brainwine
 ./gradlew dist
 ```
 
-The output will be located in the `/build/dist` directory.
-
-### Build using docker
-
-To build the project using docker only run the following in the root of the project:
-
-```sh
-docker buildx build -f jar.Dockerfile -o . -t brainwine:latest .
-```
-
-You can now find the `brainwine.jar` in the root of the project. This path can be changed using the `-o` flag.
-
-## Server setup
-
-### Using docker
-
-To host brainwine using a docker you first need to build the image. On your server run the following:
-
-```sh
-git clone https://github.com/kuroppoi/brainwine && cd brainwine
-docker buildx build -t brainwine:latest .
-```
-
-If you want to change the default ports exposed by the image use the `--build-arg` flag (e.g. `--build-arg="GATEWAY_PORT=3000"`).
-
-
-Now run the image in a container:
-
-```sh
-docker run --name "brainwine" --volume $PWD:/data brainwine:latest
-```
-
-If you want to use docker compose run this instead:
-
-```sh
-docker compose up
-```
-
-The server configuration files and the world data is saved in a docker volume and will accessible from `/data/` in the container. Feel free to add or remove options passed to docker or edit the compose file.
-
-## Usage
-
-Execute `brainwine.jar` to start the program. Navigate to the server tab and press the button to start the server.\
-It is also possible to start the server immediately with no user interface:
+The output executable jar `brainwine.jar` will be located in the `/build/dist` directory.\
+To start the server without a user interface, run the following:
 
 ```sh
 # This behavior is the default on platforms that do not support Java's Desktop API.
 java -jar brainwine.jar disablegui
 ```
 
-To connect to a local or remote server, download a [patching kit](https://github.com/kuroppoi/brainwine/releases/tag/patching-kits-1.0) for your desired platform.\
-Alternatively, Windows users may use the program's user interface to configure the host settings and start the game.
+## Docker
+
+Run the following to build the image:
+
+```sh
+git clone https://github.com/kuroppoi/brainwine
+cd brainwine
+docker buildx build -t brainwine:latest .
+```
+
+To then run the image in a container, run the following:
+
+```sh
+# Replace ${PWD} with %cd% if you're using a Windows Command Prompt.
+docker run -p 5001-5003:5001-5003 --volume ${PWD}/run:/data brainwine:latest
+```
+
+Or alternatively, if you wish to use docker compose:
+
+```sh
+docker compose up
+```
+
+The server files will be stored in a docker volume and can be accessed from `/data` in the container.\
+Feel free to play around with the configuration by editing `docker-compose.yml`.
