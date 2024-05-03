@@ -7,8 +7,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -96,8 +99,7 @@ public class CommandManager {
             return;
         }
         
-        String name = info.name();
-        String[] aliases = info.aliases();
+        String name = info.name().toLowerCase();
         
         if(commands.containsKey(name)) {
             logger.warn(SERVER_MARKER, "Attempted to register duplicate command '{}' with name '{}'", type.getSimpleName(), name);
@@ -115,7 +117,9 @@ public class CommandManager {
         
         commands.put(name, command);
         
-        if(aliases != null) {
+        if(info.aliases() != null) {
+            List<String> aliases = Stream.of(info.aliases()).map(String::toLowerCase).collect(Collectors.toList());
+            
             for(String alias : aliases) {
                 if(commands.containsKey(alias) || CommandManager.aliases.containsKey(alias)) {
                     logger.warn(SERVER_MARKER, "Duplicate alias {} for command {}", alias, command.getClass());
@@ -139,7 +143,7 @@ public class CommandManager {
     }
     
     public static Command getCommand(String name, boolean allowAlias) {
-        return commands.getOrDefault(name, allowAlias ? aliases.get(name) : null);
+        return commands.getOrDefault(name.toLowerCase(), allowAlias ? aliases.get(name.toLowerCase()) : null);
     }
     
     public static Collection<Command> getCommands() {
