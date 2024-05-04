@@ -17,11 +17,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 public class JsonHelper {
     
     public static final ObjectMapper MAPPER = JsonMapper.builder()
             .findAndAddModules()
+            .addModule(new SimpleModule()
+                    .addSerializer(OffsetDateTimeSerializer.INSTANCE))
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
