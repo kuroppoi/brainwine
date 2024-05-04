@@ -298,7 +298,7 @@ public class EntityManager {
             Player player = (Player)entity;
             player.onZoneChanged();
             players.put(entityId, player);
-            playersByName.put(player.getName(), player);
+            playersByName.put(player.getName().toLowerCase(), player);
             player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.ENTERING));
             player.sendMessageToPeers(new EntityPositionMessage(player));
         } else if(entity instanceof Npc) {
@@ -317,7 +317,7 @@ public class EntityManager {
         
         if(entity instanceof Player) {
             players.remove(entityId);
-            playersByName.remove(entity.getName());
+            playersByName.remove(entity.getName().toLowerCase());
             zone.sendMessage(new EntityStatusMessage(entity, EntityStatus.EXITING));
         } else {
             npcs.remove(entityId);
@@ -369,7 +369,7 @@ public class EntityManager {
     }
     
     public Player getPlayer(String name) {
-        return playersByName.get(name);
+        return playersByName.get(name.toLowerCase());
     }
     
     public int getPlayerCount() {
