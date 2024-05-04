@@ -5,10 +5,14 @@ import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
 import brainwine.gameserver.item.interactions.BurstInteraction;
 import brainwine.gameserver.item.interactions.ChangeInteraction;
+import brainwine.gameserver.item.interactions.ComposterInteraction;
 import brainwine.gameserver.item.interactions.ContainerInteraction;
 import brainwine.gameserver.item.interactions.DialogInteraction;
+import brainwine.gameserver.item.interactions.ExpiatorInteraction;
+import brainwine.gameserver.item.interactions.GeckInteraction;
 import brainwine.gameserver.item.interactions.ItemInteraction;
 import brainwine.gameserver.item.interactions.NoteInteraction;
+import brainwine.gameserver.item.interactions.RecyclerInteraction;
 import brainwine.gameserver.item.interactions.SpawnInteraction;
 import brainwine.gameserver.item.interactions.SpawnTeleportInteraction;
 import brainwine.gameserver.item.interactions.SwitchInteraction;
@@ -23,10 +27,13 @@ public enum ItemUseType {
     
     AFTERBURNER,
     BURST(new BurstInteraction()),
+    COMPOSTER(new ComposterInteraction()),
     CONTAINER(new ContainerInteraction()),
     CREATE_DIALOG(new DialogInteraction(true)),
     DESTROY,
     DIALOG(new DialogInteraction(false)),
+    EXPIATOR(new ExpiatorInteraction()),
+    GECK(new GeckInteraction()),
     GUARD,
     CHANGE(new ChangeInteraction()),
     FIELDABLE,
@@ -37,6 +44,7 @@ public enum ItemUseType {
     PLENTY,
     PROTECTED,
     PUBLIC,
+    RECYCLER(new RecyclerInteraction()),
     SPAWN(new SpawnInteraction()),
     SPAWN_TELEPORT(new SpawnTeleportInteraction()),
     SWITCH(new SwitchInteraction()),
