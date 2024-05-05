@@ -932,6 +932,7 @@ public class Zone {
             }
             
             player.notifyPeers(String.format("%s discovered %s %s component.", player.getName(), determiner, machineName), NotificationType.PEER_ACCOMPLISHMENT);
+            player.getStatistics().trackDiscovery(part);
         }
         
         // Update machine status
