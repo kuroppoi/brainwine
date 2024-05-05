@@ -38,7 +38,7 @@ public class ZoneManager {
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
-    private float lastZoneGenerationTime = System.currentTimeMillis();
+    private long lastZoneGenerationTime = System.currentTimeMillis();
     private boolean generatingZone = false;
         
     public ZoneManager() {
@@ -76,19 +76,21 @@ public class ZoneManager {
             zone.tick(deltaTime);
         }
 
-        float timeSinceLastGeneration = 0.001f * (System.currentTimeMillis() - lastZoneGenerationTime);
+        long timeSinceLastGeneration = (System.currentTimeMillis() - lastZoneGenerationTime) / 1000;
 
         // zero players interval has to be greater than the min generation interval
-        final float MIN_GENERATION_INTERVAL_SECONDS = 30.0f * 60.0f;
-        final float GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 120.0f * 60.0f;
+        final long MIN_GENERATION_INTERVAL_SECONDS = 10 * 60;
+        final long GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 30 * 60;
         // player count influence has to be positive and a greater value means
         // more players are needed for a given increase in generation rate
-        final float PLAYER_COUNT_INFLUENCE = 16.0f;
+        final long PLAYER_COUNT_INFLUENCE = 16;
 
         if (!generatingZone && timeSinceLastGeneration > MIN_GENERATION_INTERVAL_SECONDS) {
             int playerCount = zones.values().stream().map(Zone::getPlayerCount).reduce(Integer::sum).orElse(0);
-            float requiredInterval = 
-                GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - (playerCount - 1) * (GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - MIN_GENERATION_INTERVAL_SECONDS) / PLAYER_COUNT_INFLUENCE;
+            long requiredInterval = Math.max(
+                MIN_GENERATION_INTERVAL_SECONDS,
+                GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - (playerCount - 1) * (GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - MIN_GENERATION_INTERVAL_SECONDS) / PLAYER_COUNT_INFLUENCE
+            );
 
             if (timeSinceLastGeneration > requiredInterval) {
                 if (shouldGenerateUnexploredZone() && !generatingZone) {
@@ -98,13 +100,13 @@ public class ZoneManager {
                     generator.generateZoneAsync(biome, zone -> {
                         if (zone != null) {
                             this.addZone(zone);
+                            lastZoneGenerationTime = System.currentTimeMillis();
                         } else {
                             logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");
                         }
                         generatingZone = false;
                     });
                 }
-                lastZoneGenerationTime = System.currentTimeMillis();
             }
         }
     }
