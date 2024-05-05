@@ -29,7 +29,7 @@ public class EcoCommand extends Command {
         EcologicalMachine machine = EcologicalMachine.fromName(args[0]);
         
         if(machine == null) {
-            player.notify(String.format("Machine type must be one of %s", Arrays.toString(EcologicalMachine.values())).toLowerCase(), SYSTEM);
+            player.notify(String.format("Machine type must be one of %s", Arrays.toString(EcologicalMachine.values()).toLowerCase()), SYSTEM);
             return;
         }
         
@@ -47,7 +47,7 @@ public class EcoCommand extends Command {
             }
             
             if(action.equals("add")) {
-                if(part == null) {                    
+                if(part == null) {
                     machine.getParts().forEach(zone::discoverMachinePart);
                     zone.discoverMachinePart(machine.getBase());
                     player.notify(String.format("Added all %s components.", machine.getId()), SYSTEM);
