@@ -23,17 +23,16 @@ import brainwine.gameserver.zone.Zone;
  */
 public class RecyclerInteraction extends EcologicalMachineInteraction {
     
-    private static final Map<Item, Item> recyclables = MapHelper.map(Item.class, Item.class,
-            ItemRegistry.getItem("rubble/iron"), ItemRegistry.getItem("building/iron"),
-            ItemRegistry.getItem("rubble/copper"), ItemRegistry.getItem("building/copper"),
-            ItemRegistry.getItem("rubble/brass"), ItemRegistry.getItem("building/brass"));
-    
     public RecyclerInteraction() {
         super(EcologicalMachine.RECYCLER);
     }
     
     @Override
     public void interact(Zone zone, Player player, int x, int y) {
+        Map<Item, Item> recyclables = MapHelper.map(Item.class, Item.class,
+                ItemRegistry.getItem("rubble/iron"), ItemRegistry.getItem("building/iron"),
+                ItemRegistry.getItem("rubble/copper"), ItemRegistry.getItem("building/copper"),
+                ItemRegistry.getItem("rubble/brass"), ItemRegistry.getItem("building/brass"));
         int totalScrapRecycled = 0;
         int scrapRequired = (int)MathUtils.lerp(10.0, 5.0, player.getTotalSkillLevel(Skill.BUILDING) / 9.0);
         Inventory inventory = player.getInventory();
