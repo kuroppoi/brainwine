@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import brainwine.gameserver.achievements.CraftingAchievement;
+import brainwine.gameserver.achievements.DeliveranceAchievement;
 import brainwine.gameserver.achievements.DiscoveryAchievement;
 import brainwine.gameserver.achievements.ExploringAchievement;
 import brainwine.gameserver.achievements.HuntingAchievement;
@@ -43,6 +44,7 @@ public class PlayerStatistics {
     private int dungeonsRaided;
     private int mawsPlugged;
     private int undertakings;
+    private int deliverances;
     private int deaths;
     
     @JsonIgnore
@@ -349,6 +351,24 @@ public class PlayerStatistics {
     
     public int getUndertakings() {
         return undertakings;
+    }
+    
+    public void trackDeliverance() {
+        trackDeliverances(1);
+    }
+    
+    public void trackDeliverances(int amount) {
+        deliverances += amount;
+        player.addExperience(25 * amount);
+        player.updateAchievementProgress(DeliveranceAchievement.class);
+    }
+    
+    public void setDeliverances(int deliverances) {
+        this.deliverances = deliverances;
+    }
+    
+    public int getDeliverances() {
+        return deliverances;
     }
     
     public void trackDeath() {

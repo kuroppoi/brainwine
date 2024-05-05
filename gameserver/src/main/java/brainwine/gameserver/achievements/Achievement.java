@@ -29,6 +29,7 @@ import brainwine.gameserver.util.MathUtils;
     @Type(name = "DiscoveryAchievement", value = DiscoveryAchievement.class),
     @Type(name = "SpawnerStoppageAchievement", value = SpawnerStoppageAchievement.class),
     @Type(name = "UndertakerAchievement", value = UndertakerAchievement.class),
+    @Type(name = "DeliveranceAchievement", value = DeliveranceAchievement.class),
     @Type(name = "TrappingAchievement", value = TrappingAchievement.class),
     @Type(name = "Journeyman", value = JourneymanAchievement.class)
 })
