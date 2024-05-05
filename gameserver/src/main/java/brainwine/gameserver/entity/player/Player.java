@@ -332,6 +332,7 @@ public class Player extends Entity implements CommandExecutor {
         
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig(this)));
+        zone.sendMachineStatus(this);
         sendMessage(new PlayerPositionMessage((int)x, (int)y));
         sendMessage(new HealthMessage(health));
         
