@@ -1670,6 +1670,14 @@ public class Zone {
     public OffsetDateTime getCreationDate() {
         return creationDate;
     }
+
+    public boolean isUnexplored() {
+        return this.getExplorationProgress() < 0.7;
+    }
+
+    public boolean isPopular() {
+        return this.getPlayers().size() > 0;
+    }
     
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link ConfigurationMessage}.
