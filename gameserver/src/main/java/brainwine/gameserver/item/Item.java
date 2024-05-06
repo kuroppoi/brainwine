@@ -171,6 +171,9 @@ public class Item {
     @JsonProperty("timer_mine")
     private boolean processTimerOnBreak;
     
+    @JsonProperty("field_damage")
+    private FieldDamage fieldDamage;
+    
     @JsonProperty("ingredients")
     private List<CraftingRequirement> craftingIngredients = new ArrayList<>();
     
@@ -503,6 +506,14 @@ public class Item {
     
     public boolean shouldProcessTimerOnBreak() {
         return processTimerOnBreak;
+    }
+    
+    public boolean hasFieldDamage() {
+        return fieldDamage != null;
+    }
+    
+    public FieldDamage getFieldDamage() {
+        return fieldDamage;
     }
     
     public boolean isCraftable() {

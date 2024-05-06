@@ -87,9 +87,11 @@ public class Zone {
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
+    private final Map<Integer, MetaBlock> damageFieldBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> ecologicalMachineBlocks = new HashMap<>();
     private final Map<EcologicalMachine, List<Item>> discoveredParts = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
+    private int ticksElapsed;
     
     protected Zone(String documentId, ZoneConfigFile config, ZoneDataFile data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
@@ -178,6 +180,31 @@ public class Zone {
             
             blockChanges.clear();
         }
+        
+        
+        // Process field damage (every 1 second)
+        if(ticksElapsed % 8 == 0) {
+            for(Player player : getPlayers()) {
+                for(MetaBlock block : damageFieldBlocks.values()) {
+                    Item item = block.getItem();
+                    float distance = (float)MathUtils.distance(player.getX(), player.getY(), block.getX(), block.getY());
+                    float radius = item.getFieldDamage().getRadius();
+                    float maxDamage = item.getFieldDamage().getMaxDamage();
+                    
+                    if(maxDamage == 0.0F) {
+                        maxDamage = 2.0F;
+                    }
+                    
+                    // Deal true damage to the target, scaling with distance from field block
+                    if(distance < radius) {
+                        float damage = maxDamage * (1.0F - distance / radius);
+                        player.attack(null, item, damage, item.getFieldDamage().getType(), true);
+                    }
+                }
+            }
+        }
+        
+        ticksElapsed++;
     }
     
     /**
@@ -1189,6 +1216,10 @@ public class Zone {
             fieldBlocks.put(index, block);
         }
         
+        if(item.hasFieldDamage()) {
+            damageFieldBlocks.put(index, block);
+        }
+        
         EcologicalMachine machine = EcologicalMachine.fromBase(item);
         
         if(machine != null) {
@@ -1201,6 +1232,7 @@ public class Zone {
         metaBlocks.remove(index);
         globalMetaBlocks.remove(index);
         fieldBlocks.remove(index);
+        damageFieldBlocks.remove(index);
         ecologicalMachineBlocks.remove(index);
     }
     
