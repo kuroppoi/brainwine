@@ -1145,6 +1145,20 @@ public class Zone {
         }
     }
     
+    // TODO better block update methods
+    protected void updateBlockMod(int x, int y, Layer layer, int mod) {
+        if(!areCoordinatesInBounds(x, y)) {
+            return;
+        }
+        
+        Block block = getBlock(x, y);
+        block.setMod(layer, mod);
+        
+        if(!getPlayers().isEmpty()) {
+            blockChanges.add(new BlockChangeData(x, y, layer, block.getItem(layer), mod));
+        }
+    }
+    
     /**
      * @param x The x position of the block.
      * @param y The y position of the block.

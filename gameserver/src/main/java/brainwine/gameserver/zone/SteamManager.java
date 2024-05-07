@@ -76,7 +76,7 @@ public class SteamManager {
             }
             
             // Directly set the block mod
-            block.setMod(Layer.FRONT, 0);
+            zone.updateBlockMod(x, y, Layer.FRONT, 0);
         }
         
         // Unindex expired steamables
@@ -128,12 +128,10 @@ public class SteamManager {
             
             processedIndices.add(index);
             
-            // Skip if block is not a pipe
+            // Skip if block is not a pipe but activate it first if it uses steam
             if(getState(x, y) != STATE_PIPE) {
-                
-                // ...but activate it first if it uses steam!
                 if(steamableIndices.contains(index)) {
-                    zone.getBlock(x, y).setMod(Layer.FRONT, 1); // Directly set the block mod
+                    zone.updateBlockMod(x, y, Layer.FRONT, 1); // Directly set the block mod
                 }
                 
                 continue;
