@@ -204,8 +204,8 @@ public class StructureGeneratorTask implements GeneratorTask {
     }
     
     private void placeBrokenTeleporters(GeneratorContext ctx, List<MetaBlock> containers) {
-        // Calculate the number of broken teleporters to place
-        int amount = Math.min(containers.size(), Math.max(1, ctx.getWidth() * ctx.getHeight() / (ctx.nextInt(80000) + 120000)));
+        // One teleporter per 150,000 blocks (8 teleporters in a normal sized world)
+        int amount = Math.min(containers.size(), Math.max(1, ctx.getWidth() * ctx.getHeight() / 150000));
         
         // Place teleporters
         for(int i = 0; i < amount; i++) {
