@@ -39,7 +39,8 @@ public class BlockMineRequest extends PlayerRequest {
     public void process(Player player) {
         Zone zone = player.getZone();
         boolean digging = item.isDiggable() && player.getHeldItem().getAction() == Action.DIG;
-        
+        boolean scrubbing = player.getHeldItem().hasUse(ItemUseType.SCRUBBER);
+
         if(player.isDead()) {
             return;
         }
@@ -90,6 +91,14 @@ public class BlockMineRequest extends PlayerRequest {
         if(digging) {
             zone.digBlock(x, y);
             return;
+        }
+
+        if (scrubbing) {
+            zone.updateBlock(x, y, Layer.BASE, Item.get(1));
+            // // Add if you don't want the top block to be destroyed.
+            // Block myBlock = player.getZone().getBlock(x, y);
+            // player.sendDelayedMessage(new BlockChangeMessage(x, y, layer, myBlock.getItem(layer), myBlock.getMod(layer)));
+            // return;
         }
         
         // Apply decay if block is being mined with a hatchet
