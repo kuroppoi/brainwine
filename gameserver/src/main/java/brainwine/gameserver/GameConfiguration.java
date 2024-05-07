@@ -22,8 +22,6 @@ import org.reflections.util.ConfigurationBuilder;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 import brainwine.gameserver.commands.CommandManager;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
@@ -162,9 +160,9 @@ public class GameConfiguration {
                 try {
                     Item item = JsonHelper.readValue(config, Item.class);
                     ItemRegistry.registerItem(item);
-                } catch (JsonProcessingException e) {
-                    logger.fatal(SERVER_MARKER, "Failed to register item {}", id, e);
-                    System.exit(0);
+                } catch (Exception e) {
+                    logger.fatal(SERVER_MARKER, "Failed to register item '{}'", id, e);
+                    throw new RuntimeException(e); // Server SHOULD NOT attempt to start if there is a problem with the item configuration
                 }
             });
             
@@ -202,7 +200,7 @@ public class GameConfiguration {
             }
         } catch(Exception e) {
             logger.fatal(SERVER_MARKER, "Could not load configuration files", e);
-            System.exit(-1);
+            throw new RuntimeException(e); // Server SHOULD NOT attempt to start if the game configuration can't be loaded
         }
     }
     
