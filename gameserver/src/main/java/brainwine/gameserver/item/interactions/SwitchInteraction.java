@@ -145,10 +145,18 @@ public class SwitchInteraction implements ItemInteraction {
             return;
         }
         
+        int x = metaBlock.getX();
+        int y = metaBlock.getY();
+        
+        // Do nothing if exploder isn't activated
+        if(zone.getBlock(x, y).getFrontMod() == 0) {
+            return;
+        }
+        
         // Create explosion
         DamageType damageType = type.equalsIgnoreCase("electric") ? DamageType.ENERGY : DamageType.fromName(type);
         String effect = String.format("bomb-%s", type.toLowerCase());
-        zone.explode(metaBlock.getX(), metaBlock.getY(), 6, entity, false, 6, damageType, effect);
+        zone.explode(x, y, 6, entity, false, 6, damageType, effect);
     }
     
     private void switchSign(Zone zone, Entity entity, MetaBlock metaBlock, MetaBlock switchMeta) {

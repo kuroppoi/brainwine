@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.Layer;
 
 /**
  * Distributes steam through collectors to nearby machines via pipes.
@@ -65,7 +66,8 @@ public class SteamManager {
                 continue;
             }
             
-            Item item = zone.getBlock(x, y).getFrontItem();
+            Block block = zone.getBlock(x, y);
+            Item item = block.getFrontItem();
             
             // Skip if front item doesn't use steam
             if(!item.usesSteam()) {
@@ -73,8 +75,8 @@ public class SteamManager {
                 continue;
             }
             
-            // Update block
-            zone.updateBlock(x, y, item.getLayer(), item, 0);
+            // Directly set the block mod
+            block.setMod(Layer.FRONT, 0);
         }
         
         // Unindex expired steamables
@@ -131,8 +133,7 @@ public class SteamManager {
                 
                 // ...but activate it first if it uses steam!
                 if(steamableIndices.contains(index)) {
-                    Item item = zone.getBlock(x, y).getFrontItem();
-                    zone.updateBlock(x, y, item.getLayer(), item, 1);
+                    zone.getBlock(x, y).setMod(Layer.FRONT, 1); // Directly set the block mod
                 }
                 
                 continue;
