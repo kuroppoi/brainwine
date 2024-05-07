@@ -879,6 +879,10 @@ public class Zone {
         return dungeons.containsKey(id);
     }
     
+    /**
+     * This will show the number of discovered components on the minimap
+     * as well as update the machine sprite on V2 clients.
+     */
     public void sendMachineStatus(Player player) {
         // V3 unfortunately doesn't seem to track machine progress
         if(player.isV3()) {
@@ -886,6 +890,7 @@ public class Zone {
         }
         
         // Get list of ecological machine types that exist in the zone
+        // TODO this isn't necessary: it originally only showed minimap status of machines that have had components discovered.
         List<EcologicalMachine> machines = ecologicalMachineBlocks.values().stream()
                 .map(MetaBlock::getItem)
                 .distinct().map(EcologicalMachine::fromBase)
@@ -903,16 +908,23 @@ public class Zone {
         player.sendMessage(new ZoneStatusMessage(MapHelper.map("machines", data)));
     }
     
+    /**
+     * Sync machine status with all players in the zone.
+     */
     private void updateMachineStatus(EcologicalMachine machine) {
-        // Update sprite metadata for V3 clients
+        // Find all machines of this type in the zone
         List<MetaBlock> metaBlocks = ecologicalMachineBlocks.values().stream()
                 .filter(x -> x.getItem() == machine.getBase())
                 .collect(Collectors.toList());
         
+        // Get list of discovered parts and transform to client data
         List<Integer> parts = discoveredParts.getOrDefault(machine, Collections.emptyList()).stream()
+                .filter(machine::isMachinePart)
                 .map(Item::getCode)
                 .collect(Collectors.toList());
+        parts.add(machine.getBase().getCode());
         
+        // Update the machine sprite for V3 clients
         for(MetaBlock metaBlock : metaBlocks) {
             metaBlock.setProperty("spr", parts);
             sendBlockMetaUpdate(metaBlock);
@@ -944,6 +956,7 @@ public class Zone {
         }
         
         // Send notifications if part was discovered by a player
+        // TODO machine base shouldn't do this
         if(player != null) {
             String machineName = machine.toString().toLowerCase();
             String determiner = Stream.of("a", "e", "i", "o", "u").filter(x -> machineName.startsWith(x)).findFirst().isPresent() ? "an" : "a";

@@ -165,13 +165,14 @@ public class StructureGeneratorTask implements GeneratorTask {
                 machines.add(ctx.nextDouble() < 0.5 ? EcologicalMachine.RECYCLER : EcologicalMachine.COMPOSTER);
                 break;
             case ARCTIC:
-                machines.add(ctx.nextDouble() < 0.5 ? EcologicalMachine.RECYCLER : EcologicalMachine.COMPOSTER);
+                machines.add(EcologicalMachine.RECYCLER);
                 break;
             case HELL:
                 machines.add(EcologicalMachine.EXPIATOR);
                 break;
             case DESERT:
                 machines.add(EcologicalMachine.PURIFIER);
+                machines.add(EcologicalMachine.RECYCLER);
                 break;
             case DEEP:
                 machines.add(EcologicalMachine.PURIFIER);
