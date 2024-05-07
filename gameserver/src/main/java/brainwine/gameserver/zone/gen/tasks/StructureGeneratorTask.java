@@ -148,6 +148,10 @@ public class StructureGeneratorTask implements GeneratorTask {
         placeComponentChests(ctx, containers);
         placeBrokenTeleporters(ctx, containers);
         
+        if(ctx.getZone().getBiome() == Biome.HELL) {
+            placeInfernalProtectors(ctx, containers);
+        }
+        
     }
     
     private void placeComponentChests(GeneratorContext ctx, List<MetaBlock> containers) {
@@ -210,6 +214,25 @@ public class StructureGeneratorTask implements GeneratorTask {
             int y = container.getY();
             ctx.updateBlock(x, y, Layer.FRONT, "mechanical/teleporter");
             ctx.getZone().removeMetaBlock(x, y); // Broken teleporters should have no metadata
+        }
+    }
+    
+    private void placeInfernalProtectors(GeneratorContext ctx, List<MetaBlock> containers) {
+        // One dish per 100,000 blocks (12 dishes in a normal sized world)
+        int amount = Math.min(containers.size(), Math.max(1, ctx.getWidth() * ctx.getHeight() / 100000));
+        
+        for(int i = 0; i < amount; i++) {
+            MetaBlock container = containers.remove(i);
+            int x = container.getX();
+            int y = container.getY();
+            
+            // Replace with large chest if container is a small chest
+            if(container.getItem().hasId("containers/chest")) {
+                ctx.updateBlock(x, y, Layer.FRONT, "containers/chest-large", 1, container.getMetadata());
+            }
+            
+            // Place dish on top of the container
+            ctx.updateBlock(x, y - 1, Layer.FRONT, "hell/dish");
         }
     }
     
