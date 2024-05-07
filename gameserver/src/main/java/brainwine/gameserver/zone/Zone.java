@@ -1232,6 +1232,7 @@ public class Zone {
     }
     
     private void indexMetaBlock(int index, MetaBlock block) {
+        unindexMetaBlock(index);
         Item item = block.getItem();
         metaBlocks.put(index, block);
         
