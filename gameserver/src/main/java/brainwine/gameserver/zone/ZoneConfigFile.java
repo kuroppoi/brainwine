@@ -37,6 +37,9 @@ public class ZoneConfigFile {
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime creationDate = OffsetDateTime.now();
     
+    @JsonSetter(nulls = Nulls.SKIP)
+    private OffsetDateTime lastActiveDate = OffsetDateTime.now();
+    
     public ZoneConfigFile(Zone zone) {
         this(zone.getName(), zone.getBiome(), zone.getWidth(), zone.getHeight(), zone.getAcidity(), zone.getDiscoveredParts(), zone.getCreationDate());
     }
@@ -87,5 +90,9 @@ public class ZoneConfigFile {
     
     public OffsetDateTime getCreationDate() {
         return creationDate;
+    }
+    
+    public OffsetDateTime getLastActiveDate() {
+        return lastActiveDate;
     }
 }

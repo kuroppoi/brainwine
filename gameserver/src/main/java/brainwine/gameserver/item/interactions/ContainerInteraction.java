@@ -1,13 +1,18 @@
 package brainwine.gameserver.item.interactions;
 
+import java.util.stream.Stream;
+
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.loot.Loot;
+import brainwine.gameserver.util.MapHelper;
+import brainwine.gameserver.zone.EcologicalMachine;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
@@ -77,11 +82,28 @@ public class ContainerInteraction implements ItemInteraction {
                 } else {
                     player.notify("No eligible loot could be found for this container.");
                 }
-            } else {                
-                if(zone.discoverMachinePart(player, ItemRegistry.getItem(specialItem))) {
-                    metaBlock.removeProperty("$");
+            } else {
+                Item machinePart = ItemRegistry.getItem(specialItem);
+                
+                if(zone.addMachinePart(machinePart)) {
+                    EcologicalMachine machine = EcologicalMachine.fromPart(machinePart);
+                    String machineName = machine.toString().toLowerCase();
+                    String determiner = Stream.of("a", "e", "i", "o", "u").filter(machineName::startsWith).findFirst().isPresent() ? "an" : "a";
+                    String text = String.format("You discovered %s %s component!", determiner, machineName);
+                    
+                    if(player.isV3()) {
+                        player.notify(text, NotificationType.ACCOMPLISHMENT);
+                    } else {
+                        Object message = MapHelper.map(String.class, String.class, 
+                                "t", text,
+                                "i", machinePart.getId());
+                        player.notify(message, NotificationType.ACCOMPLISHMENT);
+                    }
+                    
+                    player.notifyPeers(String.format("%s discovered %s %s component.", player.getName(), determiner, machineName), NotificationType.PEER_ACCOMPLISHMENT);
+                    player.getStatistics().trackDiscovery(machinePart);
                 } else {
-                    // TODO notify player
+                    // TODO how should we handle this...?
                 }
             }
         }

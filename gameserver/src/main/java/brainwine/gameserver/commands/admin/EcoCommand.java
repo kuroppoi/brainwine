@@ -3,7 +3,7 @@ package brainwine.gameserver.commands.admin;
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.commands.Command;
@@ -48,13 +48,12 @@ public class EcoCommand extends Command {
             
             if(action.equals("add")) {
                 if(part == null) {
-                    machine.getParts().forEach(zone::discoverMachinePart);
-                    zone.discoverMachinePart(machine.getBase());
+                    machine.getParts().forEach(zone::addMachinePart);
                     player.notify(String.format("Added all %s components.", machine.getId()), SYSTEM);
                     return;
                 }
                 
-                if(zone.discoverMachinePart(part)) {
+                if(zone.addMachinePart(part)) {
                     player.notify(String.format("Added %s component '%s'", machine.getId(), part.getId()), SYSTEM);
                     return;
                 }
@@ -65,13 +64,12 @@ public class EcoCommand extends Command {
             
             if(action.equals("remove")) {
                 if(part == null) {                    
-                    machine.getParts().forEach(x -> zone.removeDiscoveredPart(machine, x));
-                    zone.removeDiscoveredPart(machine, machine.getBase());
+                    machine.getParts().forEach(zone::removeMachinePart);
                     player.notify(String.format("Removed all %s components.", machine.getId()), SYSTEM);
                     return;
                 }
                 
-                if(zone.removeDiscoveredPart(machine, part)) {
+                if(zone.removeMachinePart(part)) {
                     player.notify(String.format("Removed %s component '%s'", machine.getId(), part.getId()), SYSTEM);
                     return;
                 }
@@ -84,8 +82,8 @@ public class EcoCommand extends Command {
             return;
         }
         
-        List<Item> parts = zone.getDiscoveredParts(machine);
-        player.notify(String.format("Discovered %s/%s %s components%s", parts.size(), machine.getPartCount() + 1, machine.getId(), parts.isEmpty() ? "." : ": " + parts), SYSTEM);
+        Collection<Item> parts = zone.getDiscoveredParts(machine);
+        player.notify(String.format("Discovered %s/%s %s components%s", parts.size(), machine.getPartCount(), machine.getId(), parts.isEmpty() ? "." : ": " + parts), SYSTEM);
     }
     
     @Override

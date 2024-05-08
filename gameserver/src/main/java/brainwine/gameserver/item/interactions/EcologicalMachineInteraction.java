@@ -1,6 +1,7 @@
 package brainwine.gameserver.item.interactions;
 
 import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.player.NotificationType;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
@@ -16,6 +17,8 @@ public abstract class EcologicalMachineInteraction implements ItemInteraction {
         this.machine = machine;
     }
     
+    public abstract void interact(Zone zone, Player player, int x, int y);
+    
     @Override
     public final void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
@@ -27,13 +30,36 @@ public abstract class EcologicalMachineInteraction implements ItemInteraction {
         Player player = (Player)entity;
         
         // Do nothing if the machine cannot be used yet.
-        if(!zone.canUseMachine(machine, player, x, y)) {
+        if(!canUseMachine(zone, player, x, y, metaBlock)) {
             return;
         }
         
         // Handle interaction
         interact(zone, player, x, y);
     }
-    
-    public abstract void interact(Zone zone, Player player, int x, int y);
+        
+    private boolean canUseMachine(Zone zone, Player player, int x, int y, MetaBlock metaBlock) {
+        // Check if machine is already active
+        if(metaBlock.getBooleanProperty("activated")) {
+            return true;
+        }
+        
+        int totalParts = machine.getPartCount();
+        int foundParts = zone.getDiscoveredParts(machine).size();
+        
+        // Check if parts have been discovered
+        if(foundParts < totalParts) {
+            int remainingParts = totalParts - foundParts;
+            player.notify(String.format("%s part%s of the %s still need%s to be found.",
+                    remainingParts, remainingParts == 1 ? "" : "s", machine.getId(), remainingParts == 1 ? "s" : ""));
+            return false;
+        }
+        
+        // Activate the machine!
+        metaBlock.setProperty("activated", true);
+        zone.updateBlock(x, y, Layer.FRONT, machine.getBase(), 2, null, metaBlock.getMetadata()); // TODO
+        player.notify(String.format("You activated the %s!", machine.getId()), NotificationType.ACCOMPLISHMENT);
+        player.notifyPeers(String.format("%s activated the %s!", player.getName(), machine.getId()), NotificationType.PEER_ACCOMPLISHMENT);
+        return false;
+    }
 }

@@ -198,9 +198,9 @@ public class StructureGeneratorTask implements GeneratorTask {
             iterator.remove();
         }
         
-        // If there are still parts left but no containers, just discover 'em.
+        // If there are still parts left but no containers, just add 'em.
         for(Item part : parts) {
-            ctx.getZone().discoverMachinePart(part);
+            ctx.getZone().addMachinePart(part);
         }
     }
     

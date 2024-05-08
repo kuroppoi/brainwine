@@ -53,6 +53,9 @@ import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.SimplexNoise;
 import brainwine.gameserver.util.Vector2i;
 
+/**
+ * TODO Zone class is getting kinda big. I want to split it into more smaller classes to make it more manageable.
+ */
 public class Zone {
     
     public static final int DEFAULT_CHUNK_WIDTH = 20;
@@ -80,6 +83,7 @@ public class Zone {
     private final WeatherManager weatherManager = new WeatherManager();
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
+    private final MachineManager machineManager = new MachineManager(this);
     private final List<BlockChangeData> blockChanges = new ArrayList<>();
     private final List<Timer<Integer>> blockTimers = new ArrayList<>();
     private final Set<Integer> pendingSunlight = new HashSet<>();
@@ -88,8 +92,6 @@ public class Zone {
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> damageFieldBlocks = new HashMap<>();
-    private final Map<Integer, MetaBlock> ecologicalMachineBlocks = new HashMap<>();
-    private final Map<EcologicalMachine, List<Item>> discoveredParts = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
     
@@ -104,9 +106,9 @@ public class Zone {
         this.depths = depths != null && depths.length == 3 ? depths : this.depths;
         this.chunksExplored = chunksExplored != null && chunksExplored.length == getChunkCount() ? chunksExplored : this.chunksExplored;
         steamManager.setData(data.getSteamData());
+        machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
-        discoveredParts.putAll(config.getDiscoveredParts());
         creationDate = config.getCreationDate();
     }
     
@@ -140,6 +142,7 @@ public class Zone {
         entityManager.tick(deltaTime);
         liquidManager.tick(deltaTime);
         steamManager.tick(deltaTime);
+        simulate(deltaTime);
         
         // One full cycle = 1200 seconds = 20 minutes
         time += deltaTime * (1.0F / 1200.0F);
@@ -205,6 +208,13 @@ public class Zone {
         }
         
         ticksElapsed++;
+    }
+    
+    /**
+     * Simulate happenings that take longer periods of time
+     */
+    protected void simulate(float deltaTime) {
+        machineManager.updatePurifier(deltaTime);
     }
     
     /**
@@ -879,140 +889,6 @@ public class Zone {
         return dungeons.containsKey(id);
     }
     
-    /**
-     * This will show the number of discovered components on the minimap
-     * as well as update the machine sprite on V2 clients.
-     */
-    public void sendMachineStatus(Player player) {
-        // V3 unfortunately doesn't seem to track machine progress
-        if(player.isV3()) {
-            return;
-        }
-        
-        // Get list of ecological machine types that exist in the zone
-        // TODO this isn't necessary: it originally only showed minimap status of machines that have had components discovered.
-        List<EcologicalMachine> machines = ecologicalMachineBlocks.values().stream()
-                .map(MetaBlock::getItem)
-                .distinct().map(EcologicalMachine::fromBase)
-                .collect(Collectors.toList());
-                
-        // Create client data
-        Map<String, Object> data = machines.stream()
-                .collect(Collectors.toMap(
-                        x -> String.valueOf(x.getClientId()), // Map machine instance to client ID
-                        x -> discoveredParts.getOrDefault(x, Collections.emptyList()).stream()
-                            .map(Item::getCode) // Map item instance to item code
-                            .collect(Collectors.toList())));
-        
-        // Send data
-        player.sendMessage(new ZoneStatusMessage(MapHelper.map("machines", data)));
-    }
-    
-    /**
-     * Sync machine status with all players in the zone.
-     */
-    private void updateMachineStatus(EcologicalMachine machine) {
-        // Find all machines of this type in the zone
-        List<MetaBlock> metaBlocks = ecologicalMachineBlocks.values().stream()
-                .filter(x -> x.getItem() == machine.getBase())
-                .collect(Collectors.toList());
-        
-        // Get list of discovered parts and transform to client data
-        List<Integer> parts = discoveredParts.getOrDefault(machine, Collections.emptyList()).stream()
-                .filter(machine::isMachinePart)
-                .map(Item::getCode)
-                .collect(Collectors.toList());
-        parts.add(machine.getBase().getCode());
-        
-        // Update the machine sprite for V3 clients
-        for(MetaBlock metaBlock : metaBlocks) {
-            metaBlock.setProperty("spr", parts);
-            sendBlockMetaUpdate(metaBlock);
-        }
-        
-        // Send machine status update to players
-        for(Player player : getPlayers()) {
-            sendMachineStatus(player);
-        }
-    }
-    
-    public boolean discoverMachinePart(Item part) {
-        return discoverMachinePart(null, part);
-    }
-    
-    public boolean discoverMachinePart(Player player, Item part) {
-        EcologicalMachine machine = EcologicalMachine.fromPart(part);
-        
-        // Do nothing if machine doesn't exist
-        if(machine == null) {
-            return false;
-        }
-        
-        List<Item> parts = discoveredParts.computeIfAbsent(machine, x -> new ArrayList<>());
-        
-        // Do nothing if part has already been discovered
-        if(parts.contains(part)) {
-            return false;
-        }
-        
-        // Send notifications if part was discovered by a player
-        // TODO machine base shouldn't do this
-        if(player != null) {
-            String machineName = machine.toString().toLowerCase();
-            String determiner = Stream.of("a", "e", "i", "o", "u").filter(x -> machineName.startsWith(x)).findFirst().isPresent() ? "an" : "a";
-            String text = String.format("You discovered %s %s component!", determiner, machineName);
-            
-            if(player.isV3()) {
-                player.notify(text, NotificationType.ACCOMPLISHMENT);
-            } else {
-                Object message = MapHelper.map(String.class, String.class, 
-                        "t", text,
-                        "i", part.getId());
-                player.notify(message, NotificationType.ACCOMPLISHMENT);
-            }
-            
-            player.notifyPeers(String.format("%s discovered %s %s component.", player.getName(), determiner, machineName), NotificationType.PEER_ACCOMPLISHMENT);
-            player.getStatistics().trackDiscovery(part);
-        }
-        
-        // Update machine status
-        parts.add(part);
-        updateMachineStatus(machine);
-        return true;
-    }
-    
-    public boolean canUseMachine(EcologicalMachine machine, Player player, int x, int y) {
-        // Check if chunk is loaded
-        if(!isChunkLoaded(x, y)) {
-            return false;
-        }
-        
-        int mod = getBlock(x, y).getFrontMod();
-        
-        // Check if machine is already active
-        if(mod != 0) {
-            return true;
-        }
-        
-        int totalParts = machine.getPartCount();
-        int foundParts = discoveredParts.getOrDefault(machine, Collections.emptyList()).size();
-        
-        // Check if parts have been discovered
-        if(foundParts < totalParts) {
-            int remainingParts = totalParts - foundParts;
-            player.notify(String.format("%s part%s of the %s still need%s to be found.",
-                    remainingParts, remainingParts == 1 ? "" : "s", machine.getId(), remainingParts == 1 ? "s" : ""));
-            return false;
-        }
-        
-        // Discover the final part and activate the machine!
-        discoverMachinePart(player, machine.getBase());
-        updateBlock(x, y, Layer.FRONT, machine.getBase(), 1, null, getMetaBlock(x, y).getMetadata()); // TODO
-        player.notify(String.format("You activated the %s!", machine.getId()), NotificationType.ACCOMPLISHMENT);
-        player.notifyPeers(String.format("%s activated the %s!", player.getName(), machine.getId()), NotificationType.PEER_ACCOMPLISHMENT);
-        return false;
-    }
-    
     public boolean digBlock(int x, int y) {
         if(!areCoordinatesInBounds(x, y)) {
             return false;
@@ -1248,12 +1124,7 @@ public class Zone {
             damageFieldBlocks.put(index, block);
         }
         
-        EcologicalMachine machine = EcologicalMachine.fromBase(item);
-        
-        if(machine != null) {
-            ecologicalMachineBlocks.put(index, block);
-            updateMachineStatus(machine); // TODO this updates ALL machines of this type which isn't really an issue but still kinda scuffed!
-        }
+        machineManager.indexMetaBlock(index, block);
     }
     
     private void unindexMetaBlock(int index) {
@@ -1261,7 +1132,7 @@ public class Zone {
         globalMetaBlocks.remove(index);
         fieldBlocks.remove(index);
         damageFieldBlocks.remove(index);
-        ecologicalMachineBlocks.remove(index);
+        machineManager.unindexMetaBlock(index);
     }
     
     protected void setMetaBlocks(List<MetaBlock> metaBlocks) {
@@ -1410,6 +1281,34 @@ public class Zone {
     
     public int settleLiquids() {
         return liquidManager.settleLiquids();
+    }
+    
+    public boolean isMachineActive(EcologicalMachine machine) {
+        return machineManager.isMachineActive(machine);
+    }
+    
+    public void sendMachineStatus(Player player) {
+        machineManager.sendMachineStatus(player);
+    }
+    
+    public boolean addMachinePart(Item part) {
+        return machineManager.addMachinePart(part);
+    }
+    
+    public boolean removeMachinePart(Item part) {
+        return machineManager.removeMachinePart(part);
+    }
+    
+    public Collection<Item> getDiscoveredParts(EcologicalMachine machine) {
+        return machineManager.getDiscoveredParts(machine);
+    }
+    
+    public Map<EcologicalMachine, List<Item>> getDiscoveredParts() {
+        return machineManager.getDiscoveredParts();
+    }
+    
+    public MachineManager getMachineManager() {
+        return machineManager;
     }
     
     /**
@@ -1708,23 +1607,6 @@ public class Zone {
     
     public float getAcidity() {
         return acidity;
-    }
-    
-    public boolean removeDiscoveredPart(EcologicalMachine machine, Item part) {
-        if(discoveredParts.containsKey(machine) && discoveredParts.get(machine).remove(part)) {            
-            updateMachineStatus(machine);
-            return true;
-        }
-        
-        return false;
-    }
-    
-    public List<Item> getDiscoveredParts(EcologicalMachine machine) {
-        return discoveredParts.getOrDefault(machine, Collections.emptyList());
-    }
-    
-    public Map<EcologicalMachine, List<Item>> getDiscoveredParts() {
-        return Collections.unmodifiableMap(discoveredParts);
     }
     
     public OffsetDateTime getCreationDate() {

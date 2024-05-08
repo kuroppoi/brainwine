@@ -5,6 +5,8 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -149,6 +151,7 @@ public class ZoneManager {
                 zone.spawnPersistentNpcs(JsonHelper.readList(charactersFile, NpcData.class));
             }
             
+            zone.simulate(ChronoUnit.SECONDS.between(config.getLastActiveDate(), OffsetDateTime.now()));
             addZone(zone);
         } catch (Exception e) {
             logger.error(SERVER_MARKER, "Zone load failure. id: {}", id, e);
