@@ -102,6 +102,7 @@ public class ContainerInteraction implements ItemInteraction {
                     
                     player.notifyPeers(String.format("%s discovered %s %s component.", player.getName(), determiner, machineName), NotificationType.PEER_ACCOMPLISHMENT);
                     player.getStatistics().trackDiscovery(machinePart);
+                    metaBlock.removeProperty("$");
                 } else {
                     // TODO how should we handle this...?
                 }
