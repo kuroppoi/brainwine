@@ -63,9 +63,9 @@ public class MachineManager {
         }
         
         // Create client data
-        Map<String, Object> data = discoveredParts.entrySet().stream()
+        Map<String, List<Integer>> data = discoveredParts.entrySet().stream()
                 .collect(Collectors.toMap(
-                        entry -> entry.getKey().getClientId(), // Map machine instance to client ID
+                        entry -> entry.getKey().getClientId(), // Map machine type to client ID
                         entry -> entry.getValue().stream()
                             .map(Item::getCode) // Map item instance to item code
                             .collect(Collectors.toCollection(ArrayList::new))));
@@ -172,7 +172,7 @@ public class MachineManager {
     }
     
     protected void loadData(ZoneConfigFile config) {
-        // Filter out invalid
+        // Filter out invalid parts
         Map<EcologicalMachine, List<Item>> discoveredParts = config.getDiscoveredParts().entrySet().stream()
                 .collect(Collectors.toMap(
                         Entry::getKey,
