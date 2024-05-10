@@ -62,8 +62,10 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
-        // TODO block ownership & 'placed' fieldability
-        if(!player.isGodMode() && !digging && item.getFieldability() == Fieldability.TRUE && zone.isBlockProtected(x, y, player)) {
+        Fieldability fieldability = item.getFieldability();
+        boolean fieldable = fieldability == Fieldability.TRUE || (fieldability == Fieldability.PLACED && !block.isNatural());
+        
+        if(!player.isGodMode() && !digging && fieldable && zone.isBlockProtected(x, y, player)) {
             fail(player, "This block is protected.");
             return;
         }
