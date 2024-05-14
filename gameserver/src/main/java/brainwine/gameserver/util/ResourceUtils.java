@@ -1,6 +1,9 @@
 package brainwine.gameserver.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Set;
 
@@ -15,10 +18,30 @@ public class ResourceUtils {
     
     private static final Logger logger = LogManager.getLogger();
     
+    public static InputStream getOverridableResource(String name) throws IOException {
+        File file = new File(name);
+        
+        if(!file.exists()) {
+            return ResourceUtils.class.getResourceAsStream(String.format("/defaults/%s", name));
+        }
+        
+        return new FileInputStream(file);
+    }
+    
+    public static Set<String> getResourceNames(String directory) {
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forResource("defaults"))
+                .setInputsFilter(x -> x.matches(String.format("defaults/%s.*", directory)))
+                .setScanners(Scanners.Resources));
+        return reflections.getResources(".*");
+    }
+    
+    @Deprecated
     public static void copyDefaults(String path) {
         copyDefaults(path, false);
     }
     
+    @Deprecated
     public static void copyDefaults(String path, boolean force) {
         try {
             File file = new File(path);
