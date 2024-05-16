@@ -132,6 +132,9 @@ public class Item {
     @JsonProperty("decay inventory")
     private LazyItemGetter decayInventoryItem;
     
+    @JsonProperty("mod_inventory")
+    private Pair<Integer, LazyItemGetter> modInventoryItem;
+    
     @JsonProperty("crafting quantity")
     private int craftingQuantity = 1;
     
@@ -458,6 +461,14 @@ public class Item {
     
     public Item getDecayInventoryItem() {
         return decayInventoryItem == null ? this : decayInventoryItem.get();
+    }
+    
+    public boolean hasModInventoryItem() {
+        return modInventoryItem != null;
+    }
+    
+    public Item getModInventoryItem(int mod) {
+        return modInventoryItem == null ? this : mod >= modInventoryItem.getFirst() ? modInventoryItem.getLast().get() : Item.AIR;
     }
     
     public String[] getLootCategories() {

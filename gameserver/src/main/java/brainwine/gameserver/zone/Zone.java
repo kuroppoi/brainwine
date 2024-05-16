@@ -80,7 +80,8 @@ public class Zone {
     private float acidity;
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
-    private final WeatherManager weatherManager = new WeatherManager();
+    private final GrowthManager growthManager;
+    private final WeatherManager weatherManager = new WeatherManager(this);
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
     private final MachineManager machineManager = new MachineManager(this);
@@ -124,9 +125,10 @@ public class Zone {
         surface = new int[width];
         sunlight = new int[width];
         chunksExplored = new boolean[numChunksWidth * numChunksHeight];
+        acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : 1;
         chunkManager = new ChunkManager(this);
         steamManager = new SteamManager(this);
-        acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : 1;
+        growthManager = new GrowthManager(this);
         Arrays.fill(surface, height);
         Arrays.fill(sunlight, height);
     }
@@ -1006,6 +1008,7 @@ public class Zone {
             removeBlockTimer(x, y);
             entityManager.trySpawnBlockEntity(x, y);
             steamManager.indexBlock(x, y, item);
+            growthManager.indexBlock(x, y, item);
             
             if(item.isWhole() && y < sunlight[x]) {
                 sunlight[x] = y;
@@ -1283,6 +1286,10 @@ public class Zone {
         return liquidManager.settleLiquids();
     }
     
+    public void updateGrowables(int rainCycles) {
+        growthManager.updateGrowables(rainCycles);
+    }
+    
     public boolean isMachineActive(EcologicalMachine machine) {
         return machineManager.isMachineActive(machine);
     }
@@ -1329,9 +1336,11 @@ public class Zone {
         return x >= 0 && y >= 0 && x < width && y < height;
     }
     
+    // TODO move this function to ChunkManager
     protected void onChunkLoaded(Chunk chunk) {
         int chunkX = chunk.getX();
         int chunkY = chunk.getY();
+        List<Integer> growthSourceIndices = new ArrayList<>();
         
         for(int x = chunkX; x < chunkX + chunk.getWidth(); x++) {
             // Update pending sunlight
@@ -1345,8 +1354,13 @@ public class Zone {
                 entityManager.trySpawnBlockEntity(x, y);
                 Block block = chunk.getBlock(x, y);
                 
-                // Index steam blocks
-                steamManager.indexBlock(x, y, block.getFrontItem());
+                // Index front item
+                Item item = block.getFrontItem();
+                steamManager.indexBlock(x, y, item);
+                
+                if(growthManager.indexBlock(x, y, item)) {
+                    growthSourceIndices.add(getBlockIndex(x, y));
+                }
                 
                 // Index liquids
                 if(!block.getLiquidItem().isAir() && block.getLiquidMod() > 0) {
@@ -1354,8 +1368,14 @@ public class Zone {
                 }
             }
         }
+        
+        // Simulate plant growth based on time passed since chunk was last loaded
+        int cycles = (int)((System.currentTimeMillis() - chunk.getSaveTime()) / 1200000); // One cycle per 20 minutes
+        growthManager.updateGrowables(cycles, growthSourceIndices);
+        
     }
     
+    // TODO move this function to ChunkManager
     protected void onChunkUnloaded(Chunk chunk) { 
         // TODO is this function ever gonna be necessary?
         // It seems that most (if not all) thingies are unindexed automatically.
@@ -1619,6 +1639,10 @@ public class Zone {
 
     public boolean isPopular() {
         return this.getPlayers().size() > 0;
+    }
+    
+    public boolean isPurified() {
+        return acidity < 0.05F;
     }
     
     /**

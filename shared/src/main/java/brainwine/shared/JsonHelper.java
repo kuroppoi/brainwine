@@ -2,6 +2,7 @@ package brainwine.shared;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -37,8 +38,12 @@ public class JsonHelper {
         return MAPPER.readValue(string, type);
     }
     
-    public static <T> T readValue(File file, Class<T> type) throws JsonParseException, JsonMappingException, IOException {
+    public static <T> T readValue(File file, Class<T> type) throws IOException {
         return MAPPER.readValue(file, type);
+    }
+    
+    public static <T> T readValue(InputStream inputStream, Class<T> type) throws IOException {
+        return MAPPER.readValue(inputStream, type);
     }
     
     public static <T> T readValue(Object object, Class<T> type) throws JsonProcessingException {
@@ -51,6 +56,10 @@ public class JsonHelper {
     
     public static <T> T readValue(File file, TypeReference<T> type) throws IOException {
         return MAPPER.readValue(file, type);
+    }
+    
+    public static <T> T readValue(InputStream inputStream, TypeReference<T> type) throws IOException {
+        return MAPPER.readValue(inputStream, type);
     }
     
     public static <T> T readValue(Object object, TypeReference<T> type) throws JsonProcessingException {
