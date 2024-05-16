@@ -85,11 +85,14 @@ public class PortalService {
         
         handleQueryParam(ctx, "sort", String.class, sort -> {
             switch(sort) {
-            case "popularity":
+            case "popularity": // Sort by most players first
                 zones.removeIf(zone -> zone.getPlayerCount() == 0);
                 zones.sort((a, b) -> Integer.compare(b.getPlayerCount(), a.getPlayerCount()));
                 break;
-            case "created":
+            case "created": // Sort by newest first
+                zones.sort((a, b) -> b.getCreationDate().compareTo(a.getCreationDate()));
+                break;
+            case "development": // TODO
                 break;
             }
         });
