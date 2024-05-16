@@ -6,6 +6,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -17,8 +19,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gui.GuiPreferences;
-import brainwine.gui.MainView;
 import brainwine.gui.theme.ThemeManager;
+import brainwine.gui.view.MainView;
+import brainwine.util.OperatingSystem;
 import brainwine.util.SwingUtils;
 
 public class Main {
@@ -26,8 +29,8 @@ public class Main {
     private static Logger logger = LogManager.getLogger();
     private static boolean disableGui = false;
     private static boolean forceGui = false;
+    private final List<ServerStatusListener> listeners = new ArrayList<>();
     private ServerThread serverThread;
-    private MainView mainView;
     private boolean closeRequested;
     
     public static void main(String[] args) {
@@ -102,12 +105,11 @@ public class Main {
             UIManager.put("Brainwine.settingsIcon", new ImageIcon(getClass().getResource("/settingsIcon16x.png")));
             UIManager.put("Brainwine.communityIcon", new ImageIcon(getClass().getResource("/communityIcon16x.png")));
             UIManager.put("Brainwine.powerIcon", new ImageIcon(getClass().getResource("/powerIcon16x.png")));
-            UIManager.put("Brainwine.consoleFont", new Font("Consolas", Font.PLAIN, 12));
+            UIManager.put("Brainwine.consoleFont", new Font(OperatingSystem.isMacOS() ? "Andale Mono" : "Consolas", Font.PLAIN, 12));
             UIManager.put("Spinner.editorAlignment", JTextField.LEFT);
             UIManager.put("TitlePane.unifiedBackground", false);
             UIManager.put("Button.foreground", UIManager.get("MenuBar.foreground"));
-            SwingUtils.setDefaultFontSize(Math.min(28, Math.max(10, GuiPreferences.getInt(GuiPreferences.FONT_SIZE_KEY, 15))));
-            SwingUtils.setMenuBarEmbedded(GuiPreferences.getBoolean(GuiPreferences.EMBED_MENU_BAR_KEY, true));
+            SwingUtils.setDefaultFontSize(Math.min(28, Math.max(10, GuiPreferences.getFontSize())));
             
             // Check read/write permissions
             if(!checkReadWritePermissions()) {
@@ -117,7 +119,7 @@ public class Main {
             }
             
             // Create view
-            mainView = new MainView(this);
+            new MainView(this);
         });
     }
     
@@ -126,8 +128,17 @@ public class Main {
         return Files.isReadable(path) && Files.isWritable(path);
     }
     
+    public void toggleServer() {
+        if(isServerRunning()) {
+            stopServer();
+        } else {
+            startServer();
+        }
+    }
+    
     public void startServer() {
         if(!isServerRunning()) {
+            listeners.forEach(ServerStatusListener::onServerStarting);
             serverThread = new ServerThread(this);
             serverThread.start();
         }
@@ -135,25 +146,28 @@ public class Main {
     
     public void stopServer() {
         if(isServerRunning()) {
+            listeners.forEach(ServerStatusListener::onServerStopping);
             serverThread.stopGracefully();
         }
     }
     
     public void onServerStarted() {
-        if(mainView != null) {
-            SwingUtilities.invokeLater(mainView::enableServerButton);
-        }
+        listeners.forEach(ServerStatusListener::onServerStarted);
     }
     
     public void onServerStopped() {
+        listeners.forEach(ServerStatusListener::onServerStopped);
+        
         if(closeRequested) {
             System.exit(0);
-        } else if(mainView != null) {
-            SwingUtilities.invokeLater(mainView::enableServerButton);
         }
     }
     
     public boolean isServerRunning() {
         return serverThread != null && serverThread.isRunning();
+    }
+    
+    public void addServerStatusListener(ServerStatusListener listener) {
+        listeners.add(listener);
     }
 }

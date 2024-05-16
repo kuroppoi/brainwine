@@ -1,4 +1,4 @@
-package brainwine.gui;
+package brainwine.gui.view;
 
 import static brainwine.gui.GuiConstants.DEEPWORLD_PLAYERPREFS;
 import static brainwine.gui.GuiConstants.GITHUB_REPOSITORY_URL;
@@ -26,6 +26,10 @@ import com.formdev.flatlaf.extras.components.FlatTabbedPane;
 import com.formdev.flatlaf.extras.components.FlatTabbedPane.TabAlignment;
 
 import brainwine.Main;
+import brainwine.gui.GuiPreferences;
+import brainwine.gui.component.GamePanel;
+import brainwine.gui.component.ServerPanel;
+import brainwine.gui.component.SettingsPanel;
 import brainwine.util.DesktopUtils;
 import brainwine.util.OperatingSystem;
 import brainwine.util.ProcessResult;
@@ -40,8 +44,6 @@ public class MainView {
     private final JFrame frame;
     private final JPanel panel;
     private final FlatTabbedPane tabbedPane;
-    private final ServerPanel serverPanel;
-    private final SettingsPanel settingsPanel;
     
     public MainView(Main main) {
         logger.info(GUI_MARKER, "Creating main view ...");
@@ -53,14 +55,14 @@ public class MainView {
         tabbedPane = new FlatTabbedPane();
         tabbedPane.setShowContentSeparators(true);
         tabbedPane.setTabAlignment(TabAlignment.leading);
-        setTabPlacement(GuiPreferences.getInt(GuiPreferences.TAB_PLACEMENT_KEY, 1), false);
+        setTabPlacement(GuiPreferences.getTabPlacement(), false);
         
-        if(OperatingSystem.isWindows()) {
-            tabbedPane.addTab("Play Game", UIManager.getIcon("Brainwine.playIcon"), new GamePanel(this));
+        if(OperatingSystem.isWindows() || OperatingSystem.isMacOS()) {
+            tabbedPane.addTab("Play Game", UIManager.getIcon("Brainwine.playIcon"), new GamePanel(main));
         }
         
-        tabbedPane.addTab("Server", UIManager.getIcon("Brainwine.serverIcon"), serverPanel = new ServerPanel(main));
-        tabbedPane.addTab("Settings", UIManager.getIcon("Brainwine.settingsIcon"), settingsPanel = new SettingsPanel(this));
+        tabbedPane.addTab("Server", UIManager.getIcon("Brainwine.serverIcon"), new ServerPanel(main));
+        tabbedPane.addTab("Settings", UIManager.getIcon("Brainwine.settingsIcon"), new SettingsPanel(this));
         panel.add(tabbedPane);
         
         // Menu
@@ -110,15 +112,6 @@ public class MainView {
     
     public int getTabPlacement() {
         return tabbedPane.getTabPlacement();
-    }
-    
-    public void showHostSettings() {
-        tabbedPane.setSelectedComponent(settingsPanel);
-        settingsPanel.focusHostSettings();
-    }
-    
-    public void enableServerButton() {
-        serverPanel.enableServerButton();
     }
     
     private void showAccountLockPrompt() {

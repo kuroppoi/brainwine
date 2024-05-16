@@ -1,4 +1,4 @@
-package brainwine.gui;
+package brainwine.gui.component;
 
 import static brainwine.gui.GuiConstants.ERROR_COLOR;
 import static brainwine.gui.GuiConstants.INFO_COLOR;
@@ -14,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
+import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -27,8 +28,9 @@ import org.apache.logging.log4j.Level;
 import com.formdev.flatlaf.extras.components.FlatScrollPane;
 import com.formdev.flatlaf.extras.components.FlatTextField;
 
-import brainwine.Main;
 import brainwine.ListenableAppender;
+import brainwine.Main;
+import brainwine.ServerStatusListener;
 import brainwine.gui.event.AutoScrollAdjustmentListener;
 
 @SuppressWarnings("serial")
@@ -93,8 +95,41 @@ public class ServerPanel extends JPanel {
         
         // Server Toggle Button
         serverButton = new JButton("Start Server", UIManager.getIcon("Brainwine.powerIcon"));
-        serverButton.addActionListener(event -> toggleServer());
+        serverButton.addActionListener(event -> main.toggleServer());
         bottomPanel.add(serverButton, BorderLayout.LINE_END);
+        
+        // Create server status listener
+        main.addServerStatusListener(new ServerStatusListener() {
+            @Override
+            public void onServerStarting() {
+                serverButton.setEnabled(false);
+                consoleOutput.setText(null);
+            }
+
+            @Override
+            public void onServerStopping() {
+                serverButton.setEnabled(false);
+                consoleInput.setEditable(false);
+                consoleInput.setText(null);
+            }
+
+            @Override
+            public void onServerStarted() {
+                SwingUtilities.invokeLater(() -> {
+                    serverButton.setText("Stop Server");
+                    serverButton.setEnabled(true);
+                    consoleInput.setEditable(true);
+                });
+            }
+
+            @Override
+            public void onServerStopped() {
+                SwingUtilities.invokeLater(() -> {
+                    serverButton.setText("Start Server");
+                    serverButton.setEnabled(true);
+                });
+            }
+        });
     }
     
     private void appendConsoleOutput(String text, Color color) {        
@@ -117,29 +152,5 @@ public class ServerPanel extends JPanel {
             main.executeCommand(commandLine);
             consoleInput.setText(null);
         }
-    }
-    
-    private void toggleServer() {
-        if(main.isServerRunning()) {
-            serverButton.setEnabled(false);
-            consoleInput.setEditable(false);
-            consoleInput.setText(null);
-            main.stopServer();
-        } else {
-            serverButton.setEnabled(false);
-            consoleInput.setEditable(true);
-            consoleOutput.setText(null);
-            main.startServer();
-        }
-    }
-    
-    public void enableServerButton() {
-        if(!main.isServerRunning()) {
-            consoleInput.setEditable(false);
-            consoleInput.setText(null);
-        }
-        
-        serverButton.setText(main.isServerRunning() ? "Stop Server" : "Start Server");
-        serverButton.setEnabled(true);
     }
 }
