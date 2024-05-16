@@ -168,7 +168,17 @@ public class BlockMineRequest extends PlayerRequest {
             zone.spawnEntity(item.getEntitySpawns().next(), x, y);
         }
         
-        Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
+        // Determine inventory item
+        Item inventoryItem;
+        
+        if(item.getMod() == ModType.DECAY && block.getMod(layer) > 0) {
+            inventoryItem = item.getDecayInventoryItem();
+        } else if(item.hasModInventoryItem()) {
+            inventoryItem = item.getModInventoryItem(block.getMod(layer));
+        } else {
+            inventoryItem = item.getInventoryItem();
+        }
+        
         int quantity = 1;
         player.getStatistics().trackItemMined(item);
         zone.updateBlock(x, y, layer, 0, 0, player);
