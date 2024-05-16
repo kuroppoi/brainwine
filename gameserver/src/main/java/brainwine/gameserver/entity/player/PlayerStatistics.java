@@ -32,6 +32,7 @@ import brainwine.gameserver.item.Item;
 public class PlayerStatistics {
     
     private Map<Item, Integer> itemsMined = new HashMap<>();
+    private Map<Item, Integer> itemsScavenged = new HashMap<>();
     private Map<Item, Integer> itemsCrafted = new HashMap<>();
     private Map<Item, Integer> discoveries = new HashMap<>();
     private Map<EntityConfig, Integer> kills = new HashMap<>();
@@ -62,14 +63,8 @@ public class PlayerStatistics {
     }
     
     public void trackItemMined(Item item) {
-        if(!itemsMined.containsKey(item)) {
-            player.addExperience(150, "New item mined!");
-        }
-        
         itemsMined.put(item, getItemsMined(item) + 1);
-        player.addExperience(item.getExperienceYield());
         player.updateAchievementProgress(MiningAchievement.class);
-        player.updateAchievementProgress(ScavengingAchievement.class);
     }
     
     public void setItemsMined(Map<Item, Integer> itemsMined) {
@@ -94,6 +89,40 @@ public class PlayerStatistics {
     
     public Map<Item, Integer> getItemsMined() {
         return Collections.unmodifiableMap(itemsMined);
+    }
+    
+    public void trackItemScavenged(Item item) {
+        if(!itemsScavenged.containsKey(item)) {
+            player.addExperience(150, "New item mined!");
+        }
+        
+        itemsScavenged.put(item, getItemsScavenged(item) + 1);
+        player.addExperience(item.getExperienceYield());
+        player.updateAchievementProgress(ScavengingAchievement.class);
+    }
+    
+    public void setItemsScavenged(Map<Item, Integer> itemsScavenged) {
+        this.itemsScavenged = itemsScavenged;
+    }
+    
+    public int getTotalItemsScavenged() {
+        return itemsScavenged.values().stream()
+                .reduce(Integer::sum)
+                .orElse(0);
+    }
+    
+    public int getUniqueItemsScavenged() {
+        return (int)itemsScavenged.entrySet().stream()
+                .filter(entry -> entry.getValue() > 0)
+                .count();
+    }
+    
+    public int getItemsScavenged(Item item) {
+        return itemsScavenged.getOrDefault(item, 0);
+    }
+    
+    public Map<Item, Integer> getItemsScavenged() {
+        return Collections.unmodifiableMap(itemsScavenged);
     }
     
     public void trackItemCrafted(Item item) {

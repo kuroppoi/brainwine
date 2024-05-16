@@ -25,9 +25,9 @@ public class ScavengingAchievement extends Achievement {
         PlayerStatistics statistics = player.getStatistics();
         
         if(items == null) {
-            return statistics.getUniqueItemsMined();
+            return statistics.getUniqueItemsScavenged();
         } else {
-            return (int)(statistics.getItemsMined().entrySet().stream()
+            return (int)(statistics.getItemsScavenged().entrySet().stream()
                     .filter(entry -> entry.getValue() > 0 && items.contains(entry.getKey()))
                     .count());
         }

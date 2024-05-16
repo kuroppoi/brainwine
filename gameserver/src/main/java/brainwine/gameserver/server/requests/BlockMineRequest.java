@@ -181,16 +181,22 @@ public class BlockMineRequest extends PlayerRequest {
         
         int quantity = 1;
         player.getStatistics().trackItemMined(item);
+        
+        if(block.isNatural()) {
+            player.getStatistics().trackItemScavenged(item);
+        }
+        
         zone.updateBlock(x, y, layer, 0, 0, player);
         
         // Apply mining bonus if there is one
         if(item.hasMiningBonus()) {
             MiningBonus bonus = item.getMiningBonus();
+            
             if(Math.random() < player.getMiningBonusChance(bonus)) {
                 if(!bonus.getItem().isAir()) {
                     inventoryItem = bonus.getItem();
                 }
-                                
+                
                 if(bonus.isDoubleLoot()) {
                     quantity *= 2;
                 }
