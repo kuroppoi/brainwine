@@ -32,6 +32,7 @@ public class PlayerConfigFile {
     private PlayerStatistics statistics = new PlayerStatistics();
     private List<String> authTokens = new ArrayList<>();
     private List<NameChange> nameChanges = new ArrayList<>();
+    private List<TradeRecord> tradeHistory = new ArrayList<>();
     private List<PlayerRestriction> mutes = new ArrayList<>();
     private List<PlayerRestriction> bans = new ArrayList<>();
     private Set<String> lootCodes = new HashSet<>();
@@ -55,6 +56,7 @@ public class PlayerConfigFile {
         this.statistics = player.getStatistics();
         this.authTokens = player.getAuthTokens();
         this.nameChanges = player.getNameChanges();
+        this.tradeHistory = player.getTradeHistory();
         this.mutes = player.getMutes();
         this.bans = player.getBans();
         this.lootCodes = player.getLootCodes();
@@ -97,6 +99,11 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public List<NameChange> getNameChanges() {
         return nameChanges;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<TradeRecord> getTradeHistory() {
+        return tradeHistory;
     }
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)

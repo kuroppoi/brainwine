@@ -96,6 +96,7 @@ public class Player extends Entity implements CommandExecutor {
     private PlayerStatistics statistics;
     private List<String> authTokens;
     private List<NameChange> nameChanges;
+    private List<TradeRecord> tradeHistory;
     private List<PlayerRestriction> mutes;
     private List<PlayerRestriction> bans;
     private Set<String> lootCodes;
@@ -140,6 +141,7 @@ public class Player extends Entity implements CommandExecutor {
         this.statistics = config.getStatistics();
         this.authTokens = config.getAuthTokens();
         this.nameChanges = config.getNameChanges();
+        this.tradeHistory = config.getTradeHistory();
         this.mutes = config.getMutes();
         this.bans = config.getBans();
         this.lootCodes = config.getLootCodes();
@@ -161,6 +163,7 @@ public class Player extends Entity implements CommandExecutor {
         this.statistics = new PlayerStatistics(this);
         this.authTokens = new ArrayList<>();
         this.nameChanges = new ArrayList<>();
+        this.tradeHistory = new ArrayList<>();
         this.mutes = new ArrayList<>();
         this.bans = new ArrayList<>();
         this.lootCodes = new HashSet<>();
@@ -680,6 +683,14 @@ public class Player extends Entity implements CommandExecutor {
     
     public TradeSession getTradeSession() {
         return tradeSession;
+    }
+    
+    public void addTradeRecord(TradeRecord record) {
+        tradeHistory.add(record);
+    }
+    
+    public List<TradeRecord> getTradeHistory() {
+        return Collections.unmodifiableList(tradeHistory);
     }
     
     public void trackPlacement(int x, int y, Item item) {

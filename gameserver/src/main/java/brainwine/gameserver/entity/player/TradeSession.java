@@ -241,6 +241,11 @@ public class TradeSession {
             recipient.getInventory().addItem(item, quantity, true);
         });
         
+        // Add record to trade history
+        TradeRecord record = new TradeRecord(initiator.getDocumentId(), recipient.getDocumentId(), initiatorOffers, recipientOffers);
+        initiator.addTradeRecord(record);
+        recipient.addTradeRecord(record);
+        
         // Show feedback
         initiator.showDialog(Dialogs.createOfferDialog(String.format("You sent free goodies to %s!", recipient.getName()), "Sent:", initiatorOffers));
         recipient.showDialog(Dialogs.createOfferDialog(String.format("You received goodies from %s!", initiator.getName()), "Received:", initiatorOffers));
@@ -382,6 +387,11 @@ public class TradeSession {
             recipient.getInventory().removeItem(item, quantity, true);
             initiator.getInventory().addItem(item, quantity, true);
         });
+        
+        // Add record to trade history
+        TradeRecord record = new TradeRecord(initiator.getDocumentId(), recipient.getDocumentId(), initiatorOffers, recipientOffers);
+        initiator.addTradeRecord(record);
+        recipient.addTradeRecord(record);
         
         // Show trade completion dialog
         initiator.showDialog(Dialogs.createOfferDialog(String.format("You traded with %s.", recipient.getName()), "Received:", recipientOffers));
