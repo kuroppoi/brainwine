@@ -29,7 +29,7 @@ public class EntityUseRequest extends PlayerRequest {
             Player targetPlayer = (Player)entity;
             
             if(data instanceof List<?>) {
-                List<?> data = (List<?>)this.data;
+                List<Object> data = (List<Object>)this.data;
                 
                 // Handle trade
                 if(data.size() == 2 && "trade".equals(data.get(0)) && data.get(1) instanceof Integer) {
