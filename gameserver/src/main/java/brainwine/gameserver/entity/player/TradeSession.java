@@ -137,8 +137,8 @@ public class TradeSession {
             return;
         }
         
-        // Abort if player does not have enough of this item
-        if(!player.getInventory().hasItem(item, quantity)) {
+        // Abort if quantiy is invalid or if the player does not have enough of this item
+        if(quantity <= 0 || !player.getInventory().hasItem(item, quantity)) {
             abort();
             return;
         }
@@ -255,6 +255,12 @@ public class TradeSession {
             return;
         }
         
+        // Abort trade if no offers are present
+        if(initiatorOffers.isEmpty()) {
+            abort();
+            return;
+        }
+        
         // End trade if recipient is unavailable
         if(!canTrade(recipient)) {
             initiator.showDialog(DialogHelper.messageDialog(String.format("%s cannot trade right now -- try again in a minute.", recipient.getName())));
@@ -319,6 +325,12 @@ public class TradeSession {
     private void onRecipientSubmitOffer() {
         // Do nothing if state is invalid
         if(state != State.RECIPIENT_OFFERING) {
+            return;
+        }
+        
+        // Abort trade if no offers are present
+        if(recipientOffers.isEmpty()) {
+            abort();
             return;
         }
         
