@@ -60,7 +60,7 @@ public class Appearance {
     }
     
     public static List<String> getAvailableColors(AppearanceSlot slot) {
-        return getAvailableColors(null);
+        return getAvailableColors(slot, null);
     }
     
     public static List<String> getAvailableColors(AppearanceSlot slot, Player player) {
