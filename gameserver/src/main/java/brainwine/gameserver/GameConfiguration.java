@@ -22,7 +22,7 @@ import org.reflections.util.ConfigurationBuilder;
 import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
-import brainwine.gameserver.commands.CommandManager;
+import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.player.Player;

@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 
-import brainwine.gameserver.achievements.Achievement;
+import brainwine.gameserver.achievement.Achievement;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.zone.Zone;
 
