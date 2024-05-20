@@ -74,6 +74,7 @@ public class Zone {
     private int[] sunlight;
     private int[] depths;
     private boolean[] chunksExplored;
+    private int chunksExploredCount;
     private OffsetDateTime creationDate = OffsetDateTime.now();
     private float time = (float)Math.random(); // TODO temporary
     private float temperature;
@@ -106,6 +107,7 @@ public class Zone {
         this.sunlight = sunlight != null && sunlight.length == width ? sunlight : this.sunlight;
         this.depths = depths != null && depths.length == 3 ? depths : this.depths;
         this.chunksExplored = chunksExplored != null && chunksExplored.length == getChunkCount() ? chunksExplored : this.chunksExplored;
+        recalculateChunksExploredCount();
         steamManager.setData(data.getSteamData());
         machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
@@ -1525,6 +1527,7 @@ public class Zone {
             explorer.getStatistics().trackAreaExplored();
         }
         
+        chunksExploredCount++;
         sendMessage(new ZoneExploredMessage(chunkIndex));
         return chunksExplored[chunkIndex] = true;
     }
@@ -1553,15 +1556,17 @@ public class Zone {
     }
     
     public int getChunksExploredCount() {
-        int count = 0;
+        return chunksExploredCount;
+    }
+    
+    private void recalculateChunksExploredCount() {
+        chunksExploredCount = 0;
         
         for(boolean explored : chunksExplored) {
             if(explored) {
-                count++;
+                chunksExploredCount++;
             }
         }
-        
-        return count;
     }
     
     @JsonValue
