@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;

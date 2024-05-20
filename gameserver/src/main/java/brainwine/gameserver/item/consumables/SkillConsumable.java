@@ -11,9 +11,9 @@ import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.input.DialogSelectInput;
-import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.server.messages.InventoryMessage;
 
 /**

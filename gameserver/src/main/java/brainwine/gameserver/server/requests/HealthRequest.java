@@ -1,12 +1,12 @@
 package brainwine.gameserver.server.requests;
 
-import brainwine.gameserver.annotations.OptionalField;
-import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 
 @RequestInfo(id = 18)
 public class HealthRequest extends PlayerRequest {

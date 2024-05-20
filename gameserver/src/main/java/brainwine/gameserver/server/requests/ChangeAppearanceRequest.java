@@ -3,14 +3,14 @@ package brainwine.gameserver.server.requests;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.dialog.DialogHelper;
-import brainwine.gameserver.entity.player.Appearance;
-import brainwine.gameserver.entity.player.AppearanceSlot;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.player.Appearance;
+import brainwine.gameserver.player.AppearanceSlot;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.util.MapHelper;
 

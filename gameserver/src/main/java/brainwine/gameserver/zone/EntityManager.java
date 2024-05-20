@@ -2,8 +2,8 @@ package brainwine.gameserver.zone;
 
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,14 +26,14 @@ import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.NpcData;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.util.MapHelper;
-import brainwine.gameserver.util.ResourceUtils;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.shared.JsonHelper;
@@ -61,15 +61,12 @@ public class EntityManager {
     public static void loadEntitySpawns() {
         spawns.clear();
         logger.info(SERVER_MARKER, "Loading entity spawns ...");
-        File file = new File("spawning.json");
-        ResourceUtils.copyDefaults("spawning.json");
         
-        if(file.isFile()) {
-            try {
-                spawns.putAll(JsonHelper.readValue(file, new TypeReference<Map<Biome, List<EntitySpawn>>>(){}));
-            } catch (IOException e) {
-                logger.error(SERVER_MARKER, "Failed to load entity spawns", e);
-            }
+        try {
+            URL url = ResourceFinder.getResourceUrl("spawning.json", true);
+            spawns.putAll(JsonHelper.readValue(url, new TypeReference<Map<Biome, List<EntitySpawn>>>(){}));
+        } catch (IOException e) {
+            logger.error(SERVER_MARKER, "Failed to load entity spawns", e);
         }
     }
     

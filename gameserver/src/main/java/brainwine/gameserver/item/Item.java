@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.dialog.DialogType;
-import brainwine.gameserver.entity.player.Skill;
+import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;

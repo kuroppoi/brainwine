@@ -3,12 +3,12 @@ package brainwine.gameserver.server.requests;
 import java.time.format.DateTimeFormatter;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.annotations.OptionalField;
-import brainwine.gameserver.annotations.RequestInfo;
-import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.PlayerRestriction;
-import brainwine.gameserver.entity.player.PlayerManager;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.PlayerManager;
+import brainwine.gameserver.player.PlayerRestriction;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.Request;
+import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.zone.Zone;
 

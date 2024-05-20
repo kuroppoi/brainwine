@@ -1,6 +1,6 @@
 package brainwine.gameserver.item.interactions;
 
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.zone.EcologicalMachine;
 import brainwine.gameserver.zone.Zone;
 

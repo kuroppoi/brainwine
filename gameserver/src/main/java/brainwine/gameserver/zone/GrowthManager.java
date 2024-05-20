@@ -2,7 +2,7 @@ package brainwine.gameserver.zone;
 
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
-import java.io.InputStream;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.util.ResourceUtils;
+import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.shared.JsonHelper;
 
@@ -40,17 +40,15 @@ public class GrowthManager {
         this.zone = zone;
     }
     
-    /**
-     * Loads growth data configuration
-     */
     public static void loadGrowthData() {
         growables.clear();
         sourcesByBiome.clear();
         
-        try(InputStream inputStream = ResourceUtils.getOverridableResource("growth.json")) {
-            Map<String, Object> data = JsonHelper.readValue(inputStream, new TypeReference<Map<String, Object>>(){});
+        try {
+            URL url = ResourceFinder.getResourceUrl("growth.json");
+            Map<String, Object> data = JsonHelper.readValue(url, new TypeReference<Map<String, Object>>(){});
             growables.putAll(JsonHelper.readValue(data.get("growables"), new TypeReference<Map<Item, Growable>>(){}));
-            sourcesByBiome.putAll(JsonHelper.readValue(data.get("sources"), new TypeReference<Map<Biome, Map<Item, WeightedMap<Item>>>>(){}));            
+            sourcesByBiome.putAll(JsonHelper.readValue(data.get("sources"), new TypeReference<Map<Biome, Map<Item, WeightedMap<Item>>>>(){}));
         } catch(Exception e) {
             logger.error(SERVER_MARKER, "Could not load growth data", e);
         }

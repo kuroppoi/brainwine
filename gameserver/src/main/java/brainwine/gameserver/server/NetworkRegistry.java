@@ -10,9 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
 
-import brainwine.gameserver.annotations.MessageInfo;
-import brainwine.gameserver.annotations.RequestInfo;
-
 @SuppressWarnings("unchecked")
 public class NetworkRegistry {
     

@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import brainwine.api.Api;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.TickLoop;
-import brainwine.gameserver.commands.CommandManager;
+import brainwine.gameserver.command.CommandManager;
 
 public class ServerThread extends Thread {
     

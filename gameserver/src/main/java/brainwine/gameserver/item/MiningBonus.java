@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import brainwine.gameserver.entity.player.Skill;
+import brainwine.gameserver.player.Skill;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MiningBonus {

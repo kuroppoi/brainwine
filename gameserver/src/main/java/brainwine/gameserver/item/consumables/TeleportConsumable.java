@@ -2,9 +2,9 @@ package brainwine.gameserver.item.consumables;
 
 import java.util.List;
 
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.zone.MetaBlock;
 

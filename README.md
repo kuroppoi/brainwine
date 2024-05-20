@@ -16,9 +16,10 @@ Brainwine currently supports the following versions of Deepworld:
 
 - Install [Java 8](https://adoptium.net/temurin/releases/?package=jdk&version=8).
 - Download the [latest Brainwine release](https://github.com/kuroppoi/brainwine/releases/latest).
-- Run Brainwine, go to the server tab and start the server.
-- Go to the game tab and start the game.
-  - If this isn't available for you, download a [patching kit](https://github.com/kuroppoi/brainwine/releases/tag/patching-kits-1.0) for your platform and follow the instructions there.
+- Start Brainwine by running the jar file.
+- In the window that appears, press "Start Server" to start the server.
+- Press "Start Deepworld" to launch the game.
+  - If you want to play on iOS, download a patching kit for it [here](https://github.com/kuroppoi/brainwine/releases/tag/patching-kits-1.0).
 - Register a new account and play the game.
 
 ## Building
