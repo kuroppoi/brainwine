@@ -16,12 +16,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import java.util.zip.DataFormatException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.msgpack.core.MessagePack;
-import org.msgpack.core.MessageUnpacker;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -128,16 +125,12 @@ public class ZoneManager {
         File metaBlocksFile = new File(file, "metablocks.json");
         File charactersFile = new File(file, "characters.json");
         
-        try {
-            ZoneDataFile data = null;
-            
+        try {            
             if(legacyDataFile.exists() && !dataFile.exists()) {
-                data = convertLegacyDataFile(legacyDataFile, dataFile);
-                // legacyDataFile.delete(); Let's just keep it..
-            } else {
-                data = mapper.readValue(ZipUtils.inflateBytes(Files.readAllBytes(dataFile.toPath())), ZoneDataFile.class);
+                throw new IOException("Zone data format is outdated. Please try to load this zone with an older server version to update it.");
             }
             
+            ZoneDataFile data = mapper.readValue(ZipUtils.inflateBytes(Files.readAllBytes(dataFile.toPath())), ZoneDataFile.class);
             ZoneConfigFile config = JsonHelper.readValue(configFile, ZoneConfigFile.class);
             Zone zone = new Zone(id, config, data);
             
@@ -156,38 +149,6 @@ public class ZoneManager {
         } catch (Exception e) {
             logger.error(SERVER_MARKER, "Zone load failure. id: {}", id, e);
         }
-    }
-    
-    private ZoneDataFile convertLegacyDataFile(File legacyFile, File outputFile) throws IOException, DataFormatException {
-        MessageUnpacker unpacker = MessagePack.newDefaultUnpacker(ZipUtils.inflateBytes(Files.readAllBytes(legacyFile.toPath())));
-        int[] surface = new int[unpacker.unpackArrayHeader()];
-        
-        for(int i = 0; i < surface.length; i++) {
-            surface[i] = unpacker.unpackInt();
-        }
-        
-        int[] sunlight = new int[unpacker.unpackArrayHeader()];
-        
-        for(int i = 0; i < sunlight.length; i++) {
-            sunlight[i] = unpacker.unpackInt();
-        }
-        
-        List<Integer> pendingSunlight = new ArrayList<>();
-        int pendingSunlightSize = unpacker.unpackArrayHeader();
-        
-        for(int i = 0; i < pendingSunlightSize; i++) {
-            pendingSunlight.add(unpacker.unpackInt());
-        }
-        
-        boolean[] chunksExplored = new boolean[unpacker.unpackArrayHeader()];
-        
-        for(int i = 0; i < chunksExplored.length; i++) {
-            chunksExplored[i] = unpacker.unpackBoolean();
-        }
-        
-        ZoneDataFile data = new ZoneDataFile(surface, sunlight, null, pendingSunlight, chunksExplored, null);
-        Files.write(outputFile.toPath(), ZipUtils.deflateBytes(mapper.writeValueAsBytes(data)));
-        return data;
     }
     
     public void saveZones() {
