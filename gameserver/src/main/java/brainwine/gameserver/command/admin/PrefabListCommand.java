@@ -8,9 +8,9 @@ import java.util.List;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.prefab.Prefab;
 
 @CommandInfo(name = "prefabs", description = "Displays a list of all prefabs.")

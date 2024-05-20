@@ -5,9 +5,9 @@ import static brainwine.gameserver.player.NotificationType.SYSTEM;
 import java.util.regex.Pattern;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.prefab.PrefabManager;

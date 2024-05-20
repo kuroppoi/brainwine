@@ -7,15 +7,15 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.text.WordUtils;
 
-import brainwine.gameserver.annotations.OptionalField;
-import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.input.DialogSelectInput;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.Skill;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 
 @RequestInfo(id = 45)
 public class DialogRequest extends PlayerRequest {

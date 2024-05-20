@@ -5,9 +5,9 @@ import static brainwine.gameserver.player.NotificationType.SYSTEM;
 import java.util.Arrays;
 import java.util.Collection;
 
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.player.Player;

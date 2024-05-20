@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.player.Player;

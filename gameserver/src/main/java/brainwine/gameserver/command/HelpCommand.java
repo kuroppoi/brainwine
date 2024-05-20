@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.apache.commons.lang3.math.NumberUtils;
 
-import brainwine.gameserver.annotations.CommandInfo;
-
 @CommandInfo(name = "help", description = "Displays a list of commands.")
 public class HelpCommand extends Command {
 

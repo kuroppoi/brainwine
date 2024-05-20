@@ -1,8 +1,8 @@
 package brainwine.gameserver.server.requests;
 
-import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 
 @RequestInfo(id = 26)
 public class RespawnRequest extends PlayerRequest {

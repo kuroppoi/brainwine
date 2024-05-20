@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Fieldability;
@@ -17,6 +16,7 @@ import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.util.MapHelper;

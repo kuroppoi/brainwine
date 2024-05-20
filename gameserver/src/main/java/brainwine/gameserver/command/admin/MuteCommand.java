@@ -7,9 +7,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.DateTimeUtils;
 

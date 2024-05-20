@@ -4,9 +4,9 @@ import static brainwine.gameserver.player.NotificationType.POPUP;
 import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.player.Player;
 
 @CommandInfo(name = "broadcast", description = "Broadcasts a message to all online players.", aliases = "bc")

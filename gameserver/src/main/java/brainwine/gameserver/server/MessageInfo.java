@@ -1,4 +1,4 @@
-package brainwine.gameserver.annotations;
+package brainwine.gameserver.server;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

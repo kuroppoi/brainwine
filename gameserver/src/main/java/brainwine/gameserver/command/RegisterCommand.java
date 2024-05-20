@@ -6,7 +6,6 @@ import org.apache.commons.validator.routines.EmailValidator;
 import org.mindrot.jbcrypt.BCrypt;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.player.Player;
 

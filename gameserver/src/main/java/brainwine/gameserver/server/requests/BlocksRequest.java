@@ -3,9 +3,9 @@ package brainwine.gameserver.server.requests;
 import java.util.ArrayList;
 import java.util.List;
 
-import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.BlocksMessage;
 import brainwine.gameserver.server.messages.LightMessage;

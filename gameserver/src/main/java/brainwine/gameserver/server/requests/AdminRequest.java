@@ -3,11 +3,11 @@ package brainwine.gameserver.server.requests;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-import brainwine.gameserver.annotations.OptionalField;
-import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 
 @RequestInfo(id = 254)
 public class AdminRequest extends PlayerRequest {

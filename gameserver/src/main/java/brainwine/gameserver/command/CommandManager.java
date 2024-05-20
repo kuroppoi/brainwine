@@ -17,7 +17,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
 
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.player.Player;
 
 @SuppressWarnings("unchecked")

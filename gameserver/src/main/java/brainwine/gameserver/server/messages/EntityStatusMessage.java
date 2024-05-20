@@ -5,10 +5,10 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 import brainwine.gameserver.server.models.EntityStatusData;
 
 @MessageInfo(id = 7, prepacked = true)

@@ -1,8 +1,8 @@
 package brainwine.gameserver.server.messages;
 
-import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.player.ChatType;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 
 @MessageInfo(id = 13, collection = true)
 public class ChatMessage extends Message {

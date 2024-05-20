@@ -7,8 +7,8 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 
-import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.shared.JsonHelper;

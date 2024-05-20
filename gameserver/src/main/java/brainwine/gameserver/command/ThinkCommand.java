@@ -2,7 +2,6 @@ package brainwine.gameserver.command;
 
 import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.player.ChatType;
 import brainwine.gameserver.player.Player;
 

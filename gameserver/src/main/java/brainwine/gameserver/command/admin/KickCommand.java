@@ -5,9 +5,9 @@ import static brainwine.gameserver.player.NotificationType.SYSTEM;
 import java.util.Arrays;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.player.Player;
 
 @CommandInfo(name = "kick", description = "Kicks a player from the server.")

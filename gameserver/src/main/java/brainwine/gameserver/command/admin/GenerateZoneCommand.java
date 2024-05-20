@@ -3,9 +3,9 @@ package brainwine.gameserver.command.admin;
 import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
+import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
