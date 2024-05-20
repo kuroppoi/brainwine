@@ -1,6 +1,6 @@
 package brainwine.gameserver.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.util.Collection;
@@ -18,7 +18,7 @@ import org.apache.logging.log4j.Logger;
 import org.reflections.Reflections;
 
 import brainwine.gameserver.annotations.CommandInfo;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 
 @SuppressWarnings("unchecked")
 public class CommandManager {

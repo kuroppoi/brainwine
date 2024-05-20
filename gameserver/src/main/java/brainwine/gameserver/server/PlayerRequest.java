@@ -1,6 +1,6 @@
 package brainwine.gameserver.server;
 
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.pipeline.Connection;
 
 /**

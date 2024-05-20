@@ -7,8 +7,8 @@ import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.EntityItemUseMessage;
 

@@ -1,11 +1,11 @@
 package brainwine.gameserver.commands.admin;
 
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.commands.Command;
 import brainwine.gameserver.commands.CommandExecutor;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 
 @CommandInfo(name = "settle", description = "Settles all liquids in all active chunks in the current zone. Warning - can cause lag!")
 public class SettleLiquidsCommand extends Command {

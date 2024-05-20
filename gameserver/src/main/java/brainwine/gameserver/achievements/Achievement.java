@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.serialization.AchievementSerializer;
 import brainwine.gameserver.util.MathUtils;
 

@@ -1,6 +1,6 @@
 package brainwine.gameserver.commands;
 
-import brainwine.gameserver.entity.player.NotificationType;
+import brainwine.gameserver.player.NotificationType;
 
 public interface CommandExecutor {
     

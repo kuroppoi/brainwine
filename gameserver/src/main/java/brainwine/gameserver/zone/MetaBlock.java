@@ -12,8 +12,8 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
 
 /**
  * I hate this class and everything in it.

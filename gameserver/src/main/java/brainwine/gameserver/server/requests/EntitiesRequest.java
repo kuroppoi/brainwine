@@ -5,7 +5,7 @@ import java.util.List;
 
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.server.models.EntityStatusData;

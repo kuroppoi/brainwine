@@ -2,9 +2,9 @@ package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
-import brainwine.gameserver.entity.player.ContainerType;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.ContainerType;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 
 /**

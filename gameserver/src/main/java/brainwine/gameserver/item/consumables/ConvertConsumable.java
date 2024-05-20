@@ -7,10 +7,10 @@ import java.util.stream.Collectors;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.input.DialogSelectInput;
-import brainwine.gameserver.entity.player.Inventory;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.player.Inventory;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.messages.InventoryMessage;
 
 /**

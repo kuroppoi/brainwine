@@ -6,9 +6,9 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.PlayerStatistics;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.PlayerStatistics;
 
 public class ScavengingAchievement extends Achievement {
     

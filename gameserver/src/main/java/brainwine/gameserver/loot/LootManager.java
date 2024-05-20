@@ -18,8 +18,8 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.Skill;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.shared.JsonHelper;

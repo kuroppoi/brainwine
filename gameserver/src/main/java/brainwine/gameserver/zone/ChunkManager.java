@@ -26,7 +26,7 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.serialization.BlockDeserializer;
 import brainwine.gameserver.serialization.BlockSerializer;
 import brainwine.gameserver.util.ZipUtils;

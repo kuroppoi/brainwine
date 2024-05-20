@@ -2,7 +2,7 @@ package brainwine.gameserver.server.requests;
 
 import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.commands.CommandManager;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 
 @RequestInfo(id = 47)

@@ -1,4 +1,4 @@
-package brainwine.gameserver.entity.player;
+package brainwine.gameserver.player;
 
 public enum AppearanceSlot {
 

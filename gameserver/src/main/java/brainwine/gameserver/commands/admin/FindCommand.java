@@ -1,11 +1,11 @@
 package brainwine.gameserver.commands.admin;
 
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.commands.Command;
 import brainwine.gameserver.commands.CommandExecutor;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.zone.MetaBlock;
 
 @CommandInfo(name = "find", description = "Displays the location of a random meta block of the specified type.")

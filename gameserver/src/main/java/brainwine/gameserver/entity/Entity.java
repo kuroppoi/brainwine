@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.EntityChangeMessage;

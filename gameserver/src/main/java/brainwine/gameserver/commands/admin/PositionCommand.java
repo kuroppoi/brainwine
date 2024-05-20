@@ -1,11 +1,11 @@
 package brainwine.gameserver.commands.admin;
 
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.commands.Command;
 import brainwine.gameserver.commands.CommandExecutor;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 
 @CommandInfo(name = "position", description = "Displays the coordinates of the block you are standing on.", aliases = { "pos", "feet", "coords", "location" })
 public class PositionCommand extends Command {

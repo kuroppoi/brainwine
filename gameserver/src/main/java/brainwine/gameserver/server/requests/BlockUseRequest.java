@@ -4,11 +4,11 @@ import java.util.Map;
 
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.interactions.ItemInteraction;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.MetaBlock;

@@ -5,8 +5,8 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 import brainwine.gameserver.annotations.MessageInfo;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.models.EntityItemUseData;
 

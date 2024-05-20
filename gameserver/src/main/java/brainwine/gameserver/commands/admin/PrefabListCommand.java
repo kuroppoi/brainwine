@@ -1,6 +1,6 @@
 package brainwine.gameserver.commands.admin;
 
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import java.util.ArrayList;
 import java.util.List;

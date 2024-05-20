@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.entity.EntityGroup;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 
 public class HuntingAchievement extends Achievement {
     

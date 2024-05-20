@@ -1,12 +1,12 @@
 package brainwine.gameserver.commands.admin;
 
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.commands.Command;
 import brainwine.gameserver.commands.CommandExecutor;
-import brainwine.gameserver.entity.player.NotificationType;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.NotificationType;
+import brainwine.gameserver.player.Player;
 
 @CommandInfo(name = "entity", description = "Spawns an entity at your current location.")
 public class EntityCommand extends Command {

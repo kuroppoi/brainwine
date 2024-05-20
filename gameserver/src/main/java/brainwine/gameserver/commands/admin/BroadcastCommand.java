@@ -1,13 +1,13 @@
 package brainwine.gameserver.commands.admin;
 
-import static brainwine.gameserver.entity.player.NotificationType.POPUP;
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.POPUP;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.commands.Command;
 import brainwine.gameserver.commands.CommandExecutor;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 
 @CommandInfo(name = "broadcast", description = "Broadcasts a message to all online players.", aliases = "bc")
 public class BroadcastCommand extends Command {

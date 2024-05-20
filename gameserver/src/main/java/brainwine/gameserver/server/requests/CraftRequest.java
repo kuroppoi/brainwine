@@ -5,11 +5,11 @@ import java.util.stream.Collectors;
 
 import brainwine.gameserver.annotations.OptionalField;
 import brainwine.gameserver.annotations.RequestInfo;
-import brainwine.gameserver.entity.player.Inventory;
-import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.CraftingRequirement;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Inventory;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.Pair;

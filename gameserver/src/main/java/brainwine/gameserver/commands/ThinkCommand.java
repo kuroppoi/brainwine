@@ -1,10 +1,10 @@
 package brainwine.gameserver.commands;
 
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import brainwine.gameserver.annotations.CommandInfo;
-import brainwine.gameserver.entity.player.ChatType;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.ChatType;
+import brainwine.gameserver.player.Player;
 
 @CommandInfo(name = "think", description = "Shows a thought bubble to nearby players.")
 public class ThinkCommand extends Command {

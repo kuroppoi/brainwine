@@ -23,10 +23,10 @@ import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import brainwine.gameserver.commands.CommandManager;
-import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.VersionUtils;
 import brainwine.shared.JsonHelper;

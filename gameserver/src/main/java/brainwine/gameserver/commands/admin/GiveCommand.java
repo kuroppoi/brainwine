@@ -1,6 +1,6 @@
 package brainwine.gameserver.commands.admin;
 
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +9,9 @@ import brainwine.gameserver.GameServer;
 import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.commands.Command;
 import brainwine.gameserver.commands.CommandExecutor;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.player.Player;
 
 @CommandInfo(name = "give", description = "Give or take items from players.")
 public class GiveCommand extends Command {

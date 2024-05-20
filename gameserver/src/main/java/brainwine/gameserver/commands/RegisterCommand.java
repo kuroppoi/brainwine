@@ -1,14 +1,14 @@
 package brainwine.gameserver.commands;
 
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
+
 import org.apache.commons.validator.routines.EmailValidator;
 import org.mindrot.jbcrypt.BCrypt;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.annotations.CommandInfo;
 import brainwine.gameserver.dialog.DialogHelper;
-import brainwine.gameserver.entity.player.Player;
-
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import brainwine.gameserver.player.Player;
 
 @CommandInfo(name = "register", description = "Shows a prompt with which you can register your account.")
 public class RegisterCommand extends Command {

@@ -3,7 +3,7 @@ package brainwine.gameserver.achievements;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 
 public class UndertakerAchievement extends Achievement {
     

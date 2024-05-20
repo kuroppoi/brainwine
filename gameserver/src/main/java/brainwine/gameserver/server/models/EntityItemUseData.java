@@ -3,8 +3,8 @@ package brainwine.gameserver.server.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
 
 @JsonFormat(shape = Shape.ARRAY)
 public class EntityItemUseData {

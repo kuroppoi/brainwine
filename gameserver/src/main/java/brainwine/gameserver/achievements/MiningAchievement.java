@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.ItemGroup;
+import brainwine.gameserver.player.Player;
 
 public class MiningAchievement extends Achievement {
     
