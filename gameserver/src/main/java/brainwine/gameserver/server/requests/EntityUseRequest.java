@@ -2,12 +2,12 @@ package brainwine.gameserver.server.requests;
 
 import java.util.List;
 
-import brainwine.gameserver.annotations.RequestInfo;
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 
 @RequestInfo(id = 46)
 public class EntityUseRequest extends PlayerRequest {
