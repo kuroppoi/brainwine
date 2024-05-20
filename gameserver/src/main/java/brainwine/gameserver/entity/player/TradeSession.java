@@ -242,9 +242,10 @@ public class TradeSession {
         });
         
         // Add record to trade history
+        /*
         TradeRecord record = new TradeRecord(initiator.getDocumentId(), recipient.getDocumentId(), initiatorOffers, recipientOffers);
         initiator.addTradeRecord(record);
-        recipient.addTradeRecord(record);
+        recipient.addTradeRecord(record);*/
         
         // Show feedback
         initiator.showDialog(Dialogs.createOfferDialog(String.format("You sent free goodies to %s!", recipient.getName()), "Sent:", initiatorOffers));
@@ -389,9 +390,10 @@ public class TradeSession {
         });
         
         // Add record to trade history
+        /*
         TradeRecord record = new TradeRecord(initiator.getDocumentId(), recipient.getDocumentId(), initiatorOffers, recipientOffers);
         initiator.addTradeRecord(record);
-        recipient.addTradeRecord(record);
+        recipient.addTradeRecord(record);*/
         
         // Show trade completion dialog
         initiator.showDialog(Dialogs.createOfferDialog(String.format("You traded with %s.", recipient.getName()), "Received:", recipientOffers));
