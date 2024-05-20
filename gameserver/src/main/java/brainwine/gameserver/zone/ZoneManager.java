@@ -24,6 +24,7 @@ import org.msgpack.jackson.dataformat.MessagePackFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.npc.NpcData;
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
@@ -85,7 +86,7 @@ public class ZoneManager {
         final long PLAYER_COUNT_INFLUENCE = 16;
 
         if (!generatingZone && timeSinceLastGeneration > MIN_GENERATION_INTERVAL_SECONDS) {
-            int playerCount = zones.values().stream().map(Zone::getPlayerCount).reduce(Integer::sum).orElse(0);
+            int playerCount = GameServer.getInstance().getPlayerManager().getOnlinePlayerCount();
             long requiredInterval = Math.max(
                 MIN_GENERATION_INTERVAL_SECONDS,
                 GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - (playerCount - 1) * (GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - MIN_GENERATION_INTERVAL_SECONDS) / PLAYER_COUNT_INFLUENCE

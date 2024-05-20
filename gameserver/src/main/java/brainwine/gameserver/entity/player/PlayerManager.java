@@ -3,8 +3,10 @@ package brainwine.gameserver.entity.player;
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +27,7 @@ public class PlayerManager {
     private static final Logger logger = LogManager.getLogger();
     private final Map<String, Player> playersById = new HashMap<>();
     private final Map<String, Player> playersByName = new HashMap<>();
-    private final Map<Connection, Player> playersByConnection = new HashMap<>();
+    private final List<Player> onlinePlayers = new ArrayList<>();
     
     public PlayerManager() {
         loadPlayers();
@@ -154,13 +156,13 @@ public class PlayerManager {
     
     public void onPlayerConnect(Player player) {
         Connection connection = player.getConnection();
-        playersByConnection.put(connection, player);
+        onlinePlayers.add(player);
         logger.info(SERVER_MARKER, "{} logged into zone {} from {}", player.getName(), player.getZone().getName(), connection.getAddress());
     }
     
     public void onPlayerDisconnect(Player player) {
         Connection connection = player.getConnection();
-        playersByConnection.remove(connection);
+        onlinePlayers.remove(player);
         logger.info(SERVER_MARKER, "{} disconnected: {}", player.getName(), connection.getDisconnectReason());
     }
     
@@ -182,11 +184,15 @@ public class PlayerManager {
         return playersById.get(id);
     }
     
-    public Player getPlayer(Connection connection) {
-        return playersByConnection.get(connection);
-    }
-    
     public Collection<Player> getPlayers() {
         return playersById.values();
+    }
+    
+    public int getOnlinePlayerCount() {
+        return onlinePlayers.size();
+    }
+    
+    public List<Player> getOnlinePlayers() {
+        return Collections.unmodifiableList(onlinePlayers);
     }
 }

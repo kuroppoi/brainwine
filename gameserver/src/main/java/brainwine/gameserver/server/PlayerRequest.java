@@ -1,6 +1,5 @@
 package brainwine.gameserver.server;
 
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.server.pipeline.Connection;
 
@@ -12,7 +11,7 @@ public abstract class PlayerRequest extends Request {
     public abstract void process(Player player);
     
     public final void process(Connection connection) {
-        Player player = GameServer.getInstance().getPlayerManager().getPlayer(connection);
+        Player player = connection.getPlayer();
         
         if(player == null) {
             connection.kick("No player instance found.");
