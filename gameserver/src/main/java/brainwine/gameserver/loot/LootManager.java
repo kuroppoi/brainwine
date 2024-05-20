@@ -2,8 +2,8 @@ package brainwine.gameserver.loot;
 
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,7 +20,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 
 import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.entity.player.Skill;
-import brainwine.gameserver.util.ResourceUtils;
+import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.shared.JsonHelper;
 
@@ -36,16 +36,13 @@ public class LootManager {
     
     private void loadLootTables() {
         logger.info(SERVER_MARKER, "Loading loot tables ...");
-        File file = new File("loottables.json");
-        ResourceUtils.copyDefaults("loottables.json");
         
-        if(file.isFile()) {
-            try {
-                Map<String, List<Loot>> loot = JsonHelper.readValue(file, new TypeReference<Map<String, List<Loot>>>(){});
-                lootTables.putAll(loot);
-            } catch (IOException e) {
-                logger.error(SERVER_MARKER, "Failed to load loot tables", e);
-            }
+        try {
+            URL url = ResourceFinder.getResourceUrl("loottables.json");
+            Map<String, List<Loot>> loot = JsonHelper.readValue(url, new TypeReference<Map<String, List<Loot>>>(){});
+            lootTables.putAll(loot);
+        } catch (IOException e) {
+            logger.error(SERVER_MARKER, "Failed to load loot tables", e);
         }
     }
     

@@ -2,7 +2,6 @@ package brainwine.gameserver.commands.admin;
 
 import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
 
-import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import brainwine.gameserver.GameServer;
@@ -27,12 +26,13 @@ public class ExportCommand extends Command {
             return;
         }
         
+        boolean overwrite = args.length >= 6 && args[5].equalsIgnoreCase("overwrite");
         Zone zone = ((Player)executor).getZone();
         PrefabManager prefabManager = GameServer.getInstance().getPrefabManager();
-        String name = String.join(" ", Arrays.copyOfRange(args, 4, args.length)).toLowerCase();
+        String name = args[4].toLowerCase();
         
-        if(prefabManager.getPrefab(name) != null) {
-            executor.notify("A prefab with that name already exists.", SYSTEM);
+        if(!overwrite && prefabManager.prefabExists(name)) {
+            executor.notify("A prefab with that name already exists. Add 'overwrite' at the end of the command if you wish to overwrite it.", SYSTEM);
             return;
         } else if(!PREFAB_NAME_PATTERN.matcher(name).matches()) {
             executor.notify("Please enter a valid prefab name. Example: dungeons/my_epic_dungeon (or just my_epic_dungeon)", SYSTEM);
@@ -75,7 +75,7 @@ public class ExportCommand extends Command {
         executor.notify(String.format("Exporting your prefab as '%s' ...", name), SYSTEM);
         
         try {
-            prefabManager.addPrefab(prefab);
+            prefabManager.createPrefab(prefab, overwrite);
             executor.notify(String.format("Your prefab '%s' was successfully exported!", name), SYSTEM);
         } catch (Exception e) {
             executor.notify(String.format("An error occured while exporting prefab '%s': %s", name, e.getMessage()), SYSTEM);
@@ -84,7 +84,7 @@ public class ExportCommand extends Command {
     
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/export <x> <y> <width> <height> <name>";
+        return "/export <x> <y> <width> <height> <name> [overwrite]";
     }
     
     @Override

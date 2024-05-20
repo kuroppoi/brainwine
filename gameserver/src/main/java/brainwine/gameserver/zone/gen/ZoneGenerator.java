@@ -2,7 +2,6 @@ package brainwine.gameserver.zone.gen;
 
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -15,7 +14,8 @@ import org.apache.logging.log4j.Logger;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.Naming;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.util.ResourceUtils;
+import brainwine.gameserver.resource.Resource;
+import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.gen.tasks.CaveGeneratorTask;
@@ -50,24 +50,20 @@ public class ZoneGenerator {
     public static void init() {
         generators.clear();
         logger.info(SERVER_MARKER, "Loading zone generator configurations ...");
-        ResourceUtils.copyDefaults("generators/");
-        File dataDir = new File("generators");
         
-        if(dataDir.isDirectory()) {
-            for(File file : dataDir.listFiles()) {
-                try {
-                    String name = ResourceUtils.removeFileSuffix(file.getName()).toLowerCase();
-                    
-                    if(generators.containsKey(name)) {
-                        logger.warn(SERVER_MARKER, "Duplicate generator config name '{}'", name);
-                        continue;
-                    }
-                    
-                    GeneratorConfig config = JsonHelper.readValue(file, GeneratorConfig.class);
-                    generators.put(name, new ZoneGenerator(config));
-                } catch(Exception e) {
-                    logger.error(SERVER_MARKER, "Failed to load generator config '{}'", file.getName(), e);
-                }
+        for(Resource resource : ResourceFinder.getResources("generators", false)) {
+            String name = ResourceFinder.removeFileSuffix(resource.getSimpleName()).toLowerCase();
+            
+            if(generators.containsKey(name)) {
+                logger.warn(SERVER_MARKER, "Duplicate generator config name '{}'", name);
+                continue;
+            }
+            
+            try {
+                GeneratorConfig config = JsonHelper.readValue(resource.getUrl(), GeneratorConfig.class);
+                generators.put(name, new ZoneGenerator(config));
+            } catch(Exception e) {
+                logger.error(SERVER_MARKER, "Failed to load generator config '{}'", name, e);
             }
         }
         
