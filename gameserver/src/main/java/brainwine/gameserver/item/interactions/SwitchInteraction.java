@@ -9,11 +9,11 @@ import org.apache.commons.text.WordUtils;
 
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.zone.MetaBlock;

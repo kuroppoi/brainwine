@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.behavior.Behavior;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 
 public class RandomlyTargetBehavior extends Behavior {
     

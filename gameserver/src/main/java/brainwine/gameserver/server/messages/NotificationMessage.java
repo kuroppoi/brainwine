@@ -1,8 +1,8 @@
 package brainwine.gameserver.server.messages;
 
-import brainwine.gameserver.annotations.MessageInfo;
-import brainwine.gameserver.entity.player.NotificationType;
+import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 
 @MessageInfo(id = 33)
 public class NotificationMessage extends Message {

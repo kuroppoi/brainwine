@@ -2,9 +2,9 @@ package brainwine.gameserver.server.messages;
 
 import java.util.Map;
 
-import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 
 @MessageInfo(id = 45, compressed = true)
 public class DialogMessage extends Message {

@@ -1,8 +1,8 @@
 package brainwine.gameserver.server.messages;
 
-import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 
 @MessageInfo(id = 30)
 public class EffectMessage extends Message {

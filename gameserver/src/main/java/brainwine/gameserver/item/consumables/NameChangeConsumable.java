@@ -5,9 +5,9 @@ import java.util.regex.Pattern;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
-import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.PlayerManager;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.PlayerManager;
 import brainwine.gameserver.server.messages.EventMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 

@@ -10,8 +10,8 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.util.MapHelper;
 

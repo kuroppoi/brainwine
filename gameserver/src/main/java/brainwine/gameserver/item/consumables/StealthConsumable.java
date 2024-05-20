@@ -1,7 +1,7 @@
 package brainwine.gameserver.item.consumables;
 
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
 
 /**
  * Consumable handler for stealth cloaks

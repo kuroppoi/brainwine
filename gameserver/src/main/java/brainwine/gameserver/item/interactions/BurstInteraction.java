@@ -3,11 +3,11 @@ package brainwine.gameserver.item.interactions;
 import java.util.Map;
 
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.MetaBlock;

@@ -1,7 +1,7 @@
 package brainwine.gameserver.server.messages;
 
-import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 
 @MessageInfo(id = 29, collection = true)
 public class AchievementMessage extends Message {
