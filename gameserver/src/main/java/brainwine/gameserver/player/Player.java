@@ -110,6 +110,7 @@ public class Player extends Entity implements CommandExecutor {
     private final List<Timer<String>> timers = new ArrayList<>();
     private final List<Entity> trackedEntities = new ArrayList<>();
     private String clientVersion;
+    private TradeSession tradeSession;
     private Placement lastPlacement;
     private Item heldItem = Item.AIR;
     private int spawnX;
@@ -191,6 +192,11 @@ public class Player extends Entity implements CommandExecutor {
         // Regenerate health out of combat
         if(!isDead() && now >= lastDamagedAt + REGEN_NO_DAMAGE_TIME) {
             heal(BASE_REGEN_AMOUNT * deltaTime);
+        }
+        
+        // Try to timeout trade
+        if(isTrading()) {
+            tradeSession.timeout();
         }
         
         // Process timers
@@ -394,6 +400,11 @@ public class Player extends Entity implements CommandExecutor {
         if(nextZone != null) {
             zone = nextZone;
             nextZone = null;
+        }
+        
+        // Cancel existing trade session
+        if(isTrading()) {
+            tradeSession.cancel(this);
         }
         
         dialogs.clear();
@@ -637,6 +648,38 @@ public class Player extends Entity implements CommandExecutor {
     
     public Item getHeldItem() {
         return heldItem;
+    }
+    
+    public void tradeItem(Player recipient, Item item) {
+        // Cannot trade with self
+        if(recipient == this) {
+            return;
+        }
+        
+        // Cancel the current trade if the player is initiating a new trade
+        if(isTrading() && !tradeSession.isParticipant(recipient)) {
+            tradeSession.cancel(this);
+        }
+        
+        // Create a new trade session if it doesn't exist
+        if(!isTrading()) {
+            tradeSession = new TradeSession(this, recipient);
+        }
+        
+        // Process the offer
+        tradeSession.onItemOffered(this, item);
+    }
+    
+    public void setTradeSession(TradeSession tradeSession) {
+        this.tradeSession = tradeSession;
+    }
+    
+    public boolean isTrading() {
+        return tradeSession != null;
+    }
+    
+    public TradeSession getTradeSession() {
+        return tradeSession;
     }
     
     public void trackPlacement(int x, int y, Item item) {
