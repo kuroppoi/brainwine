@@ -40,7 +40,7 @@ public class CommandManager {
     
     private static void registerCommands() {
         logger.info(SERVER_MARKER, "Registering commands ...");
-        Reflections reflections = new Reflections("brainwine.gameserver.commands");
+        Reflections reflections = new Reflections("brainwine.gameserver.command");
         Set<Class<?>> classes = reflections.getTypesAnnotatedWith(CommandInfo.class);
         
         for(Class<?> clazz : classes) {
