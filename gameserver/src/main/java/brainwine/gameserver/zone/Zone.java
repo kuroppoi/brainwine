@@ -574,7 +574,37 @@ public class Zone {
         
         return false;
     }
-    
+
+    /**
+     * Find block with item occupying the block position that satisfies the predicate.
+     * Closer blocks are prioritized in row major order.
+     */
+    public Block findBlock(int x, int y, Layer layer, Predicate<Item> predicate) {
+        Block block;
+        Item item;
+
+        for (int i = 0; i >= -3; i--) {
+            for (int j = 0; j <= 2; j++) {
+                int x1 = x + i;
+                int y1 = y + j;
+
+                if (!areCoordinatesInBounds(x1, y1) || !isChunkLoaded(x1, y1)) {
+                    continue;
+                }
+
+                block = getBlock(x1, y1);
+                item = block.getItem(Layer.FRONT);
+
+                if (item.getBlockWidth() > Math.abs(i) && item.getBlockHeight() > Math.abs(j)
+                        && predicate.test(item)) {
+                    return block;
+                }
+            }
+        }
+
+        return null;
+    }
+
     public boolean isBlockOccupied(int x, int y, Layer layer) {
         if(!areCoordinatesInBounds(x, y)) {
             return false;
