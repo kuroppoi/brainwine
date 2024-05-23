@@ -14,7 +14,9 @@ import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
+import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
+import brainwine.gameserver.server.messages.PlayerPositionMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.zone.Block;
@@ -61,6 +63,12 @@ public abstract class Entity {
     public void tick(float deltaTime) {
         long now = System.currentTimeMillis();
         
+        // Do mechanical movement if necessary.
+        // Only for V3 clients (cocos2d client handles these client side)
+        if (isPlayer() && ((Player) this).isV3() && !((Player) this).isGodMode()) {
+            doMechanicalMovement(deltaTime);
+        }
+
         // Update block position
         updateBlockPosition();
         
@@ -164,6 +172,56 @@ public abstract class Entity {
             if(item.hasUse(ItemUseType.TRIGGER)) {
                 ItemUseType.SWITCH.getInteraction().interact(zone, this, blockX, blockY, Layer.FRONT, item, mod, metaBlock, null, null);
             }
+        }
+    }
+
+    /**
+     * Adjust entity position and velocity according to game mechanics, like items
+     * with a MOVE use.
+     *
+     * @param deltaTime change in time since last server tick in seconds
+     */
+    public void doMechanicalMovement(float deltaTime) {
+        float deltaVelocityX = 0.0f;
+        float deltaVelocityY = 0.0f;
+
+        float groundHeight = -1.0f;
+        boolean hasDistance = false;
+
+        Block block = zone.findBlock(blockX, blockY + 1, Layer.FRONT, item -> item.hasUse(ItemUseType.MOVE));
+        if (block == null && getY() - Math.floor(getY()) > 0.4) {
+            block = zone.findBlock(blockX, blockY + 2, Layer.FRONT, item -> item.hasUse(ItemUseType.MOVE));
+            hasDistance = true;
+        } 
+
+        if (block != null) {
+            Item frontItem = block.getFrontItem();
+
+            // item is assumed to be a conveyor belt
+            // character jumps every third frame so we multiply by 1.5
+            if (block.getMod(Layer.FRONT) == 0) {
+                deltaVelocityX += 1.5 * frontItem.getPower(); 
+            } else {
+                deltaVelocityX -= 1.5 * frontItem.getPower();
+            }
+
+            if (getVelocityY() < -0.001) {
+                deltaVelocityY -= getVelocityY();
+                groundHeight = 0.82f;
+                setVelocity(getVelocityX(), 0.0f);
+            }
+        }
+
+        if (Math.abs(deltaVelocityX) > 0.01 || Math.abs(deltaVelocityY) > 0.01) {
+            float yPosition  = groundHeight < 0
+              ? getY() + deltaTime * deltaVelocityY
+              : blockY + (hasDistance ? 2.7f : 1.8f) - groundHeight;
+
+            setPosition(getX() + deltaTime * deltaVelocityX, yPosition);
+
+            if (isPlayer()) ((Player) this).sendMessage(new PlayerPositionMessage(getX(), getY()));
+
+            zone.sendLocalMessage(new EntityPositionMessage(this), blockX, blockY);
         }
     }
     
