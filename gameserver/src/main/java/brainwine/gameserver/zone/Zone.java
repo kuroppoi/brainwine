@@ -543,32 +543,12 @@ public class Zone {
         }
         
         Block block = getBlock(x, y);
-        Item item = block.getItem(Layer.FRONT);
-        
-        if(item.isDoor() && block.getFrontMod() % 2 == 0) {
-            return true;
-        } else if(!item.isDoor() && item.isSolid()) {
-            return true;
-        }
+
+        if (block.isSolid()) return true;
         
         if(checkAdjacents) {
-            for(int i = -3; i <= 0; i++) {
-                for(int j = 0; j <= 2; j++) {
-                    int x1 = x + i;
-                    int y1 = y + j;
-                    
-                    if(!areCoordinatesInBounds(x1, y1) || !isChunkLoaded(x1, y1)) {
-                        continue;
-                    }
-                    
-                    block = getBlock(x1, y1);
-                    item = block.getFrontItem();
-                    
-                    if(item.getBlockWidth() > Math.abs(i) && item.getBlockHeight() > Math.abs(j)
-                            && isBlockSolid(x1, y1, false)) {
-                        return true;
-                    }
-                }
+            if (findBlock(x, y, Block::isSolid) != null) {
+                return true;
             }
         }
         
@@ -579,7 +559,7 @@ public class Zone {
      * Find block with item occupying the block position that satisfies the predicate.
      * Closer blocks are prioritized in row major order.
      */
-    public Block findBlock(int x, int y, Layer layer, Predicate<Item> predicate) {
+    public Block findBlock(int x, int y, Predicate<Block> predicate) {
         Block block;
         Item item;
 
@@ -596,7 +576,7 @@ public class Zone {
                 item = block.getItem(Layer.FRONT);
 
                 if (item.getBlockWidth() > Math.abs(i) && item.getBlockHeight() > Math.abs(j)
-                        && predicate.test(item)) {
+                        && predicate.test(block)) {
                     return block;
                 }
             }
