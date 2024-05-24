@@ -27,15 +27,15 @@ public class WalkBehavior extends Behavior {
 
         // regular walk behavior if the zone is not known
         Block block = zone.findBlock(entity.getBlockX(), entity.getBlockY() + 1, Layer.FRONT, i -> i.hasUse(ItemUseType.MOVE));
-        
+
         if (block != null) {
             // conveyor belt
             int direction = block.getMod(Layer.FRONT) == 0 ? 1 : -1;
             float movingSurfacePower = block.getFrontItem().getPower();
-            entity.move(direction, 0, movingSurfacePower, animation);
+            entity.move(direction, 0, movingSurfacePower, "idle");
         } else {
             // regular walk behavior
-            entity.move(entity.getDirection().getId(), 0, animation);
+            entity.move(entity.getDirection().getId(), 0, "walk");
         }
         
         return true;
