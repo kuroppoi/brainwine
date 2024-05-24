@@ -23,30 +23,19 @@ public class WalkBehavior extends Behavior {
     
     @Override
     public boolean behave() {
-        // null if the npc should walk. Power value with sign if on moving surface.
-        Float movingSurfacePower = null;
-
         Zone zone = entity.getZone();
 
         // regular walk behavior if the zone is not known
-        if (zone != null) {
-            Block block = zone.findBlock(entity.getBlockX(), entity.getBlockY() + 1, Layer.FRONT, i -> i.hasUse(ItemUseType.MOVE));
-
-            if (block != null) {
-                float direction = block.getMod(Layer.FRONT) == 0 ? 1.0f : -1.0f;
-                movingSurfacePower = direction * block.getFrontItem().getPower();
-            } else {
-                movingSurfacePower = null;
-            }
-        }
-
-        if (movingSurfacePower == null) {
-            setAnimation("walk");
-            entity.move(entity.getDirection().getId(), 0, animation);
+        Block block = zone.findBlock(entity.getBlockX(), entity.getBlockY() + 1, Layer.FRONT, i -> i.hasUse(ItemUseType.MOVE));
+        
+        if (block != null) {
+            // conveyor belt
+            int direction = block.getMod(Layer.FRONT) == 0 ? 1 : -1;
+            float movingSurfacePower = block.getFrontItem().getPower();
+            entity.move(direction, 0, movingSurfacePower, animation);
         } else {
-            setAnimation("idle");
-            entity.setDirection(movingSurfacePower > 0 ? FacingDirection.EAST : FacingDirection.WEST);
-            entity.move(movingSurfacePower.intValue(), 0, animation);
+            // regular walk behavior
+            entity.move(entity.getDirection().getId(), 0, animation);
         }
         
         return true;
