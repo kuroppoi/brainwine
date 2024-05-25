@@ -26,7 +26,8 @@ public class WalkBehavior extends Behavior {
         Zone zone = entity.getZone();
 
         // regular walk behavior if the zone is not known
-        Block block = zone.findBlock(entity.getBlockX(), entity.getBlockY() + 1, Layer.FRONT, i -> i.hasUse(ItemUseType.MOVE));
+        Block block = zone.findBlock(entity.getBlockX(), entity.getBlockY() + 1,
+            b -> b.getFrontItem() != null && b.getFrontItem().hasUse(ItemUseType.MOVE));
 
         if (block != null) {
             // conveyor belt
