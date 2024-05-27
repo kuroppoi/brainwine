@@ -79,6 +79,9 @@ public class Zone {
     private float time = (float)Math.random(); // TODO temporary
     private float temperature;
     private float acidity;
+    private boolean isPrivate;
+    private boolean isProtected;
+    private String owner;
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
     private final GrowthManager growthManager;
@@ -86,9 +89,10 @@ public class Zone {
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
     private final MachineManager machineManager = new MachineManager(this);
+    private final Set<Integer> pendingSunlight = new HashSet<>();
+    private final List<String> members = new ArrayList<>();
     private final List<BlockChangeData> blockChanges = new ArrayList<>();
     private final List<Timer<Integer>> blockTimers = new ArrayList<>();
-    private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
@@ -111,7 +115,11 @@ public class Zone {
         steamManager.setData(data.getSteamData());
         machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
+        owner = config.getOwner();
+        members.addAll(config.getMembers());
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
+        isPrivate = config.isPrivate();
+        isProtected = config.isProtected();
         creationDate = config.getCreationDate();
     }
     
@@ -595,6 +603,12 @@ public class Zone {
     }
     
     public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+        // Check protection at zone level
+        if(player != null && isProtected(player)) {
+            return true;
+        }
+        
+        // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
             int fX = fieldBlock.getX();
@@ -1634,6 +1648,68 @@ public class Zone {
         return acidity;
     }
     
+    public void setPrivate(boolean value) {
+        this.isPrivate = value;
+    }
+    
+    public boolean canJoin(Player player) {
+        return isPublic() || isOwner(player) || isMember(player);
+    }
+    
+    public boolean isPublic() {
+        return !isPrivate();
+    }
+    
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+    
+    public void setProtected(boolean value) {
+        this.isProtected = value;
+    }
+    
+    public boolean isProtected(Player player) {
+        return isProtected && !isOwner(player) && !isMember(player);
+    }
+    
+    public boolean isProtected() {
+        return isProtected;
+    }
+    
+    public boolean isOwner(Player player) {
+        return isOwned() && player.getDocumentId().equals(owner);
+    }
+    
+    public boolean isOwned() {
+        return owner != null;
+    }
+    
+    public void setOwner(Player player) {
+        this.owner = player.getDocumentId();
+        
+        // Update spawn teleporter ownership
+        for(MetaBlock block : getMetaBlocksWithItem("mechanical/zone-teleporter")) {
+            block.setOwner(owner);
+            sendBlockMetaUpdate(block);
+        }
+    }
+    
+    public String getOwner() {
+        return owner;
+    }
+    
+    public void addMember(Player player) {
+        members.add(player.getDocumentId());
+    }
+    
+    public boolean isMember(Player player) {
+        return members.contains(player.getDocumentId());
+    }
+    
+    public List<String> getMembers() {
+        return Collections.unmodifiableList(members);
+    }
+    
     public OffsetDateTime getCreationDate() {
         return creationDate;
     }
@@ -1663,6 +1739,11 @@ public class Zone {
         config.put("surface", surface);
         config.put("chunks_explored", chunksExplored);
         config.put("chunks_explored_count", getChunksExploredCount());
+        config.put("private", isPrivate);
+        config.put("protected", isProtected);
+        config.put("protected_player", isProtected(player));
+        config.put("owner", isOwner(player));
+        config.put("member", isMember(player));
         Map<String, Object> depth = new HashMap<>();
         List<Object> earth = new ArrayList<>();
         

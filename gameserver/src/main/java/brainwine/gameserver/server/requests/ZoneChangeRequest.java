@@ -5,35 +5,39 @@ import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.ZoneManager;
 
 @RequestInfo(id = 24)
 public class ZoneChangeRequest extends PlayerRequest {
     
-    public String zoneName;
+    public String zoneId;
     
     @Override
     public void process(Player player) {
-        Zone zone = GameServer.getInstance().getZoneManager().getZoneByName(zoneName);
+        ZoneManager manager = GameServer.getInstance().getZoneManager();
+        Zone zone = manager.getZone(zoneId);
+        
+        // Get zone by name if ID search yielded no result
+        if(zone == null) {
+            zone = manager.getZoneByName(zoneId);
+        }
         
         if(zone == null) {
-            player.notify("Sorry, could not find a zone with name " + zoneName);
-            return;
-        } else if(zone == player.getZone()) {
-            player.notify("You're already in " + zoneName);
+            player.notify("Couldn't locate world.");
             return;
         }
         
-        // Check survival requirement unless player has god mode enabled
-        /*
+        if(zone == player.getZone()) {
+            player.notify("You're already in " + zone.getName());
+            return;
+        }
+        
         if(!player.isGodMode()) {
-            Biome biome = zone.getBiome();
-            int survival = MapHelper.getInt(GameConfiguration.getBaseConfig(), String.format("biomes.%s.survival_requirement", biome.getId()));
-            
-            if(player.getTotalSkillLevel(Skill.SURVIVAL) < survival) {
-                player.notify(String.format("Your survival skill needs to be at least level %s to enter %s worlds.", survival, biome.getId()));
+            if(!zone.canJoin(player)) {
+                player.notify("You do not belong to that world.");
                 return;
             }
-        }*/
+        }
         
         player.changeZone(zone);
     }
