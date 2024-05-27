@@ -32,11 +32,9 @@ public class ZoneChangeRequest extends PlayerRequest {
             return;
         }
         
-        if(!player.isGodMode()) {
-            if(!zone.canJoin(player)) {
-                player.notify("You do not belong to that world.");
-                return;
-            }
+        if(!player.isGodMode() && !zone.canJoin(player)) {
+            player.notify("You do not belong to that world.");
+            return;
         }
         
         player.changeZone(zone);
