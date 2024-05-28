@@ -25,7 +25,7 @@ public class WalkBehavior extends Behavior {
     public boolean behave() {
         // Find moving surface the entity is standing on
         Block block = entity.getZone().findBlock(entity.getBlockX(), entity.getBlockY() + 1,
-            b -> b.getFrontItem() != null && b.getFrontItem().hasUse(ItemUseType.MOVE));
+            b -> b.getFrontItem().hasUse(ItemUseType.MOVE));
 
         if (block != null) {
             // Move entity in the direction of the conveyor belt
