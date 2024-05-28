@@ -543,16 +543,7 @@ public class Zone {
         }
         
         Block block = getBlock(x, y);
-
-        if (block.isSolid()) return true;
-        
-        if(checkAdjacents) {
-            if (findBlock(x, y, Block::isSolid) != null) {
-                return true;
-            }
-        }
-        
-        return false;
+        return block.isSolid() || (checkAdjacents && findBlock(x, y, Block::isSolid) != null);
     }
 
     /**
