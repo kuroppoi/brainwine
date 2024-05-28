@@ -560,23 +560,19 @@ public class Zone {
      * Closer blocks are prioritized in row major order.
      */
     public Block findBlock(int x, int y, Predicate<Block> predicate) {
-        Block block;
-        Item item;
-
-        for (int i = 0; i >= -3; i--) {
-            for (int j = 0; j <= 2; j++) {
+        for(int i = 0; i >= -3; i--) {
+            for(int j = 0; j <= 2; j++) {
                 int x1 = x + i;
                 int y1 = y + j;
 
-                if (!areCoordinatesInBounds(x1, y1) || !isChunkLoaded(x1, y1)) {
+                if(!areCoordinatesInBounds(x1, y1) || !isChunkLoaded(x1, y1)) {
                     continue;
                 }
 
-                block = getBlock(x1, y1);
-                item = block.getItem(Layer.FRONT);
+                Block block = getBlock(x1, y1);
+                Item item = block.getFrontItem();
 
-                if (item.getBlockWidth() > Math.abs(i) && item.getBlockHeight() > Math.abs(j)
-                        && predicate.test(block)) {
+                if(item.getBlockWidth() > Math.abs(i) && item.getBlockHeight() > Math.abs(j) && predicate.test(block)) {
                     return block;
                 }
             }
