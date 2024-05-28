@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.behavior.SelectorBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.ConveyorBeltBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.FallBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.IdleBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.TurnBehavior;
@@ -31,6 +32,7 @@ public class WalkerBehavior extends SelectorBehavior {
             addChild(IdleBehavior.class, MapHelper.getMap(config, "idle"));
         }
         
+        addChild(ConveyorBeltBehavior.class, config);
         addChild(WalkBehavior.class, config);
         addChild(FallBehavior.class, config);
         addChild(TurnBehavior.class, config);
