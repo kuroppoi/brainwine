@@ -6,17 +6,18 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
 
 public class ZoneProduct extends Product {
     
-    private final ZoneProductSettings settings;
+    private final Settings settings;
     
     @JsonCreator
     public ZoneProduct(
             @JsonProperty(value = "name", required = true) String name,
             @JsonProperty(value = "cost", required = true) int cost,
-            @JsonProperty(value = "zone", required = true) ZoneProductSettings settings) {
+            @JsonProperty(value = "zone", required = true) Settings settings) {
         super(name, cost);
         this.settings = settings;
     }
@@ -60,4 +61,44 @@ public class ZoneProduct extends Product {
             });
         });
     }
+    
+    /**
+     * Zone generator settings for the product.
+     */
+    private static class Settings {
+        
+        private final Biome biome;
+        private final int width;
+        private final int height;
+        private final String generator;
+        
+        @JsonCreator
+        public Settings(
+                @JsonProperty(value = "biome", required = true) Biome biome,
+                @JsonProperty(value = "width", required = true) int width,
+                @JsonProperty(value = "height", required = true) int height,
+                @JsonProperty(value = "generator") String generator) {
+            this.biome = biome;
+            this.width = width;
+            this.height = height;
+            this.generator = generator;
+        }
+        
+        public Biome getBiome() {
+            return biome;
+        }
+        
+        public int getWidth() {
+            return width;
+        }
+        
+        public int getHeight() {
+            return height;
+        }
+        
+        public String getGenerator() {
+            return generator;
+        }
+    }
+
 }
