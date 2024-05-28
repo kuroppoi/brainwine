@@ -9,7 +9,6 @@ import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.behavior.Behavior;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.Block;
 
 public class WalkBehavior extends Behavior {
@@ -31,7 +30,15 @@ public class WalkBehavior extends Behavior {
             // Move entity in the direction of the conveyor belt
             int direction = block.getMod(Layer.FRONT) == 0 ? 1 : -1;
             float movingSurfacePower = block.getFrontItem().getPower();
-            entity.move(direction, 0, movingSurfacePower, "idle");
+            
+            if(entity.isBlocked(direction, 0)) {
+                // Walk against the conveyor direction to not get crushed
+                entity.setDirection(direction == -1 ? FacingDirection.EAST : FacingDirection.WEST);
+                entity.setAnimation(animation);
+            } else {
+                // Move along with the conveyor belt surface
+                entity.move(direction, 0, movingSurfacePower, "idle");
+            }
         } else {
             // Regular walk behavior
             entity.move(entity.getDirection().getId(), 0, animation);
