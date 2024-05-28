@@ -338,7 +338,11 @@ public abstract class Entity {
     public int getSizeY() {
         return sizeY;
     }
-        
+    
+    public void setDirection(int direction) {
+        setDirection(direction > 0 ? FacingDirection.EAST : direction < 0 ? FacingDirection.WEST : this.direction);
+    }
+    
     public void setDirection(FacingDirection direction) {
         this.direction = direction;
     }

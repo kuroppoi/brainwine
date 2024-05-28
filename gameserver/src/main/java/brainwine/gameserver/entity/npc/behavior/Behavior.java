@@ -13,7 +13,7 @@ import brainwine.gameserver.entity.npc.behavior.composed.DiggerBehavior;
 import brainwine.gameserver.entity.npc.behavior.composed.FlyerBehavior;
 import brainwine.gameserver.entity.npc.behavior.composed.WalkerBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.ClimbBehavior;
-import brainwine.gameserver.entity.npc.behavior.parts.ConveyorBeltBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.ConveyorBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.DigBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.EruptionAttackBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.FallBehavior;
@@ -47,7 +47,7 @@ import brainwine.gameserver.entity.npc.behavior.parts.WalkBehavior;
     @Type(name = "walk", value = WalkBehavior.class),
     @Type(name = "fall", value = FallBehavior.class),
     @Type(name = "turn", value = TurnBehavior.class),
-    @Type(name = "conveyor_belt", value = ConveyorBeltBehavior.class),
+    @Type(name = "conveyor", value = ConveyorBehavior.class),
     @Type(name = "follow", value = FollowBehavior.class),
     @Type(name = "climb", value = ClimbBehavior.class),
     @Type(name = "dig", value = DigBehavior.class),

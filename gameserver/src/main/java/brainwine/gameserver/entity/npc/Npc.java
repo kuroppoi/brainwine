@@ -254,10 +254,17 @@ public class Npc extends Entity {
     }
     
     public void move(int x, int y, float speed, String animation) {
+        move(x, y, speed, animation, true);
+    }
+    
+    public void move(int x, int y, float speed, String animation, boolean changeDirection) {
         this.speed = speed;
-        direction = x > 0 ? FacingDirection.EAST : x < 0 ? FacingDirection.WEST : direction;
         moveX = x;
         moveY = y;
+        
+        if(changeDirection) {
+            setDirection(x);
+        }
         
         if(animation != null) {
             setAnimation(animation);
