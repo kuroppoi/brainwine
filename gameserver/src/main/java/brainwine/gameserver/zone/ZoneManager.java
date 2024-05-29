@@ -209,13 +209,16 @@ public class ZoneManager {
         return zonesByName.get(name.toLowerCase());
     }
     
-    public Zone getRandomZone() {
-        return getRandomZone(null);
-    }
-    
-    public Zone getRandomZone(Predicate<Zone> predicate) {
-        List<Zone> zones = searchZones(predicate);
-        return zones.get((int)(Math.random() * zones.size()));
+    /**
+     * @return A public, non-owned, recently-generated temperate world (with players if possible) or {@code null} if no such world exists.
+     */
+    public Zone findBeginnerZone() {
+        return zones.values().stream()
+                .filter(zone -> zone.isPublic() && !zone.isOwned() && zone.isUnexplored() && zone.getBiome() == Biome.PLAIN)
+                .sorted((a, b) -> b.getCreationDate().compareTo(a.getCreationDate()))
+                .limit(50)
+                .sorted((a, b) -> Integer.compare(b.getPlayerCount(), a.getPlayerCount())) 
+                .findFirst().orElse(null);
     }
     
     public List<Zone> searchZones(Predicate<Zone> predicate) {

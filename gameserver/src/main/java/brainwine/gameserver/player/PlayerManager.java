@@ -57,11 +57,6 @@ public class PlayerManager {
         try {
             PlayerConfigFile configFile = JsonHelper.readValue(file, PlayerConfigFile.class);
             Player player = new Player(id, configFile);
-            
-            if(player.getZone() == null) {
-                player.setZone(GameServer.getInstance().getZoneManager().getRandomZone());
-            }
-            
             String name = player.getName();
             
             if(playersByName.containsKey(name)) {
@@ -98,7 +93,7 @@ public class PlayerManager {
         }
         
         String id = UUID.randomUUID().toString();
-        Player player = new Player(id, name, GameServer.getInstance().getZoneManager().getRandomZone()); // TODO tutorial zone
+        Player player = new Player(id, name, null); // TODO tutorial zone
         playersById.put(id, player);
         playersByName.put(name.toLowerCase(), player);
         String authToken = UUID.randomUUID().toString();
@@ -155,9 +150,8 @@ public class PlayerManager {
     }
     
     public void onPlayerConnect(Player player) {
-        Connection connection = player.getConnection();
         onlinePlayers.add(player);
-        logger.info(SERVER_MARKER, "{} logged into zone {} from {}", player.getName(), player.getZone().getName(), connection.getAddress());
+        logger.info(SERVER_MARKER, "{} logged into zone {}", player.getName(), player.getZone().getName());
     }
     
     public void onPlayerDisconnect(Player player) {
