@@ -16,7 +16,10 @@ import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityLoot;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.FacingDirection;
+import brainwine.gameserver.entity.npc.behavior.ReactionEffect;
+import brainwine.gameserver.entity.npc.behavior.Reactor;
 import brainwine.gameserver.entity.npc.behavior.SequenceBehavior;
+import brainwine.gameserver.entity.npc.job.Job;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
@@ -52,6 +55,7 @@ public class Npc extends Entity {
     private Entity owner;
     private Entity target;
     private boolean artificial;
+    private String job;
     private long lastBehavedAt = System.currentTimeMillis();
     private long lastTrackedAt = System.currentTimeMillis();
     
@@ -152,6 +156,12 @@ public class Npc extends Entity {
         
         if(!trackers.isEmpty()) {
             lastTrackedAt = now;
+        }
+    }
+
+    public void interact(Entity other, Object params) {
+        if (behaviorTree.isReactor()) {
+            ((Reactor)behaviorTree).react(other, ReactionEffect.interact(params), params);
         }
     }
     
@@ -407,6 +417,14 @@ public class Npc extends Entity {
     
     public int getMoveY() {
         return moveY;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
     }
     
     public long getLastTrackedAt() {

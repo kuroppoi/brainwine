@@ -7,13 +7,17 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.behavior.composed.CrawlerBehavior;
 import brainwine.gameserver.entity.npc.behavior.composed.DiggerBehavior;
 import brainwine.gameserver.entity.npc.behavior.composed.FlyerBehavior;
+import brainwine.gameserver.entity.npc.behavior.composed.QuesterBehavior;
 import brainwine.gameserver.entity.npc.behavior.composed.WalkerBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.ChatterBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.ClimbBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.ConveyorBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.DialoguerBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.DigBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.EruptionAttackBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.FallBehavior;
@@ -42,6 +46,7 @@ import brainwine.gameserver.entity.npc.behavior.parts.WalkBehavior;
     @Type(name = "crawler", value = CrawlerBehavior.class),
     @Type(name = "flyer", value = FlyerBehavior.class),
     @Type(name = "digger", value = DiggerBehavior.class),
+    @Type(name = "quester", value = QuesterBehavior.class),
     // Parts
     @Type(name = "idle", value = IdleBehavior.class),
     @Type(name = "walk", value = WalkBehavior.class),
@@ -58,7 +63,9 @@ import brainwine.gameserver.entity.npc.behavior.parts.WalkBehavior;
     @Type(name = "eruption_attack", value = EruptionAttackBehavior.class),
     @Type(name = "randomly_target", value = RandomlyTargetBehavior.class),
     @Type(name = "reporter", value = ReporterBehavior.class),
-    @Type(name = "unblock", value = UnblockBehavior.class)
+    @Type(name = "unblock", value = UnblockBehavior.class),
+    @Type(name = "chatter", value = ChatterBehavior.class),
+    @Type(name = "dialoguer", value = DialoguerBehavior.class),
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Behavior {
@@ -74,4 +81,9 @@ public abstract class Behavior {
     public boolean canBehave() {
         return true;
     }
+
+    public boolean isReactor() {
+        return this instanceof Reactor;
+    }
+
 }

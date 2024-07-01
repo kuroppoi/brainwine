@@ -13,11 +13,12 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.databind.InjectableValues;
 import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.shared.JsonHelper;
 
-public class SequenceBehavior extends CompositeBehavior {
+public class SequenceBehavior extends CompositeBehavior implements Reactor {
     
     private static final Logger logger = LogManager.getLogger();
     private static final List<String> loggedInvalidTypes = new ArrayList<>();
@@ -62,5 +63,17 @@ public class SequenceBehavior extends CompositeBehavior {
         }
         
         return true;
+    }
+
+    @Override
+    public boolean react(Entity other, ReactionEffect message, Object params) {
+        boolean any = false;
+        for(Behavior child : children) {
+            if(child.isReactor()) {
+                any = any || ((Reactor)child).react(other, message, params);
+            }
+        }
+        
+        return any;
     }
 }
