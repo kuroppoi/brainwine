@@ -1740,7 +1740,7 @@ public class Zone {
         config.put("chunks_explored", chunksExplored);
         config.put("chunks_explored_count", getChunksExploredCount());
         config.put("private", isPrivate);
-        config.put("protected", isProtected);
+        config.put("protected", isProtected(player));
         config.put("protected_player", isProtected(player));
         config.put("owner", isOwner(player));
         config.put("member", isMember(player));

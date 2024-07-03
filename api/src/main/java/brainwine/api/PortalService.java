@@ -47,13 +47,16 @@ public class PortalService {
      * TODO could use some work.
      */
     private void handleZoneSearch(Context ctx) {
-        final List<ZoneInfo> zones = (List<ZoneInfo>)dataFetcher.fetchZoneInfo();
+        final List<ZoneInfo> zones = (List<ZoneInfo>)dataFetcher.fetchZoneInfo(); // TODO this will probably be slow if there is a large number of zones
         String apiToken = ctx.queryParam("api_token");
         
         if(apiToken == null || !dataFetcher.verifyApiToken(apiToken)) {
             error(ctx, "A valid api token is required for this request.");
             return;
         }
+        
+        // Remove private worlds that user does not own and is not a member of
+        zones.removeIf(zone -> zone.isPrivate() && !apiToken.equals(zone.getOwner()) && !zone.getMembers().contains(apiToken));
         
         handleQueryParam(ctx, "name", String.class, name -> {
             zones.removeIf(zone -> !zone.getName().toLowerCase().contains(name.toLowerCase()));
@@ -71,12 +74,22 @@ public class PortalService {
             zones.removeIf(zone -> zone.isPvp() != pvp);
         });
         
-        handleQueryParam(ctx, "protected", boolean.class, locked -> {
-            zones.removeIf(zone -> zone.isLocked() != locked);
+        handleQueryParam(ctx, "protected", boolean.class, value -> {
+            zones.removeIf(zone -> zone.isProtected() != value);
         });
         
         handleQueryParam(ctx, "residency", String.class, residency -> {
-            zones.clear(); // not supported yet
+            switch(residency) {
+            case "owned":
+                zones.removeIf(zone -> !apiToken.equals(zone.getOwner()));
+                break;
+            case "member":
+                zones.removeIf(zone -> !zone.getMembers().contains(apiToken));
+                break;
+            default:
+                zones.clear();
+                break;
+            }
         });
         
         handleQueryParam(ctx, "account", String.class, account -> {
@@ -86,13 +99,11 @@ public class PortalService {
         handleQueryParam(ctx, "sort", String.class, sort -> {
             switch(sort) {
             case "popularity": // Sort by most players first
-                zones.removeIf(zone -> zone.getPlayerCount() == 0);
+                //zones.removeIf(zone -> zone.getPlayerCount() == 0);
                 zones.sort((a, b) -> Integer.compare(b.getPlayerCount(), a.getPlayerCount()));
                 break;
             case "created": // Sort by newest first
                 zones.sort((a, b) -> b.getCreationDate().compareTo(a.getCreationDate()));
-                break;
-            case "development": // TODO
                 break;
             }
         });

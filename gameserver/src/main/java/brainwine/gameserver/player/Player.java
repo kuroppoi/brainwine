@@ -1377,6 +1377,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("deaths", statistics.getDeaths());
         config.put("appearance", appearance);
         config.put("settings", settings);
+        config.put("api_token", documentId); // Use document ID for now
         return config;
     }
 }
