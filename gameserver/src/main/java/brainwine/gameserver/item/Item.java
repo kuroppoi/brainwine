@@ -134,6 +134,9 @@ public class Item {
     
     @JsonProperty("mod_inventory")
     private Pair<Integer, LazyItemGetter> modInventoryItem;
+
+    @JsonProperty("craft")
+    private Craft craft = null;
     
     @JsonProperty("crafting quantity")
     private int craftingQuantity = 1;
@@ -485,6 +488,10 @@ public class Item {
     
     public MiningBonus getMiningBonus() {
         return miningBonus;
+    }
+
+    public Craft getCraft() {
+        return craft;
     }
     
     public int getCraftingQuantity() {
