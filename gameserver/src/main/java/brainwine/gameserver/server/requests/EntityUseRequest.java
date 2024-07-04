@@ -3,6 +3,7 @@ package brainwine.gameserver.server.requests;
 import java.util.List;
 
 import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.player.Player;
@@ -17,6 +18,11 @@ public class EntityUseRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
+        // Do nothing if player is dead
+        if(player.isDead()) {
+            return;
+        }
+        
         Entity entity = player.getZone().getEntity(entityId);
         
         // Check if entity exists
@@ -39,6 +45,15 @@ public class EntityUseRequest extends PlayerRequest {
             }
             
             return;
+        }
+                
+        // Handle NPC interaction
+        Npc npc = (Npc)entity;
+        
+        if(data instanceof List<?>) {
+            npc.interact(player, ((List<?>)data).toArray());
+        } else {
+            npc.interact(player, data);
         }
     }
 }
