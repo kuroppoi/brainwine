@@ -67,9 +67,10 @@ public class SequenceBehavior extends CompositeBehavior implements Reactor {
 
     @Override
     public boolean react(Entity other, ReactionEffect message, Object params) {
-        boolean any = false;
+        boolean any = message.isHandled();
         for(Behavior child : children) {
             if(child.isReactor()) {
+                message.clearHandled();
                 any = any || ((Reactor)child).react(other, message, params);
             }
         }

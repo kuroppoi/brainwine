@@ -9,6 +9,9 @@ import brainwine.gameserver.entity.npc.behavior.ReactionEffect;
 import brainwine.gameserver.entity.npc.behavior.Reactor;
 import brainwine.gameserver.entity.npc.job.Job;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemUseType;
+import brainwine.gameserver.entity.npc.job.jobs.Crafter;
 
 public class DialoguerBehavior extends Behavior implements Reactor {
     
@@ -41,13 +44,35 @@ public class DialoguerBehavior extends Behavior implements Reactor {
                 Job job = Job.get(entity.getJob());
 
                 if (job != null) {
-                    job.dialogue(entity, other);
+                    return job.dialogue(entity, other);
                 }        
 
-                return;
+                return false;
+            })
+            .onDropItemOnto(itemId -> {
+                Item item = Item.get(itemId);
+
+                if (item == null) return false;
+
+                if (item.hasUse(ItemUseType.MEMORY)) {
+                    loadMemory(other, item);
+                } else {
+                    if ("crafter".equals(entity.getJob())) {
+                        ((Crafter)Job.get("crafter")).craftDialog(other, item);
+                    }
+                }
+
+                return false;
             });
 
         return true;
+    }
+
+    public boolean loadMemory(Entity other, Item item) {
+        if(!entity.isPlayer()) return false;
+        Player player = (Player)other;
+        
+        return false;
     }
 
 }

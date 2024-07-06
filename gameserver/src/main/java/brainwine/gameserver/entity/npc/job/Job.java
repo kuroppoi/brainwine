@@ -9,7 +9,8 @@ import brainwine.gameserver.entity.npc.job.jobs.*;
 public abstract class Job {
     private static Map<String, Job> jobMap = Map.of(
         "giver", new Giver(),
-        "joker", new Joker()
+        "joker", new Joker(),
+        "crafter", new Crafter()
     );
 
     private static Job defaultJob = new Joker();

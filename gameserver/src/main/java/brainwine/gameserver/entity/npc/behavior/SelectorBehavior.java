@@ -28,6 +28,7 @@ public class SelectorBehavior extends CompositeBehavior implements Reactor {
 
     @Override
     public boolean react(Entity other, ReactionEffect message, Object params) {
+        boolean any = message.isHandled();
         for(Behavior child : children) {
             if(child.isReactor()) {
                 if(((Reactor) child).react(other, message, params)) {
@@ -36,6 +37,6 @@ public class SelectorBehavior extends CompositeBehavior implements Reactor {
             }
         }
 
-        return false;
+        return any;
     }
 }
