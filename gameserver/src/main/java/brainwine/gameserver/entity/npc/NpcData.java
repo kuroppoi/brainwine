@@ -16,6 +16,7 @@ public class NpcData {
     private String name;
     private int x;
     private int y;
+    private String job;
     
     @JsonCreator
     public NpcData(@JsonProperty(value = "type", required = true) EntityConfig type) {
@@ -27,6 +28,7 @@ public class NpcData {
         this.name = npc.getName();
         this.x = npc.getBlockX();
         this.y = npc.getBlockY();
+        this.job = npc.getJob();
     }
     
     public EntityConfig getType() {
@@ -43,5 +45,9 @@ public class NpcData {
     
     public int getY() {
         return y;
+    }
+
+    public String getJob() {
+        return job;
     }
 }

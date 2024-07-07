@@ -53,6 +53,7 @@ public class Npc extends Entity {
     private Entity owner;
     private Entity target;
     private boolean artificial;
+    private String job;
     private long lastBehavedAt = System.currentTimeMillis();
     private long lastTrackedAt = System.currentTimeMillis();
     
@@ -409,6 +410,14 @@ public class Npc extends Entity {
     
     public int getMoveY() {
         return moveY;
+    }
+
+    public String getJob() {
+        return job;
+    }
+
+    public void setJob(String job) {
+        this.job = job;
     }
     
     public long getLastTrackedAt() {

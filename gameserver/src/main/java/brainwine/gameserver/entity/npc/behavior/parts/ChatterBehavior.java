@@ -6,6 +6,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
+import brainwine.gameserver.Fake;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.behavior.Behavior;
@@ -47,18 +48,8 @@ public class ChatterBehavior extends Behavior {
         if(player == null || recentChats.containsKey(player)) {
             return false;
         }
-                
-        // TODO store messages in a server configuration along with entity & zone names
-        String[] messages = {
-            "Hello.",
-            "Salutations.",
-            "Acknowledgements, stranger.",
-            "Ah, a human!",
-            "Hello, survivor person.",
-            "Good day.",
-            "Hello human."
-        };
-        nextMessage = messages[(int)(Math.random() * messages.length)];
+        
+        nextMessage = Fake.get(Fake.Type.SALUTATION);
         nextMessageAt = now + 1000; // Give the entity some time to stop moving
         lastChattedAt = now;
         recentChats.put(player, lastChattedAt);
