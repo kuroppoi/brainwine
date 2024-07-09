@@ -15,7 +15,6 @@ import org.apache.logging.log4j.Logger;
 import com.fasterxml.jackson.databind.InjectableValues;
 
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.player.Player;
 import brainwine.shared.JsonHelper;
 
 public abstract class CompositeBehavior extends Behavior {
@@ -30,14 +29,6 @@ public abstract class CompositeBehavior extends Behavior {
     
     public CompositeBehavior(Npc entity) {
         this(entity, Collections.emptyMap());
-    }
-    
-    @Override
-    public void react(BehaviorMessage message, Player player, Object... data) {
-        // Child behavior might add new behavior to its parent so we loop like this to avoid ConcurrentModificationException
-        for(int i = 0; i < children.size(); i++) {
-            children.get(i).react(message, player, data);
-        }
     }
     
     protected void addChildren(Map<String, Object> config) {
@@ -58,14 +49,11 @@ public abstract class CompositeBehavior extends Behavior {
             return;
         }
         
-        child.setParent(this);
         children.add(child);
     }
     
     public void removeChild(Behavior child) {
-        if(children.remove(child)) {
-            child.setParent(null);
-        }
+        children.remove(child);
     }
     
     public Collection<Behavior> getChildren() {

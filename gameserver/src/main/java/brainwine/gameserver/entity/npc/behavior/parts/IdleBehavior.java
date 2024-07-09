@@ -4,7 +4,6 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
-import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
@@ -87,7 +86,6 @@ public class IdleBehavior extends Behavior {
     }
     
     @JsonSetter("animation")
-    @JsonAlias("idle_animation")
     public void setAnimations(String... animations) {
         this.animations = animations;
     }
