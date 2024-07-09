@@ -15,6 +15,7 @@ import brainwine.gameserver.entity.npc.behavior.composed.QuesterBehavior;
 import brainwine.gameserver.entity.npc.behavior.composed.WalkerBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.ChatterBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.ClimbBehavior;
+import brainwine.gameserver.entity.npc.behavior.parts.ConveyorBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.DialoguerBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.DigBehavior;
 import brainwine.gameserver.entity.npc.behavior.parts.EruptionAttackBehavior;
@@ -52,6 +53,7 @@ import brainwine.gameserver.player.Player;
     @Type(name = "walk", value = WalkBehavior.class),
     @Type(name = "fall", value = FallBehavior.class),
     @Type(name = "turn", value = TurnBehavior.class),
+    @Type(name = "conveyor", value = ConveyorBehavior.class),
     @Type(name = "follow", value = FollowBehavior.class),
     @Type(name = "climb", value = ClimbBehavior.class),
     @Type(name = "dig", value = DigBehavior.class),

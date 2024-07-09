@@ -34,6 +34,10 @@ public class Block {
         updateLayer(Layer.FRONT, frontItem, frontMod, ownerHash);
         updateLayer(Layer.LIQUID, liquidItem, liquidMod, ownerHash);
     }
+
+    public boolean isSolid() {
+        return (frontItem.isDoor() && frontMod % 2 == 0) || (!frontItem.isDoor() && frontItem.isSolid());
+    }
     
     public void updateLayer(Layer layer, int item) {
         updateLayer(layer, item, 0);
