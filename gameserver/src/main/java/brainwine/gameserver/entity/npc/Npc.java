@@ -16,6 +16,7 @@ import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityLoot;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.FacingDirection;
+import brainwine.gameserver.entity.npc.behavior.BehaviorMessage;
 import brainwine.gameserver.entity.npc.behavior.SequenceBehavior;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
@@ -239,6 +240,14 @@ public class Npc extends Entity {
         }
         
         return config;
+    }
+    
+    public void interact(Player player, Object... data) {
+        interact(BehaviorMessage.INTERACT, player, data);
+    }
+    
+    public void interact(BehaviorMessage message, Player player, Object... data) {
+        behaviorTree.react(message, player, data);
     }
     
     public void move(int x, int y) {
