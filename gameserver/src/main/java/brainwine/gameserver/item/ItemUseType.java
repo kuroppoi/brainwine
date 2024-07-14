@@ -39,6 +39,7 @@ public enum ItemUseType {
     FIELDABLE,
     FLY,
     MEMORY,
+    MOVE,
     MULTI,
     NOTE(new NoteInteraction()),
     PET,
