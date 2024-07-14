@@ -50,6 +50,7 @@ public class GameServer implements CommandExecutor {
         EntityRegistry.init();
         EntityManager.loadEntitySpawns();
         GrowthManager.loadGrowthData();
+        Fake.loadFake();
         lootManager = new LootManager();
         prefabManager = new PrefabManager();
         ZoneGenerator.init();
