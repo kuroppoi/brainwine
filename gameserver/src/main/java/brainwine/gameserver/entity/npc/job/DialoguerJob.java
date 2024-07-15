@@ -1,5 +1,7 @@
 package brainwine.gameserver.entity.npc.job;
 
+import java.util.Map;
+
 import brainwine.gameserver.Fake;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
@@ -112,7 +114,7 @@ public abstract class DialoguerJob extends Job {
                     }
 
                     player.notify(String.format("Cool, I'm now %s the %s!", me.getName(), me.getJob()));
-                    me.getZone().sendMessage(new EntityChangeMessage(me.getId(), me.getStatusConfig()));
+                    me.getZone().sendMessage(new EntityChangeMessage(me.getId(), Map.of("n", me.getName())));
                 }
             });
         }

@@ -1,8 +1,16 @@
 package brainwine.gameserver.entity.npc.behavior.parts;
 
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
+import brainwine.gameserver.Fake;
+import brainwine.gameserver.GameConfiguration;
+import brainwine.gameserver.dialog.Dialog;
+import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.behavior.Behavior;
 import brainwine.gameserver.entity.npc.behavior.BehaviorMessage;
@@ -12,6 +20,9 @@ import brainwine.gameserver.entity.npc.job.jobs.Crafter;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.server.messages.EntityChangeMessage;
+import brainwine.gameserver.util.MapHelper;
+import brainwine.shared.JsonHelper;
 
 public class DialoguerBehavior extends Behavior {
 
@@ -92,7 +103,47 @@ public class DialoguerBehavior extends Behavior {
         }
     }
 
-    public boolean loadMemory(Player player, Item item) {
-        return false;
+    public void loadMemory(Player player, Item item) {
+        if(entity.getJob() == null) {
+            if (player.getZone().isBlockProtected(entity.getBlockX(), entity.getBlockY(), player)) {
+                String message = MapHelper.getString(GameConfiguration.getBaseConfig(), "dialogs.android.protected");
+                player.showDialog(DialogHelper.messageDialog(message));
+            } else {
+                Integer memoryType = (Integer)item.getUse(ItemUseType.MEMORY);
+                Map<String, Object> dialogDesc = (Map<String, Object>)MapHelper.getList(GameConfiguration.getBaseConfig(), "dialogs.android.load_memory").get(memoryType);
+                try {
+                    Dialog dialog = JsonHelper.readValue(dialogDesc, Dialog.class);
+
+                    player.showDialog(dialog, ans -> {
+                        if (ans.length >= 1 && ans[0] == "cancel") {
+                            return;
+                        }
+
+                        if (ans.length >= 1) {
+                            String entityName = (String)ans[0];
+
+                            // remove the memory unit from the player's inventory
+                            player.getInventory().removeItem(item, true);
+
+                            // set entity parameters
+                            entity.setName(entityName);
+                            entity.setJob("quester");
+
+                            // notify the player
+                            player.notify(String.format("Android has been reconfigured as %s!", entity.getName()));
+
+                            // update entity name on client side
+                            entity.getZone().sendMessage(new EntityChangeMessage(entity.getId(), Map.of("n", entity.getName())));
+                        }
+                    });
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    player.showDialog(DialogHelper.messageDialog("Could not load the memory load dialog."));
+                }
+            }
+        } else {
+            List<String> options = MapHelper.getList(GameConfiguration.getBaseConfig(), "dialogs.android.cannot_load_memory");
+            player.showDialog(DialogHelper.messageDialog(Fake.pickFromList(options)));
+        }
     }
 }
