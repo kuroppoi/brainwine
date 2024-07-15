@@ -1,16 +1,21 @@
 package brainwine.gameserver;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.yaml.snakeyaml.LoaderOptions;
-import org.yaml.snakeyaml.Yaml;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
+import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.util.MapHelper;
+import brainwine.shared.JsonHelper;
 
 public class Fake {
     private static final Logger logger = LogManager.getLogger();
@@ -33,24 +38,22 @@ public class Fake {
         }
     }
 
-    /** Load fake.yml and if successful cache its contents into the fake variable.
+    /** Load fake.json and if successful cache its contents into the fake variable.
      */
     public static void loadFake() {
-        LoaderOptions options = new LoaderOptions();
-        options.setMaxAliasesForCollections(Short.MAX_VALUE);
-        Yaml yaml = new Yaml(options);
-
+        logger.info(SERVER_MARKER, "Loading fakes ...");
+        
         try {
-            fake = yaml.load(Fake.class.getResourceAsStream("/fake.yml"));
-        } catch (Exception e) {
+            URL url = ResourceFinder.getResourceUrl("fake.json");
+            fake = JsonHelper.readValue(url, new TypeReference<Map<String, Object>>(){});
+        } catch (IOException e) {
             logger.error(SERVER_MARKER, "Failed to load fakes", e);
-            return;
         }
     }
 
-    /** Get cached fake.yml contents or attempt to load it and return.
+    /** Get cached fake.json contents or attempt to load it and return.
      * 
-     * @return cached or newly loaded fake.yml contents or null if unsuccessful
+     * @return cached or newly loaded fake.json contents or null if unsuccessful
      */
     private static Map<String, Object> getFake() {
         if(fake == null) {
@@ -67,7 +70,8 @@ public class Fake {
      * @return random selection
      */
     public static <T> T get(String listKey) {
-        List<T> list = MapHelper.getList(GameConfiguration.getBaseConfig(), "fake." + listKey);
+        List<T> list = MapHelper.getList(getFake(), "fake." + listKey);
+        
         if(list != null) {
             return pickFromList(list);
         }else {
@@ -115,7 +119,7 @@ public class Fake {
      * @param list the list
      * @return random selection
      */
-    private static <T> T pickFromList(List<T> list) {
+    public static <T> T pickFromList(List<T> list) {
         int length = list.size();
         int index = (int) Math.round(Math.floor(length * Math.random()));
         return list.get(index);
