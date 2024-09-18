@@ -33,10 +33,6 @@ public class PlayerManager {
         loadPlayers();
     }
     
-    public void tick() {
-        
-    }
-    
     private void loadPlayers() {
         logger.info(SERVER_MARKER, "Loading player data ...");
         File dataDir = new File("players");

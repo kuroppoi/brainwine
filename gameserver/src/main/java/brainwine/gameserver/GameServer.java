@@ -92,7 +92,6 @@ public class GameServer implements CommandExecutor {
         }
         
         zoneManager.tick(deltaTime);
-        playerManager.tick();
     }
     
     /**
