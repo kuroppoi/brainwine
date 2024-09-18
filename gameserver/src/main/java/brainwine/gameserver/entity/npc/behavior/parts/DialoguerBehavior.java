@@ -133,7 +133,7 @@ public class DialoguerBehavior extends Behavior {
                             player.notify(String.format("Android has been reconfigured as %s!", entity.getName()));
 
                             // update entity name on client side
-                            entity.getZone().sendMessage(new EntityChangeMessage(entity.getId(), MapHelper.mapOf("n", entity.getName())));
+                            entity.getZone().sendMessage(new EntityChangeMessage(entity.getId(), MapHelper.map("n", entity.getName())));
                         }
                     });
                 } catch (JsonProcessingException e) {

@@ -8,7 +8,8 @@ import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MapHelper;
 
 public abstract class Job {
-    private static Map<String, Job> jobMap = MapHelper.mapOf(
+    private static Map<String, Job> jobMap = MapHelper.map(
+        String.class, Job.class,
         "giver", new Giver(),
         "joker", new Joker(),
         "crafter", new Crafter()

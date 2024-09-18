@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -190,25 +189,5 @@ public class MapHelper {
     
     public static <K, V> Map<K, V> getMap(Map<?, ?> map, String path, Map<K, V> def){
         return get(map, path, Map.class, def);
-    }
-
-    public static <K, V> Map<K, V> mapOf() {
-        return new HashMap<>();
-    }
-
-    public static <K, V> Map<K, V> mapOf(K k1, V v1, Object... others) {
-        if (others.length % 2 != 0) {
-            throw new IllegalArgumentException("There must be the same number of keys as values.");
-        }
-
-        Map<K, V> myMap = new HashMap<>(others.length / 2 + 1);
-
-        myMap.put(k1, v1);
-        for (int i = 0; i < others.length; i += 2) {
-            myMap.put((K) others[i], (V) others[i + 1]);
-        }
-
-        // The returned map is modifiable but I don't care.
-        return myMap;
     }
 }

@@ -113,7 +113,7 @@ public abstract class DialoguerJob extends Job {
                     }
 
                     player.notify(String.format("Cool, I'm now %s the %s!", me.getName(), me.getJob()));
-                    me.getZone().sendMessage(new EntityChangeMessage(me.getId(), MapHelper.mapOf("n", me.getName())));
+                    me.getZone().sendMessage(new EntityChangeMessage(me.getId(), MapHelper.map("n", me.getName())));
                 }
             });
         }
