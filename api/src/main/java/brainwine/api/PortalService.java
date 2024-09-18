@@ -47,7 +47,6 @@ public class PortalService {
      * TODO could use some work.
      */
     private void handleZoneSearch(Context ctx) {
-        final List<ZoneInfo> zones = (List<ZoneInfo>)dataFetcher.fetchZoneInfo(); // TODO this will probably be slow if there is a large number of zones
         String apiToken = ctx.queryParam("api_token");
         
         if(apiToken == null || !dataFetcher.verifyApiToken(apiToken)) {
@@ -55,7 +54,7 @@ public class PortalService {
             return;
         }
         
-        // Remove private worlds that user does not own and is not a member of
+        final List<ZoneInfo> zones = (List<ZoneInfo>)dataFetcher.fetchZoneInfo(); // TODO this will probably be slow if there is a large number of zones
         zones.removeIf(zone -> zone.isPrivate() && !apiToken.equals(zone.getOwner()) && !zone.getMembers().contains(apiToken));
         
         handleQueryParam(ctx, "name", String.class, name -> {

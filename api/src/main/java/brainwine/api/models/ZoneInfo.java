@@ -14,26 +14,26 @@ public class ZoneInfo {
     private final String activity;
     private final boolean pvp;
     private final boolean premium;
+    private final boolean isPrivate;
     private final boolean isProtected;
     private final int playerCount;
     private final double explorationProgress;
     private final OffsetDateTime creationDate;
-    private final boolean isPrivate;
     private final String owner;
     private final List<String> members;
     
-    public ZoneInfo(String name, String biome, String activity, boolean pvp, boolean premium, boolean isProtected, 
-            int playerCount, double explorationProgress, OffsetDateTime creationDate, boolean isPrivate, String owner, List<String> members) {
+    public ZoneInfo(String name, String biome, String activity, boolean pvp, boolean premium, boolean isPrivate, boolean isProtected, 
+            int playerCount, double explorationProgress, OffsetDateTime creationDate, String owner, List<String> members) {
         this.name = name;
         this.biome = biome;
         this.activity = activity;
         this.pvp = pvp;
         this.premium = premium;
+        this.isPrivate = isPrivate;
         this.isProtected = isProtected;
         this.playerCount = playerCount;
         this.explorationProgress = explorationProgress;
         this.creationDate = creationDate;
-        this.isPrivate = isPrivate;
         this.owner = owner;
         this.members = members;
     }
@@ -58,8 +58,12 @@ public class ZoneInfo {
         return premium;
     }
     
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+    
     public boolean isProtected() {
-        return isProtected;
+        return !isPrivate && isProtected; // Only display protection lock if world is public
     }
     
     @JsonProperty("players")
@@ -75,11 +79,6 @@ public class ZoneInfo {
     @JsonProperty("gen_date")
     public OffsetDateTime getCreationDate() {
         return creationDate;
-    }
-    
-    @JsonIgnore
-    public boolean isPrivate() {
-        return isPrivate;
     }
     
     @JsonIgnore

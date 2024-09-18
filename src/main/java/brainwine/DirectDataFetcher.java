@@ -63,10 +63,13 @@ public class DirectDataFetcher implements DataFetcher {
                     null,
                     false,
                     false,
-                    false,
+                    zone.isPrivate(),
+                    zone.isProtected(),
                     zone.getPlayers().size(), 
                     zone.getExplorationProgress(), 
-                    zone.getCreationDate()));
+                    zone.getCreationDate(),
+                    zone.getOwner(),
+                    zone.getMembers()));
         }
         
         return zoneInfo;

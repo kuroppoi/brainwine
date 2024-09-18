@@ -1700,6 +1700,24 @@ public class Zone {
     
     public void addMember(Player player) {
         members.add(player.getDocumentId());
+        
+        // Force player to reconnect if they're currently in this zone
+        if(player.getZone() == this) {
+            player.kick("Member status changed.", true);
+        }
+    }
+    
+    public void removeMember(Player player) {
+        members.remove(player.getDocumentId());
+        
+        // Kick the player from the world if they are currently in it or force them to reconnect if the world is public
+        if(player.getZone() == this) {
+            if(isPublic()) {
+                player.kick("Member status changed.", true);
+            } else {
+                player.changeZone(null);
+            }
+        }
     }
     
     public boolean isMember(Player player) {
