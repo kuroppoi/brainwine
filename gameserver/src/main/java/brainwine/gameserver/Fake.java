@@ -95,14 +95,22 @@ public class Fake {
      * @return random selection
      */
     public static String get(Type type, Degree degree) {
-        return switch (type) {
-            case SALUTATION -> switch (degree) {
-                case UNFRIENDLY -> pickFromList("fake.salutations.unfriendly");
-                case NEUTRAL -> pickFromList("fake.salutations.neutral");
-                case FRIENDLY -> pickFromList("fake.salutations.friendly");
-            };
-            case JOKE -> pickFromList("fake.jokes");
-        };
+        if(type == Type.SALUTATION) {
+            if(degree == Degree.UNFRIENDLY) {
+                return pickFromList("fake.salutations.unfriendly");
+            }
+            if(degree == Degree.FRIENDLY) {
+                return pickFromList("fake.salutations.friendly");
+            }
+
+            return pickFromList("fake.salutations.neutral");
+        }
+        
+        if(type == Type.JOKE) {
+            return pickFromList("fake.jokes");
+        }
+
+        return "";
     }
 
     private static String pickFromList(String path) {

@@ -2,6 +2,7 @@ package brainwine.gameserver.item;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -25,7 +26,7 @@ public class Craft {
         for (Map.Entry<String, Map<String, Integer>> entry : map.entrySet()) {
             List<CraftingRequirement> requirements = entry.getValue().entrySet().stream()
                 .map(e -> new CraftingRequirement(new LazyItemGetter(e.getKey()), e.getValue()))
-                .toList();
+                .collect(Collectors.toList());
             
             options.put(entry.getKey(), requirements);
         }

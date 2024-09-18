@@ -1,7 +1,5 @@
 package brainwine.gameserver.entity.npc.job;
 
-import java.util.Map;
-
 import brainwine.gameserver.Fake;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
@@ -9,6 +7,7 @@ import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
+import brainwine.gameserver.util.MapHelper;
 
 public abstract class DialoguerJob extends Job {
     protected String choice;
@@ -99,7 +98,7 @@ public abstract class DialoguerJob extends Job {
 
                 if("null".equals(job)) {
                     job = null;
-                } else if(!job.isBlank()) {
+                } else if(!job.matches("^\\s*$")) {
                     if(!Job.validateJob(job)) {
                         player.showDialog(DialogHelper.messageDialog(String.format("\"%s\" is not a valid job type.", job)));
                         validated = false;
@@ -109,12 +108,12 @@ public abstract class DialoguerJob extends Job {
                 if(validated) {
                     me.setName(name);
 
-                    if(job == null || !job.isBlank()) {
+                    if(job == null || !job.matches("^\\s*$")) {
                         me.setJob(job);
                     }
 
                     player.notify(String.format("Cool, I'm now %s the %s!", me.getName(), me.getJob()));
-                    me.getZone().sendMessage(new EntityChangeMessage(me.getId(), Map.of("n", me.getName())));
+                    me.getZone().sendMessage(new EntityChangeMessage(me.getId(), MapHelper.mapOf("n", me.getName())));
                 }
             });
         }

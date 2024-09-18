@@ -5,9 +5,10 @@ import java.util.Map;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.job.jobs.*;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.util.MapHelper;
 
 public abstract class Job {
-    private static Map<String, Job> jobMap = Map.of(
+    private static Map<String, Job> jobMap = MapHelper.mapOf(
         "giver", new Giver(),
         "joker", new Joker(),
         "crafter", new Crafter()
