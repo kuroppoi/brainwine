@@ -1,0 +1,7 @@
+# Binary info
+binary_name Deepworld
+binary_size 0x367DA0
+
+# Addresses
+location gateway_host 0x0013EB0B
+location gateway_host_strlen 0x001FF3C8
