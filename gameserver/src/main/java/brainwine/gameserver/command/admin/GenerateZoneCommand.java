@@ -17,6 +17,7 @@ public class GenerateZoneCommand extends Command {
     public static final int MIN_HEIGHT = 200;
     public static final int MAX_WIDTH = 4000;
     public static final int MAX_HEIGHT = 1600;
+    private boolean generating;
     
     @Override
     public void execute(CommandExecutor executor, String[] args) {
@@ -27,6 +28,11 @@ public class GenerateZoneCommand extends Command {
         
         if(args.length > 1 && args.length < 3) {
             executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
+            return;
+        }
+        
+        if(generating) {
+            executor.notify("Already generating a zone, please try again in a moment.", SYSTEM);
             return;
         }
         
@@ -76,6 +82,7 @@ public class GenerateZoneCommand extends Command {
             }
         }
         
+        generating = true;
         executor.notify("Your zone is being generated. It should be ready soon!", SYSTEM);
         generator.generateZoneAsync(biome, width, height, seed, zone -> {
             if(zone == null) {
@@ -84,6 +91,8 @@ public class GenerateZoneCommand extends Command {
                 GameServer.getInstance().getZoneManager().addZone(zone);
                 executor.notify(String.format("Your zone '%s' is ready for exploration!", zone.getName()), SYSTEM);
             }
+            
+            generating = false;
         });
     }
     
