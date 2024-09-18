@@ -110,9 +110,14 @@ public class SwitchInteraction implements ItemInteraction {
         if(metaBlock.hasProperty("eid")) {
             Entity entity = zone.getEntity(metaBlock.getIntProperty("eid"));
             
-            if(entity != null && !entity.isDead()) {
-                entity.spawnEffect("bomb-teleport", 4);
-                entity.setHealth(0);
+            if(entity instanceof Npc) {
+                Npc npc = (Npc)entity;
+                
+                // TODO an isArtificial() check will work well enough as a fix for #45 for now since spawners are the only things that use it
+                if(!npc.isDead() && npc.isArtificial()) {
+                    npc.spawnEffect("bomb-teleport", 4);
+                    npc.setHealth(0);
+                }
             }
         }
         
