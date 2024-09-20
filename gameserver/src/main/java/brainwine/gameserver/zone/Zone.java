@@ -52,6 +52,7 @@ import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.SimplexNoise;
 import brainwine.gameserver.util.Vector2i;
+import brainwine.gameserver.zone.gen.models.RubbleType;
 
 /**
  * TODO Zone class is getting kinda big. I want to split it into more smaller classes to make it more manageable.
@@ -743,6 +744,15 @@ public class Zone {
                         }
                     } else if(decay && frontItem.getMod() == ModType.DECAY && random.nextBoolean()) {
                         frontMod = random.nextInt(4) + 1;
+                    }
+                    
+                    // Try to place rubble
+                    if(decay && frontItem.isWhole() && !isBlockOccupied(x + i, y + j - 1, Layer.FRONT) && random.nextDouble() <= 0.2) {
+                        RubbleType[] types = RubbleType.values();
+                        RubbleType type = types[random.nextInt(types.length)];
+                        String[] itemIds = type.getItemIds();
+                        Item item = ItemRegistry.getItem(itemIds[random.nextInt(itemIds.length)]);
+                        updateBlock(x + i, y + j - 1, Layer.FRONT, item);
                     }
                     
                     int offset = mirrored ? -(frontItem.getBlockWidth() - 1) : 0;
