@@ -15,7 +15,7 @@ import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.behavior.Behavior;
 import brainwine.gameserver.entity.npc.behavior.BehaviorMessage;
 import brainwine.gameserver.entity.npc.job.DialoguerJob;
-import brainwine.gameserver.entity.npc.job.Job;
+import brainwine.gameserver.entity.npc.job.JobType;
 import brainwine.gameserver.entity.npc.job.jobs.Crafter;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
@@ -53,7 +53,7 @@ public class DialoguerBehavior extends Behavior {
         case INTERACT:
             if (data.length <= 1) {
                 if (entity.getJob() != null) {
-                    Job.get(entity.getJob()).dialogue(entity, player);
+                    entity.getJob().dialogue(entity, player);
                     return;
                 }
 
@@ -87,8 +87,8 @@ public class DialoguerBehavior extends Behavior {
                         if (item.hasUse(ItemUseType.MEMORY)) {
                             loadMemory(player, item);
                         } else {
-                            if ("crafter".equals(entity.getJob())) {
-                                ((Crafter) Job.get("crafter")).craftDialog(player, item);
+                            if (JobType.CRAFTER.equals(entity.getJob())) {
+                                ((Crafter) JobType.CRAFTER.get()).craftDialog(player, item);
                             }
                         }
 
@@ -127,7 +127,7 @@ public class DialoguerBehavior extends Behavior {
 
                             // set entity parameters
                             entity.setName(entityName);
-                            entity.setJob("quester");
+                            entity.setJob(JobType.JOKER);
 
                             // notify the player
                             player.notify(String.format("Android has been reconfigured as %s!", entity.getName()));

@@ -96,10 +96,13 @@ public abstract class DialoguerJob extends Job {
 
                 boolean validated = true;
 
+                JobType jobType = null;
+
                 if("null".equals(job)) {
-                    job = null;
+                    jobType = null;
                 } else if(!job.matches("^\\s*$")) {
-                    if(!Job.validateJob(job)) {
+                    jobType = JobType.fromString(job);
+                    if(jobType == null) {
                         player.showDialog(DialogHelper.messageDialog(String.format("\"%s\" is not a valid job type.", job)));
                         validated = false;
                     }
@@ -109,7 +112,7 @@ public abstract class DialoguerJob extends Job {
                     me.setName(name);
 
                     if(job == null || !job.matches("^\\s*$")) {
-                        me.setJob(job);
+                        me.setJob(jobType);
                     }
 
                     player.notify(String.format("Cool, I'm now %s the %s!", me.getName(), me.getJob()));

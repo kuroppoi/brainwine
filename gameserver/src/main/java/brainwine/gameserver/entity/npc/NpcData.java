@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.entity.EntityConfig;
+import brainwine.gameserver.entity.npc.job.JobType;
 
 /**
  * Storage data for persistent non-player characters.
@@ -16,7 +17,7 @@ public class NpcData {
     private String name;
     private int x;
     private int y;
-    private String job;
+    private JobType job;
     
     @JsonCreator
     public NpcData(@JsonProperty(value = "type", required = true) EntityConfig type) {
@@ -47,7 +48,7 @@ public class NpcData {
         return y;
     }
 
-    public String getJob() {
+    public JobType getJob() {
         return job;
     }
 }
