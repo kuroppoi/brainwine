@@ -12,5 +12,6 @@ public interface DataFetcher {
     public String fetchPlayerName(String name);
     public boolean verifyAuthToken(String name, String token);
     public boolean verifyApiToken(String apiToken);
+    public ZoneInfo getZoneInfo(String nameOrId);
     public Collection<ZoneInfo> fetchZoneInfo();
 }

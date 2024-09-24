@@ -39,6 +39,11 @@ public class DefaultDataFetcher implements DataFetcher {
     }
     
     @Override
+    public ZoneInfo getZoneInfo(String nameOrId) {
+        throw exception;
+    }
+    
+    @Override
     public Collection<ZoneInfo> fetchZoneInfo() {
         throw exception;
     }

@@ -2,8 +2,12 @@ package brainwine.api.models;
 
 import java.time.OffsetDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * TODO split model in two: one for internal use & one for {@code /v1/worlds} serialization.
+ */
 public class ZoneInfo {
     
     private final String name;
@@ -13,11 +17,14 @@ public class ZoneInfo {
     private final boolean premium;
     private final boolean locked;
     private final int playerCount;
+    private final int width;
+    private final int height;
+    private final int[] surface;
     private final double explorationProgress;
     private final OffsetDateTime creationDate;
     
     public ZoneInfo(String name, String biome, String activity, boolean pvp, boolean premium, boolean locked, 
-            int playerCount, double explorationProgress, OffsetDateTime creationDate) {
+            int playerCount, int width, int height, int[] surface, double explorationProgress, OffsetDateTime creationDate) {
         this.name = name;
         this.biome = biome;
         this.activity = activity;
@@ -25,6 +32,9 @@ public class ZoneInfo {
         this.premium = premium;
         this.locked = locked;
         this.playerCount = playerCount;
+        this.width = width;
+        this.height = height;
+        this.surface = surface;
         this.explorationProgress = explorationProgress;
         this.creationDate = creationDate;
     }
@@ -57,6 +67,21 @@ public class ZoneInfo {
     @JsonProperty("players")
     public int getPlayerCount() {
         return playerCount;
+    }
+    
+    @JsonIgnore
+    public int getWidth() {
+        return width;
+    }
+    
+    @JsonIgnore
+    public int getHeight() {
+        return height;
+    }
+    
+    @JsonIgnore
+    public int[] getSurface() {
+        return surface;
     }
     
     @JsonProperty("explored")
