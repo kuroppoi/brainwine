@@ -14,6 +14,7 @@ public class DialogSelectInput extends DialogInput {
         return setOptions(Arrays.asList(options));
     }
     
+    @JsonProperty("options")
     public DialogSelectInput setOptions(Collection<String> options) {
         this.options = options;
         return this;

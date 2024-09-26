@@ -18,6 +18,7 @@ import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.FacingDirection;
 import brainwine.gameserver.entity.npc.behavior.BehaviorMessage;
 import brainwine.gameserver.entity.npc.behavior.SequenceBehavior;
+import brainwine.gameserver.entity.npc.job.JobType;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
@@ -53,6 +54,7 @@ public class Npc extends Entity {
     private Entity owner;
     private Entity target;
     private boolean artificial;
+    private JobType job;
     private long lastBehavedAt = System.currentTimeMillis();
     private long lastTrackedAt = System.currentTimeMillis();
     
@@ -416,6 +418,14 @@ public class Npc extends Entity {
     
     public int getMoveY() {
         return moveY;
+    }
+
+    public JobType getJob() {
+        return job;
+    }
+
+    public void setJob(JobType job) {
+        this.job = job;
     }
     
     public long getLastTrackedAt() {
