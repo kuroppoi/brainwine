@@ -74,7 +74,7 @@ public abstract class DialoguerJob extends Job {
         
         player.showDialog(dialog, ans -> {
                 if (ans.length >= 1 && "cancel".equals(ans[0])) return;
-                handleConfiguration(me, player, ans);
+                if (handleConfiguration(me, player, ans)) return;
                 this.handleDialogAnswers(me, player, ans);
             }
         );
@@ -82,9 +82,9 @@ public abstract class DialoguerJob extends Job {
         return true;
     }
     
-    private void handleConfiguration(Npc me, Player player, Object[] ans) {
+    private boolean handleConfiguration(Npc me, Player player, Object[] ans) {
         if (ans.length >= 1 && "configure".equals(ans[0])) {
-            if(!player.isAdmin()) return;
+            if(!player.isAdmin()) return true;
 
             Dialog dialog = DialogHelper.getDialog("android.configure");
 
@@ -119,7 +119,11 @@ public abstract class DialoguerJob extends Job {
                     me.getZone().sendMessage(new EntityChangeMessage(me.getId(), MapHelper.map("n", me.getName())));
                 }
             });
+
+            return true;
         }
+
+        return false;
     }
 
 }
