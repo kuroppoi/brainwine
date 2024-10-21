@@ -97,6 +97,7 @@ public class Zone {
     private final Map<Integer, MetaBlock> damageFieldBlocks = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
+    private boolean modified;
     
     protected Zone(String documentId, ZoneConfigFile config, ZoneDataFile data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
@@ -992,6 +993,7 @@ public class Zone {
         Chunk chunk = getChunk(x, y);        
         chunk.getBlock(x, y).updateLayer(layer, item, mod, owner == null ? 0 : owner.getBlockHash()); // TODO owner hash should get updated on place only!!
         chunk.setModified(true);
+        modified = true; // TODO this alone is NOT sufficient!
         
         // Queue block update if there are players in this zone.
         // TODO maybe check if the block update was in an active chunk, too?
@@ -1655,6 +1657,14 @@ public class Zone {
     
     public boolean isPurified() {
         return acidity < 0.05F;
+    }
+    
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+    
+    public boolean isModified() {
+        return modified;
     }
     
     /**

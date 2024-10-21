@@ -153,9 +153,7 @@ public class ZoneManager {
     }
     
     public void saveZones() {
-        for(Zone zone : getZones()) {
-            saveZone(zone);
-        }
+        zones.values().stream().filter(Zone::isModified).forEach(this::saveZone);
     }
     
     public void saveZone(Zone zone) {
@@ -175,6 +173,7 @@ public class ZoneManager {
             Files.write(new File(file, "metablocks.json").toPath(), metaBlocksBytes);
             Files.write(new File(file, "config.json").toPath(), configBytes);
             Files.write(new File(file, "zone.dat").toPath(), dataBytes);
+            zone.setModified(false);
         } catch(Exception e) {
             logger.error(SERVER_MARKER, "Zone save failure. id: {}", zone.getDocumentId(), e);
         }
