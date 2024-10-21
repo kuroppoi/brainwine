@@ -25,7 +25,7 @@ import brainwine.gameserver.zone.gen.ZoneGenerator;
 
 public class GameServer implements CommandExecutor {
     
-    public static final int GLOBAL_SAVE_INTERVAL = 30000; // 30 seconds
+    public static final int GLOBAL_SAVE_INTERVAL = 300000; // 5 minutes
     private static final Logger logger = LogManager.getLogger();
     private static GameServer instance;
     private final Thread handlerThread;
