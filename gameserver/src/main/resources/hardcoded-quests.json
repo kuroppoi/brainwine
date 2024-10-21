@@ -1,0 +1,7 @@
+{
+    "hardcoded_quests": {
+        "Say Hello": {
+            "quest": "survival_say_hello"
+        }
+    }
+}
