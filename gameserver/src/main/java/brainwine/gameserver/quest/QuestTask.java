@@ -67,28 +67,63 @@ public class QuestTask {
         return description;
     }
 
+    public QuestTask setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
     public int getQuantity() {
         return quantity;
+    }
+
+    public QuestTask setQuantity(Integer quantity) {
+        this.quantity = quantity;
+        return this;
     }
 
     public List<List<Object>> getEvents() {
         return events;
     }
 
+    public QuestTask setEvents(List<List<Object>> events) {
+        this.events = events;
+        return this;
+    }
+
     public List<List<Object>> getProgress() {
         return progress;
+    }
+
+    public QuestTask setProgress(List<List<Object>> progress) {
+        this.progress = progress;
+        return this;
     }
 
     public List<List<Object>> getQualify() {
         return qualify;
     }
 
+    public QuestTask setQualify(List<List<Object>> qualify) {
+        this.qualify = qualify;
+        return this;
+    }
+
     public String getAction() {
         return action;
     }
 
+    public QuestTask setAction(String action) {
+        this.action = action;
+        return this;
+    }
+
     public QuestTaskCollectInventory getCollectInventory() {
         return collectInventory;
+    }
+
+    public QuestTask setCollectInventory(QuestTaskCollectInventory collectInventory) {
+        this.collectInventory = collectInventory;
+        return this;
     }
 
     public DialogSection getDialogSection(int taskProgress) {
@@ -98,14 +133,14 @@ public class QuestTask {
         
         if(!getQualify().isEmpty()) {
             result.addItem(new DialogListItem().setText("Qualifications:"));
-            for (List<Object> qualification : getQualify()) {
+            for(List<Object> qualification : getQualify()) {
                 result.addItem(new DialogListItem().setText(qualification.stream().<String>map(Objects::toString).collect(Collectors.joining(" "))));
             }
         }
 
         if(!getEvents().isEmpty()) {
             result.addItem(new DialogListItem().setText("Do any of these to make progress:"));
-            for (List<Object> event : getEvents()) {
+            for(List<Object> event : getEvents()) {
                 result.addItem(new DialogListItem().setText(event.stream().<String>map(Objects::toString).collect(Collectors.joining(" "))));
             }
         }

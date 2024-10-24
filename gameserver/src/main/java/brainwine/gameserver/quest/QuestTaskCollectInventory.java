@@ -14,9 +14,8 @@ import brainwine.gameserver.util.Pair;
 
 public class QuestTaskCollectInventory {
     List<Pair<LazyItemGetter, Integer>> requirements;
-
     @JsonCreator
-    private QuestTaskCollectInventory(Map<String, Integer> inp) {
+    public QuestTaskCollectInventory(Map<String, Integer> inp) {
         requirements = inp.entrySet().stream()
                 .map(e -> new Pair<>(new LazyItemGetter(e.getKey()), e.getValue()))
                 .collect(Collectors.toList());
@@ -24,6 +23,11 @@ public class QuestTaskCollectInventory {
 
     public List<Pair<LazyItemGetter, Integer>> getRequirements() {
         return requirements;
+    }
+
+    public QuestTaskCollectInventory setRequirements(List<Pair<LazyItemGetter, Integer>> requirements) {
+        this.requirements = requirements;
+        return this;
     }
 
     public boolean playerSatisfies(Player player) {

@@ -42,4 +42,19 @@ public class QuestReward {
     public List<String> getLootCategories() {
         return lootCategories;
     }
+
+    public QuestReward setXp(Integer xp) {
+        this.xp = xp;
+        return this;
+    }
+
+    public QuestReward setCrowns(Integer crowns) {
+        this.crowns = crowns;
+        return this;
+    }
+
+    public QuestReward setLootCategories(List<String> lootCategories) {
+        this.lootCategories = lootCategories;
+        return this;
+    }
 }

@@ -21,6 +21,7 @@ import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.PickRandom;
 import brainwine.shared.JsonHelper;
+import io.netty.util.internal.ThreadLocalRandom;
 
 public class Quests {
     public static Map<String, Map<String, Quest>> questMaps = new HashMap<>();
@@ -40,6 +41,10 @@ public class Quests {
         } catch (Exception e) {
             logger.warn(String.format("Could not load any hardcoded quest entries from hardcoded-quests.json: %s", e.getMessage()));
         }
+    }
+
+    private static void loadRandomQuests() {
+        RandomQuests.loadConfiguration();
     }
 
     private static int loadQuestsForCategory(String categoryPrefix, String categoryTitle) {
@@ -72,6 +77,7 @@ public class Quests {
 
     public static void loadQuests() {
         loadHardcodedQuests();
+        loadRandomQuests();
 
         int counter = 0;
 

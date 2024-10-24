@@ -98,10 +98,6 @@ public class Quest {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getGroup() {
         return group;
     }
@@ -132,6 +128,61 @@ public class Quest {
 
     public List<QuestTask> getTasks() {
         return tasks;
+    }
+
+    public Quest setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public Quest setGroup(String group) {
+        this.group = group;
+        return this;
+    }
+
+    public Quest setTitle(String title) {
+        this.title = title;
+        return this;
+    }
+
+    public Quest setReward(QuestReward reward) {
+        this.reward = reward;
+        return this;
+    }
+
+    public Quest setStory(QuestStory story) {
+        this.story = story;
+        return this;
+    }
+
+    public Quest setDescription(String description) {
+        this.description = description;
+        return this;
+    }
+
+    public Quest setDescriptionMobile(String descriptionMobile) {
+        this.descriptionMobile = descriptionMobile;
+        return this;
+    }
+
+    public Quest setActions(Map<QuestAction.Type, List<QuestAction>> actions) {
+        this.actions = actions;
+        return this;
+    }
+
+    public Quest setTasks(List<QuestTask> tasks) {
+        this.tasks = tasks;
+        return this;
+    }
+
+    public Quest setPcDetails(Map<String, Object> pcDetails) {
+        this.pcDetails = pcDetails;
+        return this;
+    }
+
+    public Quest setMobileDetails(Map<String, Object> mobileDetails) {
+        this.mobileDetails = mobileDetails;
+        return this;
     }
     
 }
