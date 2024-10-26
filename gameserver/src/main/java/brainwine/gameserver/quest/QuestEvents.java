@@ -118,7 +118,7 @@ public class QuestEvents {
         }
     }
 
-    public static  void handleCollectInventory(Player player, Item item, int quantity) {
+    public static  void handleCollectItem(Player player, Item item, int quantity) {
         handleEvent(player, "collect_item", "id", item.getId(), quantity);
     }
 

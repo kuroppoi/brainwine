@@ -1243,6 +1243,7 @@ public class Player extends Entity implements CommandExecutor {
         
         loot.getItems().forEach((item, quantity) -> {
             inventory.addItem(item, quantity, true);
+            QuestEvents.handleCollectItem(this, item, quantity);
             section.addItem(new DialogListItem()
                     .setItem(item.getCode())
                     .setText(String.format("%s x %s", item.getTitle(), quantity)));
