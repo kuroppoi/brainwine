@@ -7,8 +7,10 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import brainwine.gameserver.util.randomobject.ObjectMapperProvider;
+import brainwine.shared.JsonHelper;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,7 +18,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.util.WeightedMap;
-import brainwine.shared.JsonHelper;
 import io.netty.util.internal.ThreadLocalRandom;
 
 public class RandomQuests {
@@ -32,12 +33,21 @@ public class RandomQuests {
         List<RandomQuest> randomQuests = new ArrayList<>();
     }
 
+    public static class MapperProvider implements ObjectMapperProvider {
+        @Override
+        public ObjectMapper get() {
+            return JsonHelper.MAPPER;
+        }
+    }
+
     public static void loadConfiguration() {
-        logger.info(SERVER_MARKER, "Loading loot tables ...");
+        logger.info(SERVER_MARKER, "Loading random quest configuration...");
         
         try {
             URL url = ResourceFinder.getResourceUrl("random-quests.json");
-            configuration = JsonHelper.readValue(url, new TypeReference<Configuration>(){});
+            configuration = JsonHelper.MAPPER.readValue(url, new TypeReference<Configuration>(){});
+
+            logger.info(String.format("Successfully loaded %d random quests.", configuration.randomQuests.size()));
         } catch (IOException e) {
             logger.error(SERVER_MARKER, "Failed to load random quests", e);
         }
@@ -48,8 +58,8 @@ public class RandomQuests {
 
         int tier = 1;
         int level = player.getLevel();
-        for (Map.Entry<Integer, Integer> e : configuration.levelMaxTiers.entrySet()) {
-            if (level >= e.getValue() && tier < e.getKey()) {
+        for(Map.Entry<Integer, Integer> e : configuration.levelMaxTiers.entrySet()) {
+            if(level >= e.getValue() && tier < e.getKey()) {
                 tier = e.getKey();
             }
         }
@@ -62,6 +72,10 @@ public class RandomQuests {
     }
     
     public static Quest generateRandomPlayerQuest(Random random, Player player) {
+        if(configuration.randomQuests.isEmpty()) {
+            return null;
+        }
+
         int maxTier = getMaxTier(player);
         List<RandomQuest> candidates = configuration.randomQuests.stream()
                 .filter(q -> q.getTier() <= maxTier)

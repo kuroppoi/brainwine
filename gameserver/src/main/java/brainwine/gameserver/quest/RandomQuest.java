@@ -4,9 +4,9 @@ import java.util.Random;
 
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.quest.randomquests.*;
+import brainwine.gameserver.util.randomobject.RandomListObjectMapperProvider;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import io.netty.util.internal.ThreadLocalRandom;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -18,14 +18,11 @@ import io.netty.util.internal.ThreadLocalRandom;
         @JsonSubTypes.Type(value = Kill.class, name = "kill"),
         @JsonSubTypes.Type(value = Collect.class, name = "collect"),
 })
+@RandomListObjectMapperProvider(RandomQuests.MapperProvider.class)
 public abstract class RandomQuest {
     private String type = "none";
     private int tier = 1;
     private int frequency = 1;
-
-    public void nextQuest(Player player, Quest quest) {
-        nextQuest(ThreadLocalRandom.current(), player, quest);
-    }
 
     public abstract void nextQuest(Random random, Player player, Quest quest);
 

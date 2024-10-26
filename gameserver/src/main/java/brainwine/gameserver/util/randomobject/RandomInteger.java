@@ -22,15 +22,15 @@ public class RandomInteger implements Arbitrary<Integer> {
 
     @JsonCreator
     public RandomInteger(@JsonProperty("random_between") List<Integer> randomBetween ) throws JsonMappingException {
-        if (!(randomBetween.size() == 2 || randomBetween.size() == 3)) {
+        if(!(randomBetween.size() == 2 || randomBetween.size() == 3)) {
             throw new JsonMappingException("Invalid input for random_between: provide either 2 or 3 constant numbers");
         }
 
-        if (randomBetween.get(0) > randomBetween.get(1)) {
+        if(randomBetween.get(0) > randomBetween.get(1)) {
             throw new JsonMappingException("Invalid input for random_between: range min is greater than range max");
         }
 
-        if (randomBetween.size() == 3 && randomBetween.get(2) <= 0) {
+        if(randomBetween.size() == 3 && randomBetween.get(2) <= 0) {
             throw new JsonMappingException("Invalid input for random_between: only positive step values are allowed");
         }
         this.randomBetween = randomBetween;
@@ -38,7 +38,7 @@ public class RandomInteger implements Arbitrary<Integer> {
 
     @Override
     public Integer next(Random random) {
-        if (this.isConcrete) {
+        if(this.isConcrete) {
             return value;
         } else {
             int step = 1;

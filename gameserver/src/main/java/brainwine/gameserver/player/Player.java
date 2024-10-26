@@ -14,6 +14,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.quest.DailyQuests;
+import brainwine.gameserver.quest.Quest;
+import brainwine.gameserver.util.ValueWithExpiry;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
@@ -107,6 +110,7 @@ public class Player extends Entity implements CommandExecutor {
     private Map<Item, List<Skill>> bumpedSkills;
     private Map<String, Object> appearance;
     private Map<String, QuestProgress> questProgresses = new HashMap<>();
+    private ValueWithExpiry<Quest> dailyQuest = ValueWithExpiry.getExpired();
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
@@ -127,7 +131,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastTrackedEntityUpdate;
     private Zone nextZone;
     private Connection connection;
-    
+
     protected Player(String documentId, PlayerConfigFile config) {
         super(config.getCurrentZone());
         this.documentId = documentId;
@@ -152,6 +156,7 @@ public class Player extends Entity implements CommandExecutor {
         this.bumpedSkills = config.getBumpedSkills();
         this.appearance = config.getAppearance();
         this.questProgresses = config.getQuestProgresses();
+        this.dailyQuest = config.getDailyQuest();
         health = getMaxHealth();
         inventory.setPlayer(this);
         statistics.setPlayer(this);
@@ -212,6 +217,8 @@ public class Player extends Entity implements CommandExecutor {
             sendMessage(new EntityPositionMessage(trackedEntities));
             lastTrackedEntityUpdate = now;
         }
+
+        DailyQuests.tryIssueDailyQuest(this);
     }
     
     @Override
@@ -477,6 +484,7 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
         QuestEvents.handleEnterZone(this, zone);
+        DailyQuests.tryIssueDailyQuest(this);
     }
     
     public void showDialog(Dialog dialog) {
@@ -1134,6 +1142,14 @@ public class Player extends Entity implements CommandExecutor {
 
     public Map<String, QuestProgress> getQuestProgresses() {
         return questProgresses;
+    }
+
+    public ValueWithExpiry<Quest> getDailyQuest() {
+        return dailyQuest;
+    }
+
+    public void setDailyQuest(ValueWithExpiry<Quest> dailyQuest) {
+        this.dailyQuest = dailyQuest;
     }
     
     public void setSkillLevel(Skill skill, int level) {

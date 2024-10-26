@@ -12,6 +12,17 @@ import brainwine.gameserver.util.MapHelper;
 public class PlayerQuests {
     private PlayerQuests() {}
 
+    public static void deleteUnknownQuestProgress(Player player) {
+        if(player.getQuestProgresses() == null) return;
+
+        for(String questId : new ArrayList<>(player.getQuestProgresses().keySet())) {
+            if(Quests.get(player, questId) == null) {
+                player.getQuestProgresses().remove(questId);
+            }
+        }
+
+    }
+
     public static void beginQuest(Player player, Quest quest) {
         if(player == null) return;
         
@@ -105,8 +116,7 @@ public class PlayerQuests {
         progress.markAsComplete();
 
         sendPlayerQuestMessage(player, progress);
-        // TODO: this should normally happen without the player having to return to the android
-        performAction(player, quest, QuestAction.Type.DONE);
+
     }
 
     public static void performAction(Player player, Quest quest, QuestAction.Type actionType) {
@@ -125,22 +135,30 @@ public class PlayerQuests {
         Map<String, QuestProgress> progresses = player.getQuestProgresses();
 
         if(progresses == null) return;
-        
+
+        Quest dailyQuest = player.getDailyQuest() == null ? null : player.getDailyQuest().getValue();
+        if(player.getDailyQuest() != null && !player.getDailyQuest().isExpired() && dailyQuest != null) {
+            QuestProgress progress = player.getQuestProgresses().get(dailyQuest.getId());
+            if(progress != null) sendPlayerQuestMessage(player, progress);
+        }
+
         for(QuestProgress progress : progresses.values()) {
             sendPlayerQuestMessage(player, progress);
         }
     }
 
     public static void sendPlayerQuestMessage(Player player, QuestProgress progress) {
-        Quest quest = Quests.get(progress.getQuestId());
+        if(progress == null) return;
+
+        Quest quest = Quests.get(player, progress.getQuestId());
 
         if(quest == null) return;
 
         // TODO: detect mobile player properly
         if(player.isV3()) {
-            player.sendMessage(new QuestMessage(quest.getPcDetails(), progress.getClientStatus()));
+            player.sendMessage(new QuestMessage(quest.getPcDetails(), progress.getClientStatus(player)));
         } else {
-            player.sendMessage(new QuestMessage(quest.getMobileDetails(), progress.getClientStatus()));
+            player.sendMessage(new QuestMessage(quest.getMobileDetails(), progress.getClientStatus(player)));
         }
         
     }

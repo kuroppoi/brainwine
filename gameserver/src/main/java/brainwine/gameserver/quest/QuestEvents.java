@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.item.Item;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.zone.Zone;
 
@@ -66,11 +67,11 @@ public class QuestEvents {
         for(Map.Entry<String, QuestProgress> questProgressEntry : player.getQuestProgresses().entrySet()) {
             String questId = questProgressEntry.getKey();
             QuestProgress questProgress = questProgressEntry.getValue();
-            Quest quest = Quests.get(questId);
+            Quest quest = Quests.get(player, questId);
             int i = 0;
 
             boolean anyProgress = false;
-            for(QuestTask task : quest.getTasks()) {
+            if(pattern != null) for(QuestTask task : quest.getTasks()) {
                 if(task.getEvents() == null) continue;
 
                 if(!task.doesQualify(player)) {
@@ -78,14 +79,28 @@ public class QuestEvents {
                 }
 
                 for(List<Object> event : task.getEvents()) {
-                    if(patternMatch(event, pattern)) {
-                        questProgress.getTaskProgresses().set(i, questProgress.getTaskProgress(i) + 1);
+                    try {
+                        if(patternMatch(event, pattern)) {
+                            if(event.size() >= 4 && "collect_item".equals(event.get(0)) && "id".equals(event.get(1))) {
+                                Integer amount = (Integer) pattern[3];
+                                if(amount != null && amount > 0) {
+                                    questProgress.getTaskProgresses().set(i, questProgress.getTaskProgress(i) + amount);
+                                }
+                                anyProgress = true;
+                                break;
+                            }
 
-                        if(event.size() >= 3 && "interact".equals(event.get(0)) && "name".equals(event.get(1))) {
-                            PlayerQuests.performAction(player, quest, QuestAction.Type.INTERACT);
+                            questProgress.getTaskProgresses().set(i, questProgress.getTaskProgress(i) + 1);
+
+                            if(event.size() >= 3 && "interact".equals(event.get(0)) && "name".equals(event.get(1))) {
+                                PlayerQuests.performAction(player, quest, QuestAction.Type.INTERACT);
+                            }
+
+                            anyProgress = true;
+                            break;
                         }
-                        anyProgress = true;
-                        break;
+                    } catch(Exception e) {
+                        e.printStackTrace();
                     }
                 }
                 i++;
@@ -94,7 +109,17 @@ public class QuestEvents {
             if(anyProgress) {
                 PlayerQuests.sendPlayerQuestMessage(player, questProgress);
             }
+
+            if(PlayerQuests.canFinishQuest(player, quest)) {
+                PlayerQuests.finishQuest(player, quest);
+                PlayerQuests.performAction(player, quest, QuestAction.Type.DONE);
+            }
+
         }
+    }
+
+    public static  void handleCollectInventory(Player player, Item item, int quantity) {
+        handleEvent(player, "collect_item", "id", item.getId(), quantity);
     }
 
     public static void handleEnterZone(Player player, Zone zone) {

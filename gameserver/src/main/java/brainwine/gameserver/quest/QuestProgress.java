@@ -31,8 +31,8 @@ public class QuestProgress {
     }
 
     @JsonIgnore
-    public Quest getQuest() {
-        return Quests.get(getQuestId());
+    public Quest getQuest(Player player) {
+        return Quests.get(player, getQuestId());
     }
 
     public int getTaskProgress(int index) {
@@ -73,7 +73,7 @@ public class QuestProgress {
         DialogSection mainSection = new DialogSection();
         result.add(mainSection);
 
-        Quest quest = getQuest();
+        Quest quest = getQuest(player);
 
         if(quest == null) {
             mainSection.setTitle("QUEST NOT FOUND");
@@ -109,9 +109,9 @@ public class QuestProgress {
     }
 
     @JsonIgnore
-    public Map<String, Object> getClientStatus() {
+    public Map<String, Object> getClientStatus(Player player) {
         Map<String, Object> result = new HashMap<>();
-        Quest quest = Quests.get(getQuestId());
+        Quest quest = Quests.get(player, getQuestId());
 
         List<Integer> completedIndices = new ArrayList<>();
 
@@ -137,7 +137,7 @@ public class QuestProgress {
     public String tryCancelOtherwiseReason(Player player) {
         if(player.isGodMode()) return null;
         
-        Quest quest = getQuest();
+        Quest quest = getQuest(player);
         if(quest == null) return null;
 
         String reason = null;

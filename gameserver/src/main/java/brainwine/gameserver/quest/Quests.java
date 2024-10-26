@@ -21,7 +21,6 @@ import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.PickRandom;
 import brainwine.shared.JsonHelper;
-import io.netty.util.internal.ThreadLocalRandom;
 
 public class Quests {
     public static Map<String, Map<String, Quest>> questMaps = new HashMap<>();
@@ -87,6 +86,16 @@ public class Quests {
         counter += loadQuestsForCategory("survival", "Survive and Thrive");
 
         logger.info("Successfully loaded {} quests", counter);
+    }
+
+    public static Quest get(Player player, String questId) {
+        if(player.getDailyQuest() != null
+                && player.getDailyQuest().getValue() != null
+                && player.getDailyQuest().getValue().getId().equals(questId)) {
+            return player.getDailyQuest().getValue();
+        }
+
+        return get(questId);
     }
 
     public static Quest get(String questId) {

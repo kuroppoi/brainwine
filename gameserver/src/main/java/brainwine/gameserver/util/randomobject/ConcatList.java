@@ -2,46 +2,31 @@ package brainwine.gameserver.util.randomobject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import java.util.stream.Collectors;
 
 public class ConcatList<T> extends RandomList<T> {
-    List<RandomList<T>> lists;
+    private List<RandomList<T>> concat;
 
-    public ConcatList() {}
-    public ConcatList(List<RandomList<T>> lists) {
-        this.lists = lists;
-    }
-
-    public static <V> ConcatList<V> create(Map<String, Object> inp) throws JsonProcessingException {
-        Object inpList = inp.get("concat");
-
-        if (inpList instanceof List) {
-            List<RandomList<V>> concat = new ArrayList<>();
-
-            for (Object o : (List<Object>)inpList) {
-                concat.add(RandomList.create(o));
-            }
-
-            return new ConcatList<>(concat);
-        }
-
-        throw new JsonMappingException("Concat list doesn't have a list of lists.");
+    public ConcatList(List<RandomList<T>> concat) {
+        this.concat = concat;
     }
 
     @Override
     public ConstantList<T> next(Random random) throws ConcretionFailureException {
-        if (lists == null) return null;
+        if(concat == null) return new ConstantList<>();
 
         List<T> result = new ArrayList<T>();
-        for (RandomList<T> l : lists) {
+        for(RandomList<T> l : concat) {
             result.addAll(l.next(random).getList());
         }
 
         return new ConstantList<T>(result);
+    }
+
+    @Override
+    public String toString() {
+        return "ConcatList(" + concat.stream().map(r -> r.toString()).collect(Collectors.joining(", ")) + ")";
     }
     
 }

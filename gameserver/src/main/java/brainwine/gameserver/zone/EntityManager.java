@@ -297,6 +297,7 @@ public class EntityManager {
             player.onZoneChanged();
             players.put(entityId, player);
             playersByName.put(player.getName().toLowerCase(), player);
+            PlayerQuests.deleteUnknownQuestProgress(player);
             PlayerQuests.sendInitialPlayerQuestMessages(player);
             player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.ENTERING));
             player.sendMessageToPeers(new EntityPositionMessage(player));

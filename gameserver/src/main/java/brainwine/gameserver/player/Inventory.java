@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.quest.QuestEvents;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -94,6 +95,9 @@ public class Inventory {
     
     public void addItem(Item item, int quantity, boolean sendMessage) {
         setItem(item, getQuantity(item) + quantity, sendMessage);
+        if(quantity > 0 && player != null && item != null) {
+            QuestEvents.handleCollectInventory(player, item, quantity);
+        }
     }
     
     public void removeItem(Item item) {
