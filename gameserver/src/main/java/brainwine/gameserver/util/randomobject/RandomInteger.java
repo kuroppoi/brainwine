@@ -45,7 +45,9 @@ public class RandomInteger implements Arbitrary<Integer> {
             if(randomBetween.size() == 3) {
                 step = randomBetween.get(2);
             }
-            return step * random.nextInt(randomBetween.get(0) / step, randomBetween.get(1) / step + 1);
+            int lowerBound = randomBetween.get(0) / step;
+            int upperBound = randomBetween.get(1) / step + 1;
+            return step * random.nextInt(upperBound - lowerBound) + lowerBound;
         }
     }
     
