@@ -98,6 +98,6 @@ public class RandomQuests {
     public static String getString(Random random, String label) {
         List<String> list = configuration.strings.get(label);
 
-        return list.get(random.nextInt(0, list.size()));
+        return list.get(random.nextInt(list.size()));
     }
 }
