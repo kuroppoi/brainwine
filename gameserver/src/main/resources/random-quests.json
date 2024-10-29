@@ -1,4 +1,6 @@
 {
+    "daily_quest_interval": "24h",
+    "daily_quest_count": 5,
     "strings": {
         "kill_description": [
             "Today you got to kill some critters!",
@@ -48,7 +50,7 @@
             "items": {
                 "choices": [
                     {
-                        "items": [ "mechanical/turret" ],
+                        "items": [ "mechanical/turret-pistol" ],
                         "count": { "random_between": [ 3, 5 ] }
                     },
                     {
