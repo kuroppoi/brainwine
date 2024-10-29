@@ -1,13 +1,13 @@
 package brainwine.gameserver.quest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.messages.QuestMessage;
-import brainwine.gameserver.util.MapHelper;
 
 public class PlayerQuests {
     private PlayerQuests() {}
@@ -93,7 +93,7 @@ public class PlayerQuests {
         }
 
         player.getQuestProgresses().remove(questId);
-        sendPlayerCancelQuestMessage(player, questId);
+        sendPlayerCancelQuestMessage(player, progress);
     }
 
     public static void finishQuest(Player player, Quest quest) {
@@ -136,10 +136,12 @@ public class PlayerQuests {
 
         if(progresses == null) return;
 
-        Quest dailyQuest = player.getDailyQuest() == null ? null : player.getDailyQuest().getValue();
-        if(player.getDailyQuest() != null && !player.getDailyQuest().isExpired() && dailyQuest != null) {
-            QuestProgress progress = player.getQuestProgresses().get(dailyQuest.getId());
-            if(progress != null) sendPlayerQuestMessage(player, progress);
+        List<Quest> dailyQuests = player.getDailyQuest() == null ? null : player.getDailyQuest().getValue();
+        if(player.getDailyQuest() != null && !player.getDailyQuest().isExpired() && dailyQuests != null) {
+            for(Quest dailyQuest : dailyQuests) {
+                QuestProgress progress = player.getQuestProgresses().get(dailyQuest.getId());
+                if(progress != null) sendPlayerQuestMessage(player, progress);
+            }
         }
 
         for(QuestProgress progress : progresses.values()) {
@@ -163,8 +165,25 @@ public class PlayerQuests {
         
     }
 
-    public static void sendPlayerCancelQuestMessage(Player player, String questId) {
-        player.sendMessage(new QuestMessage(MapHelper.map("id", questId), null));
+    public static void sendPlayerCancelQuestMessage(Player player, Quest current) {
+        if(player.getQuestProgresses() == null || current == null) return;
+        QuestProgress progress = player.getQuestProgresses().get(current.getId());
+        if(progress != null) sendPlayerCancelQuestMessage(player, progress);
+    }
+
+    public static void sendPlayerCancelQuestMessage(Player player, QuestProgress progress) {
+        if(progress == null) return;
+        Quest quest = progress.getQuest(player);
+
+        Map<String, Object> pcDetails = new HashMap<>();
+        pcDetails.put("id", progress.getQuestId());
+        pcDetails.put("group", "Cancelled");
+        pcDetails.put("title", quest == null || quest.getTitle() == null ? "Cancelled Quest" : quest.getTitle());
+        pcDetails.put("xp", 0);
+        pcDetails.put("desc", quest == null || quest.getDescription() == null ? "This quest has been cancelled. Disconnect and rejoin to make it disappear." : quest.getDescription());
+
+        progress.getClientStatus(player);
+        player.sendMessage(new QuestMessage(pcDetails, progress.getClientStatus(player)));
     }
 
 }

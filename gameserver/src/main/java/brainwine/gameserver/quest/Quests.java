@@ -90,9 +90,12 @@ public class Quests {
 
     public static Quest get(Player player, String questId) {
         if(player.getDailyQuest() != null
-                && player.getDailyQuest().getValue() != null
-                && player.getDailyQuest().getValue().getId().equals(questId)) {
-            return player.getDailyQuest().getValue();
+                && player.getDailyQuest().getValue() != null) {
+            for(Quest quest : player.getDailyQuest().getValue()) {
+                if(quest.getId().equals(questId)) {
+                    return quest;
+                }
+            }
         }
 
         return get(questId);

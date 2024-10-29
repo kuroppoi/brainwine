@@ -55,7 +55,7 @@ public class Kill extends RandomQuest {
             List<List<Object>> events = task.getEvents();
             List<Object> values = events.stream().map(i -> i.get(2)).collect(Collectors.toList());
             int quantity = task.getQuantity();
-            String times = quantity == 1 ? "" : quantity + " times";
+            String times = quantity == 1 ? "" : " " + quantity + " times";
 
             String concat;
             if(!events.isEmpty() && events.get(0).size() >= 2 && "code".equals(events.get(0).get(1))) {

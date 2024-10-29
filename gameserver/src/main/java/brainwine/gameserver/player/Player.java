@@ -110,7 +110,7 @@ public class Player extends Entity implements CommandExecutor {
     private Map<Item, List<Skill>> bumpedSkills;
     private Map<String, Object> appearance;
     private Map<String, QuestProgress> questProgresses = new HashMap<>();
-    private ValueWithExpiry<Quest> dailyQuest = ValueWithExpiry.getExpired();
+    private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
@@ -1144,11 +1144,11 @@ public class Player extends Entity implements CommandExecutor {
         return questProgresses;
     }
 
-    public ValueWithExpiry<Quest> getDailyQuest() {
+    public ValueWithExpiry<List<Quest>> getDailyQuest() {
         return dailyQuest;
     }
 
-    public void setDailyQuest(ValueWithExpiry<Quest> dailyQuest) {
+    public void setDailyQuest(ValueWithExpiry<List<Quest>> dailyQuest) {
         this.dailyQuest = dailyQuest;
     }
     

@@ -52,7 +52,7 @@ public class Collect extends RandomQuest {
                 if(item == null) {
                     itemTitle = itemId;
                 } else {
-                    itemTitle = item.getTitle();
+                    itemTitle = item.getTitle() == null ? itemId : item.getTitle();
                 }
                 return itemTitle;
             }).collect(Collectors.joining(" or "));

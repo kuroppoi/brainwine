@@ -24,13 +24,17 @@ public class RandomQuests {
     private static final Logger logger = LogManager.getLogger();
     private static Configuration configuration = new Configuration();
 
-    private static class Configuration {
+    public static class Configuration {
         @JsonProperty("level_max_tiers")
         private Map<Integer, Integer> levelMaxTiers = new HashMap<>();
         @JsonProperty("strings")
         Map<String, List<String>> strings = new HashMap<>();
         @JsonProperty("quests")
         List<RandomQuest> randomQuests = new ArrayList<>();
+        @JsonProperty("daily_quest_interval")
+        String dailyQuestInterval = "24h";
+        @JsonProperty("daily_quest_count")
+        int dailyQuestCount = 5;
     }
 
     public static class MapperProvider implements ObjectMapperProvider {
@@ -51,6 +55,10 @@ public class RandomQuests {
         } catch (IOException e) {
             logger.error(SERVER_MARKER, "Failed to load random quests", e);
         }
+    }
+
+    public static Configuration getConfiguration() {
+        return configuration;
     }
 
     public static int getMaxTier(Player player) {
@@ -89,7 +97,6 @@ public class RandomQuests {
         RandomQuest choice = wm.next(random);
 
         Quest quest = new Quest();
-        quest.setId("daily_player_quest");
         choice.nextQuest(random, player, quest);
 
         return quest;

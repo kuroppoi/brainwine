@@ -39,7 +39,7 @@ public class PlayerConfigFile {
     private Map<Item, List<Skill>> bumpedSkills = new HashMap<>();
     private Map<String, Object> appearance = new HashMap<>();
     private Map<String, QuestProgress> questProgresses = new HashMap<>();
-    private ValueWithExpiry<Quest> dailyQuest = ValueWithExpiry.getExpired();
+    private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
     
     public PlayerConfigFile(Player player) {
         this.name = player.getName();
@@ -172,7 +172,7 @@ public class PlayerConfigFile {
         return questProgresses;
     }
 
-    public ValueWithExpiry<Quest> getDailyQuest() {
+    public ValueWithExpiry<List<Quest>> getDailyQuest() {
         return dailyQuest;
     }
 }
