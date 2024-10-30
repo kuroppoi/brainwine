@@ -70,19 +70,20 @@ public class EntityManager {
         }
     }
     
-    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, Item baseItem) {
+    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, double acidity, Item baseItem) {
         return spawns.entrySet().stream()
                 .filter(entry -> entry.getKey() == biome)
                 .map(Entry::getValue)
                 .flatMap(Collection::stream)
                 .filter(spawn -> locale.equalsIgnoreCase(spawn.getLocale())
                         && depth >= spawn.getMinDepth() && depth <= spawn.getMaxDepth()
+                        && acidity >= spawn.getMinAcidity() && acidity <= spawn.getMaxAcidity()
                         && ((!baseItem.hasId("base/maw") && !baseItem.hasId("base/pipe")) || spawn.getOrifice() == baseItem))
                 .collect(Collectors.toList());
     }
     
-    private static EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, Item baseItem) {
-        return new WeightedMap<>(getEligibleEntitySpawns(biome, locale, depth, baseItem), EntitySpawn::getFrequency).next();
+    private static EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, double acidity, Item baseItem) {
+        return new WeightedMap<>(getEligibleEntitySpawns(biome, locale, depth, acidity, baseItem), EntitySpawn::getFrequency).next();
     }
     
     public void tick(float deltaTime) {
@@ -132,7 +133,7 @@ public class EntityManager {
                 Block block = chunk.getBlock(x, y);
                 String locale = block.getBaseItem().isAir() ? "sky" : "cave";
                 EntitySpawn spawn = getRandomEligibleEntitySpawn(
-                        zone.getBiome(), locale, y / (double)zone.getHeight(), block.getBaseItem());
+                        zone.getBiome(), locale, y / (double)zone.getHeight(), zone.getAcidity(), block.getBaseItem());
                 
                 if(immediate) {
                     if(tryBustOrifice(x, y, Layer.BACK) || tryBustOrifice(x, y, Layer.FRONT)) {
