@@ -13,15 +13,16 @@ public class ConcatList<T> extends RandomList<T> {
     }
 
     @Override
-    public ConstantList<T> next(Random random) throws ConcretionFailureException {
-        if(concat == null) return new ConstantList<>();
+    public List<T> next(Random random) throws ConcretionFailureException {
+        List<T> result = new ArrayList<>();
 
-        List<T> result = new ArrayList<T>();
+        if(concat == null) return result;
+
         for(RandomList<T> l : concat) {
-            result.addAll(l.next(random).getList());
+            result.addAll(l.next(random));
         }
 
-        return new ConstantList<T>(result);
+        return result;
     }
 
     @Override

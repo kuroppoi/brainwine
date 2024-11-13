@@ -84,12 +84,12 @@ public class Kill extends RandomQuest {
             quest.setDescription(RandomQuests.getString(random, "kill_description"));
 
             List<QuestTask> tasks = new ArrayList<>();
-            List<String> actions = this.actions.toConcrete(random);
+            List<String> actions = this.actions.next(random);
 
             String actionMessage = WordUtils.capitalize(String.join(" or ", actions));
 
             if(categories != null) {
-                List<String> values = categories.toConcrete(random);
+                List<String> values = categories.next(random);
                 int quantity = defaultIfNull(this.quantity, categoryQuantity).next(random);
                 QuestTask task = new QuestTask()
                         .setEvents(getKillEvents(actions, "category", values))
@@ -99,7 +99,7 @@ public class Kill extends RandomQuest {
             }
 
             if(entityIds != null) {
-                List<String> values = entityIds.toConcrete(random);
+                List<String> values = entityIds.next(random);
                 int quantity = defaultIfNull(this.quantity, entityIdQuantity).next(random);
                 QuestTask task = new QuestTask()
                         .setEvents(getKillEvents(actions, "entity", values))
@@ -109,7 +109,7 @@ public class Kill extends RandomQuest {
             }
 
             if(codes != null) {
-                List<Integer> values = codes.toConcrete(random).stream()
+                List<Integer> values = codes.next(random).stream()
                         .map(i -> i.next(random))
                         .collect(Collectors.toList());
                 int quantity = defaultIfNull(this.quantity, codeQuantity).next(random);

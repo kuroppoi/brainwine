@@ -17,8 +17,8 @@ public class ConstantList<T> extends RandomList<T> {
     }
     
     @Override
-    public ConstantList<T> next(Random random) {
-        return this;
+    public List<T> next(Random random) {
+        return list;
     }
 
     public int size() {

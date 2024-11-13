@@ -38,7 +38,7 @@ public class Collect extends RandomQuest {
     public QuestTask nextQuestTask(Random random, CollectItem collectItem) throws ConcretionFailureException {
         List<List<Object>> events = new ArrayList<>();
 
-        for(String oneItem : collectItem.items.toConcrete(random)) {
+        for(String oneItem : collectItem.items.next(random)) {
             events.add(Arrays.asList("collect_item", "id", oneItem, null));
         }
 
@@ -72,7 +72,7 @@ public class Collect extends RandomQuest {
             Quest quest = new Quest();
 
             quest.setDescription(RandomQuests.getString(random, "collect_description"));
-            List<CollectItem> collectItemList = items.toConcrete(random);
+            List<CollectItem> collectItemList = items.next(random);
             List<QuestTask> tasks = new ArrayList<>(collectItemList.size());
             for(CollectItem c : collectItemList) {
                 tasks.add(nextQuestTask(random, c));

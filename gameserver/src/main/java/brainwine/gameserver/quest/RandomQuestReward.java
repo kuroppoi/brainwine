@@ -19,7 +19,7 @@ public class RandomQuestReward implements Arbitrary<QuestReward> {
         QuestReward result = new QuestReward();
         if(xp != null) result.setXp(xp.next(random));
         if(crowns != null) result.setCrowns(crowns.next(random));
-        if(lootCategories != null) result.setLootCategories(lootCategories.toConcrete(random));
+        if(lootCategories != null) result.setLootCategories(lootCategories.next(random));
 
         return result;
     }
