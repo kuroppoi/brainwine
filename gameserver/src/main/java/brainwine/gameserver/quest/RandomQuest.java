@@ -5,6 +5,7 @@ import java.util.Random;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.quest.randomquests.*;
 import brainwine.gameserver.util.randomobject.RandomListObjectMapperProvider;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
@@ -17,12 +18,18 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = Kill.class, name = "kill"),
         @JsonSubTypes.Type(value = Collect.class, name = "collect"),
+        @JsonSubTypes.Type(value = Craft.class, name = "craft"),
 })
 @RandomListObjectMapperProvider(RandomQuests.MapperProvider.class)
 public abstract class RandomQuest {
+    @JsonProperty
     private String type = "none";
+    @JsonProperty
     private int tier = 1;
+    @JsonProperty
     private int frequency = 1;
+    @JsonProperty
+    protected RandomQuestReward reward = RandomQuests.getDefaultRandomQuestReward();
 
     /**Randomly generate a quest according to the specification found in the class instance.
      *

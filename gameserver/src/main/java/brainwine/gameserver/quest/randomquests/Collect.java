@@ -13,8 +13,6 @@ public class Collect extends RandomQuest {
     @JsonProperty("items")
     @RandomListItemType(CollectItem.class)
     private RandomList<CollectItem> items;
-    @JsonProperty("reward")
-    private RandomQuestReward reward = null;
     @JsonProperty("task_description")
     private String taskDescription = null;
 

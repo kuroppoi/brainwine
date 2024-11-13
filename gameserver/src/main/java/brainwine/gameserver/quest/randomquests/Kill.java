@@ -33,8 +33,6 @@ public class Kill extends RandomQuest {
     private RandomInteger entityIdQuantity = new RandomInteger(1);
     @JsonProperty("task_description")
     private String taskDescription = null;
-    @JsonProperty("reward")
-    private RandomQuestReward reward = null;
     @JsonProperty("actions")
     @RandomListItemType(String.class)
     private RandomList<String> actions = new ConstantList<>(Arrays.asList("kill"));

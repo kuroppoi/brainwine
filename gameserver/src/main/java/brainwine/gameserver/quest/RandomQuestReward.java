@@ -3,17 +3,27 @@ package brainwine.gameserver.quest;
 import java.util.Random;
 
 import brainwine.gameserver.util.randomobject.*;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RandomQuestReward implements Arbitrary<QuestReward> {
     @JsonProperty("xp")
-    RandomInteger xp = null;
+    private RandomInteger xp = null;
     @JsonProperty("crowns")
-    RandomInteger crowns = null;
+    private RandomInteger crowns = null;
     @JsonProperty("loot_categories")
     @RandomListItemType(String.class)
-    RandomList<String> lootCategories = null;
-    
+    private RandomList<String> lootCategories = null;
+
+    public RandomQuestReward() {}
+
+    public RandomQuestReward(RandomInteger xp, RandomInteger crowns, RandomList<String> lootCategories) {
+        this.xp = xp;
+        this.crowns = crowns;
+        this.lootCategories = lootCategories;
+    }
+
     @Override
     public QuestReward next(Random random) throws ConcretionFailureException {
         QuestReward result = new QuestReward();
