@@ -1,6 +1,5 @@
 package brainwine.gameserver.quest;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import brainwine.gameserver.player.Player;
@@ -11,13 +10,13 @@ public class DailyQuests {
         ValueWithExpiry<List<Quest>> currentV = player.getDailyQuest();
 
         if(currentV == null || currentV.isExpired()) {
-            List<Quest> newQuests = new ArrayList<>();
-            for(int i = 1; i <= RandomQuests.getConfiguration().dailyQuestCount; i++) {
-                Quest newQuest = RandomQuests.generateRandomPlayerQuest(player);
+            List<Quest> newQuests = RandomQuests.generateRandomPlayerQuests(player, RandomQuests.getConfiguration().dailyQuestCount);
+
+            for(int i = 1; i <= newQuests.size(); i++) {
+                Quest newQuest = newQuests.get(i - 1);
                 if(newQuest == null) return;
                 newQuest.setId("daily_player_quest_" + i);
                 newQuest.setTitle("Daily Quest #" + i);
-                newQuests.add(newQuest);
             }
 
             if(currentV.getValue() != null) {

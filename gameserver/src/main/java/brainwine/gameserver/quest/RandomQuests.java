@@ -75,11 +75,11 @@ public class RandomQuests {
         return tier;
     }
 
-    public static Quest generateRandomPlayerQuest(Player player) {
-        return generateRandomPlayerQuest(ThreadLocalRandom.current(), player);
+    public static List<Quest> generateRandomPlayerQuests(Player player, int n) {
+        return generateRandomPlayerQuests(ThreadLocalRandom.current(), player, n);
     }
     
-    public static Quest generateRandomPlayerQuest(Random random, Player player) {
+    public static List<Quest> generateRandomPlayerQuests(Random random, Player player, int n) {
         if(configuration.randomQuests.isEmpty()) {
             return null;
         }
@@ -94,12 +94,9 @@ public class RandomQuests {
                 RandomQuest::getFrequency
         );
 
-        RandomQuest choice = wm.next(random);
+        List<RandomQuest> choices = wm.nextN(random, n);
 
-        Quest quest = new Quest();
-        choice.nextQuest(random, player, quest);
-
-        return quest;
+        return choices.stream().map(rq -> rq.nextQuest(random, player)).collect(Collectors.toList());
     }
 
     public static String getString(Random random, String label) {

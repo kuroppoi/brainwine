@@ -67,8 +67,10 @@ public class Collect extends RandomQuest {
     }
 
     @Override
-    public void nextQuest(Random random, Player player, Quest quest) {
+    public Quest nextQuest(Random random, Player player) {
         try {
+            Quest quest = new Quest();
+
             quest.setDescription(RandomQuests.getString(random, "collect_description"));
             List<CollectItem> collectItemList = items.toConcrete(random);
             List<QuestTask> tasks = new ArrayList<>(collectItemList.size());
@@ -77,6 +79,8 @@ public class Collect extends RandomQuest {
             }
             quest.setTasks(tasks);
             if(reward != null) quest.setReward(reward.next(random));
+
+            return quest;
         } catch (ConcretionFailureException e) {
             throw new IllegalStateException("Concretion failure!");
         }

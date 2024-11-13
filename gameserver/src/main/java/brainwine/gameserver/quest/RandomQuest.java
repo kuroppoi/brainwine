@@ -24,7 +24,13 @@ public abstract class RandomQuest {
     private int tier = 1;
     private int frequency = 1;
 
-    public abstract void nextQuest(Random random, Player player, Quest quest);
+    /**Randomly generate a quest according to the specification found in the class instance.
+     *
+     * @param random random instance to generate random values with
+     * @param player player that the quest is being generated for
+     * @return a quest. Implementors are not obliged to set the title of the quest, but other fields must have valid values
+     */
+    public abstract Quest nextQuest(Random random, Player player);
 
     public String getType() {
         return type;
