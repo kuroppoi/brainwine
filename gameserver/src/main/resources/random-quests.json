@@ -52,6 +52,12 @@
         },
         {
             "frequency": 10,
+            "type": "kill",
+            "entities": { "choices": ["creatures/crow-auto", "creatures/crow"] },
+            "quantity": 1
+        },
+        {
+            "frequency": 10,
             "type": "collect",
             "items": {
                 "choices": [
@@ -75,6 +81,17 @@
                 { "item": "building/door-wood", "count":  { "random_between": [ 3, 5 ]}},
                 { "item": "building/door-brass", "count":  { "random_between": [ 3, 5 ]}}
             ]}
+        },
+        {
+            "frequency": 10,
+            "type": "multistep",
+            "reward": { "crowns": 3 },
+            "steps": [
+                { "type": "collect", "items": [{ "items": ["building/wood"], "count": 3 }] },
+                { "type": "collect", "items": [{ "items": ["building/brass"], "count": 6 }] },
+                { "type": "collect", "items": [{ "items": ["building/iron"], "count": 3 }] },
+                { "type": "craft", "items": [{ "item": "building/door-wood", "count": 3 }, { "item": "building/door-brass", "count": 3 }] }
+            ]
         }
     ]
 }
