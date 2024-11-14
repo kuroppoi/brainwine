@@ -76,7 +76,7 @@ public class Collect extends RandomQuest {
                 tasks.add(nextQuestTask(random, c));
             }
             quest.setTasks(tasks);
-            if(reward != null) quest.setReward(reward.next(random));
+            quest.setReward(RandomQuestReward.nextOrDefault(random, getReward()));
 
             return quest;
         } catch (ConcretionFailureException e) {
@@ -88,7 +88,7 @@ public class Collect extends RandomQuest {
     public String toString() {
         return "Collect{" +
                 "items=" + items +
-                ", reward=" + reward +
+                ", reward=" + getReward() +
                 ", taskDescription='" + taskDescription + '\'' +
                 '}';
     }

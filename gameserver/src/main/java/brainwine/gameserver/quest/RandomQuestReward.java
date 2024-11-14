@@ -33,4 +33,12 @@ public class RandomQuestReward implements Arbitrary<QuestReward> {
 
         return result;
     }
+
+    public static QuestReward nextOrDefault(Random random, RandomQuestReward... options) throws ConcretionFailureException {
+        for(RandomQuestReward r : options) {
+            if(r != null) return r.next(random);
+        }
+
+        return new QuestReward().setXp(100);
+    }
 }

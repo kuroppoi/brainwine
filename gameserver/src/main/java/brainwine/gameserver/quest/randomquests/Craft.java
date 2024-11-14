@@ -50,7 +50,7 @@ public class Craft extends RandomQuest {
             }
             quest.setTasks(tasks);
 
-            if(reward != null) quest.setReward(reward.next(random));
+            quest.setReward(RandomQuestReward.nextOrDefault(random, getReward()));
 
             return quest;
         } catch (ConcretionFailureException e) {

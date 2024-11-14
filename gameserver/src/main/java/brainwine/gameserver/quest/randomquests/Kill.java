@@ -131,7 +131,7 @@ public class Kill extends RandomQuest {
                         continue;
                     }
 
-                    names.add(config.getName());
+                    names.add(defaultIfNull(config.getTitle(), id));
                     codes.add(config.getType());
                 }
 
@@ -152,7 +152,7 @@ public class Kill extends RandomQuest {
             }
 
             quest.setTasks(tasks);
-            if(reward != null) quest.setReward(reward.next(random));
+            quest.setReward(RandomQuestReward.nextOrDefault(random, getReward()));
 
             return quest;
         } catch (ConcretionFailureException e) {
@@ -166,7 +166,7 @@ public class Kill extends RandomQuest {
         sb.append("Kill{ ");
 
         sb.append("taskDescription='" + taskDescription + '\'' +
-                ", reward=" + reward +
+                ", reward=" + getReward() +
                 ", actions=" + actions);
 
         if(categories != null) {

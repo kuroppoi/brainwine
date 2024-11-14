@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.util.randomobject.ConcretionFailureException;
 import brainwine.gameserver.util.randomobject.ObjectMapperProvider;
 import brainwine.gameserver.util.randomobject.RandomInteger;
 import brainwine.shared.JsonHelper;
@@ -98,10 +99,6 @@ public class RandomQuests {
         List<RandomQuest> choices = wm.nextN(random, n);
 
         return choices.stream().map(rq -> rq.nextQuest(random, player)).collect(Collectors.toList());
-    }
-
-    public static RandomQuestReward getDefaultRandomQuestReward() {
-        return new RandomQuestReward(new RandomInteger(100), new RandomInteger(0), null);
     }
 
     public static String getString(Random random, String label) {

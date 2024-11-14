@@ -16,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         visible = true
 )
 @JsonSubTypes({
+        @JsonSubTypes.Type(value = MultiStep.class, name = "multistep"),
         @JsonSubTypes.Type(value = Kill.class, name = "kill"),
         @JsonSubTypes.Type(value = Collect.class, name = "collect"),
         @JsonSubTypes.Type(value = Craft.class, name = "craft"),
@@ -29,7 +30,7 @@ public abstract class RandomQuest {
     @JsonProperty
     private int frequency = 1;
     @JsonProperty
-    protected RandomQuestReward reward = RandomQuests.getDefaultRandomQuestReward();
+    private RandomQuestReward reward = null;
 
     /**Randomly generate a quest according to the specification found in the class instance.
      *
@@ -51,4 +52,7 @@ public abstract class RandomQuest {
         return frequency;
     }
 
+    public RandomQuestReward getReward() {
+        return reward;
+    }
 }
