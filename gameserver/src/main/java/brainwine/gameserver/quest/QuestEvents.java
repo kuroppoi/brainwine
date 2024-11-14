@@ -64,6 +64,10 @@ public class QuestEvents {
     }
 
     public static void handleEvent(Player player, Object... pattern) {
+        handleEventWithQuantity(player, 1, pattern);
+    }
+
+    public static void handleEventWithQuantity(Player player, int quantity, Object... pattern) {
         for(Map.Entry<String, QuestProgress> questProgressEntry : player.getQuestProgresses().entrySet()) {
             String questId = questProgressEntry.getKey();
             QuestProgress questProgress = questProgressEntry.getValue();
@@ -81,16 +85,7 @@ public class QuestEvents {
                 for(List<Object> event : task.getEvents()) {
                     try {
                         if(patternMatch(event, pattern)) {
-                            if(event.size() >= 4 && "collect_item".equals(event.get(0)) && "id".equals(event.get(1))) {
-                                Integer amount = (Integer) pattern[3];
-                                if(amount != null && amount > 0) {
-                                    questProgress.getTaskProgresses().set(i, questProgress.getTaskProgress(i) + amount);
-                                }
-                                anyProgress = true;
-                                break;
-                            }
-
-                            questProgress.getTaskProgresses().set(i, questProgress.getTaskProgress(i) + 1);
+                            questProgress.getTaskProgresses().set(i, questProgress.getTaskProgress(i) + quantity);
 
                             if(event.size() >= 3 && "interact".equals(event.get(0)) && "name".equals(event.get(1))) {
                                 PlayerQuests.performAction(player, quest, QuestAction.Type.INTERACT);
@@ -119,7 +114,11 @@ public class QuestEvents {
     }
 
     public static  void handleCollectItem(Player player, Item item, int quantity) {
-        handleEvent(player, "collect_item", "id", item.getId(), quantity);
+        handleEventWithQuantity(player, quantity, "collect_item", "id", item.getId(), quantity);
+    }
+
+    public static void handleCraft(Player player, Item item, int quantity) {
+        handleEventWithQuantity(player, quantity, "craft", "code", item.getCode());
     }
 
     public static void handleEnterZone(Player player, Zone zone) {
@@ -160,7 +159,7 @@ public class QuestEvents {
     }
 
     public static void handleAppearance(Player player, Map<String, Object> appearance) {
-        for(Object code : appearance.values()) {
+        for (Object code : appearance.values()) {
             handleEvent(player, "appearance", "code", code);
         }
     }

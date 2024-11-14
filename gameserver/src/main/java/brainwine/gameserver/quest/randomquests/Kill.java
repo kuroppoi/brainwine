@@ -5,7 +5,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import brainwine.gameserver.entity.EntityConfig;
+import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.quest.*;
 import brainwine.gameserver.util.randomobject.*;
@@ -48,31 +51,55 @@ public class Kill extends RandomQuest {
         return events;
     }
 
-    public void setTaskDescription(QuestTask task, String taskDescription, String actionMessage) {
+    private String joinWithOr(List<String> items) {
+        if(items == null || items.size() == 0) return "nothing";
+        if(items.size() == 1) return items.get(0);
+        if(items.size() == 2) return items.get(0) + " or " + items.get(1);
+        else return String.join(", ", items.subList(0, items.size() - 1)) + ", or " + items.get(items.size() - 1);
+    }
+
+    private QuestTask makeTaskForEntityTypes(List<String> actions, List<String> names, List<Integer> codes, int quantity) {
+        List<List<Object>> events = getKillEvents(actions, "code", codes);
+
+        String message;
         if(taskDescription == null) {
-            List<List<Object>> events = task.getEvents();
-            List<Object> values = events.stream().map(i -> i.get(2)).collect(Collectors.toList());
-            int quantity = task.getQuantity();
+            String actionMessage = WordUtils.capitalize(joinWithOr(actions));
+            String times = quantity == 1 ? "" : " " + quantity + " times";
+            String concat = joinWithOr(names);
+
+            String beginning;
+            if(names.size() == 1) beginning = Stream.of("a", "e", "i", "o", "u").anyMatch(concat::startsWith) ? " an " : " a ";
+            else beginning = " any of ";
+
+            message = actionMessage + beginning + concat + times;
+        } else {
+            message = taskDescription.replaceAll("\\{QUANTITY\\}", Integer.toString(quantity));
+        }
+
+        return new QuestTask().setDescription(message).setEvents(events).setQuantity(quantity);
+    }
+
+    private QuestTask makeTaskForEntityCategories(List<String> actions, List<String> categories, int quantity) {
+        List<List<Object>> events = getKillEvents(actions, "category", categories);
+
+        String message;
+        if(taskDescription == null) {
+            String actionMessage = WordUtils.capitalize(String.join(" or ", actions));
+
             String times = quantity == 1 ? "" : " " + quantity + " times";
 
-            String concat;
-            if(!events.isEmpty() && events.get(0).size() >= 2 && "code".equals(events.get(0).get(1))) {
-                concat = String.join(", ", values.stream().map(v -> "(Type: " + v + ")").collect(Collectors.toList()));
-            } else {
-                concat = String.join(", ", values.stream().map(v -> (String) v).collect(Collectors.toList()));
-            }
+            String concat = joinWithOr(categories);
 
-            String message;
-            if(values.size() == 1) {
-                message = actionMessage + " an entity " + concat + times;
-            } else {
-                message = actionMessage + " any of the entities " + concat + times;
-            }
+            String beginning;
+            if(categories.size() == 1) beginning = " an entities of category ";
+            else beginning = " an entity of categories ";
 
-            task.setDescription(message);
+            message = actionMessage + beginning + concat + times;
         } else {
-            task.setDescription(taskDescription.replaceAll("\\{QUANTITY\\}", Integer.toString(task.getQuantity())));
+            message = taskDescription.replaceAll("\\{QUANTITY\\}", Integer.toString(quantity));
         }
+
+        return new QuestTask().setDescription(message).setEvents(events).setQuantity(quantity);
     }
 
     @Override
@@ -84,38 +111,44 @@ public class Kill extends RandomQuest {
             List<QuestTask> tasks = new ArrayList<>();
             List<String> actions = this.actions.next(random);
 
-            String actionMessage = WordUtils.capitalize(String.join(" or ", actions));
-
             if(categories != null) {
                 List<String> values = categories.next(random);
-                int quantity = defaultIfNull(this.quantity, categoryQuantity).next(random);
-                QuestTask task = new QuestTask()
-                        .setEvents(getKillEvents(actions, "category", values))
-                        .setQuantity(quantity);
-                setTaskDescription(task, taskDescription, actionMessage);
-                tasks.add(task);
+                int quantity = defaultIfNull(categoryQuantity, this.quantity).next(random);
+                tasks.add(makeTaskForEntityCategories(actions, values, quantity));
             }
 
             if(entityIds != null) {
                 List<String> values = entityIds.next(random);
-                int quantity = defaultIfNull(this.quantity, entityIdQuantity).next(random);
-                QuestTask task = new QuestTask()
-                        .setEvents(getKillEvents(actions, "entity", values))
-                        .setQuantity(quantity);
-                setTaskDescription(task, taskDescription, actionMessage);
-                tasks.add(task);
+                int quantity = defaultIfNull(entityIdQuantity, this.quantity).next(random);
+                List<String> names = new ArrayList<>();
+                List<Integer> codes = new ArrayList<>();
+                for(String id : values) {
+                    EntityConfig config = EntityRegistry.getEntityConfig(id);
+
+                    if(config == null) {
+                        names.add(id);
+                        codes.add(0);
+                        continue;
+                    }
+
+                    names.add(config.getName());
+                    codes.add(config.getType());
+                }
+
+                tasks.add(makeTaskForEntityTypes(actions, names, codes, quantity));
             }
 
             if(codes != null) {
-                List<Integer> values = codes.next(random).stream()
-                        .map(i -> i.next(random))
-                        .collect(Collectors.toList());
-                int quantity = defaultIfNull(this.quantity, codeQuantity).next(random);
-                QuestTask task = new QuestTask()
-                        .setEvents(getKillEvents(actions, "code", values))
-                        .setQuantity(quantity);
-                setTaskDescription(task, taskDescription, actionMessage);
-                tasks.add(task);
+                List<Integer> values = codes.next(random).stream().map(ri -> ri.next(random)).collect(Collectors.toList());
+                int quantity = defaultIfNull(codeQuantity, this.quantity).next(random);
+                List<String> names = new ArrayList<>();
+                List<Integer> codes = new ArrayList<>();
+                for(Integer code : values) {
+                    names.add("(Type: " + code + ")");
+                    codes.add(code);
+                }
+
+                tasks.add(makeTaskForEntityTypes(actions, names, codes, quantity));
             }
 
             quest.setTasks(tasks);

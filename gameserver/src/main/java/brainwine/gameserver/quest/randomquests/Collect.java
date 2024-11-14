@@ -37,7 +37,7 @@ public class Collect extends RandomQuest {
         List<List<Object>> events = new ArrayList<>();
 
         for(String oneItem : collectItem.items.next(random)) {
-            events.add(Arrays.asList("collect_item", "id", oneItem, null));
+            events.add(Arrays.asList("collect_item", "id", oneItem));
         }
 
         int quantity = collectItem.count.next(random);

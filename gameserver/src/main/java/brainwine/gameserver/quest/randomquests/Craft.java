@@ -43,8 +43,9 @@ public class Craft extends RandomQuest {
                 QuestTask task = new QuestTask();
                 task.setDescription("Craft " + amount + " of " + itemName);
                 task.setEvents(Arrays.asList(
-                        Arrays.asList("craft", "code", item.getCode())
+                        Arrays.asList("craft", "code", item == null ? 0 : item.getCode())
                 ));
+                task.setQuantity(amount);
                 tasks.add(task);
             }
             quest.setTasks(tasks);
