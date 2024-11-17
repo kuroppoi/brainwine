@@ -11,45 +11,6 @@ import brainwine.gameserver.player.Player;
 import brainwine.gameserver.zone.Zone;
 
 public class QuestEvents {
-    public static void handleQuestFinalReturn(Player player, Quest quest) {
-        QuestProgress progress = player.getQuestProgresses().get(quest.getId());
-
-        if(progress == null) return;
-
-        int found = -1;
-
-        for(int i = 0; i < quest.getTasks().size(); i++) {
-            QuestTask task = quest.getTasks().get(i);
-
-            if(task.getEvents() != null) {
-                for(List<Object> event : task.getEvents()) {
-                    for(Object o : event) {
-                        if("return".equals(o)) found = i;
-                        if(found != -1) break;
-                    }
-                    if(found != -1) break;
-                }
-            }
-            if(found != -1) break;
-        }
-
-        if(found == -1) return;
-
-        int initialReturnProgress = progress.getTaskProgress(found);
-        int wantedProgress = quest.getTasks().get(found).getQuantity();
-
-        while (progress.getTaskProgresses().size() < quest.getTasks().size()) {
-            progress.getTaskProgresses().add(0);
-        }
-
-        progress.getTaskProgresses().set(found, wantedProgress);
-
-        // if can't finish even with the return task done, set the return task progress to the previous value
-        if(!PlayerQuests.canFinishQuest(player, quest)) {
-            progress.getTaskProgresses().set(found, initialReturnProgress);
-        }
-    }
-
     private static boolean patternMatch(List<Object> event, Object[] pattern) {
         if(event.size() != pattern.length) return false;
         int iterationCount = Math.min(event.size(), pattern.length);
@@ -152,10 +113,6 @@ public class QuestEvents {
 
     public static void handleChat(Player player) {
         handleEvent(player, "chat");
-    }
-
-    public static void handleInteract(Player player, Npc npc) {
-        handleEvent(player, "interact", "name", npc.getName());
     }
 
     public static void handleAppearance(Player player, Map<String, Object> appearance) {

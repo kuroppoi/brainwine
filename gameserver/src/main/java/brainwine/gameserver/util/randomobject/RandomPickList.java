@@ -23,9 +23,7 @@ public class RandomPickList<T> extends RandomList<T> {
     public List<T> next(Random random) throws ConcretionFailureException {
         List<T> list = choices.next(random);
         int count = pick.next(random);
-        List<T> chosen = PickRandom.<T>sampleWithoutReplacement(random, list, count);
-
-        return chosen;
+        return PickRandom.<T>sampleWithoutReplacement(random, list, count);
     }
 
     @Override
