@@ -52,9 +52,8 @@ public class AuthenticateRequest extends Request {
                 }
                 
                 // Try to put player in a random zone if current zone is null
-                // TODO default zone
                 if(zone == null) {
-                    zone = server.getZoneManager().getRandomZone();
+                    zone = server.getZoneManager().findBeginnerZone();
                 }
                 
                 // Kick player if zone is still null (aka it failed to find a suitable random zone)
@@ -65,8 +64,8 @@ public class AuthenticateRequest extends Request {
                 
                 player.setConnection(connection);
                 player.setClientVersion(version);
-                playerManager.onPlayerConnect(player);
                 zone.addEntity(player);
+                playerManager.onPlayerConnect(player);
             });
         });
     }

@@ -27,6 +27,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.Skill;
+import brainwine.gameserver.shop.ShopManager;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.VersionUtils;
 import brainwine.shared.JsonHelper;
@@ -53,6 +54,7 @@ public class GameConfiguration {
         loadConfigOverrides();
         logger.info(SERVER_MARKER, "Configuring ...");
         configure();
+        ShopManager.loadShopData(); // TODO
         logger.info(SERVER_MARKER, "Caching versioned configurations ...");
         cacheVersionedConfigs();
         logger.info(SERVER_MARKER, "Load complete! Took {} milliseconds", System.currentTimeMillis() - startTime);
