@@ -91,7 +91,7 @@ public class Kill extends RandomQuest {
             String concat = joinWithOr(categories);
 
             String beginning;
-            if(categories.size() == 1) beginning = " an entities of category ";
+            if(categories.size() == 1) beginning = " an entity of category ";
             else beginning = " an entity of categories ";
 
             message = actionMessage + beginning + concat + times;

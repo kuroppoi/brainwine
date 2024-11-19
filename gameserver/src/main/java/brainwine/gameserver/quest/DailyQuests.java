@@ -17,6 +17,7 @@ public class DailyQuests {
                 if(newQuest == null) return;
                 newQuest.setId("daily_player_quest_" + i);
                 newQuest.setTitle("Daily Quest #" + i);
+                newQuest.setGroup("Daily Quests");
             }
 
             if(currentV.getValue() != null) {
