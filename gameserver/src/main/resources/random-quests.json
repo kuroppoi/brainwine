@@ -1,0 +1,97 @@
+{
+    "daily_quest_interval": "24h",
+    "daily_quest_count": 5,
+    "strings": {
+        "kill_description": [
+            "Today you got to kill some critters!",
+            "What time is it? Uh, we need to keep the game child-friendly.",
+            "Blow them up for some crowns!",
+            "Nothing better than relieving some stress by putting your weapons in good use!"
+        ],
+        "collect_description": [
+            "Time for your daily item collecting.",
+            "The shelves in your father's thrift store fell empty. Help them stock it back up!",
+            "You had been scammed by Graptik, but don't be afraid. Today is the day you will get your items back.",
+            "Hot stuff in your area, waiting for you to collect, within the next 24 hours@"
+        ],
+        "craft_description": [
+            "Today you are tasked to craft the following items.",
+            "Time to be productive.",
+            "Craft these.",
+            "The mayor of Cake Land needs you to craft these items!"
+        ]
+    },
+    "quests": [
+        {
+            "frequency": 10,
+            "type": "kill",
+            "categories": [ "terrapus" ],
+            "quantity": { "random_between": [ 5, 10 ] },
+            "reward": {
+                "xp": { "random_between": [ 50, 150, 10 ] },
+                "crowns": 2
+            }
+        },
+        {
+            "frequency": 10,
+            "type": "kill",
+            "entities": {
+                "choices": [
+                    "automata/android",
+                    "automata/cat",
+                    "creature/armadillo"
+                ],
+                "pick": 2
+            },
+            "task_description": "Stop the bot uprisal! Smash 3 androids of any kind!",
+            "quantity": 3,
+            "reward": {
+                "xp": 100,
+                "crowns": 2
+            }
+        },
+        {
+            "frequency": 10,
+            "type": "kill",
+            "entities": { "choices": ["creatures/crow-auto", "creatures/crow"] },
+            "quantity": 1
+        },
+        {
+            "frequency": 10,
+            "type": "collect",
+            "items": {
+                "choices": [
+                    {
+                        "items": [ "mechanical/turret-pistol" ],
+                        "count": { "random_between": [ 3, 5 ] }
+                    },
+                    {
+                        "items": [ "building/door-wood" ],
+                        "count": 3
+                    }
+                ],
+                "pick": 1
+            },
+            "reward": { "xp": 100, "crowns": 2 }
+        },
+        {
+            "frequency": 10,
+            "type": "craft",
+            "items": { "choices":  [
+                { "item": "building/door-wood", "count":  { "random_between": [ 3, 5 ]}},
+                { "item": "building/door-brass", "count":  { "random_between": [ 3, 5 ]}}
+            ]}
+        },
+        {
+            "frequency": 10,
+            "type": "multistep",
+            "reward": { "crowns": 3 },
+            "steps": [
+                { "type": "collect", "items": [{ "items": ["building/wood"], "count": 3 }] },
+                { "type": "collect", "items": [{ "items": ["building/brass"], "count": 6 }] },
+                { "type": "collect", "items": [{ "items": ["building/iron"], "count": 3 }] },
+                { "type": "craft", "items": [{ "item": "building/door-wood", "count": 3 }, { "item": "building/door-brass", "count": 3 }] }
+            ]
+        }
+    ]
+}

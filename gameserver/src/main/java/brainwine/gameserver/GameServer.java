@@ -16,6 +16,7 @@ import brainwine.gameserver.loot.LootManager;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.PlayerManager;
 import brainwine.gameserver.prefab.PrefabManager;
+import brainwine.gameserver.quest.Quests;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.server.Server;
 import brainwine.gameserver.zone.EntityManager;
@@ -50,6 +51,7 @@ public class GameServer implements CommandExecutor {
         EntityRegistry.init();
         EntityManager.loadEntitySpawns();
         GrowthManager.loadGrowthData();
+        Quests.loadQuests();
         lootManager = new LootManager();
         prefabManager = new PrefabManager();
         ZoneGenerator.init();

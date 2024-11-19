@@ -14,6 +14,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.quest.DailyQuests;
+import brainwine.gameserver.quest.Quest;
+import brainwine.gameserver.util.ValueWithExpiry;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
@@ -38,6 +41,8 @@ import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
+import brainwine.gameserver.quest.QuestEvents;
+import brainwine.gameserver.quest.QuestProgress;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.AchievementMessage;
 import brainwine.gameserver.server.messages.AchievementProgressMessage;
@@ -104,6 +109,8 @@ public class Player extends Entity implements CommandExecutor {
     private Map<Skill, Integer> skills;
     private Map<Item, List<Skill>> bumpedSkills;
     private Map<String, Object> appearance;
+    private Map<String, QuestProgress> questProgresses = new HashMap<>();
+    private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
@@ -124,7 +131,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastTrackedEntityUpdate;
     private Zone nextZone;
     private Connection connection;
-    
+
     protected Player(String documentId, PlayerConfigFile config) {
         super(config.getCurrentZone());
         this.documentId = documentId;
@@ -148,6 +155,8 @@ public class Player extends Entity implements CommandExecutor {
         this.skills = config.getSkills();
         this.bumpedSkills = config.getBumpedSkills();
         this.appearance = config.getAppearance();
+        this.questProgresses = config.getQuestProgresses();
+        this.dailyQuest = config.getDailyQuest();
         health = getMaxHealth();
         inventory.setPlayer(this);
         statistics.setPlayer(this);
@@ -208,6 +217,8 @@ public class Player extends Entity implements CommandExecutor {
             sendMessage(new EntityPositionMessage(trackedEntities));
             lastTrackedEntityUpdate = now;
         }
+
+        DailyQuests.tryIssueDailyQuest(this);
     }
     
     @Override
@@ -472,6 +483,8 @@ public class Player extends Entity implements CommandExecutor {
         customSpawn = x != -1 && y != -1;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
+        QuestEvents.handleEnterZone(this, zone);
+        DailyQuests.tryIssueDailyQuest(this);
     }
     
     public void showDialog(Dialog dialog) {
@@ -1120,10 +1133,23 @@ public class Player extends Entity implements CommandExecutor {
     public void updateAppearance(Map<String, Object> appearance) {
         this.appearance.putAll(appearance);
         zone.sendMessage(new EntityChangeMessage(id, appearance));
+        QuestEvents.handleAppearance(this, appearance);
     }
     
     public Map<String, Object> getAppearance() {
         return Collections.unmodifiableMap(appearance);
+    }
+
+    public Map<String, QuestProgress> getQuestProgresses() {
+        return questProgresses;
+    }
+
+    public ValueWithExpiry<List<Quest>> getDailyQuest() {
+        return dailyQuest;
+    }
+
+    public void setDailyQuest(ValueWithExpiry<List<Quest>> dailyQuest) {
+        this.dailyQuest = dailyQuest;
     }
     
     public void setSkillLevel(Skill skill, int level) {
@@ -1217,6 +1243,7 @@ public class Player extends Entity implements CommandExecutor {
         
         loot.getItems().forEach((item, quantity) -> {
             inventory.addItem(item, quantity, true);
+            QuestEvents.handleCollectItem(this, item, quantity);
             section.addItem(new DialogListItem()
                     .setItem(item.getCode())
                     .setText(String.format("%s x %s", item.getTitle(), quantity)));

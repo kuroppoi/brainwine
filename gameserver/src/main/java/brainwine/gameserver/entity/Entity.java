@@ -11,6 +11,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
@@ -101,12 +102,22 @@ public abstract class Entity {
         // Kill entity if attacker is a player in god mode
         if(attacker != null && attacker.isPlayer() && ((Player)attacker).isGodMode()) {
             setHealth(0.0F);
+
+            if(isDead()) {
+                QuestEvents.handleKill((Player) attacker, this);
+            }
+
             return;
         }
         
         // Ignore multipliers if true damage should be dealt
         if(trueDamage) {
             setHealth(health - baseDamage);
+
+            if(isDead() && attacker != null && attacker.isPlayer()) {
+                QuestEvents.handleKill((Player) attacker, this);
+            }
+
             return;
         }
         
@@ -114,6 +125,10 @@ public abstract class Entity {
         float defense = Math.max(0.0F, 1.0F - getDefense(attack));
         float damage = baseDamage * attackMultiplier * defense;
         setHealth(health - damage);
+
+        if(isDead() && attacker != null && attacker.isPlayer()) {
+            QuestEvents.handleKill((Player) attacker, this);
+        }
     }
     
     public float getAttackMultiplier(EntityAttack attack) {

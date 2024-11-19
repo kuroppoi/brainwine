@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -26,6 +27,7 @@ public class EntityConfig {
     
     private final String name;
     private final int type;
+    private String title = "Unknown";
     private int experienceYield;
     private float maxHealth = Entity.DEFAULT_HEALTH;
     private float baseSpeed = 3;
@@ -67,6 +69,18 @@ public class EntityConfig {
     
     public int getType() {
         return type;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    @JsonIgnore
+    public String getCategory() {
+        String id = getName();
+        
+        int index = id.indexOf('/');
+        return index > 1 ? id.substring(0, index) : null;
     }
     
     @JsonProperty("xp")
