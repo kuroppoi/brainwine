@@ -7,7 +7,7 @@ public class CraftingRequirement {
     private final LazyItemGetter item;
     private final int quantity;
     
-    private CraftingRequirement(LazyItemGetter item, int quantity) {
+    public CraftingRequirement(LazyItemGetter item, int quantity) {
         this.item = item;
         this.quantity = quantity;
     }

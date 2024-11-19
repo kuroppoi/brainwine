@@ -179,7 +179,7 @@ public class GameConfiguration {
             Reflections reflections = new Reflections(new ConfigurationBuilder()
                     .setUrls(ClasspathHelper.forPackage("brainwine.gameserver"))
                     .setScanners(Scanners.Resources));
-            Set<String> fileNames = reflections.getResources("^config.*\\.yml$");
+            Set<String> fileNames = reflections.getResources("^(config|quests).*\\.yml$");
             
             for(String fileName : fileNames) {
                 Map<String, Object> config = yaml.load(GameConfiguration.class.getResourceAsStream(String.format("/%s", fileName)));

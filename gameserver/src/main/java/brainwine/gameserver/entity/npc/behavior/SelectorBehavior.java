@@ -3,6 +3,7 @@ package brainwine.gameserver.entity.npc.behavior;
 import java.util.Map;
 
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.player.Player;
 
 public class SelectorBehavior extends CompositeBehavior {
     
@@ -24,4 +25,12 @@ public class SelectorBehavior extends CompositeBehavior {
         
         return false;
     }
+
+    @Override
+    public void react(BehaviorMessage message, Player player, Object... data) {
+        for(Behavior child : children) {
+            child.react(message, player, data);
+        }
+    }
+
 }

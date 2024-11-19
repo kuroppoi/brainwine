@@ -10,7 +10,6 @@ sourceSets {
     main {
         resources {
             srcDir '../deepworld-config'
-            exclude 'quests'
             exclude 'biomes.yml'
             exclude 'daily_challenges.yml'
             exclude 'README.md'

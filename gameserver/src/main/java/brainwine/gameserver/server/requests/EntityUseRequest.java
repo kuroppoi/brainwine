@@ -3,6 +3,7 @@ package brainwine.gameserver.server.requests;
 import java.util.List;
 
 import brainwine.gameserver.entity.Entity;
+import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.player.Player;
@@ -37,8 +38,15 @@ public class EntityUseRequest extends PlayerRequest {
                     player.tradeItem(targetPlayer, item);
                 }
             }
-            
-            return;
+        }
+
+        // Handle NPC interaction
+        Npc npc = (Npc)entity;
+
+        if(data instanceof List<?>) {
+            npc.interact(player, ((List<?>)data).toArray());
+        } else {
+            npc.interact(player, data);
         }
     }
 }

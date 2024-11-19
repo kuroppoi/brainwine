@@ -251,6 +251,7 @@ public class EntityManager {
             
             Npc npc = new Npc(zone, entry.getType());
             npc.setName(entry.getName());
+            npc.setJob(entry.getJob());
             spawnEntity(npc, entry.getX(), entry.getY());
         }
     }
