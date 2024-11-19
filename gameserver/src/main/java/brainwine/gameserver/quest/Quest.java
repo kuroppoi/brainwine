@@ -174,15 +174,5 @@ public class Quest {
         this.tasks = tasks;
         return this;
     }
-
-    public Quest setPcDetails(Map<String, Object> pcDetails) {
-        this.pcDetails = pcDetails;
-        return this;
-    }
-
-    public Quest setMobileDetails(Map<String, Object> mobileDetails) {
-        this.mobileDetails = mobileDetails;
-        return this;
-    }
     
 }
