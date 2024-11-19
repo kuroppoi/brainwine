@@ -120,6 +120,7 @@ public class Player extends Entity implements CommandExecutor {
     private boolean stealth;
     private boolean godMode;
     private boolean customSpawn;
+    private boolean changingZones;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private Zone nextZone;
@@ -397,9 +398,10 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         // Are we switching zones? Then set the new zone.
-        if(nextZone != null) {
+        if(changingZones) {
             zone = nextZone;
             nextZone = null;
+            changingZones = false;
         }
         
         // Cancel existing trade session
@@ -466,6 +468,7 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void changeZone(Zone zone, int x, int y) {
+        changingZones = true;
         nextZone = zone;
         spawnX = x;
         spawnY = y;
@@ -1374,6 +1377,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("deaths", statistics.getDeaths());
         config.put("appearance", appearance);
         config.put("settings", settings);
+        config.put("api_token", documentId); // Use document ID for now
         return config;
     }
 }
