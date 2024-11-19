@@ -23,7 +23,7 @@ public class Craft {
 
         options = new HashMap<String, List<CraftingRequirement>>();
 
-        for (Map.Entry<String, Map<String, Integer>> entry : map.entrySet()) {
+        for(Map.Entry<String, Map<String, Integer>> entry : map.entrySet()) {
             List<CraftingRequirement> requirements = entry.getValue().entrySet().stream()
                 .map(e -> new CraftingRequirement(new LazyItemGetter(e.getKey()), e.getValue()))
                 .collect(Collectors.toList());

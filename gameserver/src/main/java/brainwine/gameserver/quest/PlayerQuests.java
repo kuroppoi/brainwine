@@ -131,6 +131,45 @@ public class PlayerQuests {
         }
     }
 
+    public static void handleQuestFinalReturn(Player player, Quest quest) {
+        QuestProgress progress = player.getQuestProgresses().get(quest.getId());
+
+        if(progress == null) return;
+
+        int found = -1;
+
+        for(int i = 0; i < quest.getTasks().size(); i++) {
+            QuestTask task = quest.getTasks().get(i);
+
+            if(task.getEvents() != null) {
+                for(List<Object> event : task.getEvents()) {
+                    for(Object o : event) {
+                        if("return".equals(o)) found = i;
+                        if(found != -1) break;
+                    }
+                    if(found != -1) break;
+                }
+            }
+            if(found != -1) break;
+        }
+
+        if(found == -1) return;
+
+        int initialReturnProgress = progress.getTaskProgress(found);
+        int wantedProgress = quest.getTasks().get(found).getQuantity();
+
+        while (progress.getTaskProgresses().size() < quest.getTasks().size()) {
+            progress.getTaskProgresses().add(0);
+        }
+
+        progress.getTaskProgresses().set(found, wantedProgress);
+
+        // if can't finish even with the return task done, set the return task progress to the previous value
+        if(!canFinishQuest(player, quest)) {
+            progress.getTaskProgresses().set(found, initialReturnProgress);
+        }
+    }
+
     public static void sendInitialPlayerQuestMessages(Player player) {
         Map<String, QuestProgress> progresses = player.getQuestProgresses();
 

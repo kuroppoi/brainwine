@@ -53,7 +53,7 @@ public class Crafter extends DialoguerJob {
         Dialog dialog = new Dialog();
         dialog.addSection(new DialogSection().setText(String.format("I can use your %s to craft something if you have the supplies.", item.getTitle())));
 
-        for (String itemId : item.getCraft().getOptions().keySet()) {
+        for(String itemId : item.getCraft().getOptions().keySet()) {
             Item optionItem = Item.get(itemId);
 
             if(optionItem != null) {

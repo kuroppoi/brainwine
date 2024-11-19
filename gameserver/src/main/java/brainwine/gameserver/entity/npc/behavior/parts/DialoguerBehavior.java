@@ -29,7 +29,7 @@ public class DialoguerBehavior extends Behavior {
     private static final long NEXT_DIALOGUE_OVERALL_MS = 10_000;
 
     private long mostRecentDialogueAt = System.currentTimeMillis() - 24 * 60 * 60 * 1000;
-    
+
     @JsonCreator
     public DialoguerBehavior(@JacksonInject Npc entity) {
         super(entity);
@@ -51,8 +51,8 @@ public class DialoguerBehavior extends Behavior {
 
         switch(message) {
         case INTERACT:
-            if (data.length <= 1) {
-                if (entity.getJob() != null) {
+            if(data.length <= 1) {
+                if(entity.getJob() != null) {
                     entity.getJob().dialogue(entity, player);
                     return;
                 }
@@ -61,7 +61,7 @@ public class DialoguerBehavior extends Behavior {
                     DialoguerJob.CONFIGURATION_ONLY.dialogue(entity, player);
                 } else {
                     // Respond with a random bogus message for now
-        
+
                     String[] responses = {
                         "Error: Job module not found.",
                         "I am not quite ready for that yet.",
@@ -70,7 +70,7 @@ public class DialoguerBehavior extends Behavior {
                         "Critical error.",
                         "Does not compute."
                     };
-        
+
                     String response = responses[(int)(Math.random() * responses.length)];
                     entity.emote(response);
                 }
@@ -105,7 +105,7 @@ public class DialoguerBehavior extends Behavior {
 
     public void loadMemory(Player player, Item item) {
         if(entity.getJob() == null) {
-            if (player.getZone().isBlockProtected(entity.getBlockX(), entity.getBlockY(), player)) {
+            if(player.getZone().isBlockProtected(entity.getBlockX(), entity.getBlockY(), player)) {
                 String message = MapHelper.getString(GameConfiguration.getBaseConfig(), "dialogs.android.protected");
                 player.showDialog(DialogHelper.messageDialog(message));
             } else {
@@ -115,11 +115,11 @@ public class DialoguerBehavior extends Behavior {
                     Dialog dialog = JsonHelper.readValue(dialogDesc, Dialog.class);
 
                     player.showDialog(dialog, ans -> {
-                        if (ans.length >= 1 && ans[0] == "cancel") {
+                        if(ans.length >= 1 && ans[0] == "cancel") {
                             return;
                         }
 
-                        if (ans.length >= 1) {
+                        if(ans.length >= 1) {
                             String entityName = (String)ans[0];
 
                             // remove the memory unit from the player's inventory
@@ -127,7 +127,7 @@ public class DialoguerBehavior extends Behavior {
 
                             // set entity parameters
                             entity.setName(entityName);
-                            entity.setJob(JobType.JOKER);
+                            entity.setJob(JobType.QUESTER);
 
                             // notify the player
                             player.notify(String.format("Android has been reconfigured as %s!", entity.getName()));
