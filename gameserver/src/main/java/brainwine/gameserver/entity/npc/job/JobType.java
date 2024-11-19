@@ -25,6 +25,8 @@ public enum JobType {
                 return JOKER;
             case "crafter":
                 return CRAFTER;
+            case "quester":
+                return QUESTER;
             default:
                 return null;
         }
