@@ -86,11 +86,15 @@ public class PlayerQuests {
     }
 
     public static void cancelQuest(Player player, String questId) {
+        cancelQuest(player, questId, false);
+    }
+
+    public static void cancelQuest(Player player, String questId, boolean privileged) {
         QuestProgress progress = player.getQuestProgresses().get(questId);
 
-        if(progress == null || progress.isComplete()) return;
+        if(!privileged && (progress == null || progress.isComplete())) return;
 
-        String reason = progress.tryCancelOtherwiseReason(player);
+        String reason = privileged ? null : progress.getCannotCancelReason(player);
         if(reason != null) {
             player.showDialog(DialogHelper.messageDialog("Cannot Cancel Quest", reason));
             return;

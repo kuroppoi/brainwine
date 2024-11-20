@@ -23,7 +23,7 @@ public class DailyQuests {
             if(currentV.getValue() != null) {
                 for(Quest current : currentV.getValue()) {
                     String oldQuestId = current.getId();
-                    PlayerQuests.cancelQuest(player, oldQuestId);
+                    PlayerQuests.cancelQuest(player, oldQuestId, false);
 
                     player.getQuestProgresses().remove(oldQuestId);
                     PlayerQuests.sendPlayerCancelQuestMessage(player, current);

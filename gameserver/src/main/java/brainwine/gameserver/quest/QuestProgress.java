@@ -134,9 +134,7 @@ public class QuestProgress {
      * @param player player to cancel the quest for
      * @return null if the cancellation succeeded, or a string if there is a problem
      */
-    public String tryCancelOtherwiseReason(Player player) {
-        if(player.isGodMode()) return null;
-        
+    public String getCannotCancelReason(Player player) {
         Quest quest = getQuest(player);
         if(quest == null) return null;
 

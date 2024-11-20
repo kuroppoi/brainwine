@@ -49,10 +49,10 @@ public class PlayerQuestDialog {
         return DialogHelper.messageDialog(player.isV3() ? quest.getStory().getBegin() : quest.getStory().getBeginMobile());
     }
 
-    public static Dialog playerQuestsDialogGet(Player player) {
+    public static Dialog playerQuestsDialogGet(Player player, boolean privileged) {
         Dialog result = new Dialog().setTitle("Your Quests");
 
-        List<DialogSection> all = getPlayerQuestsSection(player, false);
+        List<DialogSection> all = getPlayerQuestsSection(player, false, privileged);
 
         for(DialogSection section : all) {
             result.addSection(section);
@@ -61,7 +61,7 @@ public class PlayerQuestDialog {
         return result;
     }
 
-    public static void playerQuestsDialogHandle(Player player, Object[] ans) {
+    public static void playerQuestsDialogHandle(Player player, boolean privileged, Object[] ans) {
         if(ans.length > 0 && "cancel".equals(ans[0])) return;
 
         if(ans.length == 0 || !(ans[0] instanceof String)) return;
@@ -70,19 +70,28 @@ public class PlayerQuestDialog {
 
         if("quest".equals(args[0])) {
             if(args.length >= 3 && "cancel".equals(args[2])) {
-                PlayerQuests.cancelQuest(player, args[1]);
+                PlayerQuests.cancelQuest(player, args[1], privileged);
             }
         }
     }
 
-    public static List<DialogSection> getPlayerQuestsSection(Player player, boolean canFinishQuest) {
+    public static List<DialogSection> getPlayerQuestsSection(Player player, boolean canFinishQuest, boolean privileged) {
         List<DialogSection> result = new ArrayList<>();
+        List<DialogSection> resultCompleted = new ArrayList<>();
         for(QuestProgress questProgress : player.getQuestProgresses().values()) {
             if(!questProgress.isComplete()) {
                 result.addAll(questProgress.getDialogSection(player, canFinishQuest));
+            } else if(privileged) {
+                DialogSection cancelSection = new DialogSection()
+                        .setChoice(String.format("quest.%s.%s", questProgress.getQuestId(), "cancel"))
+                        .setText("Forget Completion of " + questProgress.getQuestId());
+
+                resultCompleted.add(cancelSection);
             }
         }
 
+        // So that the completed quests appear in the end.
+        result.addAll(resultCompleted);
         return result;
     }
 
@@ -106,7 +115,11 @@ public class PlayerQuestDialog {
     }
 
     public static void showPlayerQuests(Player player) {
-        player.showDialog(playerQuestsDialogGet(player), ans -> playerQuestsDialogHandle(player, ans));
+        showPlayerQuests(player, player);
+    }
+
+    public static void showPlayerQuests(Player admin, Player player) {
+        admin.showDialog(playerQuestsDialogGet(player, admin.isGodMode()), ans -> playerQuestsDialogHandle(player, admin.isGodMode(), ans));
     }
 
 }
