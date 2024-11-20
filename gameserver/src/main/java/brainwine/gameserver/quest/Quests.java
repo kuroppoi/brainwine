@@ -125,6 +125,11 @@ public class Quests {
 
     public static List<Quest> getRandomQuestsFromCategory(Entity me, String categoryTitle, Set<String> excludeQuestIds, int count) {
         List<Quest> targetList = questLists.get(categoryTitle);
+
+        if(targetList == null) {
+            return null;
+        }
+
         targetList = targetList.stream().filter(q -> !excludeQuestIds.contains(q.getId())).collect(Collectors.toList());
 
         if(targetList == null) {

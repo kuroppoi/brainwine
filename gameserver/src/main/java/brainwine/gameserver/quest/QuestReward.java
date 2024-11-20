@@ -17,11 +17,11 @@ public class QuestReward {
     private List<String> lootCategories;
 
     public void reward(Player player) {
-        if(xp != null) {
+        if(crowns != null) {
             player.addCrowns(crowns);
         }
-        if(crowns != null) {
-            player.addExperience(xp, String.format("You have gained %d XP from completing this quest!", xp, crowns));
+        if(xp != null) {
+            player.addExperience(xp, String.format("You have gained %d XP from completing this quest!", xp));
         }
         if(lootCategories != null) {
             Loot loot = GameServer.getInstance().getLootManager().getRandomLoot(player, lootCategories);
