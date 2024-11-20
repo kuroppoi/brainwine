@@ -10,7 +10,8 @@ public enum JobType {
     @JsonEnumDefaultValue
     JOKER(new Joker()),
     CRAFTER(new Crafter()),
-    QUESTER(new Quester());
+    QUESTER(new Quester()),
+    FAMILY_NAME(new FamilyName());
 
     private Job job;
 
@@ -27,6 +28,8 @@ public enum JobType {
                 return CRAFTER;
             case "quester":
                 return QUESTER;
+            case "family_name":
+                return FAMILY_NAME;
             default:
                 return null;
         }

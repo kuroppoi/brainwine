@@ -32,6 +32,8 @@ public class QuestEvents {
         for(Map.Entry<String, QuestProgress> questProgressEntry : player.getQuestProgresses().entrySet()) {
             String questId = questProgressEntry.getKey();
             QuestProgress questProgress = questProgressEntry.getValue();
+            if(questProgress.isComplete()) continue;
+
             Quest quest = Quests.get(player, questId);
             int i = 0;
 
@@ -47,10 +49,6 @@ public class QuestEvents {
                     try {
                         if(patternMatch(event, pattern)) {
                             questProgress.getTaskProgresses().set(i, questProgress.getTaskProgress(i) + quantity);
-
-                            if(event.size() >= 3 && "interact".equals(event.get(0)) && "name".equals(event.get(1))) {
-                                PlayerQuests.performAction(player, quest, QuestAction.Type.INTERACT);
-                            }
 
                             anyProgress = true;
                             break;
@@ -119,5 +117,9 @@ public class QuestEvents {
         for (Object code : appearance.values()) {
             handleEvent(player, "appearance", "code", code);
         }
+    }
+
+    public static void handleInteract(Player player, Npc npc) {
+        handleEvent(player, "interact", "name", npc.getName());
     }
 }

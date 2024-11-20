@@ -6,6 +6,7 @@ import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.util.MapHelper;
 
@@ -78,6 +79,8 @@ public abstract class DialoguerJob extends Job {
                 this.handleDialogAnswers(me, player, ans);
             }
         );
+
+        QuestEvents.handleInteract(player, me);
 
         return true;
     }
