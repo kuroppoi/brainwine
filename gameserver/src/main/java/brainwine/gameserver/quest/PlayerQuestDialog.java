@@ -2,6 +2,7 @@ package brainwine.gameserver.quest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import brainwine.gameserver.dialog.Dialog;
@@ -27,11 +28,11 @@ public class PlayerQuestDialog {
         return result;
     }
 
-    public static Quest questOffersDialogGetSelectedOffer(Object[] ans) {
+    public static Quest questOffersDialogGetSelectedOffer(List<Quest> quests, Object[] ans) {
         if(ans.length == 0) return null;
         if("cancel".equals(ans[0])) return null;
 
-        else return Quests.get((String) ans[0]);
+        else return quests.stream().filter(q -> Objects.equals(q.getId(), ans[0])).findFirst().orElse(null);
     }
 
     public static Dialog confirmBeginQuestDialogGet(Quest quest) {
@@ -89,7 +90,7 @@ public class PlayerQuestDialog {
 
     public static void offerQuests(Player player, List<Quest> quests, Consumer<Quest> onSelect) {
         player.showDialog(questOffersDialogGet(quests), ans -> {
-            Quest quest = questOffersDialogGetSelectedOffer(ans);
+            Quest quest = questOffersDialogGetSelectedOffer(quests, ans);
 
             if(quest != null) {
                 offerSingleQuest(player, quest, onSelect);

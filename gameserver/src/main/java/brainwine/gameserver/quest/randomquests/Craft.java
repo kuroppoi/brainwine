@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Craft extends RandomQuest {
     @JsonProperty("items")
@@ -48,9 +49,21 @@ public class Craft extends RandomQuest {
                 task.setQuantity(amount);
                 tasks.add(task);
             }
-            quest.setTasks(tasks);
 
+            quest.setTitle("Craft Items");
+            quest.setTasks(tasks);
             quest.setReward(RandomQuestReward.nextOrDefault(random, getReward()));
+
+            quest.setStory(new QuestStory()
+                    .setIntro("I ran out of well-thought quests so I am just tasking you to craft the following items: \n" +
+                            tasks.stream().map(QuestTask::getDescription).map(s -> "- " + s + "\n").collect(Collectors.joining()) +
+                            "Sounds good?"
+                    )
+                    .setAccept("Alright")
+                    .setBegin("OK then. Good luck!")
+                    .setIncomplete("You still haven't crafted all the items.")
+                    .setComplete("Good job! You are getting a reward your hard work.\nHope to see you again!")
+            );
 
             return quest;
         } catch (ConcretionFailureException e) {

@@ -111,6 +111,7 @@ public class Player extends Entity implements CommandExecutor {
     private Map<String, Object> appearance;
     private Map<String, QuestProgress> questProgresses = new HashMap<>();
     private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
+    private Map<String, Quest> androidQuests = new HashMap<>();
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
@@ -157,6 +158,7 @@ public class Player extends Entity implements CommandExecutor {
         this.appearance = config.getAppearance();
         this.questProgresses = config.getQuestProgresses();
         this.dailyQuest = config.getDailyQuest();
+        this.androidQuests = config.getAndroidQuests();
         health = getMaxHealth();
         inventory.setPlayer(this);
         statistics.setPlayer(this);
@@ -1146,6 +1148,10 @@ public class Player extends Entity implements CommandExecutor {
 
     public ValueWithExpiry<List<Quest>> getDailyQuest() {
         return dailyQuest;
+    }
+
+    public Map<String, Quest> getAndroidQuests() {
+        return androidQuests;
     }
 
     public void setDailyQuest(ValueWithExpiry<List<Quest>> dailyQuest) {

@@ -1,6 +1,9 @@
 package brainwine.gameserver.quest;
 
+import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.quest.randomquests.*;
@@ -32,6 +35,15 @@ public abstract class RandomQuest {
     @JsonProperty
     private RandomQuestReward reward = null;
 
+    @JsonProperty
+    private List<RandomQuestDomain> domain = Stream.of(
+            RandomQuestDomain.DAILY,
+            RandomQuestDomain.ANDROID_SURVIVAL,
+            RandomQuestDomain.ANDROID_COMBAT,
+            RandomQuestDomain.ANDROID_COOKING,
+            RandomQuestDomain.ANDROID_COLLECT
+    ).collect(Collectors.toList());
+
     /**Randomly generate a quest according to the specification found in the class instance.
      *
      * @param random random instance to generate random values with
@@ -54,5 +66,9 @@ public abstract class RandomQuest {
 
     public RandomQuestReward getReward() {
         return reward;
+    }
+
+    public List<RandomQuestDomain> getDomain() {
+        return domain;
     }
 }

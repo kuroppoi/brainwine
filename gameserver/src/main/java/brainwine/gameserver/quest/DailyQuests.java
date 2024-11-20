@@ -10,7 +10,7 @@ public class DailyQuests {
         ValueWithExpiry<List<Quest>> currentV = player.getDailyQuest();
 
         if(currentV == null || currentV.isExpired()) {
-            List<Quest> newQuests = RandomQuests.generateRandomPlayerQuests(player, RandomQuests.getConfiguration().dailyQuestCount);
+            List<Quest> newQuests = RandomQuests.generateRandomPlayerQuests(player, RandomQuestDomain.DAILY, RandomQuests.getConfiguration().dailyQuestCount);
 
             for(int i = 1; i <= newQuests.size(); i++) {
                 Quest newQuest = newQuests.get(i - 1);

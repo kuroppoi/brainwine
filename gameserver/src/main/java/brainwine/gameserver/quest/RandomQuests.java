@@ -7,9 +7,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import brainwine.gameserver.util.randomobject.ConcretionFailureException;
 import brainwine.gameserver.util.randomobject.ObjectMapperProvider;
-import brainwine.gameserver.util.randomobject.RandomInteger;
 import brainwine.shared.JsonHelper;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -77,18 +75,18 @@ public class RandomQuests {
         return tier;
     }
 
-    public static List<Quest> generateRandomPlayerQuests(Player player, int n) {
-        return generateRandomPlayerQuests(ThreadLocalRandom.current(), player, n);
+    public static List<Quest> generateRandomPlayerQuests(Player player, RandomQuestDomain domain, int n) {
+        return generateRandomPlayerQuests(ThreadLocalRandom.current(), player, domain, n);
     }
     
-    public static List<Quest> generateRandomPlayerQuests(Random random, Player player, int n) {
+    public static List<Quest> generateRandomPlayerQuests(Random random, Player player, RandomQuestDomain domain, int n) {
         if(configuration.randomQuests.isEmpty()) {
             return null;
         }
 
         int maxTier = getMaxTier(player);
         List<RandomQuest> candidates = configuration.randomQuests.stream()
-                .filter(q -> q.getTier() <= maxTier)
+                .filter(q -> q.getTier() <= maxTier && q.getDomain().contains(domain))
                 .collect(Collectors.toList());
 
         WeightedMap<RandomQuest> wm = new WeightedMap<>(

@@ -89,6 +89,11 @@ public class Quests {
     }
 
     public static Quest get(Player player, String questId) {
+        if(player.getAndroidQuests() != null) {
+            Quest item = player.getAndroidQuests().get(questId);
+            if(item != null) return item;
+        }
+
         if(player.getDailyQuest() != null
                 && player.getDailyQuest().getValue() != null) {
             for(Quest quest : player.getDailyQuest().getValue()) {

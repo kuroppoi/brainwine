@@ -1,5 +1,7 @@
 package brainwine.gameserver.entity.npc.job.jobs;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +15,8 @@ import brainwine.gameserver.quest.*;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.Pair;
+
+import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
 
 public class Quester extends DialoguerJob {
     @Override
@@ -76,11 +80,36 @@ public class Quester extends DialoguerJob {
                 QuestProgress currentProgress = Quests.getIncompleteQuestProgressInCategory(player, category);
 
                 if (currentProgress == null) {
-                    List<Quest> quests = Quests.getRandomQuestsFromCategory(me, category, player.getQuestProgresses().keySet(), 5);
+                    long ongoingQuestCount = player.getQuestProgresses().values().stream().filter(p -> !p.isComplete()).count();
+
+                    if(ongoingQuestCount >= 20) {
+                        player.showDialog(DialogHelper.messageDialog("Too Many Quests", "Sorry, but you already have 20 or more ongoing quests. Either finish or cancel some before I can offer you more. You may use the /quests command to cancel incomplete quests."));
+                    }
+                    // Offer a set of quests that the player hasn't had before
+                    final int count = 5;
+                    List<Quest> quests = Quests.getRandomQuestsFromCategory(me, category, player.getQuestProgresses().keySet(), count);
+
+                    if(quests.size() < count) {
+                        String categoryPrefix = Quests.titleToPrefix.get(category);
+                        List<Quest> randomQuests = RandomQuests.generateRandomPlayerQuests(player, RandomQuestDomain.fromCategoryTitle(category), count - quests.size());
+                        for(Quest quest : randomQuests) {
+                            String id = Integer.toString((int) (0.1000_000 + (int)Math.floor(Math.random() * 0xEFFF_FFF)), 16);
+                            quest.setId(categoryPrefix + "_random_" + id);
+                            quest.setGroup(category);
+                            quest.setReward(new QuestReward().setXp(defaultIfNull(quest.getReward().getXp(), 100)));
+                            if(quest.getTasks() == null) quest.setTasks(new ArrayList<>());
+                            quest.getTasks().add(new QuestTask()
+                                    .setDescription("Return to the android")
+                                    .setEvents(Arrays.asList(Arrays.asList("return")))
+                            );
+                        }
+                        quests.addAll(randomQuests);
+                    }
 
                     PlayerQuestDialog.offerQuests(player, quests, quest -> beginQuest(me, player, quest));
                     return true;
                 } else {
+                    // Follow up on the previous quest
                     return dialogueCheckProgress(me, player, currentProgress.getQuestId());
                 }
             }
@@ -109,11 +138,11 @@ public class Quester extends DialoguerJob {
     }
 
     public boolean dialogueCheckProgress(Npc me, Player player, String questId) {
-        Quest quest = Quests.get(questId);
+        Quest quest = Quests.get(player, questId);
 
         PlayerQuests.handleQuestFinalReturn(player, quest);
 
-        if (PlayerQuests.canFinishQuest(player, quest)) {
+        if(PlayerQuests.canFinishQuest(player, quest)) {
             player.showDialog(DialogHelper.messageDialog(quest.getStory().getComplete()));
 
             PlayerQuests.finishQuest(player, quest);

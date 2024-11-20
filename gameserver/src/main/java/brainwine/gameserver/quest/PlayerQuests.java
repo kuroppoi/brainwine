@@ -41,6 +41,10 @@ public class PlayerQuests {
         
         player.getQuestProgresses().put(quest.getId(), progress);
 
+        if(quest.getId().contains("random")) {
+            player.getAndroidQuests().put(quest.getId(), quest);
+        }
+
         player.notify("Quest has started! Use the /quests command to view your progress at any time.");
         sendPlayerQuestMessage(player, progress);
         performAction(player, quest, QuestAction.Type.BEGIN);
@@ -116,6 +120,12 @@ public class PlayerQuests {
         progress.markAsComplete();
 
         sendPlayerQuestMessage(player, progress);
+
+        // get rid of the quest if it was randomly generated
+        if(quest.getId().contains("random")) {
+            player.getAndroidQuests().remove(quest.getId());
+            player.getQuestProgresses().remove(quest.getId());
+        }
 
     }
 

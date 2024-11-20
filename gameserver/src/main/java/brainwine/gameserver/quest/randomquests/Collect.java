@@ -75,8 +75,20 @@ public class Collect extends RandomQuest {
             for(CollectItem c : collectItemList) {
                 tasks.add(nextQuestTask(random, c));
             }
+            quest.setTitle("Collect Items");
             quest.setTasks(tasks);
             quest.setReward(RandomQuestReward.nextOrDefault(random, getReward()));
+
+            quest.setStory(new QuestStory()
+                    .setIntro("I ran out of well-thought quests so I am just tasking you to collect the following items: \n" +
+                            tasks.stream().map(QuestTask::getDescription).map(s -> "- " + s + "\n").collect(Collectors.joining()) +
+                            "Sounds good?"
+                    )
+                    .setAccept("Sure")
+                    .setBegin("OK then. Good luck!")
+                    .setIncomplete("You still haven't collected all the items.")
+                    .setComplete("Good job! You are getting a reward your hard work.\nHope to see you again!")
+            );
 
             return quest;
         } catch (ConcretionFailureException e) {

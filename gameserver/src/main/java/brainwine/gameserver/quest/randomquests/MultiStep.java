@@ -1,10 +1,7 @@
 package brainwine.gameserver.quest.randomquests;
 
 import brainwine.gameserver.player.Player;
-import brainwine.gameserver.quest.Quest;
-import brainwine.gameserver.quest.QuestTask;
-import brainwine.gameserver.quest.RandomQuest;
-import brainwine.gameserver.quest.RandomQuestReward;
+import brainwine.gameserver.quest.*;
 import brainwine.gameserver.util.randomobject.ConcretionFailureException;
 import brainwine.gameserver.util.randomobject.ConstantList;
 import brainwine.gameserver.util.randomobject.RandomList;
@@ -23,7 +20,11 @@ public class MultiStep extends RandomQuest {
     @RandomListItemType(RandomQuest.class)
     private RandomList<RandomQuest> steps = new ConstantList<>();
     @JsonProperty
-    private String description;
+    private String title = null;
+    @JsonProperty
+    private String description = null;
+    @JsonProperty
+    private QuestStory story = null;
 
     @Override
     public Quest nextQuest(Random random, Player player) {
@@ -47,15 +48,19 @@ public class MultiStep extends RandomQuest {
                 result.setDescription(defaultIfNull(description, toBeCopied.getDescription()));
 
                 return new Quest()
+                        .setTitle(defaultIfNull(title, toBeCopied.getTitle()))
                         .setDescription(defaultIfNull(description, toBeCopied.getDescription()))
                         .setTasks(tasks)
-                        .setReward(RandomQuestReward.nextOrDefault(random, getReward(), altRandomQuestReward));
+                        .setReward(RandomQuestReward.nextOrDefault(random, getReward(), altRandomQuestReward))
+                        .setStory(defaultIfNull(story, toBeCopied.getStory()));
             }
 
             return new Quest()
+                    .setTitle(title)
                     .setDescription(description)
                     .setTasks(tasks)
-                    .setReward(RandomQuestReward.nextOrDefault(random, getReward()));
+                    .setReward(RandomQuestReward.nextOrDefault(random, getReward()))
+                    .setStory(story);
 
         } catch(ConcretionFailureException e) {
             throw new IllegalStateException("Concretion failure!");

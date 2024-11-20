@@ -43,4 +43,29 @@ public class QuestStory {
             return getBeginMobile();
         }
     }
+
+    public QuestStory setIntro(String intro) {
+        this.intro = intro;
+        return this;
+    }
+
+    public QuestStory setAccept(String accept) {
+        this.accept = accept;
+        return this;
+    }
+
+    public QuestStory setBegin(String begin) {
+        this.begin = begin;
+        return this;
+    }
+
+    public QuestStory setIncomplete(String incomplete) {
+        this.incomplete = incomplete;
+        return this;
+    }
+
+    public QuestStory setComplete(String complete) {
+        this.complete = complete;
+        return this;
+    }
 }

@@ -40,6 +40,7 @@ public class PlayerConfigFile {
     private Map<String, Object> appearance = new HashMap<>();
     private Map<String, QuestProgress> questProgresses = new HashMap<>();
     private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
+    private Map<String, Quest> androidQuests = new HashMap<>();
     
     public PlayerConfigFile(Player player) {
         this.name = player.getName();
@@ -65,6 +66,7 @@ public class PlayerConfigFile {
         this.appearance = player.getAppearance();
         this.questProgresses = player.getQuestProgresses();
         this.dailyQuest = player.getDailyQuest();
+        this.androidQuests = player.getAndroidQuests();
     }
     
     @JsonCreator
@@ -174,5 +176,9 @@ public class PlayerConfigFile {
 
     public ValueWithExpiry<List<Quest>> getDailyQuest() {
         return dailyQuest;
+    }
+
+    public Map<String, Quest> getAndroidQuests() {
+        return androidQuests;
     }
 }

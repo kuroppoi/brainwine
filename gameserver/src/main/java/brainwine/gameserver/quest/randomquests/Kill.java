@@ -110,11 +110,14 @@ public class Kill extends RandomQuest {
 
             List<QuestTask> tasks = new ArrayList<>();
             List<String> actions = this.actions.next(random);
+            String titleActionMessage = String.join(" or ", actions.stream().map(WordUtils::capitalize).collect(Collectors.toList()));
+            String title = titleActionMessage;
 
             if(categories != null) {
                 List<String> values = categories.next(random);
                 int quantity = defaultIfNull(categoryQuantity, this.quantity).next(random);
                 tasks.add(makeTaskForEntityCategories(actions, values, quantity));
+                title = titleActionMessage + " " + joinWithOr(values);
             }
 
             if(entityIds != null) {
@@ -136,6 +139,7 @@ public class Kill extends RandomQuest {
                 }
 
                 tasks.add(makeTaskForEntityTypes(actions, names, codes, quantity));
+                title = titleActionMessage + " " + joinWithOr(names);
             }
 
             if(codes != null) {
@@ -149,10 +153,23 @@ public class Kill extends RandomQuest {
                 }
 
                 tasks.add(makeTaskForEntityTypes(actions, names, codes, quantity));
+                title = titleActionMessage + " " + joinWithOr(names);
             }
 
+            quest.setTitle(title);
             quest.setTasks(tasks);
             quest.setReward(RandomQuestReward.nextOrDefault(random, getReward()));
+
+            quest.setStory(new QuestStory()
+                    .setIntro("You gotta be killing: \n" +
+                            tasks.stream().map(QuestTask::getDescription).map(s -> "- " + s + "\n").collect(Collectors.joining()) +
+                            "Sounds good?"
+                    )
+                    .setAccept("Positive")
+                    .setBegin("OK then. Good luck!")
+                    .setIncomplete("You still haven't killed all the necessary entities.")
+                    .setComplete("Good job! You are getting a reward your hard work.\nHope to see you again!")
+            );
 
             return quest;
         } catch (ConcretionFailureException e) {
