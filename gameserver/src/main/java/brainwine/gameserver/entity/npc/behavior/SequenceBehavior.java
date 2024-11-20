@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import brainwine.gameserver.player.Player;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -63,4 +64,12 @@ public class SequenceBehavior extends CompositeBehavior {
         
         return true;
     }
+
+    @Override
+    public void react(BehaviorMessage message, Player player, Object... data) {
+        for(Behavior child : children) {
+            child.react(message, player, data);
+        }
+    }
+
 }

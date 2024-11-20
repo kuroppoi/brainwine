@@ -1,8 +1,10 @@
 package brainwine.gameserver.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -85,6 +87,22 @@ public class WeightedMap<T> {
         }
         
         return def;
+    }
+
+    public List<T> nextN(Random random, int n) {
+        if(entries.isEmpty()) return null;
+
+        List<T> choices = new ArrayList<>(n);
+        for(int i = 0; i < n; i++) {
+            T choice = next(random);
+            choices.add(choice);
+            double oldWeight = entries.get(choice);
+            double newWeight = oldWeight * oldWeight / totalWeight;
+            totalWeight += newWeight - oldWeight;
+            entries.put(choice, newWeight);
+        }
+
+        return choices;
     }
     
     @JsonValue
