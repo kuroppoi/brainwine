@@ -43,12 +43,6 @@ public class DialogInteraction implements ItemInteraction {
         }
         
         Player player = (Player)entity;
-
-        // Do nothing if the player doesn't own the block
-        if(metaBlock.getOwner() != player) {
-            return;
-        }
-
         Map<String, Object> configMap = (Map<String, Object>)config;
         String target = MapHelper.getString(configMap, "target", "none");
         
