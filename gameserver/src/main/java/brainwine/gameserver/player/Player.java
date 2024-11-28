@@ -122,7 +122,7 @@ public class Player extends Entity implements CommandExecutor {
     private boolean customSpawn;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
-    private long lastLandmarkVoteAt = 0;
+    private long lastLandmarkVoteAt;
     private Zone nextZone;
     private Connection connection;
     

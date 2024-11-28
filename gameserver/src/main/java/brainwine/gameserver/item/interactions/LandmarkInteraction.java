@@ -41,7 +41,7 @@ public class LandmarkInteraction implements ItemInteraction {
         }
 
         Map<String, Object> v = MapHelper.getMap(metaBlock.getMetadata(), "v");
-        if(v != null && v.containsKey(player.getName())) {
+        if(v != null && v.containsKey(player.getDocumentId())) {
             player.notify("You have already upvoted this landmark.");
             return;
         }
@@ -59,7 +59,7 @@ public class LandmarkInteraction implements ItemInteraction {
                 metaBlock.setProperty("vc", current + 1);
 
                 Map<String, Object> currentVotes = defaultIfNull(MapHelper.getMap(metaBlock.getMetadata(), "v"), new HashMap<>());
-                currentVotes.put(player.getName(), now);
+                currentVotes.put(player.getDocumentId(), now);
                 metaBlock.getMetadata().put("v", currentVotes);
                 zone.updateBlockMod(metaBlock.getX(), metaBlock.getY(), Layer.FRONT, 1);
                 zone.sendBlockMetaUpdate(metaBlock);
