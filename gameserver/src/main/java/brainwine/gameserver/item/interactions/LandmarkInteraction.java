@@ -14,8 +14,6 @@ import brainwine.gameserver.zone.Zone;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.apache.commons.lang3.ObjectUtils.defaultIfNull;
-
 public class LandmarkInteraction implements ItemInteraction {
     private static final int VOTING_INTERVAL = 1000;
     @Override
@@ -63,7 +61,7 @@ public class LandmarkInteraction implements ItemInteraction {
                 int current = metaBlock.getIntProperty("vc"); // will return 0 if null
                 metaBlock.setProperty("vc", current + 1);
 
-                Map<String, Object> currentVotes = defaultIfNull(MapHelper.getMap(metaBlock.getMetadata(), "v"), new HashMap<>());
+                Map<String, Object> currentVotes = MapHelper.getMap(metaBlock.getMetadata(), "v", new HashMap<>());
                 currentVotes.put(player.getDocumentId(), now);
                 metaBlock.getMetadata().put("v", currentVotes);
                 zone.updateBlockMod(metaBlock.getX(), metaBlock.getY(), Layer.FRONT, 1);
