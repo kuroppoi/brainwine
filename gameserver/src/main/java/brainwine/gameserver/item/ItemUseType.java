@@ -11,6 +11,7 @@ import brainwine.gameserver.item.interactions.DialogInteraction;
 import brainwine.gameserver.item.interactions.ExpiatorInteraction;
 import brainwine.gameserver.item.interactions.GeckInteraction;
 import brainwine.gameserver.item.interactions.ItemInteraction;
+import brainwine.gameserver.item.interactions.LandmarkInteraction;
 import brainwine.gameserver.item.interactions.NoteInteraction;
 import brainwine.gameserver.item.interactions.RecyclerInteraction;
 import brainwine.gameserver.item.interactions.SpawnInteraction;
@@ -38,6 +39,7 @@ public enum ItemUseType {
     CHANGE(new ChangeInteraction()),
     FIELDABLE,
     FLY,
+    LANDMARK(new LandmarkInteraction()),
     MOVE,
     MULTI,
     NOTE(new NoteInteraction()),

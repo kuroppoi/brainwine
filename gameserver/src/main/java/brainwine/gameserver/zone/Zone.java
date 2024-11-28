@@ -1036,7 +1036,7 @@ public class Zone {
     }
     
     // TODO better block update methods
-    protected void updateBlockMod(int x, int y, Layer layer, int mod) {
+    public void updateBlockMod(int x, int y, Layer layer, int mod) {
         if(!areCoordinatesInBounds(x, y)) {
             return;
         }

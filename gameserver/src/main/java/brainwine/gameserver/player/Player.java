@@ -122,6 +122,7 @@ public class Player extends Entity implements CommandExecutor {
     private boolean customSpawn;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
+    private long lastLandmarkVoteAt = 0;
     private Zone nextZone;
     private Connection connection;
     
@@ -1321,7 +1322,15 @@ public class Player extends Entity implements CommandExecutor {
         trackedEntities.clear();
         trackedEntities.addAll(entitiesInRange);
     }
-    
+
+    public long getLastLandmarkVoteAt() {
+        return lastLandmarkVoteAt;
+    }
+
+    public void setLastLandmarkVoteAt(long lastLandmarkVoteAt) {
+        this.lastLandmarkVoteAt = lastLandmarkVoteAt;
+    }
+
     public boolean isTrackingEntity(Entity entity) {
         return trackedEntities.contains(entity);
     }
