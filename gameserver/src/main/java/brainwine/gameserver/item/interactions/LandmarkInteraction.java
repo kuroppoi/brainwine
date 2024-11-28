@@ -66,6 +66,7 @@ public class LandmarkInteraction implements ItemInteraction {
 
                 player.setLastLandmarkVoteAt(now);
                 player.addExperience(10);
+                player.getStatistics().trackLandmarksUpvoted();
 
                 player.showDialog(DialogHelper.messageDialog("Vote Received", "Thanks for your upvote!"));
             }

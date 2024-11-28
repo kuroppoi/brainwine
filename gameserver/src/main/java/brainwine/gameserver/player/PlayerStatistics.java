@@ -24,6 +24,7 @@ import brainwine.gameserver.achievement.SidekickAchievement;
 import brainwine.gameserver.achievement.SpawnerStoppageAchievement;
 import brainwine.gameserver.achievement.TrappingAchievement;
 import brainwine.gameserver.achievement.UndertakerAchievement;
+import brainwine.gameserver.achievement.VotingAchievement;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.item.Item;
 
@@ -47,6 +48,7 @@ public class PlayerStatistics {
     private int undertakings;
     private int deliverances;
     private int deaths;
+    private int landmarksUpvoted;
     
     @JsonIgnore
     private Player player;
@@ -390,6 +392,15 @@ public class PlayerStatistics {
         deliverances += amount;
         player.addExperience(25 * amount);
         player.updateAchievementProgress(DeliveranceAchievement.class);
+    }
+
+    public void trackLandmarksUpvoted() {
+        landmarksUpvoted++;
+        player.updateAchievementProgress(VotingAchievement.class);
+    }
+
+    public int getLandmarksUpvoted() {
+        return landmarksUpvoted;
     }
     
     public void setDeliverances(int deliverances) {
