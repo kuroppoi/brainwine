@@ -68,6 +68,11 @@ public class LandmarkInteraction implements ItemInteraction {
                 player.addExperience(10);
                 player.getStatistics().trackLandmarksUpvoted();
 
+                Player owner = metaBlock.getOwner();
+                if(owner != null) {
+                    owner.getStatistics().trackLandmarkVotesReceived();
+                }
+
                 player.showDialog(DialogHelper.messageDialog("Vote Received", "Thanks for your upvote!"));
             }
         });
