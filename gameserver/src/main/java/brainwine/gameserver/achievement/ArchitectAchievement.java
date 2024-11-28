@@ -1,11 +1,11 @@
 package brainwine.gameserver.achievement;
 
 import brainwine.gameserver.player.Player;
+import com.fasterxml.jackson.annotation.JacksonInject;
 
 public class ArchitectAchievement extends Achievement {
-    public ArchitectAchievement(String title) {
+    public ArchitectAchievement(@JacksonInject("title") String title) {
         super(title);
-        System.out.println("CONSTRUCTED");
     }
 
     @Override
