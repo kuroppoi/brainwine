@@ -22,6 +22,11 @@ public class LandmarkInteraction implements ItemInteraction {
     public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock, Object config, Object[] data) {
         if(!entity.isPlayer()) return;
 
+        // Do nothing if data is invalid
+        if(data != null) {
+            return;
+        }
+
         Player player = (Player)entity;
 
         if(player.getLevel() < 10) {
