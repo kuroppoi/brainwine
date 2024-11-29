@@ -75,7 +75,7 @@ public class QuestEvents {
     }
 
     public static  void handleCollectItem(Player player, Item item, int quantity) {
-        handleEventWithQuantity(player, quantity, "collect_item", "id", item.getId(), quantity);
+        handleEventWithQuantity(player, quantity, "collect_item", "id", item.getId());
     }
 
     public static void handleCraft(Player player, Item item, int quantity) {
