@@ -38,6 +38,7 @@ import brainwine.gameserver.player.ChatType;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.prefab.Prefab;
+import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
@@ -80,6 +81,9 @@ public class Zone {
     private float time = (float)Math.random(); // TODO temporary
     private float temperature;
     private float acidity;
+    private boolean isPrivate;
+    private boolean isProtected;
+    private String owner;
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
     private final GrowthManager growthManager;
@@ -87,9 +91,10 @@ public class Zone {
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
     private final MachineManager machineManager = new MachineManager(this);
+    private final Set<Integer> pendingSunlight = new HashSet<>();
+    private final List<String> members = new ArrayList<>();
     private final List<BlockChangeData> blockChanges = new ArrayList<>();
     private final List<Timer<Integer>> blockTimers = new ArrayList<>();
-    private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
@@ -113,7 +118,11 @@ public class Zone {
         steamManager.setData(data.getSteamData());
         machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
+        owner = config.getOwner();
+        members.addAll(config.getMembers());
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
+        isPrivate = config.isPrivate();
+        isProtected = config.isProtected();
         creationDate = config.getCreationDate();
     }
     
@@ -277,6 +286,7 @@ public class Zone {
      */
     public void sendChatMessage(Player sender, String text, ChatType type) {
         sendMessage(new ChatMessage(sender.getId(), text, type));
+        QuestEvents.handleChat(sender);
         GameServer.getInstance().notify(String.format("%s: %s", sender.getName(), text), NotificationType.CHAT);
     }
     
@@ -489,6 +499,10 @@ public class Zone {
                 double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
                 float damage = (float)(baseDamage - distance);
                 entity.attack(cause, item, damage, damageType);
+
+                if(entity.isDead() && cause.isPlayer()) {
+                    QuestEvents.handleExplode((Player) cause, entity);
+                }
             }
         }
     }
@@ -594,6 +608,12 @@ public class Zone {
     }
     
     public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+        // Check protection at zone level
+        if(player != null && isProtected(player)) {
+            return true;
+        }
+        
+        // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
             int fX = fieldBlock.getX();
@@ -1643,6 +1663,86 @@ public class Zone {
         return acidity;
     }
     
+    public void setPrivate(boolean value) {
+        this.isPrivate = value;
+    }
+    
+    public boolean canJoin(Player player) {
+        return isPublic() || isOwner(player) || isMember(player);
+    }
+    
+    public boolean isPublic() {
+        return !isPrivate();
+    }
+    
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+    
+    public void setProtected(boolean value) {
+        this.isProtected = value;
+    }
+    
+    public boolean isProtected(Player player) {
+        return isProtected && !isOwner(player) && !isMember(player);
+    }
+    
+    public boolean isProtected() {
+        return isProtected;
+    }
+    
+    public boolean isOwner(Player player) {
+        return isOwned() && player.getDocumentId().equals(owner);
+    }
+    
+    public boolean isOwned() {
+        return owner != null;
+    }
+    
+    public void setOwner(Player player) {
+        this.owner = player.getDocumentId();
+        
+        // Update spawn teleporter ownership
+        for(MetaBlock block : getMetaBlocksWithItem("mechanical/zone-teleporter")) {
+            block.setOwner(owner);
+            sendBlockMetaUpdate(block);
+        }
+    }
+    
+    public String getOwner() {
+        return owner;
+    }
+    
+    public void addMember(Player player) {
+        members.add(player.getDocumentId());
+        
+        // Force player to reconnect if they're currently in this zone
+        if(player.getZone() == this) {
+            player.kick("Member status changed.", true);
+        }
+    }
+    
+    public void removeMember(Player player) {
+        members.remove(player.getDocumentId());
+        
+        // Kick the player from the world if they are currently in it or force them to reconnect if the world is public
+        if(player.getZone() == this) {
+            if(isPublic()) {
+                player.kick("Member status changed.", true);
+            } else {
+                player.changeZone(null);
+            }
+        }
+    }
+    
+    public boolean isMember(Player player) {
+        return members.contains(player.getDocumentId());
+    }
+    
+    public List<String> getMembers() {
+        return Collections.unmodifiableList(members);
+    }
+    
     public OffsetDateTime getCreationDate() {
         return creationDate;
     }
@@ -1680,6 +1780,11 @@ public class Zone {
         config.put("surface", surface);
         config.put("chunks_explored", chunksExplored);
         config.put("chunks_explored_count", getChunksExploredCount());
+        config.put("private", isPrivate);
+        config.put("protected", isProtected(player));
+        config.put("protected_player", isProtected(player));
+        config.put("owner", isOwner(player));
+        config.put("member", isMember(player));
         Map<String, Object> depth = new HashMap<>();
         List<Object> earth = new ArrayList<>();
         

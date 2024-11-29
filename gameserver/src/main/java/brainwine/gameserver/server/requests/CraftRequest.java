@@ -8,6 +8,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.player.Inventory;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.Skill;
+import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.RequestInfo;
@@ -100,5 +101,6 @@ public class CraftRequest extends PlayerRequest {
         int totalQuantity = item.getCraftingQuantity() * quantity;
         inventory.addItem(item, totalQuantity, item.requiresWorkshop());
         player.getStatistics().trackItemCrafted(item, totalQuantity);
+        QuestEvents.handleCraft(player, item, totalQuantity);
     }
 }

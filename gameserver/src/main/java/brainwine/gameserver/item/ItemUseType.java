@@ -40,6 +40,7 @@ public enum ItemUseType {
     FIELDABLE,
     FLY,
     LANDMARK(new LandmarkInteraction()),
+    MEMORY,
     MOVE,
     MULTI,
     NOTE(new NoteInteraction()),
