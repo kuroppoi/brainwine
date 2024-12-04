@@ -49,7 +49,11 @@ public class Craft extends RandomQuest {
                 }
 
                 QuestTask task = new QuestTask();
-                task.setDescription("Craft " + amount + " of " + joinWithOr(itemNames));
+                if(taskDescription == null) {
+                    task.setDescription("Craft " + amount + " of " + joinWithOr(itemNames));
+                } else {
+                    task.setDescription(taskDescription.replaceAll("\\{QUANTITY\\}", Integer.toString(amount)));
+                }
                 task.setEvents(events);
                 task.setQuantity(amount);
 

@@ -47,7 +47,7 @@ public class Collect extends RandomQuest {
                 return itemTitle;
             }).collect(Collectors.joining(" or "));
         } else {
-            myTaskDescription = taskDescription;
+            myTaskDescription = taskDescription.replaceAll("\\{QUANTITY\\}", Integer.toString(quantity));
         }
 
         return new QuestTask()
