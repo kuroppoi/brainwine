@@ -96,7 +96,13 @@ public class Quester extends DialoguerJob {
                             String id = Integer.toString((int) (0.1000_000 + (int)Math.floor(Math.random() * 0xEFFF_FFF)), 16);
                             quest.setId(categoryPrefix + "_random_" + id);
                             quest.setGroup(category);
-                            quest.setReward(new QuestReward().setXp(defaultIfNull(quest.getReward().getXp(), 100)));
+
+                            if(quest.getReward().getXp() == 0) {
+                                quest.setReward(new QuestReward().setXp(Math.max(20, 5 * quest.getReward().getCrowns())));
+                            } else {
+                                quest.setReward(new QuestReward().setXp(Math.max(20, quest.getReward().getXp())));
+                            }
+
                             if(quest.getTasks() == null) quest.setTasks(new ArrayList<>());
                             quest.getTasks().add(new QuestTask()
                                     .setDescription("Return to the android")

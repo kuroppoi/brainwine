@@ -1,9 +1,11 @@
 package brainwine.gameserver.quest;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.player.Player;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class QuestStory {
     private String intro;
     private String accept;

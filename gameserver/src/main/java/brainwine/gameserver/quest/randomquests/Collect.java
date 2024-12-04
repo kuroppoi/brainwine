@@ -10,9 +10,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Collect extends RandomQuest {
-    @JsonProperty("items")
+    @JsonProperty("tasks")
     @RandomListItemType(CollectItem.class)
-    private RandomList<CollectItem> items;
+    private RandomList<CollectItem> tasks;
     @JsonProperty("task_description")
     private String taskDescription = null;
 
@@ -23,17 +23,9 @@ public class Collect extends RandomQuest {
         RandomList<String> items = new ConstantList<>();
         @JsonProperty("count")
         RandomInteger count = new RandomInteger(1);
-
-        @Override
-        public String toString() {
-            return "CollectItem{" +
-                    "items=" + items +
-                    ", count=" + count +
-                    '}';
-        }
     }
 
-    public QuestTask nextQuestTask(Random random, CollectItem collectItem) throws ConcretionFailureException {
+    private QuestTask nextQuestTask(Random random, CollectItem collectItem) throws ConcretionFailureException {
         List<List<Object>> events = new ArrayList<>();
 
         for(String oneItem : collectItem.items.next(random)) {
@@ -55,7 +47,7 @@ public class Collect extends RandomQuest {
                 return itemTitle;
             }).collect(Collectors.joining(" or "));
         } else {
-            myTaskDescription = taskDescription;
+            myTaskDescription = taskDescription.replaceAll("\\{QUANTITY\\}", Integer.toString(quantity));
         }
 
         return new QuestTask()
@@ -70,7 +62,7 @@ public class Collect extends RandomQuest {
             Quest quest = new Quest();
 
             quest.setDescription(RandomQuests.getString(random, "collect_description"));
-            List<CollectItem> collectItemList = items.next(random);
+            List<CollectItem> collectItemList = tasks.next(random);
             List<QuestTask> tasks = new ArrayList<>(collectItemList.size());
             for(CollectItem c : collectItemList) {
                 tasks.add(nextQuestTask(random, c));
@@ -94,14 +86,5 @@ public class Collect extends RandomQuest {
         } catch (ConcretionFailureException e) {
             throw new IllegalStateException("Concretion failure!");
         }
-    }
-
-    @Override
-    public String toString() {
-        return "Collect{" +
-                "items=" + items +
-                ", reward=" + getReward() +
-                ", taskDescription='" + taskDescription + '\'' +
-                '}';
     }
 }
