@@ -27,6 +27,7 @@ import brainwine.gameserver.item.interactions.TransmitInteraction;
 public enum ItemUseType {
     
     AFTERBURNER,
+    BREATH,
     BURST(new BurstInteraction()),
     COMPOSTER(new ComposterInteraction()),
     CONTAINER(new ContainerInteraction()),

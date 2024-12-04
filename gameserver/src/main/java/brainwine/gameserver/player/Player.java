@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 import brainwine.gameserver.quest.DailyQuests;
 import brainwine.gameserver.quest.Quest;
 import brainwine.gameserver.util.ValueWithExpiry;
+import brainwine.gameserver.zone.Block;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
@@ -34,6 +35,7 @@ import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityAttack;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
@@ -121,6 +123,7 @@ public class Player extends Entity implements CommandExecutor {
     private TradeSession tradeSession;
     private Placement lastPlacement;
     private Item heldItem = Item.AIR;
+    private double breath = 1.0f;
     private int spawnX;
     private int spawnY;
     private int teleportX;
@@ -129,6 +132,7 @@ public class Player extends Entity implements CommandExecutor {
     private boolean godMode;
     private boolean customSpawn;
     private boolean changingZones;
+    private long lastBreathMessage;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private long lastLandmarkVoteAt;
@@ -206,7 +210,11 @@ public class Player extends Entity implements CommandExecutor {
         if(!isDead() && now >= lastDamagedAt + REGEN_NO_DAMAGE_TIME) {
             heal(BASE_REGEN_AMOUNT * deltaTime);
         }
-        
+
+        if(!isDead()) {
+            applyBreath(deltaTime);
+        }
+
         // Try to timeout trade
         if(isTrading()) {
             tradeSession.timeout();
@@ -267,7 +275,38 @@ public class Player extends Entity implements CommandExecutor {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
     }
-    
+
+    public boolean isSubmerged() {
+        Block headBlock = getZone().getBlock(getBlockX(), getBlockY() - 1);
+
+        if(headBlock == null) return false;
+
+        Item liquidItem = headBlock.getLiquidItem();
+
+        return !liquidItem.isAir() && headBlock.getLiquidMod() > 2;
+    }
+
+    public void applyBreath(float deltaTime) {
+        Item breathItem = getInventory().findAccessoryWithUse(ItemUseType.BREATH);
+        if(!breathItem.isAir()) {
+            breath = 1.0;
+        } else {
+            if(isSubmerged()) {
+                breath -= deltaTime / 15.0;
+            } else {
+                breath += deltaTime / 5.0;
+            }
+            breath = MathUtils.clamp(breath, 0.0, 1.0);
+
+            long currentTime = System.currentTimeMillis();
+            if(lastBreathMessage + 1000 < currentTime) {
+                sendMessage(new StatMessage("breath", breath));
+                if(breath < 0.001) attack(null, null, 0.5f, DamageType.SUFFOCATION);
+                lastBreathMessage = currentTime;
+            }
+        }
+    }
+
     @Override
     public float getAttackMultiplier(EntityAttack attack) {
         return isGodMode() ? 9999.0F : 1.0F;
@@ -1161,7 +1200,7 @@ public class Player extends Entity implements CommandExecutor {
     public void setDailyQuest(ValueWithExpiry<List<Quest>> dailyQuest) {
         this.dailyQuest = dailyQuest;
     }
-    
+
     public void setSkillLevel(Skill skill, int level) {
         skills.put(skill, level);
         sendMessage(new SkillMessage(skill, level));

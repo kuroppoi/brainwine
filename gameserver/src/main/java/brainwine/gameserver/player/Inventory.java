@@ -149,15 +149,19 @@ public class Inventory {
     public boolean isEmpty() {
         return items.isEmpty();
     }
-    
-    public Item findJetpack() {
+
+    public Item findAccessoryWithUse(ItemUseType use) {
         for(Item item : accessories.getItems()) {
-            if(item.hasUse(ItemUseType.FLY)) {
+            if(item.hasUse(use)) {
                 return item;
             }
         }
-        
+
         return Item.AIR;
+    }
+    
+    public Item findJetpack() {
+        return findAccessoryWithUse(ItemUseType.FLY);
     }
     
     public ItemContainer getHotbar() {

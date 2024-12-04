@@ -39,7 +39,7 @@ public class PortalService {
         logger.info(SERVER_MARKER, "Starting PortalService @ port {} ...", port);
         portal = Javalin.create(config -> config.jsonMapper(new JavalinJackson(JsonHelper.MAPPER)))
             .exception(Exception.class, this::handleException)
-            .get("/v1/map", this::handleMapRequest)
+            .get("/v1/map/{zone}", this::handleMapRequest)
             .get("/v1/worlds", this::handleZoneSearch)
             .start(port);
     }
@@ -63,15 +63,8 @@ public class PortalService {
             error(ctx, "A valid api token is required for this request.");
             return;
         }
-        
-        String nameOrId = ctx.queryParam("zone");
-        
-        if(nameOrId == null) {
-            error(ctx, "Zone not specified.");
-            return;
-        }
-        
-        ZoneInfo zone = dataFetcher.getZoneInfo(nameOrId);
+                
+        ZoneInfo zone = dataFetcher.getZoneInfo(ctx.pathParam("zone"));
         
         if(zone == null) {
             error(ctx, "Zone not found.");
