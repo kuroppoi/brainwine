@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.zone.Block;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
@@ -31,6 +32,7 @@ import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityAttack;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
+import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
@@ -113,6 +115,7 @@ public class Player extends Entity implements CommandExecutor {
     private TradeSession tradeSession;
     private Placement lastPlacement;
     private Item heldItem = Item.AIR;
+    private double breath = 1.0f;
     private int spawnX;
     private int spawnY;
     private int teleportX;
@@ -120,6 +123,7 @@ public class Player extends Entity implements CommandExecutor {
     private boolean stealth;
     private boolean godMode;
     private boolean customSpawn;
+    private long lastBreathMessage;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private long lastLandmarkVoteAt;
@@ -194,7 +198,11 @@ public class Player extends Entity implements CommandExecutor {
         if(!isDead() && now >= lastDamagedAt + REGEN_NO_DAMAGE_TIME) {
             heal(BASE_REGEN_AMOUNT * deltaTime);
         }
-        
+
+        if(!isDead()) {
+            applyBreath(deltaTime);
+        }
+
         // Try to timeout trade
         if(isTrading()) {
             tradeSession.timeout();
@@ -252,6 +260,37 @@ public class Player extends Entity implements CommandExecutor {
     public void setHealth(float health) {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
+    }
+
+    public boolean isSubmerged() {
+        Block headBlock = getZone().getBlock(getBlockX(), getBlockY() - 1);
+
+        if(headBlock == null) return false;
+
+        Item liquidItem = headBlock.getLiquidItem();
+
+        return !liquidItem.isAir() && headBlock.getLiquidMod() > 2;
+    }
+
+    public void applyBreath(float deltaTime) {
+        Item breathItem = getInventory().findAccessoryWithUse(ItemUseType.BREATH);
+        if(!breathItem.isAir()) {
+            breath = 1.0;
+        } else {
+            if(isSubmerged()) {
+                breath -= deltaTime / 15.0;
+            } else {
+                breath += deltaTime / 5.0;
+            }
+            breath = MathUtils.clamp(breath, 0.0, 1.0);
+
+            long currentTime = System.currentTimeMillis();
+            if(lastBreathMessage + 1000 < currentTime) {
+                sendMessage(new StatMessage("breath", breath));
+                if(breath < 0.001) attack(null, null, 0.5f, DamageType.SUFFOCATION);
+                lastBreathMessage = currentTime;
+            }
+        }
     }
     
     @Override
