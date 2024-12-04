@@ -38,7 +38,7 @@ public class Kill extends RandomQuest {
     private String taskDescription = null;
     @JsonProperty("actions")
     @RandomListItemType(String.class)
-    private RandomList<String> actions = new ConstantList<>(Arrays.asList("kill"));
+    private RandomList<String> actions = new ConstantList<>(Arrays.asList("kill", "explode"));
 
     private List<List<Object>> getKillEvents(List<String> actions, String type, List<?> values) {
         List<List<Object>> events = new ArrayList<>(actions.size() * values.size());
@@ -49,13 +49,6 @@ public class Kill extends RandomQuest {
         }
 
         return events;
-    }
-
-    private String joinWithOr(List<String> items) {
-        if(items == null || items.size() == 0) return "nothing";
-        if(items.size() == 1) return items.get(0);
-        if(items.size() == 2) return items.get(0) + " or " + items.get(1);
-        else return String.join(", ", items.subList(0, items.size() - 1)) + ", or " + items.get(items.size() - 1);
     }
 
     private QuestTask makeTaskForEntityTypes(List<String> actions, List<String> names, List<Integer> codes, int quantity) {

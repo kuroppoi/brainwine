@@ -1,5 +1,6 @@
 package brainwine.gameserver.quest;
 
+import java.util.List;
 import java.util.Random;
 
 import brainwine.gameserver.player.Player;
@@ -31,6 +32,13 @@ public abstract class RandomQuest {
     private int frequency = 1;
     @JsonProperty
     private RandomQuestReward reward = null;
+
+    protected String joinWithOr(List<String> items) {
+        if(items == null || items.size() == 0) return "nothing";
+        if(items.size() == 1) return items.get(0);
+        if(items.size() == 2) return items.get(0) + " or " + items.get(1);
+        else return String.join(", ", items.subList(0, items.size() - 1)) + ", or " + items.get(items.size() - 1);
+    }
 
     /**Randomly generate a quest according to the specification found in the class instance.
      *

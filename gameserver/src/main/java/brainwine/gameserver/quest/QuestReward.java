@@ -10,17 +10,17 @@ import brainwine.gameserver.player.Player;
 
 public class QuestReward {
     @JsonProperty(required = false)
-    private Integer xp = null;
+    private int xp = 0;
     @JsonProperty(required = false)
-    private Integer crowns = null;
+    private int crowns = 0;
     @JsonProperty(value = "loot_categories", required = false)
     private List<String> lootCategories;
 
     public void reward(Player player) {
-        if(crowns != null) {
+        if(crowns != 0) {
             player.addCrowns(crowns);
         }
-        if(xp != null) {
+        if(xp != 0) {
             player.addExperience(xp, String.format("You have gained %d XP from completing this quest!", xp));
         }
         if(lootCategories != null) {
