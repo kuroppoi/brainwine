@@ -491,7 +491,7 @@ public class Zone {
                 float damage = (float)(baseDamage - distance);
                 entity.attack(cause, item, damage, damageType);
 
-                if(entity.isDead() && cause.isPlayer()) {
+                if(entity.isDead() && cause != null && cause.isPlayer()) {
                     QuestEvents.handleExplode((Player) cause, entity);
                 }
             }
