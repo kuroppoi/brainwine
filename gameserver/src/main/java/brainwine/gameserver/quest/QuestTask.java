@@ -19,7 +19,7 @@ public class QuestTask {
     private int quantity = 1;
 
     @JsonProperty("events")
-    private List<List<Object>> events = new ArrayList<>();
+    private List<List<Object>> events = null;
 
     @JsonProperty("progress")
     private List<List<Object>> progressRequirements = null;
@@ -94,7 +94,7 @@ public class QuestTask {
     }
 
     public boolean checkComplete(Player player, int quantity) {
-        return getQuantity() <= quantity && checkProgressRequirements(player);
+        return (getEvents() == null || getQuantity() <= quantity) && checkProgressRequirements(player);
     }
 
     public String getDescription() {
@@ -172,7 +172,7 @@ public class QuestTask {
             }
         }
 
-        if(!getEvents().isEmpty()) {
+        if(getEvents() != null && !getEvents().isEmpty()) {
             result.addItem(new DialogListItem().setText("Do any of these to make progress:"));
             for(List<Object> event : getEvents()) {
                 result.addItem(new DialogListItem().setText(event.stream().<String>map(Objects::toString).collect(Collectors.joining(" "))));
