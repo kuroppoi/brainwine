@@ -122,4 +122,8 @@ public class QuestEvents {
     public static void handleInteract(Player player, Npc npc) {
         handleEvent(player, "interact", "name", npc.getName());
     }
+
+    public static void handleCompleteQuest(Player player) {
+        handleEvent(player, "complete_quest");
+    }
 }

@@ -50,17 +50,6 @@ public class PlayerQuests {
         performAction(player, quest, QuestAction.Type.BEGIN);
     }
 
-    public static boolean isTaskComplete(Quest quest, Player player, int i) {
-        int progress = player.getQuestProgresses().get(quest.getId()).getTaskProgress(i);
-
-        QuestTask task = quest.getTasks().get(i);
-
-        boolean satisfiesQuantity = task.getQuantity() <= progress;
-        boolean satisfiesInventory = task.getCollectInventory() == null || task.getCollectInventory().playerSatisfies(player);
-
-        return satisfiesQuantity && satisfiesInventory;
-    }
-
     public static boolean canFinishQuest(Player player, Quest quest) {
         if(player == null) return false;
         
@@ -77,7 +66,11 @@ public class PlayerQuests {
         }
 
         for(int i = 0; i < quest.getTasks().size(); i++) {
-            if(!isTaskComplete(quest, player, i)) {
+            int currentQuantity = player.getQuestProgresses().get(quest.getId()).getTaskProgress(i);
+
+            QuestTask task = quest.getTasks().get(i);
+
+            if(!task.checkComplete(player, currentQuantity)) {
                 return false;
             }
         }
@@ -120,9 +113,8 @@ public class PlayerQuests {
         }
 
         quest.getReward().reward(player);
-
         progress.markAsComplete();
-
+        QuestEvents.handleCompleteQuest(player);
         sendPlayerQuestMessage(player, progress);
 
         // get rid of the quest if it was randomly generated
