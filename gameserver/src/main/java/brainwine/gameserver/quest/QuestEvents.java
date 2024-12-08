@@ -120,4 +120,8 @@ public class QuestEvents {
             handleEvent(player, "appearance", "code", code);
         }
     }
+
+    public static void handleCompleteQuest(Player player) {
+        handleEvent(player, "complete_quest");
+    }
 }

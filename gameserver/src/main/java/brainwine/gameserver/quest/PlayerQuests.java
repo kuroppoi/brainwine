@@ -54,7 +54,7 @@ public class PlayerQuests {
         boolean satisfiesQuantity = task.getQuantity() <= progress;
         boolean satisfiesInventory = task.getCollectInventory() == null || task.getCollectInventory().playerSatisfies(player);
 
-        return satisfiesQuantity && satisfiesInventory;
+        return satisfiesQuantity && satisfiesInventory && task.checkProgress(player);
     }
 
     public static boolean canFinishQuest(Player player, Quest quest) {
@@ -114,6 +114,8 @@ public class PlayerQuests {
         quest.getReward().reward(player);
 
         progress.markAsComplete();
+
+        QuestEvents.handleCompleteQuest(player);
 
         sendPlayerQuestMessage(player, progress);
 
