@@ -117,7 +117,7 @@ public class QuestProgress {
 
         for(int i = 0; i < quest.getTasks().size(); i++) {
             QuestTask task = quest.getTasks().get(i);
-            if(task.getQuantity() <= getTaskProgress(i)) {
+            if(task.checkComplete(player, getTaskProgress(i))) {
                 completedIndices.add(i);
             }
         }

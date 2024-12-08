@@ -33,7 +33,7 @@ public class QuestTask {
     @JsonProperty("collect_inventory")
     private QuestTaskCollectInventory collectInventory;
 
-    public boolean checkQualification(Player player, Object... qualification) {
+    private boolean checkQualification(Player player, Object... qualification) {
         if(player == null || qualification == null || qualification.length == 0) {
             return false;
         }
@@ -63,7 +63,7 @@ public class QuestTask {
         return true;
     }
 
-    public boolean checkProgress(Player player) {
+    private boolean checkProgressRequirements(Player player) {
         if(this.getProgressRequirements() == null) return true;
 
         for(List<Object> requirement: getProgressRequirements()) {
@@ -91,6 +91,10 @@ public class QuestTask {
         }
 
         return true;
+    }
+
+    public boolean checkComplete(Player player, int quantity) {
+        return getQuantity() <= quantity && checkProgressRequirements(player);
     }
 
     public String getDescription() {
