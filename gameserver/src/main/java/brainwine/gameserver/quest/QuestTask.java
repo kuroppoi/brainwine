@@ -19,13 +19,13 @@ public class QuestTask {
     private int quantity = 1;
 
     @JsonProperty("events")
-    private List<List<Object>> events = new ArrayList<>();
+    private List<List<Object>> events = null;
 
     @JsonProperty("progress")
-    private List<List<Object>> progress = new ArrayList<>();
+    private List<List<Object>> progressRequirements = null;
 
     @JsonProperty("qualify")
-    private List<List<Object>> qualify = new ArrayList<>();
+    private List<List<Object>> qualify = null;
 
     @JsonProperty("action")
     private String action;
@@ -33,7 +33,7 @@ public class QuestTask {
     @JsonProperty("collect_inventory")
     private QuestTaskCollectInventory collectInventory;
 
-    public boolean checkQualification(Player player, Object... qualification) {
+    private boolean checkQualification(Player player, Object... qualification) {
         if(player == null || qualification == null || qualification.length == 0) {
             return false;
         }
@@ -63,6 +63,40 @@ public class QuestTask {
         return true;
     }
 
+    private boolean checkProgressRequirements(Player player) {
+        if(this.getProgressRequirements() == null) return true;
+
+        for(List<Object> requirement: getProgressRequirements()) {
+            if(requirement.isEmpty()) continue;
+
+            if(!(requirement.get(0) instanceof String)) continue;
+
+            switch((String) requirement.get(0)) {
+                case "quests_completed_in_group":
+                    if(requirement.size() < 2) continue;
+                    boolean found = player.getQuestProgresses().keySet().stream().anyMatch(questId -> {
+                        QuestProgress progress = player.getQuestProgresses().get(questId);
+                        Quest quest = Quests.get(player, questId);
+                        if(progress == null || quest == null) return false;
+
+                        return progress.isComplete() && Objects.equals(quest.getGroup(), requirement.get(1));
+                    });
+
+                    if(!found) return false;
+                    break;
+                case "players_killed":
+                    // TODO
+                    break;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean checkComplete(Player player, int quantity) {
+        return (getEvents() == null || getQuantity() <= quantity) && checkProgressRequirements(player);
+    }
+
     public String getDescription() {
         return description;
     }
@@ -90,12 +124,12 @@ public class QuestTask {
         return this;
     }
 
-    public List<List<Object>> getProgress() {
-        return progress;
+    public List<List<Object>> getProgressRequirements() {
+        return progressRequirements;
     }
 
-    public QuestTask setProgress(List<List<Object>> progress) {
-        this.progress = progress;
+    public QuestTask setProgressRequirements(List<List<Object>> progress) {
+        this.progressRequirements = progress;
         return this;
     }
 
@@ -131,14 +165,14 @@ public class QuestTask {
 
         result.setText(getDescription() + (taskProgress >= 0 ? String.format("(Progress: %d/%d)", taskProgress, getQuantity()) : ""));
         
-        if(!getQualify().isEmpty()) {
+        if(getQualify() != null && !getQualify().isEmpty()) {
             result.addItem(new DialogListItem().setText("Qualifications:"));
             for(List<Object> qualification : getQualify()) {
                 result.addItem(new DialogListItem().setText(qualification.stream().<String>map(Objects::toString).collect(Collectors.joining(" "))));
             }
         }
 
-        if(!getEvents().isEmpty()) {
+        if(getEvents() != null && !getEvents().isEmpty()) {
             result.addItem(new DialogListItem().setText("Do any of these to make progress:"));
             for(List<Object> event : getEvents()) {
                 result.addItem(new DialogListItem().setText(event.stream().<String>map(Objects::toString).collect(Collectors.joining(" "))));
