@@ -156,7 +156,7 @@ public class SteamManager {
             steamableIndices.remove(index);
             
             // Is it a pipe?
-            if(!item.hasId("mechanical/pipe")) {
+            if(!item.hasId("mechanical/pipe") && !item.hasId("mechanical/pipeiron") && !item.hasId("mechanical/pipecopper")) {
 
                 // Is it a collector and is it on top of a steam vent?
                 if(!item.hasId("mechanical/collector") || !isCollectorActive(x, y)) {

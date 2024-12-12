@@ -879,11 +879,11 @@ public class Zone {
             } else {
                 int effectiveGuardLevel = guardLevel + depth / 200;
                 String[][] groups = {
-                    {"creatures/bat-auto", "creatures/bat-auto"},
+                    {"brains/tiny-crawler", "brains/tiny-crawler"},
                     {"brains/small"},
-                    {"brains/small", "creatures/bat-auto"},
-                    {"brains/small", "creatures/bat-auto"},
-                    {"brains/small", "creatures/bat-auto"},
+                    {"brains/small", "brains/tiny-crawler"},
+                    {"brains/small", "brains/tiny-crawler"},
+                    {"brains/small", "brains/tiny-crawler"},
                     {"brains/medium"},
                     {"brains/medium"},
                     {"brains/medium", "brains/small"},
