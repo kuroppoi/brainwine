@@ -31,11 +31,11 @@ public class QuestReward {
         }
     }
 
-    public Integer getXp() {
+    public int getXp() {
         return xp;
     }
 
-    public Integer getCrowns() {
+    public int getCrowns() {
         return crowns;
     }
 
@@ -43,12 +43,12 @@ public class QuestReward {
         return lootCategories;
     }
 
-    public QuestReward setXp(Integer xp) {
+    public QuestReward setXp(int xp) {
         this.xp = xp;
         return this;
     }
 
-    public QuestReward setCrowns(Integer crowns) {
+    public QuestReward setCrowns(int crowns) {
         this.crowns = crowns;
         return this;
     }

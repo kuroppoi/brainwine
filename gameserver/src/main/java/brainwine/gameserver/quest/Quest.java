@@ -65,7 +65,8 @@ public class Quest {
             pcDetails.put("id", getId());
             pcDetails.put("group", getGroup());
             pcDetails.put("title", getTitle());
-            pcDetails.put("xp", getReward().getXp() == null ? 0 : getReward().getXp());
+            pcDetails.put("xp", getReward().getXp());
+            pcDetails.put("crowns", getReward().getCrowns());
             pcDetails.put("desc", getDescription());
 
             List<String> tasks = new ArrayList<>();
