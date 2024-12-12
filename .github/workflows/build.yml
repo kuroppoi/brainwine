@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   pull_request:
   push:
-    branches: [master]
+    branches: [master, live-server]
     paths:
       - .github/workflows/build.yml
       - deepworld-config

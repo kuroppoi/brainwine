@@ -694,13 +694,16 @@ public class Zone {
     }
     
     public void placePrefab(Prefab prefab, int x, int y, Random random, long seed) {
+        placePrefab(prefab, x, y, random, prefab.isMirrorable() && random.nextBoolean(), seed);
+    }
+    
+    public void placePrefab(Prefab prefab, int x, int y, Random random, boolean mirrored, long seed) {
         int width = prefab.getWidth();
         int height = prefab.getHeight();
         Block[] blocks = prefab.getBlocks();
         int guardBlocks = 0;
         String dungeonId = prefab.isDungeon() ? UUID.randomUUID().toString() : null;
         boolean decay = prefab.hasDecay();
-        boolean mirrored = prefab.isMirrorable() && random.nextBoolean();
         Map<Item, Item> replacedItems = new HashMap<>();
         
         // Replacements

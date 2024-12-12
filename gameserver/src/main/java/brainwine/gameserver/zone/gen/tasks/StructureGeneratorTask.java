@@ -191,8 +191,10 @@ public class StructureGeneratorTask implements GeneratorTask {
             String dungeonId = container.getStringProperty("@");
             int x = container.getX();
             int y = container.getY();
-            ctx.updateBlock(x, y, Layer.FRONT, "containers/chest-industrial", 1);
-            MetaBlock componentChest = ctx.getZone().getMetaBlock(x, y);
+            int offset = getContainerOffset(ctx, x, y);
+            ctx.updateBlock(x, y, Layer.FRONT, 0);
+            ctx.updateBlock(x + offset, y, Layer.FRONT, "containers/chest-industrial", 1);
+            MetaBlock componentChest = ctx.getZone().getMetaBlock(x + offset, y);
             componentChest.setProperty("@", dungeonId);
             componentChest.setProperty("$", iterator.next().getId());
             iterator.remove();
@@ -213,8 +215,10 @@ public class StructureGeneratorTask implements GeneratorTask {
             MetaBlock container = containers.remove(0);
             int x = container.getX();
             int y = container.getY();
-            ctx.updateBlock(x, y, Layer.FRONT, "mechanical/teleporter");
-            ctx.getZone().removeMetaBlock(x, y); // Broken teleporters should have no metadata
+            int offset = getContainerOffset(ctx, x, y);
+            ctx.updateBlock(x, y, Layer.FRONT, 0);
+            ctx.updateBlock(x + offset, y, Layer.FRONT, "mechanical/teleporter");
+            ctx.getZone().removeMetaBlock(x + offset, y); // Broken teleporters should have no metadata
         }
     }
     
@@ -226,15 +230,30 @@ public class StructureGeneratorTask implements GeneratorTask {
             MetaBlock container = containers.remove(i);
             int x = container.getX();
             int y = container.getY();
+            int offset = getContainerOffset(ctx, x, y);
             
             // Replace with large chest if container is a small chest
             if(container.getItem().hasId("containers/chest")) {
-                ctx.updateBlock(x, y, Layer.FRONT, "containers/chest-large", 1, container.getMetadata());
+                ctx.updateBlock(x, y, Layer.FRONT, 0);
+                ctx.updateBlock(x + offset, y, Layer.FRONT, "containers/chest-large", 1, container.getMetadata());
             }
             
             // Place dish on top of the container
-            ctx.updateBlock(x, y - 1, Layer.FRONT, "hell/dish");
+            ctx.updateBlock(x + offset, y - 1, Layer.FRONT, "hell/dish");
         }
+    }
+    
+    /**
+     * Crappy fix for badly placed teleporters, component chests etc. in mirrored structures.
+     * 
+     * @return X offset for large containers.
+     */
+    private int getContainerOffset(GeneratorContext ctx, int x, int y) {
+        if(ctx.isOccupied(x - 1, y, Layer.FRONT) || ctx.getBlock(x, y).getFrontItem().getBlockWidth() > 1) {
+            return 0; // TODO will cause issues if original container is larger than 2 blocks
+        }
+        
+        return ctx.isStructureMirrored(x, y) ? -1 : 0;
     }
     
     private void placeRandomSpawnBuilding(GeneratorContext ctx, int x) {
