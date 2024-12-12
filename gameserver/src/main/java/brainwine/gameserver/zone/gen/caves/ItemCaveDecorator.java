@@ -96,9 +96,7 @@ public class ItemCaveDecorator extends CaveDecorator {
             // Clear anything that might cover up the item
             for(int i = 0; i < item.getBlockWidth(); i++) {
                 for(int j = 0; j < item.getBlockHeight(); j++) {
-                    if(ctx.isSolid(x + i, y - j)) {
-                        ctx.updateBlock(x + i, y - j, Layer.FRONT, Item.AIR);
-                    }
+                    ctx.updateBlock(x + i, y - j, Layer.FRONT, Item.AIR);
                 }
             }
 
