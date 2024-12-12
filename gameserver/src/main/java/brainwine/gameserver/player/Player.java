@@ -262,6 +262,10 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new HealthMessage(health));
     }
 
+    public double getBreathCapacity() {
+        return 15.0 + 1.25 * (getSkillLevel(Skill.SURVIVAL) - 1);
+    }
+
     public boolean isSubmerged() {
         Block headBlock = getZone().getBlock(getBlockX(), getBlockY() - 1);
 
@@ -278,7 +282,7 @@ public class Player extends Entity implements CommandExecutor {
             breath = 1.0;
         } else {
             if(isSubmerged()) {
-                breath -= deltaTime / 15.0;
+                breath -= deltaTime / getBreathCapacity();
             } else {
                 breath += deltaTime / 5.0;
             }
