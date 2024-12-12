@@ -92,7 +92,16 @@ public class ItemCaveDecorator extends CaveDecorator {
                     mod = ctx.isSolid(x - 1, y) ? 1 : 3;
                 }
             }
-            
+
+            // Clear anything that might cover up the item
+            for(int i = 0; i < item.getBlockWidth(); i++) {
+                for(int j = 0; j < item.getBlockHeight(); j++) {
+                    if(ctx.isSolid(i + x, j + y)) {
+                        ctx.updateBlock(i + x, j + y, Layer.FRONT, Item.AIR);
+                    }
+                }
+            }
+
             ctx.updateBlock(block.getX(), block.getY(), item.getLayer(), item, mod);
 
             // Get the supporting block and repeat it towards the right if the decoration is floating
