@@ -33,7 +33,7 @@
       "name": "Giga Protector",
       "description": "Protect your creations and valuables from being mined by other players with this giga protector! When placed, it will emit a protective field that protects blocks within a 120 block radius.",
       "image": "inventory/mechanical/dish-giga",
-      "cost": 225,
+      "cost": 500,
       "items": {
         "mechanical/dish-giga": 1
       }
@@ -43,7 +43,7 @@
       "name": "Mega Protector",
       "description": "Protect your creations and valuables from being mined by other players with this mega protector! When placed, it will emit a protective field that protects blocks within a 60 block radius.",
       "image": "inventory/mechanical/dish-mega",
-      "cost": 125,
+      "cost": 250,
       "items": {
         "mechanical/dish-mega": 1
       }
@@ -53,7 +53,7 @@
       "name": "Large Protector",
       "description": "Protect your creations and valuables from being mined by other players with this large protector! When placed, it will emit a protective field that protects blocks within a 30 block radius.",
       "image": "inventory/mechanical/dish-large",
-      "cost": 50,
+      "cost": 100,
       "items": {
         "mechanical/dish-large": 1
       }
@@ -63,19 +63,19 @@
       "name": "Small Protector",
       "description": "Protect your creations and valuables from being mined by other players with this small protector! When placed, it will emit a protective field that protects blocks within a 15 block radius.",
       "image": "inventory/mechanical/dish",
-      "cost": 20,
+      "cost": 50,
       "items": {
         "mechanical/dish": 1
       }
     },
     "micro-protector-pack": {
       "type": "item",
-      "name": "Micro Protector Pack",
-      "description": "Protect your creations and valuables from being mined by other players with these micro protectors! When placed, each dish will emit a protective field that protects blocks within a 5 block radius.",
+      "name": "Micro Protector",
+      "description": "Protect your creations and valuables from being mined by other players with this micro protector! When placed, it will emit a protective field that protects blocks within a 5 block radius.",
       "image": "inventory/mechanical/dish-micro",
-      "cost": 20,
+      "cost": 25,
       "items": {
-        "mechanical/dish-micro": 4
+        "mechanical/dish-micro": 1
       }
     },
     "private-world": {

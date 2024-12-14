@@ -162,13 +162,16 @@ public class StructureGeneratorTask implements GeneratorTask {
         switch(biome) {
             case PLAIN:
                 machines.add(EcologicalMachine.PURIFIER);
-                machines.add(ctx.nextDouble() < 0.5 ? EcologicalMachine.RECYCLER : EcologicalMachine.COMPOSTER);
+                machines.add(EcologicalMachine.COMPOSTER);
                 break;
             case ARCTIC:
+                machines.add(EcologicalMachine.PURIFIER);
                 machines.add(EcologicalMachine.RECYCLER);
                 break;
             case HELL:
+                machines.add(EcologicalMachine.PURIFIER);
                 machines.add(EcologicalMachine.EXPIATOR);
+                machines.add(EcologicalMachine.COMPOSTER);
                 break;
             case DESERT:
                 machines.add(EcologicalMachine.PURIFIER);
@@ -176,6 +179,15 @@ public class StructureGeneratorTask implements GeneratorTask {
                 break;
             case DEEP:
                 machines.add(EcologicalMachine.PURIFIER);
+                machines.add(EcologicalMachine.COMPOSTER);
+                break;
+            case BRAIN:
+                machines.add(EcologicalMachine.PURIFIER);
+                machines.add(EcologicalMachine.RECYCLER);
+                break;
+            case SPACE:
+                machines.add(EcologicalMachine.PURIFIER);
+                machines.add(EcologicalMachine.RECYCLER);
                 break;
             default:
                 break;
