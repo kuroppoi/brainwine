@@ -263,7 +263,7 @@ public class Player extends Entity implements CommandExecutor {
     }
 
     public double getBreathCapacity() {
-        return 15.0 + 1.25 * (getSkillLevel(Skill.SURVIVAL) - 1);
+        return 15.0 + 1.25 * (getTotalSkillLevel(Skill.SURVIVAL) - 1);
     }
 
     public boolean isSubmerged() {
