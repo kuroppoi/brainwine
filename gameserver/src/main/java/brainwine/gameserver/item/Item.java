@@ -104,6 +104,9 @@ public class Item {
     
     @JsonProperty("field_place")
     private boolean fieldPlace;
+
+    @JsonProperty("place_transform")
+    private Map<String, String> placeTransform;
     
     @JsonProperty("base")
     private boolean base;
@@ -390,7 +393,11 @@ public class Item {
     public boolean canPlaceInField() {
         return fieldPlace;
     }
-    
+
+    public Map<String, String> getPlaceTransform() {
+        return placeTransform;
+    }
+
     public boolean isWhole() {
         return whole;
     }
