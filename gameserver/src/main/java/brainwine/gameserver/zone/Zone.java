@@ -749,15 +749,35 @@ public class Zone {
                     } else if(decay && frontItem.getMod() == ModType.DECAY && random.nextBoolean()) {
                         frontMod = random.nextInt(4) + 1;
                     }
-                    
+
                     // Try to place rubble
-                    if(decay && frontItem.isWhole() && random.nextDouble() <= 0.2
-                            && findBlock(x + i, y + j - 1, b -> !b.getFrontItem().isAir()) == null) {
+                    if(decay && frontItem.isWhole() && !isBlockOccupied(x + i, y + j - 1, Layer.FRONT)
+                            && random.nextDouble() <= 0.2 && findBlock(x + i, y + j - 1, b -> !b.getFrontItem().isAir()) == null) {
+                        // Find the width of the surface available to place the rubble
+                        int maxRubbleWidth;
+                        for(maxRubbleWidth = 2; maxRubbleWidth <= Math.min(3, width - i); maxRubbleWidth++) {
+                            int currentIndex = index + (mirrored ? -1 : 1) * (maxRubbleWidth - 1);
+                            if(currentIndex < 0 || currentIndex > blocks.length
+                                    || !blocks[currentIndex].isSolid()
+                                    || findBlock(x + i + maxRubbleWidth - 1, y + j - 1, b -> !b.getFrontItem().isAir()) != null) {
+                                maxRubbleWidth--;
+                                break;
+                            }
+                        }
+
+                        // Find the rubble items that fit the available surface
                         RubbleType[] types = RubbleType.values();
                         RubbleType type = types[random.nextInt(types.length)];
-                        String[] itemIds = type.getItemIds();
-                        Item item = ItemRegistry.getItem(itemIds[random.nextInt(itemIds.length)]);
-                        updateBlock(x + i, y + j - 1, Layer.FRONT, item);
+                        final int filterMaxRubbleWidth = maxRubbleWidth;
+                        List<String> items = Arrays.stream(type.getItemIds()).filter(id -> {{
+                            Item item = ItemRegistry.getItem(id);
+                            return item != null && item.getBlockWidth() <= filterMaxRubbleWidth;
+                        }
+                        }).collect(Collectors.toUnmodifiableList());
+                        if(!items.isEmpty()) {
+                            Item item = ItemRegistry.getItem(items.get(random.nextInt(items.size())));
+                            updateBlock(x + i, y + j - 1, Layer.FRONT, item);
+                        }
                     }
                     
                     int offset = mirrored ? -(frontItem.getBlockWidth() - 1) : 0;
