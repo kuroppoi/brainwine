@@ -7,6 +7,7 @@ import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemGroup;
+import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
@@ -102,11 +103,38 @@ public class BlockPlaceRequest extends PlayerRequest {
                 mod = 3;
             }
         }
-        
-        zone.updateBlock(x, y, layer, item, mod, player);
+
         player.getInventory().removeItem(item);
         player.getStatistics().trackItemPlaced();
         player.trackPlacement(x, y, item);
+
+        boolean isBlockPlaced = false;
+        // Process jar use if applicable
+        if(item.getPlaceTransform() != null) {
+            Block block = zone.getBlock(x, y);
+            if(block == null) return;
+
+            for(String originalId : item.getPlaceTransform().keySet()) {
+                Item original = ItemRegistry.getItem(originalId);
+                Item replacement = ItemRegistry.getItem(item.getPlaceTransform().get(originalId));
+
+                if(original == null || replacement == null) continue;
+
+                if(block.getItem(original.getLayer()).equals(original)) {
+                    if(original.getLayer() != replacement.getLayer()) {
+                        zone.updateBlock(x, y, original.getLayer(), Item.AIR);
+                    }
+                    zone.updateBlock(x, y, replacement.getLayer(), replacement);
+                    isBlockPlaced = true;
+                    break;
+                }
+            }
+        }
+
+        // Place the item as a block if no block had been placed yet
+        if(!isBlockPlaced) {
+            zone.updateBlock(x, y, layer, item, mod, player);
+        }
         
         // Create block timer if applicable
         if(item.hasTimer()) {
