@@ -773,7 +773,7 @@ public class Zone {
                             Item item = ItemRegistry.getItem(id);
                             return item != null && item.getBlockWidth() <= filterMaxRubbleWidth;
                         }
-                        }).collect(Collectors.toUnmodifiableList());
+                        }).collect(Collectors.toList());
                         if(!items.isEmpty()) {
                             Item item = ItemRegistry.getItem(items.get(random.nextInt(items.size())));
                             updateBlock(x + i, y + j - 1, Layer.FRONT, item);
