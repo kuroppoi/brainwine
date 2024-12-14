@@ -101,6 +101,8 @@ public class BlockMineRequest extends PlayerRequest {
             
             // Send inventory message for v3 players
             if(player.isV3()) {
+                player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
+
                 Item decayItem = item.getDecayInventoryItem();
                 
                 if(!decayItem.isAir()) {
