@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import brainwine.gameserver.server.models.PlayerStat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -90,14 +91,14 @@ public class ShopManager {
         // Check if item is available
         if(product == null || !product.isAvailable()) {
             player.notify("Oops! There was an error with your purchase.");
-            player.sendMessage(new StatMessage("crowns", player.getCrowns()));
+            player.sendMessage(new StatMessage(PlayerStat.CROWNS, player.getCrowns()));
             return false;
         }
         
         // Check if player has enough crowns
         if(player.getCrowns() < product.getCost()) {
             player.notify("You do not have enough crowns to buy this.");
-            player.sendMessage(new StatMessage("crowns", player.getCrowns()));
+            player.sendMessage(new StatMessage(PlayerStat.CROWNS, player.getCrowns()));
             return false;
         }
         
