@@ -703,9 +703,9 @@ public class Zone {
                 }
             }
         });
-        
-        for(int i = 0; i < width; i++) {
-            for(int j = 0; j < height; j++) {
+
+        for(int j = 0; j < height; j++) {
+            for(int i = 0; i < width; i++) {
                 // Skip ruined bits
                 if(prefab.isRuin() && SimplexNoise.noise2(seed, (x + i) / 8.0, (y + j) / 8.0, 2) > 0.4) {
                     continue;
