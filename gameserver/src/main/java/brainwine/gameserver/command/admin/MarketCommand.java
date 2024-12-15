@@ -15,7 +15,7 @@ public class MarketCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
         if(!(executor instanceof Player)) {
-            executor.notify("Market worlds can only be set up by an admin.", NotificationType.SYSTEM);
+            executor.notify("Market worlds can only be set up by a player in a zone.", NotificationType.SYSTEM);
             return;
         }
 
@@ -49,8 +49,7 @@ public class MarketCommand extends Command {
             executor.notify(value
                     ? "Zone is now a market. Trading is possible and further placement of protectors is limited."
                     : "Zone is now not a market. Protectors in the zone will keep their owners."
-                    , NotificationType.SYSTEM
-            );
+                    , NotificationType.SYSTEM);
         }
 
         zone.setActivity(value ? ZoneActivity.MARKET : ZoneActivity.NONE);
