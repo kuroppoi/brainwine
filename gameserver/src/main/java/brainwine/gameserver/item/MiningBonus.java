@@ -36,6 +36,10 @@ public class MiningBonus {
         return accessory;
     }
 
+    public String getItem() {
+        return item;
+    }
+
     public Item computeItem(Item minedItem) {
         if(this.item == null) {
             return Item.AIR;
