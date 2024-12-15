@@ -34,6 +34,7 @@ public enum ItemUseType {
     CREATE_DIALOG(new DialogInteraction(true)),
     DESTROY,
     DIALOG(new DialogInteraction(false)),
+    DOWSING,
     EXPIATOR(new ExpiatorInteraction()),
     GECK(new GeckInteraction()),
     GUARD,

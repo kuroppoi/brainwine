@@ -196,8 +196,8 @@ public class BlockMineRequest extends PlayerRequest {
             MiningBonus bonus = item.getMiningBonus();
             
             if(Math.random() < player.getMiningBonusChance(bonus)) {
-                if(!bonus.getItem().isAir()) {
-                    inventoryItem = bonus.getItem();
+                if(!bonus.computeItem(item).isAir()) {
+                    inventoryItem = bonus.computeItem(item);
                 }
                 
                 if(bonus.isDoubleLoot()) {
