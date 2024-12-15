@@ -25,6 +25,7 @@ import brainwine.gameserver.achievement.JourneymanAchievement;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogListItem;
+import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.Entity;
@@ -766,6 +767,10 @@ public class Player extends Entity implements CommandExecutor {
         // Cannot trade with self
         if(recipient == this) {
             return;
+        }
+
+        if(zone != null & !zone.isMarket()) {
+            showDialog(DialogHelper.messageDialog("Trade at the Market!", "Trading is only allowed in Market worlds and private worlds. Ask the player to join you in a Market world."));
         }
         
         // Cancel the current trade if the player is initiating a new trade

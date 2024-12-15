@@ -80,6 +80,7 @@ public class Zone {
     private float time = (float)Math.random(); // TODO temporary
     private float temperature;
     private float acidity;
+    private ZoneActivity activity;
     private boolean isPrivate;
     private boolean isProtected;
     private String owner;
@@ -120,6 +121,7 @@ public class Zone {
         owner = config.getOwner();
         members.addAll(config.getMembers());
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
+        activity = config.getActivity();
         isPrivate = config.isPrivate();
         isProtected = config.isProtected();
         creationDate = config.getCreationDate();
@@ -1658,6 +1660,18 @@ public class Zone {
     
     public float getAcidity() {
         return acidity;
+    }
+
+    public void setActivity(ZoneActivity activity) {
+        this.activity = activity;
+    }
+
+    public ZoneActivity getActivity() {
+        return activity;
+    }
+
+    public boolean isMarket() {
+        return this.activity == ZoneActivity.MARKET;
     }
     
     public void setPrivate(boolean value) {
