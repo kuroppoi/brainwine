@@ -9,6 +9,7 @@ import brainwine.api.models.ZoneInfo;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.PlayerManager;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.ZoneActivity;
 import brainwine.gameserver.zone.ZoneManager;
 
 public class DirectDataFetcher implements DataFetcher {
@@ -78,7 +79,7 @@ public class DirectDataFetcher implements DataFetcher {
     private static ZoneInfo createZoneInfo(Zone zone) {
         return new ZoneInfo(zone.getName(),
                 zone.getBiome().getId(),
-                null,
+                zone.getActivity() == null || zone.getActivity() == ZoneActivity.NONE ? null : zone.getActivity().toString().toLowerCase(),
                 false,
                 false,
                 zone.isPrivate(),

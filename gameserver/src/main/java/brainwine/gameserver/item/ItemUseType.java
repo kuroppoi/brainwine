@@ -20,6 +20,7 @@ import brainwine.gameserver.item.interactions.SwitchInteraction;
 import brainwine.gameserver.item.interactions.TargetTeleportInteraction;
 import brainwine.gameserver.item.interactions.TeleportInteraction;
 import brainwine.gameserver.item.interactions.TransmitInteraction;
+import brainwine.gameserver.item.interactions.WarmthInteraction;
 
 /**
  * Much like with {@link Action}, block interactions depend on their use type.
@@ -60,6 +61,7 @@ public enum ItemUseType {
     TRIGGER,
     TRANSMIT(new TransmitInteraction()),
     TRANSMITTED,
+    WARMTH(new WarmthInteraction()),
     ZONE_TELEPORT,
     
     @JsonEnumDefaultValue

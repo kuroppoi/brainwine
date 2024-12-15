@@ -31,6 +31,9 @@ public class ZoneConfigFile {
     
     @JsonSetter(nulls = Nulls.SKIP)
     private float acidity = 1.0F;
+
+    @JsonSetter(nulls = Nulls.DEFAULT)
+    private ZoneActivity activity;
     
     @JsonSetter(value = "private")
     private boolean isPrivate;
@@ -68,6 +71,7 @@ public class ZoneConfigFile {
         this.width = zone.getWidth();
         this.height = zone.getHeight();
         this.acidity = zone.getAcidity();
+        this.activity = zone.getActivity();
         this.isPrivate = zone.isPrivate();
         this.isProtected = zone.isProtected();
         this.owner = zone.getOwner();
@@ -94,6 +98,10 @@ public class ZoneConfigFile {
     
     public float getAcidity() {
         return acidity;
+    }
+
+    public ZoneActivity getActivity() {
+        return activity;
     }
     
     public boolean isPrivate() {

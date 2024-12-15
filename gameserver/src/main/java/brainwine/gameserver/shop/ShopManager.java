@@ -21,6 +21,7 @@ import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.server.messages.StatMessage;
+import brainwine.gameserver.server.models.PlayerStat;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.shared.JsonHelper;
 
@@ -38,6 +39,11 @@ public class ShopManager {
         sections.clear();
         products.clear();
         
+        // Clear out default shop config
+        Map<String, Object> gameConfig = GameConfiguration.getBaseConfig();
+        MapHelper.put(gameConfig, "shop.sections", new ArrayList<>());
+        MapHelper.put(gameConfig, "shop.items", new ArrayList<>());
+        
         try {
             URL url = ResourceFinder.getResourceUrl("shop.json");
             Map<String, Object> data = JsonHelper.readValue(url, new TypeReference<Map<String, Object>>(){});
@@ -48,11 +54,6 @@ public class ShopManager {
             return;
         }
         
-        // Create client config
-        Map<String, Object> gameConfig = GameConfiguration.getBaseConfig();
-        MapHelper.put(gameConfig, "shop.sections", new ArrayList<>());
-        MapHelper.put(gameConfig, "shop.items", new ArrayList<>());
-
         try {
             // Create section data
             for(Entry<String, ShopSection> entry : sections.entrySet()) {
@@ -65,6 +66,7 @@ public class ShopManager {
             // Create product data
             for(Entry<String, Product> entry : products.entrySet()) {
                 Product product = entry.getValue();
+                ProductImage image = product.getImage();
                 
                 // Skip product if it isn't available
                 if(!product.isAvailable()) {
@@ -80,10 +82,19 @@ public class ShopManager {
                     inventoryData.forEach((item, quantity) -> MapHelper.appendList(data, "inventory", Arrays.asList(item, quantity)));
                 }
                 
+                // Convert image data
+                if(image != null && data.containsKey("image")) {                    
+                    if(image.isLayered()) {
+                        data.put("images", data.remove("image"));
+                    }
+                    
+                    data.put("image", image.getBaseSprite());
+                }
+                
                 MapHelper.appendList(gameConfig, "shop.items", data);
             }
         } catch(Exception e) {
-            e.printStackTrace();
+            logger.error("An error occured while converting shop data", e);
         }
     }
     

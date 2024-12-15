@@ -29,6 +29,7 @@ import brainwine.gameserver.achievement.JourneymanAchievement;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogListItem;
+import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.Entity;
@@ -127,6 +128,7 @@ public class Player extends Entity implements CommandExecutor {
     private Item heldItem = Item.AIR;
     private double breath = 1.0;
     private double thirst;
+    private double cold;
     private int spawnX;
     private int spawnY;
     private int teleportX;
@@ -138,6 +140,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastBreathMessage;
     private long lastThirstMessage;
     private long lastThirstDamageAt;
+    private long lastFreezeMessage;
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private long lastLandmarkVoteAt;
@@ -219,6 +222,7 @@ public class Player extends Entity implements CommandExecutor {
         if(!isDead()) {
             applyBreath(deltaTime);
             applyThirst(deltaTime);
+            applyFreeze(deltaTime);
         }
 
         // Try to timeout trade
@@ -321,7 +325,7 @@ public class Player extends Entity implements CommandExecutor {
         long now = System.currentTimeMillis();
         double thirstPeriod = MathUtils.lerp(5.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
         int direction = zone.getBiome() == Biome.DESERT && !zone.isPurified() ? 1 : -1;
-        thirst = MathUtils.clamp(thirst + (direction * deltaTime * (1.0 / thirstPeriod)), 0.0, 1.0);
+        thirst = MathUtils.clamp(thirst + (direction * deltaTime / thirstPeriod), 0.0, 1.0);
 
         if(now > lastThirstMessage + 1000) {
             sendMessage(new StatMessage(PlayerStat.THIRST, (float)thirst));
@@ -346,6 +350,28 @@ public class Player extends Entity implements CommandExecutor {
                 lastThirstDamageAt = now;
             }
         }
+    }
+
+    public void applyFreeze(float deltaTime) {
+        long now = System.currentTimeMillis();
+        double freezePeriod = MathUtils.lerp(3.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
+        int direction = zone.getBiome() == Biome.ARCTIC ? 1 : -2; // Warm back up twice as fast
+        cold = MathUtils.clamp(cold + (direction * deltaTime / freezePeriod), 0.0, 1.0);
+
+        // Send message & perform damage tick if it is time
+        if(now > lastFreezeMessage + 1000) {
+            if(cold >= 1.0) {
+                attack(null, null, 0.25F, DamageType.COLD, true); // Apply as true damage
+            }
+
+            sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
+            lastFreezeMessage = now;
+        }
+    }
+
+    public void applyWarmth() {
+        cold = 0.0;
+        sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
     }
 
     @Override
@@ -662,6 +688,7 @@ public class Player extends Entity implements CommandExecutor {
             setHealth(getMaxHealth());
             breath = 1.0;
             thirst = 0.0;
+            cold = 0.0;
         }
         
         sendMessage(new PlayerPositionMessage(spawnX, spawnY));
@@ -756,7 +783,11 @@ public class Player extends Entity implements CommandExecutor {
         if(recipient == this) {
             return;
         }
-        
+
+        if(zone != null & !zone.isMarket()) {
+            showDialog(DialogHelper.messageDialog("Trade at the Market!", "Trading is only allowed in Market worlds and private worlds. Ask the player to join you in a Market world."));
+        }
+
         // Cancel the current trade if the player is initiating a new trade
         if(isTrading() && !tradeSession.isParticipant(recipient)) {
             tradeSession.cancel(this);

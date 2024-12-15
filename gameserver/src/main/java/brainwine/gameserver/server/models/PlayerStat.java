@@ -11,6 +11,7 @@ public enum PlayerStat {
     
     BREATH,
     CROWNS,
+    FREEZE,
     POINTS,
     THIRST;
     

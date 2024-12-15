@@ -5,6 +5,7 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import brainwine.gameserver.zone.ZoneActivityManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,6 +35,7 @@ public class GameServer implements CommandExecutor {
     private final LootManager lootManager;
     private final PrefabManager prefabManager;
     private final ZoneManager zoneManager;
+    private final ZoneActivityManager zoneActivityManager;
     private final PlayerManager playerManager;
     private final Server server;
     private long lastTick = System.currentTimeMillis();
@@ -58,6 +60,7 @@ public class GameServer implements CommandExecutor {
         ZoneGenerator.init();
         zoneManager = new ZoneManager();
         zoneManager.tryGenerateDefaultZone();
+        zoneActivityManager = new ZoneActivityManager();
         playerManager = new PlayerManager();
         NetworkRegistry.init();
         server = new Server();
@@ -142,6 +145,10 @@ public class GameServer implements CommandExecutor {
     
     public ZoneManager getZoneManager() {
         return zoneManager;
+    }
+
+    public ZoneActivityManager getZoneActivityManager() {
+        return zoneActivityManager;
     }
     
     public PlayerManager getPlayerManager() {

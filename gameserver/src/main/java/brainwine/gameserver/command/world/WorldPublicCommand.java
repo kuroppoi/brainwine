@@ -20,8 +20,14 @@ public class WorldPublicCommand extends WorldCommand {
         }
         
         boolean value = args[0].equalsIgnoreCase("on");
+        
+        if(value == zone.isPublic()) {
+            player.notify(String.format("Your world is already %s.", value ? "public" : "private"));
+            return;
+        }
+        
         zone.setPrivate(!value);
-        player.notify("Your world has been made " + String.format("%s.", value ? "public" : "private"));
+        player.notify(String.format("Your world has been made %s.", value ? "public" : "private"));
     }
 
     @Override

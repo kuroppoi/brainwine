@@ -51,8 +51,8 @@ public class AuthenticateRequest extends Request {
                     return;
                 }
                 
-                // Try to put player in a random zone if current zone is null
-                if(zone == null) {
+                // Try to put player in a random zone if current zone is null or cannot be joined
+                if(zone == null || !zone.canJoin(player)) {
                     zone = server.getZoneManager().findBeginnerZone();
                 }
                 
