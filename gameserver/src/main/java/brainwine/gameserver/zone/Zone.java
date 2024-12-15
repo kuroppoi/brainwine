@@ -757,7 +757,7 @@ public class Zone {
                         int maxRubbleWidth;
                         for(maxRubbleWidth = 2; maxRubbleWidth <= Math.min(3, width - i); maxRubbleWidth++) {
                             int currentIndex = index + (mirrored ? -1 : 1) * (maxRubbleWidth - 1);
-                            if(currentIndex < 0 || currentIndex > blocks.length
+                            if(currentIndex < 0 || currentIndex >= blocks.length
                                     || !blocks[currentIndex].isSolid()
                                     || findBlock(x + i + maxRubbleWidth - 1, y + j - 1, b -> !b.getFrontItem().isAir()) != null) {
                                 maxRubbleWidth--;
