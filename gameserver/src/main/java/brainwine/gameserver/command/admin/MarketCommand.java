@@ -60,4 +60,9 @@ public class MarketCommand extends Command {
     public String getUsage(CommandExecutor executor) {
         return "/market [true|false]";
     }
+
+    @Override
+    public boolean canExecute(CommandExecutor executor) {
+        return executor.isAdmin();
+    }
 }

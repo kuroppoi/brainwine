@@ -1,0 +1,9 @@
+{
+  "market": {
+    "player_item_limits": {
+      "mechanical/dish-micro": 5,
+      "mechanical/dish": 2,
+      "mechanical/dish-large": 1
+    }
+  }
+}

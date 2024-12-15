@@ -2,6 +2,7 @@ package brainwine.gameserver.server.requests;
 
 import java.util.UUID;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.item.DamageType;
@@ -81,6 +82,18 @@ public class BlockPlaceRequest extends PlayerRequest {
                 fail(player, "You are not skilled enough to place this block.");
                 return;
             }
+        }
+
+        Integer itemLimit = GameServer.getInstance().getZoneActivityManager().getPlayerItemLimits(zone.getActivity()).get(item.getId());
+        if(!player.isGodMode() && itemLimit != null && (itemLimit == 0 || zone.getMetaBlocksWithItem(item).stream()
+                .filter(x -> player.equals(x.getOwner()))
+                .count() >= itemLimit)
+        ) {
+            fail(player, itemLimit == 0
+                    ? "This item cannot be placed in this world."
+                    : "You can only place " + itemLimit + " of these in this world."
+            );
+            return;
         }
         
         if(!player.isGodMode() && item.isDish() && zone.willDishOverlap(x, y, item.getField(), player)) {
