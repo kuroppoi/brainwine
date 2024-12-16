@@ -3,22 +3,22 @@
     "daily_quest_count": 5,
     "strings": {
         "kill_description": [
-            "Today you got to kill some critters!",
-            "What time is it? Uh, we need to keep the game child-friendly.",
+            "Today you've gotta kill some critters!",
+            "Alright stop. It's hammer time!",
             "Blow them up for some crowns!",
-            "Nothing better than relieving some stress by putting your weapons in good use!"
+            "There's nothing better for stress relief by putting your weapons to good use!"
         ],
         "collect_description": [
-            "Time for your daily item collecting.",
-            "The shelves in your father's thrift store fell empty. Help them stock it back up!",
-            "You had been scammed by Graptik, but don't be afraid. Today is the day you will get your items back.",
-            "Hot stuff in your area, waiting for you to collect, within the next 24 hours@"
+            "Time to do some scavenging.",
+            "The shelves in your father's thrift store are empty. Help him stock it back up!",
+            "Head out into the wastes and see what's lying around.",
+            "Time to fill your pockets with loot from the wastes!"
         ],
         "craft_description": [
-            "Today you are tasked to craft the following items.",
-            "Time to be productive.",
-            "Craft these.",
-            "The mayor of Cake Land needs you to craft these items!"
+            "Time to do some crafting!",
+            "Put those crafting skills to good use by crafting these items!",
+            "Craft these items for some crowns!",
+            "The mayor of Cakeland needs you to craft these items!"
         ]
     },
     "quests": [
@@ -52,7 +52,7 @@
             "reward": { "crowns": 20 }
         },
         {
-            "frequency": 100,
+            "frequency": 10,
             "type": "kill",
             "categories": ["brains"],
             "task_description": "Stop the brain uprising! Kill {QUANTITY} brains of any type.",
@@ -129,7 +129,7 @@
             "reward": { "crowns": 20 }
         },
         {
-            "frequency": 80,
+            "frequency": 100,
             "type": "craft",
             "tasks": [
                 {
