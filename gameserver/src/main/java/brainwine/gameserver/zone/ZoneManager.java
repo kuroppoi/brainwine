@@ -192,12 +192,14 @@ public class ZoneManager {
         zonesByName.put(name.toLowerCase(), zone);
     }
 
-    /**Should the game create a new world because all the worlds are established?
-     *
-     * @return true iff the game should create a new world at next opportunity
+    /**
+     * Should the automatic zone generator generate a new zone?
+     * TODO could be slow, it might be a better idea to just check the most recently auto-generated zone instead.
+     * 
+     * @return {@code true} if all unowned worlds are at least 40% explored, otherwise {@code false}.
      */
     public boolean shouldGenerateUnexploredZone() {
-        return getZones().stream().allMatch(zone -> zone.getExplorationProgress() >= 0.4);
+        return getZones().stream().filter(zone -> !zone.isOwned()).allMatch(zone -> zone.getExplorationProgress() >= 0.4);
     }
     
     /**
