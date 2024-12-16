@@ -38,6 +38,8 @@ public class EntityUseRequest extends PlayerRequest {
                     player.tradeItem(targetPlayer, item);
                 }
             }
+
+            return;
         }
 
         // Handle NPC interaction
