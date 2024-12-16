@@ -99,6 +99,9 @@ public class Item {
     @JsonProperty("placeover")
     private boolean placeover;
     
+    @JsonProperty("custom_mine")
+    private boolean customMine;
+    
     @JsonProperty("custom_place")
     private boolean customPlace;
     
@@ -381,6 +384,10 @@ public class Item {
     
     public boolean canPlaceOver() {
         return placeover;
+    }
+    
+    public boolean hasCustomMine() {
+        return customMine;
     }
     
     public boolean hasCustomPlace() {
