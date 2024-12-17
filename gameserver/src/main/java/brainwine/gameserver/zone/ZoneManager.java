@@ -199,7 +199,7 @@ public class ZoneManager {
      * @return {@code true} if all unowned worlds are at least 40% explored, otherwise {@code false}.
      */
     public boolean shouldGenerateUnexploredZone() {
-        return getZones().stream().filter(zone -> !zone.isOwned()).allMatch(zone -> zone.getExplorationProgress() >= 0.4);
+        return getZones().stream().filter(zone -> !zone.isOwned()).allMatch(zone -> zone.getExplorationProgress() >= 0.25);
     }
     
     /**
