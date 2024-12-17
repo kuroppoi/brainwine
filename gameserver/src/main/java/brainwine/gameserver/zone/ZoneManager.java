@@ -38,8 +38,8 @@ public class ZoneManager {
     private final double ZONE_EXPLORATION_THRESHOLD = 0.25;
     private final double UNEXPLORED_ZONES_AT_A_TIME = 2;
     // zero players interval has to be greater than the min generation interval
-    final double MIN_GENERATION_INTERVAL_SECONDS = 10 * 60;
-    final double GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 30 * 60;
+    final double MIN_GENERATION_INTERVAL_SECONDS = 3 * 60;
+    final double GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 10 * 60;
     // player count influence has to be positive and a greater value means
     // more players are needed for a given increase in generation rate
     final double PLAYER_COUNT_INFLUENCE = 16;
@@ -137,11 +137,16 @@ public class ZoneManager {
      * @return {@code true} if all unowned worlds are at least 40% explored, otherwise {@code false}.
      */
     public boolean shouldGenerateUnexploredZone() {
-        unexploredZones.removeIf(zone -> getZone(zone) == null
-                || getZone(zone).isOwned()
-                || getZone(zone).getUndergroundExplorationProgress() >= ZONE_EXPLORATION_THRESHOLD);
+        unexploredZones.removeIf(zone -> !shouldTrackExplorationOfZone(getZone(zone)));
 
         return unexploredZones.size() < UNEXPLORED_ZONES_AT_A_TIME;
+    }
+
+    public boolean shouldTrackExplorationOfZone(Zone zone) {
+        return zone != null
+                && !zone.isOwned()
+                && zone.getBiome() != Biome.HELL && zone.getBiome() != Biome.DEEP
+                && zone.getUndergroundExplorationProgress() < ZONE_EXPLORATION_THRESHOLD;
     }
     
     public void onShutdown() {
@@ -223,7 +228,7 @@ public class ZoneManager {
         
         zones.put(id, zone);
         zonesByName.put(name.toLowerCase(), zone);
-        if(zone.getExplorationProgress() < ZONE_EXPLORATION_THRESHOLD) {
+        if(shouldTrackExplorationOfZone(zone)) {
             unexploredZones.add(zone.getDocumentId());
         }
     }
