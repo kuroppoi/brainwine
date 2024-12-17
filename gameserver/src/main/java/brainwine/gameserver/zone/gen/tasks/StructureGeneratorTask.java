@@ -239,7 +239,7 @@ public class StructureGeneratorTask implements GeneratorTask {
         int amount = Math.min(containers.size(), Math.max(1, ctx.getWidth() * ctx.getHeight() / 100000));
         
         for(int i = 0; i < amount; i++) {
-            MetaBlock container = containers.remove(i);
+            MetaBlock container = containers.remove(0);
             int x = container.getX();
             int y = container.getY();
             int offset = getContainerOffset(ctx, x, y);
