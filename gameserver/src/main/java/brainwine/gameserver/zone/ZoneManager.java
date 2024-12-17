@@ -12,13 +12,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import brainwine.gameserver.util.PickRandom;
+import brainwine.gameserver.util.MathUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
@@ -33,8 +35,15 @@ import brainwine.gameserver.zone.gen.ZoneGenerator;
 import brainwine.shared.JsonHelper;
 
 public class ZoneManager {
-    private static int ZONES_TO_GENERATE = 2;
-    
+    private final double ZONE_EXPLORATION_THRESHOLD = 0.25;
+    private final double UNEXPLORED_ZONES_AT_A_TIME = 2;
+    // zero players interval has to be greater than the min generation interval
+    final double MIN_GENERATION_INTERVAL_SECONDS = 3 * 60;
+    final double GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 10 * 60;
+    // player count influence has to be positive and a greater value means
+    // more players are needed for a given increase in generation rate
+    final double PLAYER_COUNT_INFLUENCE = 16;
+
     private static final Logger logger = LogManager.getLogger();
     private final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory())
             .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
@@ -42,7 +51,9 @@ public class ZoneManager {
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
     private long lastZoneGenerationTime = System.currentTimeMillis();
-    private boolean[] generatingZone = new boolean[2];
+    private boolean generatingZone = false;
+    private Set<String> unexploredZones = new HashSet<>();
+    private Biome lastGeneratedBiome = Biome.PLAIN;
         
     public ZoneManager() {
         logger.info(SERVER_MARKER, "Loading zone data ...");
@@ -79,31 +90,63 @@ public class ZoneManager {
             zone.tick(deltaTime);
         }
 
-        long timeSinceLastGeneration = (System.currentTimeMillis() - lastZoneGenerationTime) / 1000;
+        tryGenerateUnexploredZone();
+    }
 
-        // zero players interval has to be greater than the min generation interval
-        final long MIN_GENERATION_INTERVAL_SECONDS = 10 * 60;
-        final long GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 30 * 60;
-        // player count influence has to be positive and a greater value means
-        // more players are needed for a given increase in generation rate
-        final long PLAYER_COUNT_INFLUENCE = 16;
-        boolean anyZoneBeingGenerated = false;
-        for(int i = 0; i < generatingZone.length; i++) {
-            anyZoneBeingGenerated = anyZoneBeingGenerated || generatingZone[i];
-        }
-        if (!anyZoneBeingGenerated && timeSinceLastGeneration > MIN_GENERATION_INTERVAL_SECONDS) {
-            int playerCount = GameServer.getInstance().getPlayerManager().getOnlinePlayerCount();
-            long requiredInterval = Math.max(
+    public void tryGenerateUnexploredZone() {
+        // Return if a zone is already being generated
+        if(generatingZone) return;
+
+        long currentTime = System.currentTimeMillis();
+        double timeSinceLastGeneration = (currentTime - lastZoneGenerationTime) / 1000.0;
+
+        // Check if sufficient time has passed since last generation
+        if(timeSinceLastGeneration < MIN_GENERATION_INTERVAL_SECONDS) return;
+
+        int playerCount = GameServer.getInstance().getPlayerManager().getOnlinePlayerCount();
+        double requiredInterval = Math.max(MIN_GENERATION_INTERVAL_SECONDS, MathUtils.lerp(
+                GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS,
                 MIN_GENERATION_INTERVAL_SECONDS,
-                GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - (playerCount - 1) * (GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS - MIN_GENERATION_INTERVAL_SECONDS) / PLAYER_COUNT_INFLUENCE
-            );
+                (playerCount - 1) / PLAYER_COUNT_INFLUENCE));
 
-            if (timeSinceLastGeneration > requiredInterval) {
-                if (shouldGenerateUnexploredZone()) {
-                    tryGenerateUnexploredZones();
+        if(timeSinceLastGeneration < requiredInterval) return;
+
+        if(shouldGenerateUnexploredZone()) {
+            lastGeneratedBiome = Arrays.stream(Biome.values())
+                    .filter(x -> x != lastGeneratedBiome)
+                    .skip((long)Math.floor((Biome.values().length - 1) * Math.random()))
+                    .findFirst().get();
+
+            ZoneGenerator generator = ZoneGenerator.getZoneGenerator(lastGeneratedBiome);
+            generatingZone = true;
+            lastZoneGenerationTime = System.currentTimeMillis();
+            generator.generateZoneAsync(lastGeneratedBiome, zone -> {
+                if (zone != null) {
+                    this.addZone(zone);
+                } else {
+                    logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");
                 }
-            }
+                generatingZone = false;
+            });
         }
+    }
+
+    /**
+     * Should the automatic zone generator generate a new zone?
+     *
+     * @return {@code true} if all unowned worlds are at least 40% explored, otherwise {@code false}.
+     */
+    public boolean shouldGenerateUnexploredZone() {
+        unexploredZones.removeIf(zone -> !shouldTrackExplorationOfZone(getZone(zone)));
+
+        return unexploredZones.size() < UNEXPLORED_ZONES_AT_A_TIME;
+    }
+
+    public boolean shouldTrackExplorationOfZone(Zone zone) {
+        return zone != null
+                && !zone.isOwned()
+                && zone.getBiome() != Biome.HELL && zone.getBiome() != Biome.DEEP
+                && zone.getUndergroundExplorationProgress() < ZONE_EXPLORATION_THRESHOLD;
     }
     
     public void onShutdown() {
@@ -173,32 +216,6 @@ public class ZoneManager {
             logger.error(SERVER_MARKER, "Zone save failure. id: {}", zone.getDocumentId(), e);
         }
     }
-
-    public void tryGenerateUnexploredZones() {
-        // TODO there might be synchronization failures
-        boolean anyZoneBeingGenerated = false;
-        for(int i = 0; i < generatingZone.length; i++) {
-            anyZoneBeingGenerated = anyZoneBeingGenerated || generatingZone[i];
-        }
-        if(!anyZoneBeingGenerated) {
-            Arrays.fill(generatingZone, true);
-            List<Biome> biomesToGenerate = PickRandom.sampleWithoutReplacement(Arrays.asList(Biome.values()), ZONES_TO_GENERATE);
-            for(int i = 0; i < biomesToGenerate.size(); i++) {
-                Biome biome = biomesToGenerate.get(i);
-                ZoneGenerator generator = ZoneGenerator.getZoneGenerator(biome);
-                final int myI = i;
-                generator.generateZoneAsync(biome, zone -> {
-                    if (zone != null) {
-                        this.addZone(zone);
-                        lastZoneGenerationTime = System.currentTimeMillis();
-                    } else {
-                        logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");
-                    }
-                    generatingZone[myI] = false;
-                });
-            }
-        }
-    }
     
     public void addZone(Zone zone) {
         String id = zone.getDocumentId();
@@ -211,16 +228,9 @@ public class ZoneManager {
         
         zones.put(id, zone);
         zonesByName.put(name.toLowerCase(), zone);
-    }
-
-    /**
-     * Should the automatic zone generator generate a new zone?
-     * TODO could be slow, it might be a better idea to just check the most recently auto-generated zone instead.
-     * 
-     * @return {@code true} if all unowned worlds are at least 40% explored, otherwise {@code false}.
-     */
-    public boolean shouldGenerateUnexploredZone() {
-        return getZones().stream().filter(zone -> !zone.isOwned()).allMatch(zone -> zone.getExplorationProgress() >= 0.25);
+        if(shouldTrackExplorationOfZone(zone)) {
+            unexploredZones.add(zone.getDocumentId());
+        }
     }
     
     /**

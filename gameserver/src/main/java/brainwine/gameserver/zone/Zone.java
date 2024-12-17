@@ -77,6 +77,8 @@ public class Zone {
     private int[] depths;
     private boolean[] chunksExplored;
     private int chunksExploredCount;
+    private int totalUndergroundChunksCount;
+    private int undergroundChunksExploredCount;
     private OffsetDateTime creationDate = OffsetDateTime.now();
     private float time = (float)Math.random(); // TODO temporary
     private float temperature;
@@ -117,6 +119,7 @@ public class Zone {
         this.depths = depths != null && depths.length == 3 ? depths : this.depths;
         this.chunksExplored = chunksExplored != null && chunksExplored.length == getChunkCount() ? chunksExplored : this.chunksExplored;
         recalculateChunksExploredCount();
+        recalculateUndergroundChunksExploredCount();
         steamManager.setData(data.getSteamData());
         machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
@@ -1590,6 +1593,7 @@ public class Zone {
         }
         
         chunksExploredCount++;
+        if(y >= surface[x]) undergroundChunksExploredCount++;
         sendMessage(new ZoneExploredMessage(chunkIndex));
         return chunksExplored[chunkIndex] = true;
     }
@@ -1612,6 +1616,15 @@ public class Zone {
     public float getExplorationProgress() {
         return (float)getChunksExploredCount() / (numChunksWidth * numChunksHeight);
     }
+
+    /**
+     * @return A float between 0 and 1, where 0 is completely unexplored and 1 is fully explored.
+     */
+    public float getUndergroundExplorationProgress() {
+        // Do not compute for asteroids terrain type
+        if(biome == Biome.SPACE) return getExplorationProgress();
+        return (float)getUndergroundChunksExploredCount() / totalUndergroundChunksCount;
+    }
     
     public boolean[] getChunksExplored() {
         return chunksExplored;
@@ -1620,6 +1633,11 @@ public class Zone {
     public int getChunksExploredCount() {
         return chunksExploredCount;
     }
+
+    public int getUndergroundChunksExploredCount() {
+        // Do not compute for asteroids terrain type
+        return biome == Biome.SPACE ? getChunksExploredCount() : undergroundChunksExploredCount;
+    }
     
     private void recalculateChunksExploredCount() {
         chunksExploredCount = 0;
@@ -1627,6 +1645,24 @@ public class Zone {
         for(boolean explored : chunksExplored) {
             if(explored) {
                 chunksExploredCount++;
+            }
+        }
+    }
+
+    private void recalculateUndergroundChunksExploredCount() {
+        // Do not compute for asteroids terrain type
+        if(biome == Biome.SPACE) return;
+
+        // Might not entirely accurate
+        undergroundChunksExploredCount = 0;
+        totalUndergroundChunksCount = 0;
+
+        for(int x = 0; x < width; x += getChunkWidth()) {
+            int surfaceHeight = surface[x];
+
+            for(int y = getChunkHeight() * (surfaceHeight / getChunkHeight()); y < height; y++) {
+                totalUndergroundChunksCount += 1;
+                undergroundChunksExploredCount += chunksExplored[getChunkIndex(x, y)] ? 1 : 0;
             }
         }
     }
