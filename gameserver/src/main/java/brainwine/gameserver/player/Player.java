@@ -345,7 +345,7 @@ public class Player extends Entity implements CommandExecutor {
             }
 
             // Damage the player every 3 seconds instead if they have no water in their inventory
-            if(now > lastThirstDamageAt + 3000) {
+            if(now > lastThirstDamageAt + 3000 && health > 1.0) {
                 attack(null, null, 0.25F, DamageType.FIRE, true); // Apply as true damage
                 lastThirstDamageAt = now;
             }
@@ -360,7 +360,7 @@ public class Player extends Entity implements CommandExecutor {
 
         // Send message & perform damage tick if it is time
         if(now > lastFreezeMessage + 1000) {
-            if(cold >= 1.0) {
+            if(cold >= 1.0 && health > 1.0) {
                 attack(null, null, 0.25F, DamageType.COLD, true); // Apply as true damage
             }
 
