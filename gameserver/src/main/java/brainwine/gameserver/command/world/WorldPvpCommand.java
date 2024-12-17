@@ -5,8 +5,8 @@ import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.zone.Zone;
 
-@CommandInfo(name = "wpublic", description = "Toggle world accessibility.")
-public class WorldPublicCommand extends WorldCommand {
+@CommandInfo(name = "wpvp", description = "Turn PvP on or off in a private world.")
+public class WorldPvpCommand extends WorldCommand {
     
     @Override
     public void execute(Zone zone, Player player, String[] args) {
@@ -21,16 +21,16 @@ public class WorldPublicCommand extends WorldCommand {
         
         boolean value = args[0].equalsIgnoreCase("on");
         
-        if(value == zone.isPublic()) {
-            player.notify(String.format("Your world is already %s.", value ? "public" : "private"));
+        if(value == zone.isPvp()) {
+            player.notify(String.format("PvP is already %s.", value ? "enabled" : "disabled"));
             return;
         }
         
-        zone.setPrivate(!value);
+        zone.setPvp(value);
     }
 
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/wpublic <on|off>";
+        return "/wpvp <on|off>";
     }
 }

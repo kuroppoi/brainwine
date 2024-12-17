@@ -84,6 +84,7 @@ public class Zone {
     private ZoneActivity activity;
     private boolean isPrivate;
     private boolean isProtected;
+    private boolean pvp;
     private String owner;
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
@@ -294,6 +295,12 @@ public class Zone {
     
     public void spawnEffect(float x, float y, String type, Object data) {
         sendLocalMessage(new EffectMessage(x, y, type, data), x, y);
+    }
+    
+    public void kickAllPlayers(String reason, boolean shouldReconnect) {
+        for(Player player : getPlayers()) {
+            player.kick(reason, shouldReconnect);
+        }
     }
     
     public boolean isPointVisibleFrom(int x1, int y1, int x2, int y2) {
@@ -1633,8 +1640,13 @@ public class Zone {
         return (int)(UUID.fromString(documentId).getMostSignificantBits() >> 32);
     }
     
+    /**
+     * @deprecated DO NOT CALL DIRECTLY.
+     * If you have to rename a zone, please use {@link ZoneManager#renameZone(Zone, String)}.
+     */
     public void setName(String name) {
         this.name = name;
+        kickAllPlayers("Zone name changed.", true);
     }
     
     public String getName() {
@@ -1703,15 +1715,7 @@ public class Zone {
     
     public void setPrivate(boolean value) {
         this.isPrivate = value;
-        
-        // Kick players who shouldn't be here
-        if(value) {
-            for(Player player : getPlayers()) {
-                if(!canJoin(player)) {
-                    player.changeZone(null);
-                }
-            }
-        }
+        kickAllPlayers("Accessibility status changed.", true); // The login handler will kick non-members out of the zone if the world is made private
     }
     
     public boolean canJoin(Player player) {
@@ -1728,6 +1732,7 @@ public class Zone {
     
     public void setProtected(boolean value) {
         this.isProtected = value;
+        kickAllPlayers("Protection status changed.", true);
     }
     
     public boolean isProtected(Player player) {
@@ -1736,6 +1741,15 @@ public class Zone {
     
     public boolean isProtected() {
         return isProtected;
+    }
+    
+    public void setPvp(boolean pvp) {
+        this.pvp = pvp;
+        kickAllPlayers("PvP status changed.", true); 
+    }
+    
+    public boolean isPvp() {
+        return pvp;
     }
     
     public boolean isOwner(Player player) {
@@ -1832,6 +1846,7 @@ public class Zone {
         config.put("protected_player", isProtected(player));
         config.put("owner", isOwner(player));
         config.put("member", isMember(player));
+        config.put("pvp", pvp);
         Map<String, Object> depth = new HashMap<>();
         List<Object> earth = new ArrayList<>();
         

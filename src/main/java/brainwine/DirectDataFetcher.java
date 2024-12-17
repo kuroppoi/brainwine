@@ -52,35 +52,35 @@ public class DirectDataFetcher implements DataFetcher {
     public boolean verifyApiToken(String apiToken) {
         return true; // TODO
     }
-
+    
     @Override
     public ZoneInfo getZoneInfo(String nameOrId) {
         Zone zone = zoneManager.getZoneByName(nameOrId);
-
+        
         if(zone == null) {
             zone = zoneManager.getZone(nameOrId);
         }
-
+        
         return zone == null ? null : createZoneInfo(zone);
     }
-
+    
     @Override
     public Collection<ZoneInfo> fetchZoneInfo() {
         List<ZoneInfo> zoneInfo = new ArrayList<>();
         Collection<Zone> zones = zoneManager.getZones();
-
+        
         for(Zone zone : zones) {
             zoneInfo.add(createZoneInfo(zone));
         }
-
+        
         return zoneInfo;
     }
-
+    
     private static ZoneInfo createZoneInfo(Zone zone) {
         return new ZoneInfo(zone.getName(),
                 zone.getBiome().getId(),
                 zone.getActivity() == null || zone.getActivity() == ZoneActivity.NONE ? null : zone.getActivity().toString().toLowerCase(),
-                false,
+                zone.isPvp(),
                 false,
                 zone.isPrivate(),
                 zone.isProtected(),

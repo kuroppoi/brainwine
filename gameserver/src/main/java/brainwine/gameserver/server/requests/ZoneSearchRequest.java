@@ -57,6 +57,8 @@ public class ZoneSearchRequest extends PlayerRequest {
                 return zone -> zone.isOwner(player);
             case "Member":
                 return zone -> zone.isMember(player);
+            case "PvP":
+                return zone -> zone.isPublic() && zone.isPvp();
             case "Plain":
             case "Hell":
             case "Arctic":

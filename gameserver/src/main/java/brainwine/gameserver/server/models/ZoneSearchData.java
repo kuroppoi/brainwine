@@ -35,6 +35,6 @@ public class ZoneSearchData {
         this.status = zone.getBiome() == Biome.PLAIN ? (zone.isPurified() ? "purified" : "toxic") : null;
         this.accessibility = "a";
         this.protectionLevel = zone.isProtected(player) ? 10 : 0;
-        this.scenario = null; // TODO
+        this.scenario = zone.isPvp() ? "PvP" : null; // TODO market scenario
     }
 }
