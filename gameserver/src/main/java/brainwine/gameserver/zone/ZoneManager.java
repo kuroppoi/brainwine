@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.util.PickRandom;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.msgpack.jackson.dataformat.MessagePackFactory;
@@ -31,6 +33,7 @@ import brainwine.gameserver.zone.gen.ZoneGenerator;
 import brainwine.shared.JsonHelper;
 
 public class ZoneManager {
+    private static int ZONES_TO_GENERATE = 2;
     
     private static final Logger logger = LogManager.getLogger();
     private final ObjectMapper mapper = new ObjectMapper(new MessagePackFactory())
@@ -39,7 +42,7 @@ public class ZoneManager {
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
     private long lastZoneGenerationTime = System.currentTimeMillis();
-    private boolean generatingZone = false;
+    private boolean[] generatingZone = new boolean[2];
         
     public ZoneManager() {
         logger.info(SERVER_MARKER, "Loading zone data ...");
@@ -84,8 +87,11 @@ public class ZoneManager {
         // player count influence has to be positive and a greater value means
         // more players are needed for a given increase in generation rate
         final long PLAYER_COUNT_INFLUENCE = 16;
-
-        if (!generatingZone && timeSinceLastGeneration > MIN_GENERATION_INTERVAL_SECONDS) {
+        boolean anyZoneBeingGenerated = false;
+        for(int i = 0; i < generatingZone.length; i++) {
+            anyZoneBeingGenerated = anyZoneBeingGenerated || generatingZone[i];
+        }
+        if (!anyZoneBeingGenerated && timeSinceLastGeneration > MIN_GENERATION_INTERVAL_SECONDS) {
             int playerCount = GameServer.getInstance().getPlayerManager().getOnlinePlayerCount();
             long requiredInterval = Math.max(
                 MIN_GENERATION_INTERVAL_SECONDS,
@@ -93,19 +99,8 @@ public class ZoneManager {
             );
 
             if (timeSinceLastGeneration > requiredInterval) {
-                if (shouldGenerateUnexploredZone() && !generatingZone) {
-                    generatingZone = true;
-                    Biome biome = Biome.getRandomBiome();
-                    ZoneGenerator generator = ZoneGenerator.getZoneGenerator(biome);
-                    generator.generateZoneAsync(biome, zone -> {
-                        if (zone != null) {
-                            this.addZone(zone);
-                            lastZoneGenerationTime = System.currentTimeMillis();
-                        } else {
-                            logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");
-                        }
-                        generatingZone = false;
-                    });
+                if (shouldGenerateUnexploredZone()) {
+                    tryGenerateUnexploredZones();
                 }
             }
         }
@@ -176,6 +171,32 @@ public class ZoneManager {
             zone.setModified(false);
         } catch(Exception e) {
             logger.error(SERVER_MARKER, "Zone save failure. id: {}", zone.getDocumentId(), e);
+        }
+    }
+
+    public void tryGenerateUnexploredZones() {
+        // TODO there might be synchronization failures
+        boolean anyZoneBeingGenerated = false;
+        for(int i = 0; i < generatingZone.length; i++) {
+            anyZoneBeingGenerated = anyZoneBeingGenerated || generatingZone[i];
+        }
+        if(!anyZoneBeingGenerated) {
+            Arrays.fill(generatingZone, true);
+            List<Biome> biomesToGenerate = PickRandom.sampleWithoutReplacement(Arrays.asList(Biome.values()), ZONES_TO_GENERATE);
+            for(int i = 0; i < biomesToGenerate.size(); i++) {
+                Biome biome = biomesToGenerate.get(i);
+                ZoneGenerator generator = ZoneGenerator.getZoneGenerator(biome);
+                final int myI = i;
+                generator.generateZoneAsync(biome, zone -> {
+                    if (zone != null) {
+                        this.addZone(zone);
+                        lastZoneGenerationTime = System.currentTimeMillis();
+                    } else {
+                        logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");
+                    }
+                    generatingZone[myI] = false;
+                });
+            }
         }
     }
     
