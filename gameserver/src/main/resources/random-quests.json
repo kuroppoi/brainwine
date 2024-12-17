@@ -34,14 +34,6 @@
         },
         {
             "frequency": 10,
-            "type": "kill",
-            "categories": [ "automata" ],
-            "task_description": "Stop the bot uprisal! Smash 3 androids of any kind!",
-            "quantity": 3,
-            "reward": { "crowns": 20 }
-        },
-        {
-            "frequency": 10,
             "type": "multistep",
             "steps": [
                 { "type": "collect", "tasks": [{ "items": ["building/wood"], "count": 3 }] },
