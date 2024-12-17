@@ -139,7 +139,7 @@ public class ZoneManager {
     public boolean shouldGenerateUnexploredZone() {
         unexploredZones.removeIf(zone -> getZone(zone) == null
                 || getZone(zone).isOwned()
-                || getZone(zone).getExplorationProgress() > ZONE_EXPLORATION_THRESHOLD);
+                || getZone(zone).getUndergroundExplorationProgress() >= ZONE_EXPLORATION_THRESHOLD);
 
         return unexploredZones.size() < UNEXPLORED_ZONES_AT_A_TIME;
     }
