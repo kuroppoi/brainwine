@@ -115,7 +115,7 @@ public class DialoguerBehavior extends Behavior {
                     Dialog dialog = JsonHelper.readValue(dialogDesc, Dialog.class);
 
                     player.showDialog(dialog, ans -> {
-                        if(ans.length >= 1 && ans[0] == "cancel") {
+                        if(ans.length >= 1 && "cancel".equals(ans[0])) {
                             return;
                         }
 
