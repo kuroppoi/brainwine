@@ -148,7 +148,7 @@ public class ZoneManager {
     }
 
     public boolean checkExplorationOfZone(Zone zone) {
-        return zone.getUndergroundExplorationProgress() >= ZONE_EXPLORATION_THRESHOLD;
+        return zone.getExplorationProgress() >= ZONE_EXPLORATION_THRESHOLD;
     }
 
     public boolean shouldTrackExplorationOfZone(Zone zone) {
