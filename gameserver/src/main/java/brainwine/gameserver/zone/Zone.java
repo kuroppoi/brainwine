@@ -1660,7 +1660,7 @@ public class Zone {
         for(int x = 0; x < width; x += getChunkWidth()) {
             int surfaceHeight = surface[x];
 
-            for(int y = getChunkHeight() * (surfaceHeight / getChunkHeight()); y < height; y++) {
+            for(int y = getChunkHeight() * (surfaceHeight / getChunkHeight()); y < height; y += getChunkHeight()) {
                 totalUndergroundChunksCount += 1;
                 undergroundChunksExploredCount += chunksExplored[getChunkIndex(x, y)] ? 1 : 0;
             }

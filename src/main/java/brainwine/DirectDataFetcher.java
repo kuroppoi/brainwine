@@ -88,7 +88,7 @@ public class DirectDataFetcher implements DataFetcher {
                 zone.getWidth(),
                 zone.getHeight(),
                 zone.getSurface(),
-                zone.getExplorationProgress(),
+                zone.getUndergroundExplorationProgress(),
                 zone.getCreationDate(),
                 zone.getOwner(),
                 zone.getMembers());
