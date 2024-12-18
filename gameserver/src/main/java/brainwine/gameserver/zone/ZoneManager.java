@@ -38,7 +38,7 @@ import brainwine.shared.JsonHelper;
 
 public class ZoneManager {
     private final double ZONE_EXPLORATION_THRESHOLD = 0.25;
-    private final double UNEXPLORED_ZONES_AT_A_TIME = 2;
+    private final double UNEXPLORED_ZONES_AT_A_TIME = 1;
     // zero players interval has to be greater than the min generation interval
     final double MIN_GENERATION_INTERVAL_SECONDS = 3 * 60;
     final double GENERATION_INTERVAL_ZERO_PLAYERS_SECONDS = 10 * 60;
@@ -115,7 +115,10 @@ public class ZoneManager {
 
         if(shouldGenerateUnexploredZone()) {
             lastGeneratedBiome = Arrays.stream(Biome.values())
-                    .filter(x -> x != lastGeneratedBiome)
+                    .filter(x -> (lastGeneratedBiome == Biome.HELL || lastGeneratedBiome == Biome.DEEP)
+                            ? x != Biome.HELL && x != Biome.DEEP
+                            : x != lastGeneratedBiome
+                    )
                     .skip((long)Math.floor((Biome.values().length - 1) * Math.random()))
                     .findFirst().get();
 
@@ -129,7 +132,7 @@ public class ZoneManager {
                     logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");
                 }
                 if(GameServer.getInstance().getPlayerManager() != null) for(Player player : GameServer.getInstance().getPlayerManager().getPlayers()) {
-                    player.notify("New zone is being generated. Everybody hold tight.", SYSTEM);
+                    player.notify(String.format("A new zone has been discovered! Check out \"%s\"!", zone.getName()), SYSTEM);
                 }
                 generatingZone = false;
             });
