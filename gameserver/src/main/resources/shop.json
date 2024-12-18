@@ -1,5 +1,18 @@
 {
   "sections": {
+    "Accessories, Skills and Equipment": {
+      "name": "Accessories, Skills and Equipment",
+      "icon": "icon-profile-equipment",
+      "products": [
+        "makeup-kit",
+        "skill-book",
+        "brain-wine",
+        "skill-reset",
+        "teleporter",
+        "stealth-pack",
+        "power-up-pack"
+      ]
+    },
     "protectors": {
       "name": "Protectors",
       "icon": "icon-skill-automata",
@@ -15,19 +28,102 @@
       "name": "Private Worlds",
       "icon": "icon-world",
       "products": [
-        "private-world-multi",
-        "private-world",
         "private-world-small",
+        "private-world",
+        "private-world-large",
+        "private-world-hell-small",
         "private-world-hell",
+        "private-world-hell-large",
+        "private-world-arctic-small",
         "private-world-arctic",
+        "private-world-arctic-large",
+        "private-world-desert-small",
         "private-world-desert",
+        "private-world-desert-large",
+        "private-world-deep-small",
         "private-world-deep",
+        "private-world-deep-large",
+        "private-world-brain-small",
         "private-world-brain",
-        "private-world-space"
+        "private-world-brain-large",
+        "private-world-space-small",
+        "private-world-space",
+        "private-world-space-large"
       ]
     }
   },
   "products": {
+    "power-up-pack": {
+      "type": "item",
+      "name": "Jerky Pack",
+      "description": "Grab a quick bite to eat and keep your place in battle with this stash of extra jerky!",
+      "image": "inventory/consumables/jerky",
+      "cost": 10,
+      "items": {
+        "consumables/jerky": 10,
+        "consumables/jerky-power": 5
+      }
+    },
+    "stealth-pack": {
+      "type": "item",
+      "name": "Stealth Pack",
+      "description": "Sneak around like a pro with this collection of stealth cloaks. Those brains won't know you were ever there!",
+      "image": "inventory/consumables/cloak",
+      "cost": 30,
+      "items": {
+        "consumables/cloak": 5
+      }
+    },
+    "skill-reset": {
+      "type": "item",
+      "name": "Skill Reset",
+      "description": "Go back in time with this handy skill reset! Reclaim all of your skill points from each skill and re-apply them however you like.",
+      "image": "inventory/consumables/skill-reset",
+      "cost": 100,
+      "items": {
+        "consumables/skill-reset": 1
+      }
+    },
+    "skill-book": {
+      "type": "item",
+      "name": "Skill Book",
+      "description": "Upgrade any skill by one point with this lovely tome of knowledge! Note: each skill can only be upgraded once via books, and only to Level 10.",
+      "image": "inventory/consumables/book-skill",
+      "cost": 250,
+      "items": {
+        "consumables/book-skill": 1
+      }
+    },
+    "brain-wine": {
+      "type": "item",
+      "name": "Brain Wine",
+      "description": "Upgrade any skill by one point with this carefully brewed essence of brain! Note: each skill can only be upgraded once via brain wine, and only to Level 10.",
+      "image": "inventory/consumables/brain-wine",
+      "cost": 250,
+      "items": {
+        "consumables/brain-wine": 1
+      }
+    },
+    "makeup-kit": {
+      "type": "item",
+      "name": "Makeup Kit",
+      "description": "Revolutionize your look with all new skin tones and hair colors. Your friends will be green with envy once you're actually green!",
+      "image": "inventory/accessories/makeup",
+      "cost": 400,
+      "items": {
+        "accessories/makeup": 1
+      }
+    },
+    "teleporter": {
+      "type": "item",
+      "name": "Teleporter",
+      "description": "Drop a teleporter to allow quick access to your home or anywhere else.",
+      "image": "inventory/mechanical/teleporter",
+      "cost": 40,
+      "items": {
+        "mechanical/teleporter": 1
+      }
+    },
     "giga-protector": {
       "type": "item",
       "name": "Giga Protector",
@@ -78,88 +174,312 @@
         "mechanical/dish-micro": 1
       }
     },
+    "private-world-small": {
+      "type": "zone",
+      "name": "Private Mini World",
+      "cost": 250,
+      "description": "Claim your own untouched world! Get all the resources, loot, and exploration you'll ever need. You can even invite friends to come visit and settle with you... or just keep it all to yourself!",
+      "image": [
+        { "sprite": "shop/biome-normal" },
+        { "sprite": "shop/banner", "color": "AAFF66" },
+        { "sprite": "shop/banner-text-mini" }
+      ],
+      "zone": {
+        "biome": "plain",
+        "width": 800,
+        "height": 400
+      }
+    },
     "private-world": {
       "type": "zone",
       "name": "Private World",
+      "cost": 500,
       "description": "Claim your own untouched world! Get all the resources, loot, and exploration you'll ever need. You can even invite friends to come visit and settle with you... or just keep it all to yourself!",
       "image": "shop/biome-normal",
-      "cost": 500,
       "zone": {
         "biome": "plain",
         "width": 2000,
         "height": 600
       }
     },
+    "private-world-large": {
+      "type": "zone",
+      "name": "Private Large World",
+      "cost": 1000,
+      "description": "Claim your own untouched world! Get all the resources, loot, and exploration you'll ever need. You can even invite friends to come visit and settle with you... or just keep it all to yourself!",
+      "image": [
+        { "sprite": "shop/biome-normal" },
+        { "sprite": "shop/banner", "color": "AAFF66" },
+        { "sprite": "shop/banner-text-xl" }
+      ],
+      "zone": {
+        "biome": "plain",
+        "width": 3000,
+        "height": 800
+      }
+    },
+    "private-world-hell-small": {
+      "type": "zone",
+      "name": "Private Mini Hell World",
+      "cost": 250,
+      "description": "Claim your own untouched Hell world! Get your own expiator, plus a fresh bevy of fire salt, bloodstone, and a never-ending supply of ghostly ectoplasm.",
+      "image": [
+        { "sprite": "shop/biome-hell" },
+        { "sprite": "shop/banner", "color": "FF3311" },
+        { "sprite": "shop/banner-text-mini" }
+      ],
+      "zone": {
+        "biome": "hell",
+        "width": 800,
+        "height": 400
+      }
+    },
     "private-world-hell": {
       "type": "zone",
       "name": "Private Hell World",
+      "cost": 500,
       "description": "Claim your own untouched Hell world! Get your own expiator, plus a fresh bevy of fire salt, bloodstone, and a never-ending supply of ghostly ectoplasm.",
       "image": "shop/biome-hell",
-      "cost": 500,
       "zone": {
         "biome": "hell",
         "width": 2000,
         "height": 600
       }
     },
+    "private-world-hell-large": {
+      "type": "zone",
+      "name": "Private Large Hell World",
+      "cost": 1000,
+      "description": "Claim your own untouched Hell world! Get your own expiator, plus a fresh bevy of fire salt, bloodstone, and a never-ending supply of ghostly ectoplasm.",
+      "image": [
+        { "sprite": "shop/biome-hell" },
+        { "sprite": "shop/banner", "color": "FF3311" },
+        { "sprite": "shop/banner-text-xl" }
+      ],
+      "zone": {
+        "biome": "hell",
+        "width": 3000,
+        "height": 800
+      }
+    },
+    "private-world-arctic-small": {
+      "type": "zone",
+      "name": "Private Mini Arctic World",
+      "cost": 250,
+      "description": "Claim your own untouched Arctic world! Discover sparkly diamonds, ice sculptures, and maybe even the rare jackalope head. Also includes all the snow and ice you'll ever need!",
+      "image": [
+        { "sprite": "shop/biome-arctic" },
+        { "sprite": "shop/banner", "color": "66AAFF" },
+        { "sprite": "shop/banner-text-mini" }
+      ],
+      "zone": {
+        "biome": "arctic",
+        "width": 800,
+        "height": 400
+      }
+    },
     "private-world-arctic": {
       "type": "zone",
       "name": "Private Arctic World",
+      "cost": 500,
       "description": "Claim your own untouched Arctic world! Discover sparkly diamonds, ice sculptures, and maybe even the rare jackalope head. Also includes all the snow and ice you'll ever need!",
       "image": "shop/biome-arctic",
-      "cost": 500,
       "zone": {
         "biome": "arctic",
         "width": 2000,
         "height": 600
       }
     },
+    "private-world-arctic-large": {
+      "type": "zone",
+      "name": "Private Large Arctic World",
+      "cost": 1000,
+      "description": "Claim your own untouched Arctic world! Discover sparkly diamonds, ice sculptures, and maybe even the rare jackalope head. Also includes all the snow and ice you'll ever need!",
+      "image": [
+        { "sprite": "shop/biome-arctic" },
+        { "sprite": "shop/banner", "color": "66AAFF" },
+        { "sprite": "shop/banner-text-xl" }
+      ],
+      "zone": {
+        "biome": "arctic",
+        "width": 3000,
+        "height": 800
+      }
+    },
+    "private-world-desert-small": {
+      "type": "zone",
+      "name": "Private Mini Desert World",
+      "cost": 250,
+      "description": "Claim your own untouched Desert world! Get a fresh supply of beryllium ore, tumbleweeds, and cacti. You'll also find a steady supply of armadillos, scorpions, and sandworms to farm!",
+      "image": [
+        { "sprite": "shop/biome-desert" },
+        { "sprite": "shop/banner", "color": "FFDD77" },
+        { "sprite": "shop/banner-text-mini" }
+      ],
+      "zone": {
+        "biome": "desert",
+        "width": 800,
+        "height": 400
+      }
+    },
     "private-world-desert": {
       "type": "zone",
       "name": "Private Desert World",
+      "cost": 500,
       "description": "Claim your own untouched Desert world! Get a fresh supply of beryllium ore, tumbleweeds, and cacti. You'll also find a steady supply of armadillos, scorpions, and sandworms to farm!",
       "image": "shop/biome-desert",
-      "cost": 500,
       "zone": {
         "biome": "desert",
         "width": 2000,
         "height": 600
       }
     },
+    "private-world-desert-large": {
+      "type": "zone",
+      "name": "Private Large Desert World",
+      "cost": 1000,
+      "description": "Claim your own untouched Desert world! Get a fresh supply of beryllium ore, tumbleweeds, and cacti. You'll also find a steady supply of armadillos, scorpions, and sandworms to farm!",
+      "image": [
+        { "sprite": "shop/biome-desert" },
+        { "sprite": "shop/banner", "color": "FFDD77" },
+        { "sprite": "shop/banner-text-xl" }
+      ],
+      "zone": {
+        "biome": "desert",
+        "width": 3000,
+        "height": 800
+      }
+    },
+    "private-world-deep-small": {
+      "type": "zone",
+      "name": "Private Mini Deep World",
+      "cost": 250,
+      "description": "Claim your own untouched Deep world! Find the elusive orange crystal along with an above-average amount of dungeons to raid! Just watch out for those explosive acid pipes!",
+      "image": [
+        { "sprite": "shop/biome-deep" },
+        { "sprite": "shop/banner", "color": "44334A" },
+        { "sprite": "shop/banner-text-mini" }
+      ],
+      "zone": {
+        "biome": "deep",
+        "width": 600,
+        "height": 500
+      }
+    },
     "private-world-deep": {
       "type": "zone",
       "name": "Private Deep World",
+      "cost": 500,
       "description": "Claim your own untouched Deep world! Find the elusive orange crystal along with an above-average amount of dungeons to raid! Just watch out for those explosive acid pipes!",
       "image": "shop/biome-deep",
-      "cost": 500,
       "zone": {
         "biome": "deep",
-        "width": 2000,
-        "height": 600
+        "width": 1200,
+        "height": 1000
+      }
+    },
+    "private-world-deep-large": {
+      "type": "zone",
+      "name": "Private Large Deep World",
+      "cost": 1000,
+      "description": "Claim your own untouched Deep world! Find the elusive orange crystal along with an above-average amount of dungeons to raid! Just watch out for those explosive acid pipes!",
+      "image": [
+        { "sprite": "shop/biome-deep" },
+        { "sprite": "shop/banner", "color": "44334A" },
+        { "sprite": "shop/banner-text-xl" }
+      ],
+      "zone": {
+        "biome": "deep",
+        "width": 1800,
+        "height": 1500
+      }
+    },
+    "private-world-brain-small": {
+      "type": "zone",
+      "name": "Private Mini Brain World",
+      "cost": 250,
+      "description": "Claim your own untouched Brain world! Perfect for the thrill seeker, you'll find an insane amount of brains, green crystals, and earn that coveted Insurrectionist achievement!",
+      "image": [
+        { "sprite": "shop/biome-brain" },
+        { "sprite": "shop/banner", "color": "FF3311" },
+        { "sprite": "shop/banner-text-mini" }
+      ],
+      "zone": {
+        "biome": "brain",
+        "width": 800,
+        "height": 400
       }
     },
     "private-world-brain": {
       "type": "zone",
       "name": "Private Brain World",
+      "cost": 500,
       "description": "Claim your own untouched Brain world! Perfect for the thrill seeker, you'll find an insane amount of brains, green crystals, and earn that coveted Insurrectionist achievement!",
       "image": "shop/biome-brain",
-      "cost": 500,
       "zone": {
         "biome": "brain",
         "width": 2000,
         "height": 600
       }
     },
+    "private-world-brain-large": {
+      "type": "zone",
+      "name": "Private Large Brain World",
+      "cost": 1000,
+      "description": "Claim your own untouched Brain world! Perfect for the thrill seeker, you'll find an insane amount of brains, green crystals, and earn that coveted Insurrectionist achievement!",
+      "image": [
+        { "sprite": "shop/biome-brain" },
+        { "sprite": "shop/banner", "color": "FF3311" },
+        { "sprite": "shop/banner-text-xl" }
+      ],
+      "zone": {
+        "biome": "brain",
+        "width": 3000,
+        "height": 800
+      }
+    },
+     "private-world-space-small": {
+      "type": "zone",
+      "name": "Private Mini Space World",
+      "cost": 250,
+      "description": "Claim your own untouched SPACE world! This brand new biome has it all - rare platinum, white crystals, custom loots, supernovas, low gravity, and more!",
+      "image": [
+        { "sprite": "shop/biome-space" },
+        { "sprite": "shop/banner", "color": "1A1A1A" },
+        { "sprite": "shop/banner-text-mini" }
+      ],
+      "zone": {
+        "biome": "space",
+        "width": 800,
+        "height": 400
+      }
+    },
     "private-world-space": {
       "type": "zone",
       "name": "Private Space World",
+      "cost": 500,
       "description": "Claim your own untouched SPACE world! This brand new biome has it all - rare platinum, white crystals, custom loots, supernovas, low gravity, and more!",
       "image": "shop/biome-space",
-      "cost": 500,
       "zone": {
         "biome": "space",
         "width": 2000,
         "height": 600
+      }
+    },
+    "private-world-space-large": {
+      "type": "zone",
+      "name": "Private Large Space World",
+      "cost": 1000,
+      "description": "Claim your own untouched SPACE world! This brand new biome has it all - rare platinum, white crystals, custom loots, supernovas, low gravity, and more!",
+      "image": [
+        { "sprite": "shop/biome-space" },
+        { "sprite": "shop/banner", "color": "1A1A1A" },
+        { "sprite": "shop/banner-text-xl" }
+      ],
+      "zone": {
+        "biome": "space",
+        "width": 3000,
+        "height": 800
       }
     }
   }
