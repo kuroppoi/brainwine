@@ -137,16 +137,19 @@ public class ZoneManager {
      * @return {@code true} if all unowned worlds are at least 40% explored, otherwise {@code false}.
      */
     public boolean shouldGenerateUnexploredZone() {
-        unexploredZones.removeIf(zone -> !shouldTrackExplorationOfZone(getZone(zone)));
+        unexploredZones.removeIf(zone -> (!shouldTrackExplorationOfZone(getZone(zone))) || checkExplorationOfZone(getZone(zone)));
 
         return unexploredZones.size() < UNEXPLORED_ZONES_AT_A_TIME;
+    }
+
+    public boolean checkExplorationOfZone(Zone zone) {
+        return zone.getUndergroundExplorationProgress() >= ZONE_EXPLORATION_THRESHOLD;
     }
 
     public boolean shouldTrackExplorationOfZone(Zone zone) {
         return zone != null
                 && !zone.isOwned()
-                && zone.getBiome() != Biome.HELL && zone.getBiome() != Biome.DEEP
-                && zone.getUndergroundExplorationProgress() < ZONE_EXPLORATION_THRESHOLD;
+                && zone.getBiome() != Biome.HELL && zone.getBiome() != Biome.DEEP;
     }
     
     public void onShutdown() {
@@ -228,7 +231,7 @@ public class ZoneManager {
         
         zones.put(id, zone);
         zonesByName.put(name.toLowerCase(), zone);
-        if(shouldTrackExplorationOfZone(zone)) {
+        if(shouldTrackExplorationOfZone(zone) && !checkExplorationOfZone(zone)) {
             unexploredZones.add(zone.getDocumentId());
         }
     }
