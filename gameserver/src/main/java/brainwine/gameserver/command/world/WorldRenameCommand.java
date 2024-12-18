@@ -1,5 +1,8 @@
 package brainwine.gameserver.command.world;
 
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
+
+import java.time.temporal.ChronoUnit;
 import java.util.regex.Pattern;
 
 import brainwine.gameserver.GameServer;
@@ -12,11 +15,18 @@ import brainwine.gameserver.zone.ZoneManager;
 @CommandInfo(name = "wrename", description = "Rename your private world.")
 public class WorldRenameCommand extends WorldCommand {
     
+    public static final String ACTION_ID = "wrename";
     private static final Pattern NAME_PATTERN = Pattern.compile("^[a-zA-Z0-9 ]{5,20}$");
 
     @Override
     public void execute(Zone zone, Player player, String[] args) {
         if(!checkArgumentCount(player, args, 1)) {
+            return;
+        }
+        
+        // Check if command is on cooldown
+        if(!player.isGodMode() && zone.isActionOnCooldown(ACTION_ID, 1, ChronoUnit.DAYS)) {
+            player.notify("Sorry, you can rename your world only once a day.");
             return;
         }
         
@@ -41,7 +51,13 @@ public class WorldRenameCommand extends WorldCommand {
             return;
         }
         
-        zoneManager.renameZone(zone, name);
+        // Try rename zone (shouldn't fail)
+        if(!zoneManager.renameZone(zone, name)) {
+            player.notify("An unexpected problem occured while renaming your world.", SYSTEM);
+            return;
+        }
+        
+        zone.recordActionTime(ACTION_ID);
     }
 
     @Override

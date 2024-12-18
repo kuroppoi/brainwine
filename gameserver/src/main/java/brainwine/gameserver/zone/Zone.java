@@ -2,6 +2,7 @@ package brainwine.gameserver.zone;
 
 import java.io.File;
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -100,6 +101,7 @@ public class Zone {
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> damageFieldBlocks = new HashMap<>();
+    private final Map<String, OffsetDateTime> actionHistory = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
     private boolean modified;
@@ -120,6 +122,7 @@ public class Zone {
         pendingSunlight.addAll(data.getPendingSunlight());
         owner = config.getOwner();
         members.addAll(config.getMembers());
+        actionHistory.putAll(config.getActionHistory());
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
         isPrivate = config.isPrivate();
         isProtected = config.isProtected();
@@ -1351,6 +1354,18 @@ public class Zone {
     
     public MachineManager getMachineManager() {
         return machineManager;
+    }
+    
+    public void recordActionTime(String name) {
+        actionHistory.put(name.toLowerCase(), OffsetDateTime.now());
+    }
+    
+    public boolean isActionOnCooldown(String name, long cooldown, TemporalUnit unit) {
+        return actionHistory.containsKey(name.toLowerCase()) && !OffsetDateTime.now().isAfter(actionHistory.get(name.toLowerCase()).plus(cooldown, unit));
+    }
+    
+    public Map<String, OffsetDateTime> getActionHistory() {
+        return Collections.unmodifiableMap(actionHistory);
     }
     
     /**

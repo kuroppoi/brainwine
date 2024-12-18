@@ -47,6 +47,9 @@ public class ZoneConfigFile {
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     private Map<EcologicalMachine, List<Item>> discoveredParts = new HashMap<>();
     
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private Map<String, OffsetDateTime> actionHistory = new HashMap<>();
+    
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime creationDate = OffsetDateTime.now();
     
@@ -73,6 +76,7 @@ public class ZoneConfigFile {
         this.owner = zone.getOwner();
         this.members = zone.getMembers();
         this.discoveredParts = zone.getDiscoveredParts();
+        this.actionHistory = zone.getActionHistory();
         this.creationDate = zone.getCreationDate();
     }
     
@@ -114,6 +118,10 @@ public class ZoneConfigFile {
     
     public Map<EcologicalMachine, List<Item>> getDiscoveredParts() {
         return discoveredParts;
+    }
+    
+    public Map<String, OffsetDateTime> getActionHistory() {
+        return actionHistory;
     }
     
     public OffsetDateTime getCreationDate() {
