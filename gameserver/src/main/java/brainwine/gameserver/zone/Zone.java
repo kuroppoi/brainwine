@@ -945,6 +945,7 @@ public class Zone {
             if(guardBlocks <= 0) {
                 dungeons.remove(dungeonId);
                 destroyer.getStatistics().trackDungeonRaided();
+                QuestEvents.handleRaid(destroyer);
                 destroyer.notify("You raided a dungeon!", NotificationType.ACCOMPLISHMENT);
                 destroyer.notifyPeers(String.format("%s raided a dungeon.", destroyer.getName()), NotificationType.SYSTEM);
             } else {

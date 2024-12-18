@@ -106,6 +106,7 @@ public class BlockMineRequest extends PlayerRequest {
         
         if(digging) {
             zone.digBlock(x, y);
+            QuestEvents.handleDig(player);
             return;
         }
         
