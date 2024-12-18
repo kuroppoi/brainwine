@@ -37,7 +37,7 @@ import brainwine.gameserver.zone.gen.ZoneGenerator;
 import brainwine.shared.JsonHelper;
 
 public class ZoneManager {
-    private final double ZONE_EXPLORATION_THRESHOLD = 0.25;
+    private final double ZONE_EXPLORATION_THRESHOLD = 0.3;
     private final double UNEXPLORED_ZONES_AT_A_TIME = 1;
     // zero players interval has to be greater than the min generation interval
     final double MIN_GENERATION_INTERVAL_SECONDS = 3 * 60;
