@@ -74,7 +74,11 @@ public class QuestEvents {
         }
     }
 
-    public static  void handleCollectItem(Player player, Item item, int quantity) {
+    public static void handleDig(Player player) {
+        handleEvent(player, "dig");
+    }
+
+    public static void handleCollectItem(Player player, Item item, int quantity) {
         handleEventWithQuantity(player, quantity, "collect_item", "id", item.getId());
     }
 
@@ -109,6 +113,10 @@ public class QuestEvents {
             Npc npc = (Npc) other;
             handleEvent(player, "explode", "category", npc.getConfig().getCategory());
         }
+    }
+
+    public static void handleRaid(Player player) {
+        handleEvent(player, "raid");
     }
 
     public static void handleChat(Player player) {
