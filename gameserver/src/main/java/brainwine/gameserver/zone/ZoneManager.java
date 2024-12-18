@@ -1,5 +1,6 @@
 package brainwine.gameserver.zone;
 
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.io.File;
@@ -20,6 +21,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MathUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -125,6 +127,9 @@ public class ZoneManager {
                     this.addZone(zone);
                 } else {
                     logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");
+                }
+                if(GameServer.getInstance().getPlayerManager() != null) for(Player player : GameServer.getInstance().getPlayerManager().getPlayers()) {
+                    player.notify("New zone is being generated. Everybody hold tight.", SYSTEM);
                 }
                 generatingZone = false;
             });
