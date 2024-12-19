@@ -114,13 +114,15 @@ public class ZoneManager {
         if(timeSinceLastGeneration < requiredInterval) return;
 
         if(shouldGenerateUnexploredZone()) {
-            lastGeneratedBiome = Arrays.stream(Biome.values())
-                    .filter(x -> (lastGeneratedBiome == Biome.HELL || lastGeneratedBiome == Biome.DEEP)
-                            ? x != Biome.HELL && x != Biome.DEEP
-                            : x != lastGeneratedBiome
-                    )
-                    .skip((long)Math.floor((Biome.values().length - 1) * Math.random()))
-                    .findFirst().get();
+            List<Biome> biomeOptions = Arrays.stream(Biome.values()).collect(Collectors.toList());
+
+            biomeOptions.remove(lastGeneratedBiome);
+            if(lastGeneratedBiome == Biome.HELL || lastGeneratedBiome == Biome.DEEP) {
+                biomeOptions.remove(Biome.HELL);
+                biomeOptions.remove(Biome.DEEP);
+            }
+
+            lastGeneratedBiome = biomeOptions.get((int)Math.floor((biomeOptions.size() - 1) * Math.random()));
 
             ZoneGenerator generator = ZoneGenerator.getZoneGenerator(lastGeneratedBiome);
             generatingZone = true;
