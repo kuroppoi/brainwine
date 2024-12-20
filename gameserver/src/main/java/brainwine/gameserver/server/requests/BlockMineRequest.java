@@ -183,9 +183,11 @@ public class BlockMineRequest extends PlayerRequest {
         
         int quantity = 1;
         player.getStatistics().trackItemMined(item);
-        
+
+        boolean trackQuest = false;
         if(block.isNatural()) {
             player.getStatistics().trackItemScavenged(item);
+            trackQuest = true;
         }
         
         zone.updateBlock(x, y, layer, 0, 0, player);
@@ -209,7 +211,7 @@ public class BlockMineRequest extends PlayerRequest {
         
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem, quantity, true);
-            if(block.isNatural() && layer == Layer.FRONT) {
+            if(trackQuest && layer == Layer.FRONT) {
                 QuestEvents.handleCollectItem(player, inventoryItem, quantity);
                 if(!item.equals(inventoryItem)) {
                     QuestEvents.handleCollectItem(player, item, 1);
