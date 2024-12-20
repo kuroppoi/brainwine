@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import brainwine.gameserver.player.PlayerStatistics;
 import brainwine.gameserver.server.models.PlayerStat;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -115,6 +116,7 @@ public class ShopManager {
         
         player.setCrowns(player.getCrowns() - product.getCost());
         product.purchase(player);
+        player.getStatistics().trackCrownsSpent(product.getCost());
         return true;
     }
     
