@@ -94,13 +94,13 @@ public class Zone {
     private final MachineManager machineManager = new MachineManager(this);
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final List<String> members = new ArrayList<>();
-    private final List<BlockChangeData> blockChanges = new ArrayList<>();
     private final List<Timer<Integer>> blockTimers = new ArrayList<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> damageFieldBlocks = new HashMap<>();
+    private final Map<Integer, BlockChangeData> blockChanges = new HashMap<>();
     private final Map<String, OffsetDateTime> actionHistory = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
@@ -190,7 +190,7 @@ public class Zone {
         // Send block changes to players who they are relevant to
         if(!blockChanges.isEmpty()) {
             for(Player player : getPlayers()) {
-                List<BlockChangeData> blockChangesNearPlayer = blockChanges.stream()
+                List<BlockChangeData> blockChangesNearPlayer = blockChanges.values().stream()
                         .filter(blockChange -> player.isChunkActive(blockChange.getX(), blockChange.getY()))
                         .collect(Collectors.toList());
                 
@@ -1025,7 +1025,9 @@ public class Zone {
         // Queue block update if there are players in this zone.
         // TODO maybe check if the block update was in an active chunk, too?
         if(!getPlayers().isEmpty()) {
-            blockChanges.add(new BlockChangeData(x, y, layer, item, mod));
+            int z = layer.ordinal();
+            int changeIndex = z * width * height + getBlockIndex(x, y);
+            blockChanges.put(changeIndex, new BlockChangeData(x, y, layer, owner == null ? 0 : owner.getId(), item, mod));
         }
         
         if(layer == Layer.FRONT) {
@@ -1072,7 +1074,9 @@ public class Zone {
         block.setMod(layer, mod);
         
         if(!getPlayers().isEmpty()) {
-            blockChanges.add(new BlockChangeData(x, y, layer, block.getItem(layer), mod));
+            int z = layer.ordinal();
+            int changeIndex = z * width * height + getBlockIndex(x, y);
+            blockChanges.put(changeIndex, new BlockChangeData(x, y, layer, 0, block.getItem(layer), mod));
         }
     }
     
