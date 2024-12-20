@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.order.OrderManager;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
@@ -104,6 +105,8 @@ public class Player extends Entity implements CommandExecutor {
     private List<PlayerRestriction> bans;
     private Set<String> lootCodes;
     private Set<Achievement> achievements;
+    private Map<String, Integer> orders = new HashMap<>();
+    private String displayedOrder = null;
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
     private Map<Item, List<Skill>> bumpedSkills;
@@ -148,6 +151,7 @@ public class Player extends Entity implements CommandExecutor {
         this.skillPoints = config.getSkillPoints();
         this.karma = config.getKarma();
         this.crowns = config.getCrowns();
+        this.displayedOrder = config.getDisplayedOrder();
         this.inventory = config.getInventory();
         this.statistics = config.getStatistics();
         this.authTokens = config.getAuthTokens();
@@ -156,6 +160,7 @@ public class Player extends Entity implements CommandExecutor {
         this.bans = config.getBans();
         this.lootCodes = config.getLootCodes();
         this.achievements = config.getAchievements();
+        this.orders = config.getOrders();
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
         this.bumpedSkills = config.getBumpedSkills();
@@ -210,6 +215,7 @@ public class Player extends Entity implements CommandExecutor {
             applyBreath(deltaTime);
             applyThirst(deltaTime);
             applyFreeze(deltaTime);
+            OrderManager.advance(this);
         }
 
         // Try to timeout trade
@@ -392,6 +398,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("id", documentId);
         config.putAll(appearance);
         config.put("u", inventory.findJetpack().getCode());
+        config.put("ni", getIcon());
         return config;
     }
     
@@ -1220,7 +1227,31 @@ public class Player extends Entity implements CommandExecutor {
     public Set<Achievement> getAchievements() {
         return Collections.unmodifiableSet(achievements);
     }
-    
+
+    public Map<String, Integer> getOrders() {
+        return orders;
+    }
+
+    public String getDisplayedOrder() {
+        return displayedOrder;
+    }
+
+    public String getIcon() {
+        if(getDisplayedOrder() == null
+                || !OrderManager.getOrders().containsKey(getDisplayedOrder())
+                || orders.getOrDefault(getDisplayedOrder(), 0) == 0) {
+            return null;
+        }
+        return String.format("orders/%s-%d",
+                getDisplayedOrder(),
+                getOrders().getOrDefault(getDisplayedOrder(), 0)
+        );
+    }
+
+    public void setDisplayedOrder(String displayedOrder) {
+        this.displayedOrder = displayedOrder;
+    }
+
     public void randomizeAppearance() {
         appearance.putAll(Appearance.getRandomAppearance(this));
         zone.sendMessage(new EntityChangeMessage(id, appearance));
@@ -1491,6 +1522,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("deaths", statistics.getDeaths());
         config.put("appearance", appearance);
         config.put("settings", settings);
+        config.put("ni", getIcon());
         return config;
     }
 }
