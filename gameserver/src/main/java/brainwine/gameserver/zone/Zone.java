@@ -1693,7 +1693,7 @@ public class Zone {
     }
     
     public boolean canJoin(Player player) {
-        return isPublic() || isOwner(player) || isMember(player);
+        return player.isGodMode() || isPublic() || isOwner(player) || isMember(player);
     }
     
     public boolean isPublic() {
