@@ -26,6 +26,7 @@ public class PlayerConfigFile {
     private int skillPoints;
     private int karma;
     private int crowns;
+    private String displayedOrder = null;
     private Inventory inventory = new Inventory();
     private PlayerStatistics statistics = new PlayerStatistics();
     private List<String> authTokens = new ArrayList<>();
@@ -34,6 +35,7 @@ public class PlayerConfigFile {
     private List<PlayerRestriction> bans = new ArrayList<>();
     private Set<String> lootCodes = new HashSet<>();
     private Set<Achievement> achievements = new HashSet<>();
+    private Map<String, Integer> orders = new HashMap<>();
     private Map<String, Float> ignoredHints = new HashMap<>();
     private Map<Skill, Integer> skills = new HashMap<>();
     private Map<Item, List<Skill>> bumpedSkills = new HashMap<>();
@@ -60,6 +62,8 @@ public class PlayerConfigFile {
         this.bans = player.getBans();
         this.lootCodes = player.getLootCodes();
         this.achievements = player.getAchievements();
+        this.orders = player.getOrders();
+        this.displayedOrder = player.getDisplayedOrder();
         this.ignoredHints = player.getIgnoredHints();
         this.skills = player.getSkills();
         this.bumpedSkills = player.getBumpedSkills();
@@ -128,7 +132,11 @@ public class PlayerConfigFile {
     public int getCrowns() {
         return crowns;
     }
-    
+
+    public String getDisplayedOrder() {
+        return displayedOrder;
+    }
+
     @JsonSetter(nulls = Nulls.SKIP)
     public Inventory getInventory() {
         return inventory;
@@ -148,7 +156,12 @@ public class PlayerConfigFile {
     public Set<Achievement> getAchievements() {
         return achievements;
     }
-    
+
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<String, Integer> getOrders() {
+        return orders;
+    }
+
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public Map<String, Float> getIgnoredHints() {
         return ignoredHints;

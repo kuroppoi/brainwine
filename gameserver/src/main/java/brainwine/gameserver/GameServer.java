@@ -6,6 +6,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import brainwine.gameserver.zone.ZoneActivityManager;
+import brainwine.gameserver.order.OrderManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +28,7 @@ import brainwine.gameserver.zone.gen.ZoneGenerator;
 
 public class GameServer implements CommandExecutor {
     
-    public static final int GLOBAL_SAVE_INTERVAL = 30000; // 30 seconds
+    public static final int GLOBAL_SAVE_INTERVAL = 300000; // 5 minutes
     private static final Logger logger = LogManager.getLogger();
     private static GameServer instance;
     private final Thread handlerThread;
@@ -50,6 +51,7 @@ public class GameServer implements CommandExecutor {
         CommandManager.init();
         GameConfiguration.init();
         AchievementManager.loadAchievements();
+        OrderManager.loadOrders();
         EntityRegistry.init();
         EntityManager.loadEntitySpawns();
         GrowthManager.loadGrowthData();
@@ -150,7 +152,7 @@ public class GameServer implements CommandExecutor {
     public ZoneActivityManager getZoneActivityManager() {
         return zoneActivityManager;
     }
-    
+
     public PlayerManager getPlayerManager() {
         return playerManager;
     }

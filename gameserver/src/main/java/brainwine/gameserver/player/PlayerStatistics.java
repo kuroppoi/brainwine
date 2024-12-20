@@ -1,10 +1,15 @@
 package brainwine.gameserver.player;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
+import brainwine.gameserver.entity.EntityGroup;
+import brainwine.gameserver.item.ItemGroup;
+import brainwine.gameserver.item.ItemRegistry;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -32,6 +37,8 @@ import brainwine.gameserver.item.Item;
 @JsonAutoDetect(fieldVisibility = Visibility.ANY, getterVisibility = Visibility.NONE)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PlayerStatistics {
+
+    private static Collection<Item> teleporters;
     
     private Map<Item, Integer> itemsMined = new HashMap<>();
     private Map<Item, Integer> itemsScavenged = new HashMap<>();
@@ -51,7 +58,8 @@ public class PlayerStatistics {
     private int deaths;
     private int landmarksUpvoted;
     private int landmarkVotesReceived;
-    
+    private int crownsSpent;
+
     @JsonIgnore
     private Player player;
         
@@ -209,6 +217,22 @@ public class PlayerStatistics {
     public Map<Item, Integer> getDiscoveries() {
         return Collections.unmodifiableMap(discoveries);
     }
+
+    public int getTeleporterDiscoveries() {
+        if(teleporters == null) {
+            teleporters = ItemRegistry.getItems().stream()
+                    .filter(i -> i.getId().startsWith("mechanical") && i.getId().contains("teleporter"))
+                    .collect(Collectors.toList());
+        }
+
+        int total = 0;
+
+        for(Item item : teleporters) {
+            total += getDiscoveries(item);
+        }
+
+        return total;
+    }
     
     public void trackKill(EntityConfig entity) {
         if(!kills.containsKey(entity)) {
@@ -232,6 +256,14 @@ public class PlayerStatistics {
     
     public int getKills(EntityConfig entity) {
         return kills.getOrDefault(entity, 0);
+    }
+
+    public int getKills(EntityGroup group) {
+        return player.getStatistics().getKills().entrySet().stream()
+                .filter(entry -> entry.getKey().getGroup() == group)
+                .map(Entry::getValue)
+                .reduce(Integer::sum)
+                .orElse(0);
     }
     
     public Map<EntityConfig, Integer> getKills() {
@@ -432,5 +464,13 @@ public class PlayerStatistics {
     
     public int getDeaths() {
         return deaths;
+    }
+
+    public int getCrownsSpent() {
+        return crownsSpent;
+    }
+
+    public void trackCrownsSpent(int crowns) {
+        crownsSpent += crowns;
     }
 }

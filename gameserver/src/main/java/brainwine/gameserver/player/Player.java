@@ -18,6 +18,7 @@ import brainwine.gameserver.quest.DailyQuests;
 import brainwine.gameserver.quest.Quest;
 import brainwine.gameserver.util.ValueWithExpiry;
 import brainwine.gameserver.zone.Block;
+import brainwine.gameserver.order.OrderManager;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
@@ -110,6 +111,8 @@ public class Player extends Entity implements CommandExecutor {
     private List<PlayerRestriction> bans;
     private Set<String> lootCodes;
     private Set<Achievement> achievements;
+    private Map<String, Integer> orders = new HashMap<>();
+    private String displayedOrder = null;
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
     private Map<Item, List<Skill>> bumpedSkills;
@@ -146,7 +149,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastLandmarkVoteAt;
     private Zone nextZone;
     private Connection connection;
-
+    
     protected Player(String documentId, PlayerConfigFile config) {
         super(config.getCurrentZone());
         this.documentId = documentId;
@@ -158,6 +161,7 @@ public class Player extends Entity implements CommandExecutor {
         this.skillPoints = config.getSkillPoints();
         this.karma = config.getKarma();
         this.crowns = config.getCrowns();
+        this.displayedOrder = config.getDisplayedOrder();
         this.inventory = config.getInventory();
         this.statistics = config.getStatistics();
         this.authTokens = config.getAuthTokens();
@@ -166,6 +170,7 @@ public class Player extends Entity implements CommandExecutor {
         this.bans = config.getBans();
         this.lootCodes = config.getLootCodes();
         this.achievements = config.getAchievements();
+        this.orders = config.getOrders();
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
         this.bumpedSkills = config.getBumpedSkills();
@@ -223,6 +228,7 @@ public class Player extends Entity implements CommandExecutor {
             applyBreath(deltaTime);
             applyThirst(deltaTime);
             applyFreeze(deltaTime);
+            OrderManager.advance(this);
         }
 
         // Try to timeout trade
@@ -320,21 +326,21 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
     }
-
+    
     public void applyThirst(float deltaTime) {
         long now = System.currentTimeMillis();
         double thirstPeriod = MathUtils.lerp(5.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
         int direction = zone.getBiome() == Biome.DESERT && !zone.isPurified() ? 1 : -1;
         thirst = MathUtils.clamp(thirst + (direction * deltaTime / thirstPeriod), 0.0, 1.0);
-
+        
         if(now > lastThirstMessage + 1000) {
             sendMessage(new StatMessage(PlayerStat.THIRST, (float)thirst));
             lastThirstMessage = now;
         }
-
+        
         if(thirst >= 1.0) {
             Item waterJar = ItemRegistry.getItem("containers/jar-water");
-
+            
             // Consume a jar of water if the player has any and reset thirst
             if(inventory.hasItem(waterJar)) {
                 inventory.removeItem(waterJar, true);
@@ -343,7 +349,7 @@ public class Player extends Entity implements CommandExecutor {
                 thirst = 0.0;
                 return;
             }
-
+            
             // Damage the player every 3 seconds instead if they have no water in their inventory
             if(now > lastThirstDamageAt + 3000 && health > 1.0) {
                 attack(null, null, 0.25F, DamageType.FIRE, true); // Apply as true damage
@@ -351,29 +357,29 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
     }
-
+    
     public void applyFreeze(float deltaTime) {
         long now = System.currentTimeMillis();
         double freezePeriod = MathUtils.lerp(3.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
         int direction = zone.getBiome() == Biome.ARCTIC ? 1 : -2; // Warm back up twice as fast
         cold = MathUtils.clamp(cold + (direction * deltaTime / freezePeriod), 0.0, 1.0);
-
+        
         // Send message & perform damage tick if it is time
         if(now > lastFreezeMessage + 1000) {
             if(cold >= 1.0 && health > 1.0) {
                 attack(null, null, 0.25F, DamageType.COLD, true); // Apply as true damage
             }
-
+            
             sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
             lastFreezeMessage = now;
         }
     }
-
+    
     public void applyWarmth() {
         cold = 0.0;
         sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
     }
-
+    
     @Override
     public float getAttackMultiplier(EntityAttack attack) {
         return isGodMode() ? 9999.0F : 1.0F;
@@ -407,6 +413,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("id", documentId);
         config.putAll(appearance);
         config.put("u", inventory.findJetpack().getCode());
+        config.put("ni", getIcon());
         return config;
     }
     
@@ -1246,7 +1253,31 @@ public class Player extends Entity implements CommandExecutor {
     public Set<Achievement> getAchievements() {
         return Collections.unmodifiableSet(achievements);
     }
-    
+
+    public Map<String, Integer> getOrders() {
+        return orders;
+    }
+
+    public String getDisplayedOrder() {
+        return displayedOrder;
+    }
+
+    public String getIcon() {
+        if(getDisplayedOrder() == null
+                || !OrderManager.getOrders().containsKey(getDisplayedOrder())
+                || orders.getOrDefault(getDisplayedOrder(), 0) == 0) {
+            return null;
+        }
+        return String.format("orders/%s-%d",
+                getDisplayedOrder(),
+                getOrders().getOrDefault(getDisplayedOrder(), 0)
+        );
+    }
+
+    public void setDisplayedOrder(String displayedOrder) {
+        this.displayedOrder = displayedOrder;
+    }
+
     public void randomizeAppearance() {
         appearance.putAll(Appearance.getRandomAppearance(this));
         zone.sendMessage(new EntityChangeMessage(id, appearance));
@@ -1535,6 +1566,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("deaths", statistics.getDeaths());
         config.put("appearance", appearance);
         config.put("settings", settings);
+        config.put("ni", getIcon());
         config.put("api_token", documentId); // Use document ID for now
         return config;
     }
