@@ -23,26 +23,25 @@ public class Order {
     private List<OrderTier> tiers;
 
     public void advance(Player player) {
-        int currentLevel = player.getOrders().getOrDefault(key, 0);
-        boolean advanced = false;
+        final int initialLevel = player.getOrders().getOrDefault(key, 0);
+        int currentLevel = initialLevel;
 
         while(currentLevel < tiers.size()) {
             int previousLevel = currentLevel;
             currentLevel = advanceOnce(player, currentLevel);
             if(previousLevel == currentLevel) break;
-            advanced = true;
         }
 
-        if(advanced && !hidden) {
+        if(currentLevel > initialLevel && !hidden) {
             String title, message, peerMessage;
-            if(currentLevel == 1) {
+            if(initialLevel == 0) {
                 title = OrderManager.getInductionTitle();
                 message = inductionMessage + " " + title;
-                peerMessage = OrderManager.getPeerInductionMessage() + " " + title;
+                peerMessage = player.getName() + " " + OrderManager.getPeerInductionMessage() + " " + title;
             } else {
                 title = OrderManager.getAdvancementTitle();
                 message = advancementMessage + " " + title;
-                peerMessage = OrderManager.getPeerAdvancementMessage() + " " + title;
+                peerMessage = player.getName() + " " + OrderManager.getPeerAdvancementMessage() + " " + title;
             }
 
             player.showDialog(DialogHelper.messageDialog(title, message));
