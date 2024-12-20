@@ -1027,7 +1027,7 @@ public class Zone {
         if(!getPlayers().isEmpty()) {
             int z = layer.ordinal();
             int changeIndex = z * width * height + getBlockIndex(x, y);
-            blockChanges.put(changeIndex, new BlockChangeData(x, y, layer, owner == null ? 0 : owner.getId(), item, mod));
+            blockChanges.put(changeIndex, new BlockChangeData(x, y, layer, 0, item, mod)); // TODO entity id
         }
         
         if(layer == Layer.FRONT) {
