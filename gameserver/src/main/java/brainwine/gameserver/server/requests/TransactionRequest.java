@@ -3,6 +3,7 @@ package brainwine.gameserver.server.requests;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.RequestInfo;
+import brainwine.gameserver.shop.ShopManager;
 import brainwine.gameserver.server.messages.StatMessage;
 import brainwine.gameserver.server.models.PlayerStat;
 
@@ -13,7 +14,6 @@ public class TransactionRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
-        player.notify("Sorry, the crown store has not been implemented yet.");
-        player.sendMessage(new StatMessage(PlayerStat.CROWNS, player.getCrowns()));
+        ShopManager.purchaseProduct(player, key);
     }
 }

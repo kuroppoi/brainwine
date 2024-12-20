@@ -79,14 +79,17 @@ public class DirectDataFetcher implements DataFetcher {
         return new ZoneInfo(zone.getName(), 
                 zone.getBiome().getId(), 
                 null,
+                zone.isPvp(),
                 false,
-                false,
-                false,
+                zone.isPrivate(),
+                zone.isProtected(),
                 zone.getPlayers().size(),
                 zone.getWidth(),
                 zone.getHeight(),
                 zone.getSurface(),
                 zone.getExplorationProgress(),
-                zone.getCreationDate());
+                zone.getCreationDate(),
+                zone.getOwner(),
+                zone.getMembers());
     }
 }

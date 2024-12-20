@@ -30,7 +30,7 @@ public class InventoryUseRequest extends PlayerRequest {
     @Override
     public void process(Player player) {
         // Don't do anything if the player is dead or doesn't own this item
-        if(player.isDead() || (!item.isAir() && !player.getInventory().hasItem(item))) {
+        if((player.isDead() && status == 1) || (!item.isAir() && !player.getInventory().hasItem(item))) {
             return;
         }
         

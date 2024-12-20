@@ -2,6 +2,7 @@ package brainwine.gameserver.zone;
 
 import java.io.File;
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -80,6 +81,10 @@ public class Zone {
     private float time = (float)Math.random(); // TODO temporary
     private float temperature;
     private float acidity;
+    private boolean isPrivate;
+    private boolean isProtected;
+    private boolean pvp;
+    private String owner;
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
     private final GrowthManager growthManager;
@@ -87,14 +92,16 @@ public class Zone {
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
     private final MachineManager machineManager = new MachineManager(this);
+    private final Set<Integer> pendingSunlight = new HashSet<>();
+    private final List<String> members = new ArrayList<>();
     private final List<BlockChangeData> blockChanges = new ArrayList<>();
     private final List<Timer<Integer>> blockTimers = new ArrayList<>();
-    private final Set<Integer> pendingSunlight = new HashSet<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> damageFieldBlocks = new HashMap<>();
+    private final Map<String, OffsetDateTime> actionHistory = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
     private boolean modified;
@@ -113,7 +120,12 @@ public class Zone {
         steamManager.setData(data.getSteamData());
         machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
+        owner = config.getOwner();
+        members.addAll(config.getMembers());
+        actionHistory.putAll(config.getActionHistory());
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
+        isPrivate = config.isPrivate();
+        isProtected = config.isProtected();
         creationDate = config.getCreationDate();
     }
     
@@ -282,6 +294,12 @@ public class Zone {
     
     public void spawnEffect(float x, float y, String type, Object data) {
         sendLocalMessage(new EffectMessage(x, y, type, data), x, y);
+    }
+    
+    public void kickAllPlayers(String reason, boolean shouldReconnect) {
+        for(Player player : getPlayers()) {
+            player.kick(reason, shouldReconnect);
+        }
     }
     
     public boolean isPointVisibleFrom(int x1, int y1, int x2, int y2) {
@@ -594,6 +612,12 @@ public class Zone {
     }
     
     public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+        // Check protection at zone level
+        if(player != null && isProtected(player)) {
+            return true;
+        }
+        
+        // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
             int fX = fieldBlock.getX();
@@ -1332,6 +1356,18 @@ public class Zone {
         return machineManager;
     }
     
+    public void recordActionTime(String name) {
+        actionHistory.put(name.toLowerCase(), OffsetDateTime.now());
+    }
+    
+    public boolean isActionOnCooldown(String name, long cooldown, TemporalUnit unit) {
+        return actionHistory.containsKey(name.toLowerCase()) && !OffsetDateTime.now().isAfter(actionHistory.get(name.toLowerCase()).plus(cooldown, unit));
+    }
+    
+    public Map<String, OffsetDateTime> getActionHistory() {
+        return Collections.unmodifiableMap(actionHistory);
+    }
+    
     /**
      * @return The specified coordinates in a player-readable format
      * For example, {@code x: 200 y: 300} in a plain biome becomes {@code 800 west, 100 below}
@@ -1590,8 +1626,13 @@ public class Zone {
         return (int)(UUID.fromString(documentId).getMostSignificantBits() >> 32);
     }
     
+    /**
+     * @deprecated DO NOT CALL DIRECTLY.
+     * If you have to rename a zone, please use {@link ZoneManager#renameZone(Zone, String)}.
+     */
     public void setName(String name) {
         this.name = name;
+        kickAllPlayers("Zone name changed.", true);
     }
     
     public String getName() {
@@ -1646,6 +1687,97 @@ public class Zone {
         return acidity;
     }
     
+    public void setPrivate(boolean value) {
+        this.isPrivate = value;
+        kickAllPlayers("Accessibility status changed.", true); // The login handler will kick non-members out of the zone if the world is made private
+    }
+    
+    public boolean canJoin(Player player) {
+        return isPublic() || isOwner(player) || isMember(player);
+    }
+    
+    public boolean isPublic() {
+        return !isPrivate();
+    }
+    
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+    
+    public void setProtected(boolean value) {
+        this.isProtected = value;
+        kickAllPlayers("Protection status changed.", true);
+    }
+    
+    public boolean isProtected(Player player) {
+        return isProtected && !isOwner(player) && !isMember(player);
+    }
+    
+    public boolean isProtected() {
+        return isProtected;
+    }
+    
+    public void setPvp(boolean pvp) {
+        this.pvp = pvp;
+        kickAllPlayers("PvP status changed.", true); 
+    }
+    
+    public boolean isPvp() {
+        return pvp;
+    }
+    
+    public boolean isOwner(Player player) {
+        return isOwned() && player.getDocumentId().equals(owner);
+    }
+    
+    public boolean isOwned() {
+        return owner != null;
+    }
+    
+    public void setOwner(Player player) {
+        this.owner = player.getDocumentId();
+        
+        // Update spawn teleporter ownership
+        for(MetaBlock block : getMetaBlocksWithItem("mechanical/zone-teleporter")) {
+            block.setOwner(owner);
+            sendBlockMetaUpdate(block);
+        }
+    }
+    
+    public String getOwner() {
+        return owner;
+    }
+    
+    public void addMember(Player player) {
+        members.add(player.getDocumentId());
+        
+        // Force player to reconnect if they're currently in this zone
+        if(player.getZone() == this) {
+            player.kick("Member status changed.", true);
+        }
+    }
+    
+    public void removeMember(Player player) {
+        members.remove(player.getDocumentId());
+        
+        // Kick the player from the world if they are currently in it or force them to reconnect if the world is public
+        if(player.getZone() == this) {
+            if(isPublic()) {
+                player.kick("Member status changed.", true);
+            } else {
+                player.changeZone(null);
+            }
+        }
+    }
+    
+    public boolean isMember(Player player) {
+        return members.contains(player.getDocumentId());
+    }
+    
+    public List<String> getMembers() {
+        return Collections.unmodifiableList(members);
+    }
+    
     public OffsetDateTime getCreationDate() {
         return creationDate;
     }
@@ -1683,6 +1815,12 @@ public class Zone {
         config.put("surface", surface);
         config.put("chunks_explored", chunksExplored);
         config.put("chunks_explored_count", getChunksExploredCount());
+        config.put("private", isPrivate);
+        config.put("protected", isProtected(player));
+        config.put("protected_player", isProtected(player));
+        config.put("owner", isOwner(player));
+        config.put("member", isMember(player));
+        config.put("pvp", pvp);
         Map<String, Object> depth = new HashMap<>();
         List<Object> earth = new ArrayList<>();
         
