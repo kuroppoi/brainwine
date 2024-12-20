@@ -1,5 +1,15 @@
 {
   "sections": {
+    "utilities": {
+      "name": "Utilities",
+      "icon": "icon-profile-equipment",
+      "products": [
+        "brain-wine",
+        "skill-book",
+        "skill-reset",
+        "name-change"
+      ]
+    },
     "protectors": {
       "name": "Protectors",
       "icon": "icon-skill-automata",
@@ -40,6 +50,54 @@
     }
   },
   "products": {
+    "brain-wine": {
+      "type": "item",
+      "name": "Brain Wine",
+      "cost": 75,
+      "description": "Upgrade any skill by one point with this carefully brewed essence of brain! Note: each skill can only be upgraded once via brain wine, and only to Level 10.",
+      "image": [
+        { "sprite": "inventory/consumables/brain-wine" },
+        { "sprite": "shop/banner", "color": "AAFF66" },
+        { "sprite": "shop/banner-text-sale" }
+      ],
+      "items": {
+        "consumables/brain-wine": 1
+      }
+    },
+    "skill-book": {
+      "type": "item",
+      "name": "Skill Book",
+      "cost": 75,
+      "description": "Upgrade any skill by one point with this lovely tome of knowledge! Note: each skill can only be upgraded once via books, and only to Level 10.",
+      "image": [
+        { "sprite": "inventory/consumables/book-skill" },
+        { "sprite": "shop/banner", "color": "AAFF66" },
+        { "sprite": "shop/banner-text-sale" }
+      ],
+      "items": {
+        "consumables/book-skill": 1
+      }
+    },
+    "skill-reset": {
+      "type": "item",
+      "name": "Skill Reset",
+      "cost": 100,
+      "description": "Go back in time a little with this handy skill reset! Reclaim all of your skill points and re-apply them however you like.",
+      "image": "inventory/consumables/skill-reset",
+      "items": {
+        "consumables/skill-reset": 1
+      }
+    },
+    "name-change": {
+      "type": "item",
+      "name": "Name Change",
+      "cost": 125,
+      "description": "Want to change your player name? Grab this handy name tag and get creative!",
+      "image": "inventory/consumables/name-change",
+      "items": {
+        "consumables/name-change": 1
+      }
+    },
     "giga-protector": {
       "type": "item",
       "name": "Giga Protector",

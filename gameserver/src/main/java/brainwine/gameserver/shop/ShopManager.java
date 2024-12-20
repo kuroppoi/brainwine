@@ -3,7 +3,6 @@ package brainwine.gameserver.shop;
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,13 +34,9 @@ public class ShopManager {
     private static final Map<String, Product> products = new HashMap<>();
     
     public static void loadShopData() {
+        logger.info(SERVER_MARKER, "Loading shop data ...");
         sections.clear();
         products.clear();
-        
-        // Clear out default shop config
-        Map<String, Object> gameConfig = GameConfiguration.getBaseConfig();
-        MapHelper.put(gameConfig, "shop.sections", new ArrayList<>());
-        MapHelper.put(gameConfig, "shop.items", new ArrayList<>());
         
         try {
             URL url = ResourceFinder.getResourceUrl("shop.json");
@@ -59,7 +54,7 @@ public class ShopManager {
                 Map<String, Object> data = JsonHelper.readValue(entry.getValue(), new TypeReference<Map<String, Object>>(){});
                 data.put("key", entry.getKey());
                 data.put("items", data.remove("products"));
-                MapHelper.appendList(gameConfig, "shop.sections", data);
+                MapHelper.appendList(GameConfiguration.getBaseConfig(), "shop.sections", data);
             }
             
             // Create product data
@@ -90,11 +85,15 @@ public class ShopManager {
                     data.put("image", image.getBaseSprite());
                 }
                 
-                MapHelper.appendList(gameConfig, "shop.items", data);
+                MapHelper.appendList(GameConfiguration.getBaseConfig(), "shop.items", data);
             }
         } catch(Exception e) {
-            logger.error("An error occured while converting shop data", e);
+            logger.error(SERVER_MARKER, "An error occured while converting shop data", e);
+            products.clear(); // Clear products so purchases can't be made
+            return;
         }
+        
+        logger.info(SERVER_MARKER, "Successfully loaded {} product{}", products.size(), products.size() == 1 ? "" : "s");
     }
     
     public static boolean purchaseProduct(Player player, Product product) {
