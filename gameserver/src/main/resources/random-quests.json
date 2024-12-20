@@ -27,10 +27,7 @@
             "type": "kill",
             "categories": [ "terrapus" ],
             "quantity": { "random_between": [ 5, 10 ] },
-            "reward": {
-                "xp": { "random_between": [ 50, 150, 10 ] },
-                "crowns": 20
-            }
+            "reward": { "crowns": 20 }
         },
         {
             "frequency": 10,
@@ -92,6 +89,39 @@
                             "building/copper",
                             "building/brass",
                             "rubble/gravestone"
+                        ]
+                    },
+                    "count": { "random_between": [5, 15] }
+                }
+            ],
+            "reward": { "crowns": 20 }
+        },
+        {
+            "frequency": 70,
+            "type": "collect",
+            "tasks": [
+                {
+                    "items": {
+                        "choices": [
+                            "music/symphonium",
+                            "music/phonograph",
+                            "lighting/candle",
+                            "lighting/lantern",
+                            "lighting/candlelabra",
+                            "furniture/hatrack",
+                            "vegetation/mushrooms-tiny",
+                            "vegetation/mushroom-portabella",
+                            "vegetation/mushroom-oyster",
+                            "vegetation/mushroom-porcini",
+                            "vegetation/mushroom-willow-tall",
+                            "vegetation/mushroom-amanita-tall",
+                            "vegetation/mushroom-chanterelle",
+                            "vegetation/mushroom-acid",
+                            "vegetation/mushroom-lava",
+                            "vegetation/mushroom-apostate",
+                            "vegetation/mushroom-shade",
+                            "vegetation/tumbleweed",
+                            "rubble/skeleton"
                         ]
                     },
                     "count": { "random_between": [5, 15] }
