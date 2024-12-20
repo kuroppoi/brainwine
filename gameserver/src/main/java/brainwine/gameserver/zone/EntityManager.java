@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.server.messages.EventMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -299,6 +300,7 @@ public class EntityManager {
             playersByName.put(player.getName().toLowerCase(), player);
             player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.ENTERING));
             player.sendMessageToPeers(new EntityPositionMessage(player));
+            player.sendMessage(new EventMessage("playerIconDidChange", player.getIconEmoji()));
         } else if(entity instanceof Npc) {
             npcs.put(entityId, (Npc)entity);
         }

@@ -1236,6 +1236,7 @@ public class Player extends Entity implements CommandExecutor {
         return displayedOrder;
     }
 
+    /** Get value for the entity status "ni" field. Use {@code Player#getIconEmoji} when sending a playerIconDidChange EventMessage */
     public String getIcon() {
         if(getDisplayedOrder() == null
                 || !OrderManager.getOrders().containsKey(getDisplayedOrder())
@@ -1246,6 +1247,12 @@ public class Player extends Entity implements CommandExecutor {
                 getDisplayedOrder(),
                 getOrders().getOrDefault(getDisplayedOrder(), 0)
         );
+    }
+
+    /** Icon for sending a playerIconDidChange EventMessage. Use {@code Player#getIcon} for the entity status "ni" field. */
+    public String getIconEmoji() {
+        String icon = getIcon();
+        return icon == null ? null : "emoji/" + icon;
     }
 
     public void setDisplayedOrder(String displayedOrder) {
