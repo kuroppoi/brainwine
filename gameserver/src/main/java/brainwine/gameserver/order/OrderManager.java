@@ -41,7 +41,7 @@ public class OrderManager {
 
             ordersMap.remove("all");
 
-            ordersByTitle.putAll(JsonHelper.readValue(ordersMap, new TypeReference<>() {}));
+            ordersByTitle.putAll(JsonHelper.readValue(ordersMap, new TypeReference<Map<String, Order>>() {}));
 
             for(Map.Entry<String, Order> orderPair : ordersByTitle.entrySet()) {
                 orderPair.getValue().setTitle(orderPair.getKey());

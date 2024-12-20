@@ -48,6 +48,9 @@ public class OrderTier {
                 case "brain_lords_killed":
                     compare = player.getStatistics().getKills(EntityRegistry.getEntityConfig("brains/large"));
                     break;
+                case "crowns_spent":
+                    compare = player.getStatistics().getCrownsSpent();
+                    break;
             }
 
             if(compare < requirements.get(requirement)) {

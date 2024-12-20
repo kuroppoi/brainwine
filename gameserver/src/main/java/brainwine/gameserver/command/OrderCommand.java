@@ -8,6 +8,7 @@ import brainwine.gameserver.order.OrderManager;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
+import brainwine.gameserver.server.messages.EventMessage;
 
 import java.util.List;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class OrderCommand extends Command {
             if(ans.length == 0 || "cancel".equals(ans[0]) || !(ans[0] instanceof String)) return;
             String newValue = "None".equals(ans[0]) ? null : (String)ans[0];
             player.setDisplayedOrder(OrderManager.getOrderKeyFromTitle(newValue));
-            player.sendMessage(new EntityChangeMessage(player.getId(), player.getStatusConfig()));
+            player.sendMessage(new EventMessage("playerIconDidChange", player.getIconEmoji()));
             player.sendMessageToPeers(new EntityChangeMessage(player.getId(), player.getStatusConfig()));
         });
     }
