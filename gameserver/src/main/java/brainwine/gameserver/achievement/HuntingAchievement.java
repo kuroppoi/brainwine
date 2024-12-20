@@ -21,10 +21,6 @@ public class HuntingAchievement extends Achievement {
     
     @Override
     public int getProgress(Player player) {
-        return player.getStatistics().getKills().entrySet().stream()
-                .filter(entry -> entry.getKey().getGroup() == group)
-                .map(Entry::getValue)
-                .reduce(Integer::sum)
-                .orElse(0);
+        return player.getStatistics().getKills(group);
     }
 }

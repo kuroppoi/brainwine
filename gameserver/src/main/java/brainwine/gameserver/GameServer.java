@@ -5,6 +5,7 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import brainwine.gameserver.order.OrderManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,6 +48,7 @@ public class GameServer implements CommandExecutor {
         CommandManager.init();
         GameConfiguration.init();
         AchievementManager.loadAchievements();
+        OrderManager.loadOrders();
         EntityRegistry.init();
         EntityManager.loadEntitySpawns();
         GrowthManager.loadGrowthData();
