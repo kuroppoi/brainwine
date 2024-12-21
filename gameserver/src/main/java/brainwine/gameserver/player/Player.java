@@ -791,7 +791,7 @@ public class Player extends Entity implements CommandExecutor {
             return;
         }
 
-        if(zone != null & !zone.isMarket()) {
+        if(zone != null && !zone.isMarket()) {
             showDialog(DialogHelper.messageDialog("Trade at the Market!", "Trading is only allowed in Market worlds and private worlds. Ask the player to join you in a Market world."));
             return;
         }
