@@ -1207,6 +1207,11 @@ public class Zone {
         return spawnBlocks.isEmpty() ? null : spawnBlocks.get((int)(Math.random() * spawnBlocks.size()));
     }
     
+    public boolean isSpawnInRange(int x, int y, double range) {
+        return metaBlocks.values().stream().anyMatch(block -> (block.getItem().hasId("mechanical/zone-teleporter") 
+                || block.getItem().hasId("signs/obelisk-spawn")) && MathUtils.inRange(block.getX(), block.getY(), x, y, range));
+    }
+    
     public List<MetaBlock> getMetaBlocksWithUse(ItemUseType useType) {
         return getMetaBlocks(metaBlock -> metaBlock.getItem().hasUse(useType));
     }
