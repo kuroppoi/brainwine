@@ -122,7 +122,7 @@ public class ZoneManager {
                 biomeOptions.remove(Biome.DEEP);
             }
 
-            lastGeneratedBiome = biomeOptions.get((int)Math.floor((biomeOptions.size() - 1) * Math.random()));
+            lastGeneratedBiome = biomeOptions.get((int)(biomeOptions.size() * Math.random()));
 
             ZoneGenerator generator = ZoneGenerator.getZoneGenerator(lastGeneratedBiome);
             generatingZone = true;
