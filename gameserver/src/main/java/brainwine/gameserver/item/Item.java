@@ -132,6 +132,12 @@ public class Item {
     @JsonProperty("steam")
     private boolean steam;
     
+    @JsonProperty("ownership")
+    private boolean ownership;
+    
+    @JsonProperty("membership")
+    private boolean membership;
+    
     @JsonProperty("inventory")
     private LazyItemGetter inventoryItem;
     
@@ -430,6 +436,14 @@ public class Item {
     
     public boolean usesSteam() {
         return steam;
+    }
+    
+    public boolean requiresOwnership() {
+        return ownership;
+    }
+    
+    public boolean requiresMembership() {
+        return membership;
     }
     
     public Map<Skill, Integer> getSkillBonuses() {

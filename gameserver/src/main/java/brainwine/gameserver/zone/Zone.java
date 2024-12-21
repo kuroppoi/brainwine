@@ -2,6 +2,7 @@ package brainwine.gameserver.zone;
 
 import java.io.File;
 import java.time.OffsetDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -77,8 +78,6 @@ public class Zone {
     private int[] depths;
     private boolean[] chunksExplored;
     private int chunksExploredCount;
-    private int totalUndergroundChunksCount;
-    private int undergroundChunksExploredCount;
     private OffsetDateTime creationDate = OffsetDateTime.now();
     private float time = (float)Math.random(); // TODO temporary
     private float temperature;
@@ -97,13 +96,14 @@ public class Zone {
     private final MachineManager machineManager = new MachineManager(this);
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final List<String> members = new ArrayList<>();
-    private final List<BlockChangeData> blockChanges = new ArrayList<>();
     private final List<Timer<Integer>> blockTimers = new ArrayList<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> damageFieldBlocks = new HashMap<>();
+    private final Map<Integer, BlockChangeData> blockChanges = new HashMap<>();
+    private final Map<String, OffsetDateTime> actionHistory = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
     private boolean modified;
@@ -119,12 +119,12 @@ public class Zone {
         this.depths = depths != null && depths.length == 3 ? depths : this.depths;
         this.chunksExplored = chunksExplored != null && chunksExplored.length == getChunkCount() ? chunksExplored : this.chunksExplored;
         recalculateChunksExploredCount();
-        recalculateUndergroundChunksExploredCount();
         steamManager.setData(data.getSteamData());
         machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
         owner = config.getOwner();
         members.addAll(config.getMembers());
+        actionHistory.putAll(config.getActionHistory());
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
         activity = config.getActivity();
         isPrivate = config.isPrivate();
@@ -193,7 +193,7 @@ public class Zone {
         // Send block changes to players who they are relevant to
         if(!blockChanges.isEmpty()) {
             for(Player player : getPlayers()) {
-                List<BlockChangeData> blockChangesNearPlayer = blockChanges.stream()
+                List<BlockChangeData> blockChangesNearPlayer = blockChanges.values().stream()
                         .filter(blockChange -> player.isChunkActive(blockChange.getX(), blockChange.getY()))
                         .collect(Collectors.toList());
                 
@@ -305,7 +305,7 @@ public class Zone {
             player.kick(reason, shouldReconnect);
         }
     }
-    
+
     public boolean isPointVisibleFrom(int x1, int y1, int x2, int y2) {
         return raycast(x1, y1, x2, y2) == null;
     }
@@ -624,7 +624,7 @@ public class Zone {
         if(player != null && isProtected(player)) {
             return true;
         }
-        
+
         // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
@@ -781,7 +781,7 @@ public class Zone {
                     } else if(decay && frontItem.getMod() == ModType.DECAY && random.nextBoolean()) {
                         frontMod = random.nextInt(4) + 1;
                     }
-
+                    
                     // Try to place rubble
                     if(decay && frontItem.isWhole() && !isBlockOccupied(x + i, y + j - 1, Layer.FRONT)
                             && random.nextDouble() <= 0.2 && findBlock(x + i, y + j - 1, b -> !b.getFrontItem().isAir()) == null) {
@@ -1055,7 +1055,9 @@ public class Zone {
         // Queue block update if there are players in this zone.
         // TODO maybe check if the block update was in an active chunk, too?
         if(!getPlayers().isEmpty()) {
-            blockChanges.add(new BlockChangeData(x, y, layer, item, mod));
+            int z = layer.ordinal();
+            int changeIndex = z * width * height + getBlockIndex(x, y);
+            blockChanges.put(changeIndex, new BlockChangeData(x, y, layer, 0, item, mod)); // TODO entity id
         }
         
         if(layer == Layer.FRONT) {
@@ -1102,7 +1104,9 @@ public class Zone {
         block.setMod(layer, mod);
         
         if(!getPlayers().isEmpty()) {
-            blockChanges.add(new BlockChangeData(x, y, layer, block.getItem(layer), mod));
+            int z = layer.ordinal();
+            int changeIndex = z * width * height + getBlockIndex(x, y);
+            blockChanges.put(changeIndex, new BlockChangeData(x, y, layer, 0, block.getItem(layer), mod));
         }
     }
     
@@ -1386,6 +1390,18 @@ public class Zone {
         return machineManager;
     }
     
+    public void recordActionTime(String name) {
+        actionHistory.put(name.toLowerCase(), OffsetDateTime.now());
+    }
+
+    public boolean isActionOnCooldown(String name, long cooldown, TemporalUnit unit) {
+        return actionHistory.containsKey(name.toLowerCase()) && !OffsetDateTime.now().isAfter(actionHistory.get(name.toLowerCase()).plus(cooldown, unit));
+    }
+
+    public Map<String, OffsetDateTime> getActionHistory() {
+        return Collections.unmodifiableMap(actionHistory);
+    }
+
     /**
      * @return The specified coordinates in a player-readable format
      * For example, {@code x: 200 y: 300} in a plain biome becomes {@code 800 west, 100 below}
@@ -1594,7 +1610,6 @@ public class Zone {
         }
         
         chunksExploredCount++;
-        if(y >= surface[x]) undergroundChunksExploredCount++;
         sendMessage(new ZoneExploredMessage(chunkIndex));
         return chunksExplored[chunkIndex] = true;
     }
@@ -1618,26 +1633,12 @@ public class Zone {
         return (float)getChunksExploredCount() / (numChunksWidth * numChunksHeight);
     }
 
-    /**
-     * @return A float between 0 and 1, where 0 is completely unexplored and 1 is fully explored.
-     */
-    public float getUndergroundExplorationProgress() {
-        // Do not compute for asteroids terrain type
-        if(biome == Biome.SPACE) return getExplorationProgress();
-        return (float)getUndergroundChunksExploredCount() / totalUndergroundChunksCount;
-    }
-    
     public boolean[] getChunksExplored() {
         return chunksExplored;
     }
     
     public int getChunksExploredCount() {
         return chunksExploredCount;
-    }
-
-    public int getUndergroundChunksExploredCount() {
-        // Do not compute for asteroids terrain type
-        return biome == Biome.SPACE ? getChunksExploredCount() : undergroundChunksExploredCount;
     }
     
     private void recalculateChunksExploredCount() {
@@ -1650,24 +1651,6 @@ public class Zone {
         }
     }
 
-    private void recalculateUndergroundChunksExploredCount() {
-        // Do not compute for asteroids terrain type
-        if(biome == Biome.SPACE) return;
-
-        // Might not entirely accurate
-        undergroundChunksExploredCount = 0;
-        totalUndergroundChunksCount = 0;
-
-        for(int x = 0; x < width; x += getChunkWidth()) {
-            int surfaceHeight = surface[x];
-
-            for(int y = getChunkHeight() * (surfaceHeight / getChunkHeight()); y < height; y += getChunkHeight()) {
-                totalUndergroundChunksCount += 1;
-                undergroundChunksExploredCount += chunksExplored[getChunkIndex(x, y)] ? 1 : 0;
-            }
-        }
-    }
-    
     @JsonValue
     public String getDocumentId() {
         return documentId;
@@ -1749,80 +1732,80 @@ public class Zone {
     public boolean isMarket() {
         return this.activity == ZoneActivity.MARKET;
     }
-    
+
     public void setPrivate(boolean value) {
         this.isPrivate = value;
         kickAllPlayers("Accessibility status changed.", true); // The login handler will kick non-members out of the zone if the world is made private
     }
-    
+
     public boolean canJoin(Player player) {
-        return isPublic() || isOwner(player) || isMember(player);
+        return player.isGodMode() || isPublic() || isOwner(player) || isMember(player);
     }
-    
+
     public boolean isPublic() {
         return !isPrivate();
     }
-    
+
     public boolean isPrivate() {
         return isPrivate;
     }
-    
+
     public void setProtected(boolean value) {
         this.isProtected = value;
         kickAllPlayers("Protection status changed.", true);
     }
-    
+
     public boolean isProtected(Player player) {
         return isProtected && !isOwner(player) && !isMember(player);
     }
-    
+
     public boolean isProtected() {
         return isProtected;
     }
-    
+
     public void setPvp(boolean pvp) {
         this.pvp = pvp;
-        kickAllPlayers("PvP status changed.", true); 
+        kickAllPlayers("PvP status changed.", true);
     }
-    
+
     public boolean isPvp() {
         return pvp;
     }
-    
+
     public boolean isOwner(Player player) {
         return isOwned() && player.getDocumentId().equals(owner);
     }
-    
+
     public boolean isOwned() {
         return owner != null;
     }
-    
+
     public void setOwner(Player player) {
         this.owner = player.getDocumentId();
-        
+
         // Update spawn teleporter ownership
         for(MetaBlock block : getMetaBlocksWithItem("mechanical/zone-teleporter")) {
             block.setOwner(owner);
             sendBlockMetaUpdate(block);
         }
     }
-    
+
     public String getOwner() {
         return owner;
     }
-    
+
     public void addMember(Player player) {
         members.add(player.getDocumentId());
-        
+
         // Force player to reconnect if they're currently in this zone
         if(player.getZone() == this) {
             player.kick("Member status changed.", true);
         }
     }
-    
+
     public void removeMember(Player player) {
         members.remove(player.getDocumentId());
-        
+
         // Kick the player from the world if they are currently in it or force them to reconnect if the world is public
         if(player.getZone() == this) {
             if(isPublic()) {
@@ -1832,15 +1815,15 @@ public class Zone {
             }
         }
     }
-    
+
     public boolean isMember(Player player) {
         return members.contains(player.getDocumentId());
     }
-    
+
     public List<String> getMembers() {
         return Collections.unmodifiableList(members);
     }
-    
+
     public OffsetDateTime getCreationDate() {
         return creationDate;
     }

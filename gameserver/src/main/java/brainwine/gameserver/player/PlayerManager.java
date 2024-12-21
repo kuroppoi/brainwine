@@ -16,7 +16,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.shared.JsonHelper;
 

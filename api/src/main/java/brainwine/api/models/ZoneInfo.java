@@ -62,7 +62,7 @@ public class ZoneInfo {
     public boolean isPvp() {
         return pvp;
     }
-
+    
     public boolean isPremium() {
         return premium;
     }
@@ -84,17 +84,17 @@ public class ZoneInfo {
     public int getWidth() {
         return width;
     }
-
+    
     @JsonIgnore
     public int getHeight() {
         return height;
     }
-
+    
     @JsonIgnore
     public int[] getSurface() {
         return surface;
     }
-
+    
     @JsonProperty("explored")
     public double getExplorationProgress() {
         return explorationProgress;

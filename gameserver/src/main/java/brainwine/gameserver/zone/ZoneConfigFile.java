@@ -34,28 +34,31 @@ public class ZoneConfigFile {
 
     @JsonSetter(nulls = Nulls.DEFAULT)
     private ZoneActivity activity;
-    
+
     @JsonSetter(value = "private")
     private boolean isPrivate;
-    
+
     @JsonSetter(value = "protected")
     private boolean isProtected;
-    
+
     @JsonSetter(nulls = Nulls.SKIP)
     private String owner;
-    
+
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     private List<String> members = new ArrayList<>();
-    
+
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     private Map<EcologicalMachine, List<Item>> discoveredParts = new HashMap<>();
     
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private Map<String, OffsetDateTime> actionHistory = new HashMap<>();
+
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime creationDate = OffsetDateTime.now();
     
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime lastActiveDate = OffsetDateTime.now();
-    
+
     @JsonCreator
     private ZoneConfigFile(@JsonProperty(value = "name", required = true) String name,
             @JsonProperty(value = "width", required = true) int width,
@@ -77,9 +80,10 @@ public class ZoneConfigFile {
         this.owner = zone.getOwner();
         this.members = zone.getMembers();
         this.discoveredParts = zone.getDiscoveredParts();
+        this.actionHistory = zone.getActionHistory();
         this.creationDate = zone.getCreationDate();
     }
-    
+
     public String getName() {
         return name;
     }
@@ -103,27 +107,31 @@ public class ZoneConfigFile {
     public ZoneActivity getActivity() {
         return activity;
     }
-    
+
     public boolean isPrivate() {
         return isPrivate;
     }
-    
+
     public boolean isProtected() {
         return isProtected;
     }
-    
+
     public String getOwner() {
         return owner;
     }
-    
+
     public List<String> getMembers() {
         return members;
     }
-    
+
     public Map<EcologicalMachine, List<Item>> getDiscoveredParts() {
         return discoveredParts;
     }
     
+    public Map<String, OffsetDateTime> getActionHistory() {
+        return actionHistory;
+    }
+
     public OffsetDateTime getCreationDate() {
         return creationDate;
     }
