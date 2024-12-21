@@ -64,6 +64,16 @@ public class BlockPlaceRequest extends PlayerRequest {
             return;
         }
         
+        if(!player.isGodMode() && item.requiresOwnership() && !zone.isOwner(player)) {
+            fail(player, "You can only place this in worlds you own.");
+            return;
+        }
+        
+        if(!player.isGodMode() && item.requiresMembership() && !zone.isOwner(player) && !zone.isMember(player)) {
+            fail(player, "You can only place these in owned or member worlds.");
+            return;
+        }
+        
         if(!player.isGodMode() && !item.canPlaceInField() && zone.isBlockProtected(x, y, player)) {
             fail(player, "This block is protected.");
             return;
