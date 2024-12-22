@@ -78,6 +78,12 @@ public class Item {
     @JsonProperty("guard")
     private int guardLevel;
     
+    @JsonProperty("spacing")
+    private int spacing;
+    
+    @JsonProperty("spawn_spacing")
+    private int spawnSpacing;
+    
     @JsonProperty("power")
     private float power;
     
@@ -191,6 +197,9 @@ public class Item {
     
     @JsonProperty("field_damage")
     private FieldDamage fieldDamage;
+    
+    @JsonProperty("spacing_items")
+    private List<LazyItemGetter> spacingItems = new ArrayList<>();
     
     @JsonProperty("ingredients")
     private List<CraftingRequirement> craftingIngredients = new ArrayList<>();
@@ -364,6 +373,22 @@ public class Item {
     
     public int getGuardLevel() {
         return guardLevel;
+    }
+    
+    public boolean hasSpacing() {
+        return spacing > 0;
+    }
+    
+    public int getSpacing() {
+        return spacing;
+    }
+    
+    public boolean hasSpawnSpacing() {
+        return spawnSpacing > 0;
+    }
+    
+    public int getSpawnSpacing() {
+        return spawnSpacing;
     }
     
     public float getPower() {
@@ -560,6 +585,14 @@ public class Item {
     
     public FieldDamage getFieldDamage() {
         return fieldDamage;
+    }
+    
+    public boolean hasSpacingItems() {
+        return !spacingItems.isEmpty();
+    }
+    
+    public List<Item> getSpacingItems() {
+        return spacingItems.stream().map(LazyItemGetter::get).collect(Collectors.toList());
     }
     
     public boolean isCraftable() {

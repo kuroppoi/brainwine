@@ -76,6 +76,18 @@ public class BlockPlaceRequest extends PlayerRequest {
             return;
         }
         
+        if(!player.isGodMode() && item.hasSpawnSpacing() && zone.isSpawnInRange(x, y, item.getSpawnSpacing())) {
+            fail(player, String.format("%s must be at least %s blocks away from spawns.", item.getTitle(), item.getSpawnSpacing()));
+            return;
+        }
+        
+        if(!player.isGodMode() && item.hasSpacing() && zone.getMetaBlocks().stream().anyMatch(block 
+                -> (item.hasSpacingItems() ? item.getSpacingItems().contains(block.getItem()) : block.getItem() == item) 
+                && MathUtils.inRange(block.getX(), block.getY(), x, y, item.getSpacing()))) {
+            fail(player, String.format("%s must be at least %s blocks away from other %ss.", item.getTitle(), item.getSpacing(), item.getTitle().toLowerCase()));
+            return;
+        }
+        
         if(!player.isGodMode() && !item.canPlaceInField() && zone.isBlockProtected(x, y, player)) {
             fail(player, "This block is protected.");
             return;
