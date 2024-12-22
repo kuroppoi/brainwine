@@ -1,5 +1,6 @@
 package brainwine.gameserver.item.interactions;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,11 +67,24 @@ public class DialogInteraction implements ItemInteraction {
                 String key = MapHelper.getString(section, "input.key");
                 
                 if(key != null) {
+                    // TODO possibly verify input based on type
                     String text = String.valueOf(data[i]);
+                    int max = MapHelper.getInt(section, "input.max", MapHelper.getInt(section, "input.maxlength")); // Defaults to 0 = no limit
+                    List<String> options = MapHelper.getList(section, "input.options", Collections.EMPTY_LIST);
                     
                     // Get rid of text if player is currently muted
                     if(player.isMuted() && MapHelper.getBoolean(section, "input.sanitize")) {
                         text = text.replaceAll(".", "*");
+                    }
+                    
+                    // Shorten text if it is too long
+                    if(max > 0 && text.length() > max) {
+                        text = text.substring(0, max);
+                    }
+                    
+                    // Check if input matches available options
+                    if(!options.isEmpty() && !options.contains(text)) {
+                        text = options.get(0);
                     }
                     
                     metadata.put(key, text);
