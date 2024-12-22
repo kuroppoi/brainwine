@@ -14,6 +14,9 @@ import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
@@ -87,6 +90,7 @@ public class Player extends Entity implements CommandExecutor {
     public static final int REGEN_NO_DAMAGE_TIME = 10000;
     public static final float ENTITY_VISIBILITY_RANGE = 40;
     public static final float BASE_REGEN_AMOUNT = 0.1F;
+    private static final Logger logger = LogManager.getLogger();
     private static int dialogDiscriminator;
     private final String documentId;
     private String email;
@@ -609,8 +613,12 @@ public class Player extends Entity implements CommandExecutor {
                 notify("Sorry, the request has expired.");
             }
         } else {
-            // TODO since we're dealing with user input, should we just try-catch this?
-            handler.accept(input);
+            try {
+                handler.accept(input);
+            } catch(Exception e) {
+                logger.error("An error occured while handling dialog input", e);
+                notify("Oops! There was a problem processing your input.");
+            }
         }
     }
     
