@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@CommandInfo(name = "order", description = "Shows a prompt where you can update your displayed order icon.")
+@CommandInfo(name = "order", description = "Shows a prompt where you can update your displayed order icon.", aliases = "orders")
 public class OrderCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {

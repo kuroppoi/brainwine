@@ -19,6 +19,7 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 public class OrderManager {
     private static Map<String, Order> orders = new HashMap<>();
     private static Map<String, Order> ordersByTitle = new HashMap<>();
+    private static Map<String, String> statFormat = new HashMap<>();
     private static String inductionTitle = "You've been inducted into an Order!";
     private static String advancementTitle = "You've advanced in an Order!";
     private static String peerInductionMessage = "has been inducted into the";
@@ -40,6 +41,14 @@ public class OrderManager {
             }
 
             ordersMap.remove("all");
+
+            Map<String, String> stat = MapHelper.getMap(ordersMap, "stat");
+
+            if(stat != null) {
+                statFormat.putAll(stat);
+            }
+
+            ordersMap.remove("stat");
 
             ordersByTitle.putAll(JsonHelper.readValue(ordersMap, new TypeReference<Map<String, Order>>() {}));
 
@@ -72,6 +81,10 @@ public class OrderManager {
         Order order = ordersByTitle.get(title);
 
         return order == null ? null : order.getKey();
+    }
+
+    public static String getStatFormat(String requirement) {
+        return statFormat.getOrDefault(requirement, "%d of " + requirement);
     }
 
     public static String getInductionTitle() {
