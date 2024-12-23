@@ -1,6 +1,5 @@
 package brainwine.gameserver.quest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -93,8 +92,12 @@ public class QuestTask {
         return true;
     }
 
+    private boolean checkCollectInventory(Player player) {
+        return getCollectInventory() == null || getCollectInventory().check(player);
+    }
+
     public boolean checkComplete(Player player, int quantity) {
-        return (getEvents() == null || getQuantity() <= quantity) && checkProgressRequirements(player);
+        return (getEvents() == null || getQuantity() <= quantity) && checkProgressRequirements(player) && checkCollectInventory(player);
     }
 
     public String getDescription() {
