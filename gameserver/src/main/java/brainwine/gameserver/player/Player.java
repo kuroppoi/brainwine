@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -299,8 +298,7 @@ public class Player extends Entity implements CommandExecutor {
     }
 
     public void applyBreath(float deltaTime) {
-        Item breathItem = getInventory().findAccessoryWithUse(ItemUseType.BREATH);
-        if(!breathItem.isAir()) {
+        if(isGodMode() || !inventory.findAccessoryWithUse(ItemUseType.BREATH).isAir()) {
             breath = 1.0;
         } else {
             if(isSubmerged()) {
@@ -321,10 +319,17 @@ public class Player extends Entity implements CommandExecutor {
     
     public void applyThirst(float deltaTime) {
         long now = System.currentTimeMillis();
-        double thirstPeriod = MathUtils.lerp(5.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
-        int direction = zone.getBiome() == Biome.DESERT && !zone.isPurified() ? 1 : -1;
-        thirst = MathUtils.clamp(thirst + (direction * deltaTime / thirstPeriod), 0.0, 1.0);
         
+        // Update thirst stat
+        if(isGodMode()) {
+            thirst = 0.0;
+        } else {
+            double thirstPeriod = MathUtils.lerp(5.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
+            int direction = zone.getBiome() == Biome.DESERT && !zone.isPurified() ? 1 : -1;
+            thirst = MathUtils.clamp(thirst + (direction * deltaTime / thirstPeriod), 0.0, 1.0);
+        }
+        
+        // Send message if it is time
         if(now > lastThirstMessage + 1000) {
             sendMessage(new StatMessage(PlayerStat.THIRST, (float)thirst));
             lastThirstMessage = now;
@@ -352,9 +357,15 @@ public class Player extends Entity implements CommandExecutor {
     
     public void applyFreeze(float deltaTime) {
         long now = System.currentTimeMillis();
-        double freezePeriod = MathUtils.lerp(3.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
-        int direction = zone.getBiome() == Biome.ARCTIC ? 1 : -2; // Warm back up twice as fast
-        cold = MathUtils.clamp(cold + (direction * deltaTime / freezePeriod), 0.0, 1.0);
+        
+        // Update freeze stat
+        if(isGodMode()) {
+            cold = 0.0;
+        } else {
+            double freezePeriod = MathUtils.lerp(3.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
+            int direction = zone.getBiome() == Biome.ARCTIC ? 1 : -2; // Warm back up twice as fast
+            cold = MathUtils.clamp(cold + (direction * deltaTime / freezePeriod), 0.0, 1.0);
+        }
         
         // Send message & perform damage tick if it is time
         if(now > lastFreezeMessage + 1000) {
