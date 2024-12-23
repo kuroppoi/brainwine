@@ -163,11 +163,16 @@ public class QuestTask {
         return this;
     }
 
-    public DialogSection getDialogSection(int taskProgress) {
+    public DialogSection getDialogSection(Player player, int taskProgress) {
         DialogSection result = new DialogSection();
 
-        result.setText(getDescription() + (taskProgress >= 0 ? String.format("(Progress: %d/%d)", taskProgress, getQuantity()) : ""));
-        
+        String title = getDescription() + (taskProgress >= 0 ? String.format(" (Progress: %d/%d)", taskProgress, getQuantity()) : "");
+        if(player == null || player.isV3()) {
+            result.setTitle("<color=#00ffff>" + title + "</color>");
+        } else {
+            result.setTitle(title).setTextColor("#00ffff");
+        }
+
         if(getQualify() != null && !getQualify().isEmpty()) {
             result.addItem(new DialogListItem().setText("Qualifications:"));
             for(List<Object> qualification : getQualify()) {
