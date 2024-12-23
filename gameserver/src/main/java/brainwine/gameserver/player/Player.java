@@ -10,15 +10,20 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.quest.DailyQuests;
 import brainwine.gameserver.quest.Quest;
 import brainwine.gameserver.util.ValueWithExpiry;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.order.OrderManager;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 import brainwine.gameserver.GameConfiguration;
@@ -59,6 +64,7 @@ import brainwine.gameserver.server.messages.EntityItemUseMessage;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.server.messages.EventMessage;
+import brainwine.gameserver.server.messages.FollowMessage;
 import brainwine.gameserver.server.messages.HealthMessage;
 import brainwine.gameserver.server.messages.HeartbeatMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
@@ -94,6 +100,7 @@ public class Player extends Entity implements CommandExecutor {
     public static final int REGEN_NO_DAMAGE_TIME = 10000;
     public static final float ENTITY_VISIBILITY_RANGE = 40;
     public static final float BASE_REGEN_AMOUNT = 0.1F;
+    private static final Logger logger = LogManager.getLogger();
     private static int dialogDiscriminator;
     private final String documentId;
     private String email;
@@ -109,6 +116,8 @@ public class Player extends Entity implements CommandExecutor {
     private List<NameChange> nameChanges;
     private List<PlayerRestriction> mutes;
     private List<PlayerRestriction> bans;
+    private Set<String> followees;
+    private Set<String> followers;
     private Set<String> lootCodes;
     private Set<Achievement> achievements;
     private Map<String, Integer> orders = new HashMap<>();
@@ -168,6 +177,8 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = config.getNameChanges();
         this.mutes = config.getMutes();
         this.bans = config.getBans();
+        this.followees = config.getFollowees();
+        this.followers = config.getFollowers();
         this.lootCodes = config.getLootCodes();
         this.achievements = config.getAchievements();
         this.orders = config.getOrders();
@@ -193,6 +204,8 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = new ArrayList<>();
         this.mutes = new ArrayList<>();
         this.bans = new ArrayList<>();
+        this.followees = new HashSet<>();
+        this.followers = new HashSet<>();
         this.lootCodes = new HashSet<>();
         this.achievements = new HashSet<>();
         this.ignoredHints = new HashMap<>();
@@ -307,8 +320,7 @@ public class Player extends Entity implements CommandExecutor {
     }
 
     public void applyBreath(float deltaTime) {
-        Item breathItem = getInventory().findAccessoryWithUse(ItemUseType.BREATH);
-        if(!breathItem.isAir()) {
+        if(isGodMode() || !inventory.findAccessoryWithUse(ItemUseType.BREATH).isAir()) {
             breath = 1.0;
         } else {
             if(isSubmerged()) {
@@ -329,10 +341,17 @@ public class Player extends Entity implements CommandExecutor {
     
     public void applyThirst(float deltaTime) {
         long now = System.currentTimeMillis();
-        double thirstPeriod = MathUtils.lerp(5.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
-        int direction = zone.getBiome() == Biome.DESERT && !zone.isPurified() ? 1 : -1;
-        thirst = MathUtils.clamp(thirst + (direction * deltaTime / thirstPeriod), 0.0, 1.0);
+
+        // Update thirst stat
+        if(isGodMode()) {
+            thirst = 0.0;
+        } else {
+            double thirstPeriod = MathUtils.lerp(5.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
+            int direction = zone.getBiome() == Biome.DESERT && !zone.isPurified() ? 1 : -1;
+            thirst = MathUtils.clamp(thirst + (direction * deltaTime / thirstPeriod), 0.0, 1.0);
+        }
         
+        // Send message if it is time
         if(now > lastThirstMessage + 1000) {
             sendMessage(new StatMessage(PlayerStat.THIRST, (float)thirst));
             lastThirstMessage = now;
@@ -360,9 +379,15 @@ public class Player extends Entity implements CommandExecutor {
     
     public void applyFreeze(float deltaTime) {
         long now = System.currentTimeMillis();
-        double freezePeriod = MathUtils.lerp(3.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
-        int direction = zone.getBiome() == Biome.ARCTIC ? 1 : -2; // Warm back up twice as fast
-        cold = MathUtils.clamp(cold + (direction * deltaTime / freezePeriod), 0.0, 1.0);
+
+        // Update freeze stat
+        if(isGodMode()) {
+            cold = 0.0;
+        } else {
+            double freezePeriod = MathUtils.lerp(3.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
+            int direction = zone.getBiome() == Biome.ARCTIC ? 1 : -2; // Warm back up twice as fast
+            cold = MathUtils.clamp(cold + (direction * deltaTime / freezePeriod), 0.0, 1.0);
+        }
         
         // Send message & perform damage tick if it is time
         if(now > lastFreezeMessage + 1000) {
@@ -506,6 +531,13 @@ public class Player extends Entity implements CommandExecutor {
             notify("Welcome to " + zone.getName(), NotificationType.WELCOME);
         }
         
+        // Send social info
+        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
+        sendMessage(new FollowMessage(followees.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 0));
+        sendMessage(new FollowMessage(followers.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 1));
+        sendMessage(new EventMessage("socialInfoReady", null));
+
+        // Misc stuff
         updateAchievementProgress(JourneymanAchievement.class);
         checkRegistration();
     }
@@ -632,8 +664,12 @@ public class Player extends Entity implements CommandExecutor {
                 notify("Sorry, the request has expired.");
             }
         } else {
-            // TODO since we're dealing with user input, should we just try-catch this?
-            handler.accept(input);
+            try {
+                handler.accept(input);
+            } catch(Exception e) {
+                logger.error("An error occured while handling dialog input", e);
+                notify("Oops! There was a problem processing your input.");
+            }
         }
     }
     
@@ -971,6 +1007,64 @@ public class Player extends Entity implements CommandExecutor {
         return authTokens;
     }
     
+    public void followPlayer(Player player) {
+        if(!followees.add(player.getDocumentId())) {
+            return; // Do nothing if player is already following
+        }
+
+        player.addFollower(this);
+        sendMessage(new FollowMessage(player, 0, true));
+    }
+
+    public void unfollowPlayer(Player player) {
+        if(!followees.remove(player.getDocumentId())) {
+            return; // Do nothing if player is not following
+        }
+
+        player.removeFollower(this);
+        sendMessage(new FollowMessage(player, 0, false));
+    }
+
+    public boolean isFollowing(Player player) {
+        return isFollowing(player.getDocumentId());
+    }
+
+    public boolean isFollowing(String followee) {
+        return followees.contains(followee);
+    }
+
+    public Set<String> getFollowees() {
+        return Collections.unmodifiableSet(followees);
+    }
+
+    private void addFollower(Player player) {
+        followers.add(player.getDocumentId());
+
+        if(isOnline()) {
+            sendMessage(new FollowMessage(player, 1, true));
+        }
+    }
+
+    private void removeFollower(Player player) {
+        followers.remove(player.getDocumentId());
+
+        if(isOnline()) {
+            sendMessage(new FollowMessage(player, 1, false));
+        }
+    }
+
+    public boolean hasFollower(Player player) {
+        return hasFollower(player.getDocumentId());
+    }
+
+    public boolean hasFollower(String follower) {
+        return followers.contains(follower);
+    }
+
+    public Set<String> getFollowers() {
+        return Collections.unmodifiableSet(followers);
+    }
+
     public void addLootCode(String lootCode) {
         lootCodes.add(lootCode);
     }

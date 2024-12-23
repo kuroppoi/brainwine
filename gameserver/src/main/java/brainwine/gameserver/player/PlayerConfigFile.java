@@ -33,6 +33,8 @@ public class PlayerConfigFile {
     private List<NameChange> nameChanges = new ArrayList<>();
     private List<PlayerRestriction> mutes = new ArrayList<>();
     private List<PlayerRestriction> bans = new ArrayList<>();
+    private Set<String> followees = new HashSet<>();
+    private Set<String> followers = new HashSet<>();
     private Set<String> lootCodes = new HashSet<>();
     private Set<Achievement> achievements = new HashSet<>();
     private Map<String, Integer> orders = new HashMap<>();
@@ -60,6 +62,8 @@ public class PlayerConfigFile {
         this.nameChanges = player.getNameChanges();
         this.mutes = player.getMutes();
         this.bans = player.getBans();
+        this.followees = player.getFollowees();
+        this.followers = player.getFollowers();
         this.lootCodes = player.getLootCodes();
         this.achievements = player.getAchievements();
         this.orders = player.getOrders();
@@ -145,6 +149,16 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP)
     public PlayerStatistics getStatistics() {
         return statistics;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Set<String> getFollowees() {
+        return followees;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Set<String> getFollowers() {
+        return followers;
     }
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)

@@ -73,7 +73,7 @@ public class MetaBlock {
     }
     
     public boolean isOwnedBy(Player player) {
-        return player != null && player.getDocumentId().equals(owner);
+        return hasOwner() && player != null && player.getDocumentId().equals(owner);
     }
     
     @JsonIgnore

@@ -305,7 +305,7 @@ public class Zone {
             player.kick(reason, shouldReconnect);
         }
     }
-
+    
     public boolean isPointVisibleFrom(int x1, int y1, int x2, int y2) {
         return raycast(x1, y1, x2, y2) == null;
     }
@@ -625,6 +625,15 @@ public class Zone {
             return true;
         }
 
+        MetaBlock metaBlock = getMetaBlock(x, y);
+
+        // Check block owner if it has a field
+        // TODO this will cause issues for field blocks that have no metadata (though conveniently, no such items exist by default)
+        // but checking the item here would cause some functions to gain chunk loading privileges.
+        if(metaBlock != null && metaBlock.getItem().hasField() && !metaBlock.isOwnedBy(player)) {
+            return true;
+        }
+
         // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
@@ -632,7 +641,8 @@ public class Zone {
             int fY = fieldBlock.getY();
             int field = fieldBlock.getItem().getField();
             
-            if(player == null || !fieldBlock.isOwnedBy(player)) {
+            if(player == null || (!fieldBlock.isOwnedBy(player)
+                    && !(fieldBlock.getIntProperty("t") == 1 && player.hasFollower(fieldBlock.getOwner())))) {
                 if(item.isDish()) {
                     if(MathUtils.inRange(x, y, fX, fY, field)) {
                         return true;
@@ -1398,15 +1408,15 @@ public class Zone {
     public void recordActionTime(String name) {
         actionHistory.put(name.toLowerCase(), OffsetDateTime.now());
     }
-
+    
     public boolean isActionOnCooldown(String name, long cooldown, TemporalUnit unit) {
         return actionHistory.containsKey(name.toLowerCase()) && !OffsetDateTime.now().isAfter(actionHistory.get(name.toLowerCase()).plus(cooldown, unit));
     }
-
+    
     public Map<String, OffsetDateTime> getActionHistory() {
         return Collections.unmodifiableMap(actionHistory);
     }
-
+    
     /**
      * @return The specified coordinates in a player-readable format
      * For example, {@code x: 200 y: 300} in a plain biome becomes {@code 800 west, 100 below}
@@ -1637,7 +1647,7 @@ public class Zone {
     public float getExplorationProgress() {
         return (float)getChunksExploredCount() / (numChunksWidth * numChunksHeight);
     }
-
+    
     public boolean[] getChunksExplored() {
         return chunksExplored;
     }
@@ -1655,7 +1665,7 @@ public class Zone {
             }
         }
     }
-
+    
     @JsonValue
     public String getDocumentId() {
         return documentId;
@@ -1742,75 +1752,75 @@ public class Zone {
         this.isPrivate = value;
         kickAllPlayers("Accessibility status changed.", true); // The login handler will kick non-members out of the zone if the world is made private
     }
-
+    
     public boolean canJoin(Player player) {
         return player.isGodMode() || isPublic() || isOwner(player) || isMember(player);
     }
-
+    
     public boolean isPublic() {
         return !isPrivate();
     }
-
+    
     public boolean isPrivate() {
         return isPrivate;
     }
-
+    
     public void setProtected(boolean value) {
         this.isProtected = value;
         kickAllPlayers("Protection status changed.", true);
     }
-
+    
     public boolean isProtected(Player player) {
         return isProtected && !isOwner(player) && !isMember(player);
     }
-
+    
     public boolean isProtected() {
         return isProtected;
     }
-
+    
     public void setPvp(boolean pvp) {
         this.pvp = pvp;
-        kickAllPlayers("PvP status changed.", true);
+        kickAllPlayers("PvP status changed.", true); 
     }
-
+    
     public boolean isPvp() {
         return pvp;
     }
-
+    
     public boolean isOwner(Player player) {
         return isOwned() && player.getDocumentId().equals(owner);
     }
-
+    
     public boolean isOwned() {
         return owner != null;
     }
-
+    
     public void setOwner(Player player) {
         this.owner = player.getDocumentId();
-
+        
         // Update spawn teleporter ownership
         for(MetaBlock block : getMetaBlocksWithItem("mechanical/zone-teleporter")) {
             block.setOwner(owner);
             sendBlockMetaUpdate(block);
         }
     }
-
+    
     public String getOwner() {
         return owner;
     }
-
+    
     public void addMember(Player player) {
         members.add(player.getDocumentId());
-
+        
         // Force player to reconnect if they're currently in this zone
         if(player.getZone() == this) {
             player.kick("Member status changed.", true);
         }
     }
-
+    
     public void removeMember(Player player) {
         members.remove(player.getDocumentId());
-
+        
         // Kick the player from the world if they are currently in it or force them to reconnect if the world is public
         if(player.getZone() == this) {
             if(isPublic()) {
@@ -1820,15 +1830,15 @@ public class Zone {
             }
         }
     }
-
+    
     public boolean isMember(Player player) {
         return members.contains(player.getDocumentId());
     }
-
+    
     public List<String> getMembers() {
         return Collections.unmodifiableList(members);
     }
-
+    
     public OffsetDateTime getCreationDate() {
         return creationDate;
     }
