@@ -88,6 +88,8 @@ public class DialogInteraction implements ItemInteraction {
                         metadata.put(key, text);
                         break;
                     case "text select":
+                    case "select":
+                    case "color":
                         // Check if input matches available options
                         if(!options.isEmpty() && !options.contains(text)) {
                             text = options.get(0);
