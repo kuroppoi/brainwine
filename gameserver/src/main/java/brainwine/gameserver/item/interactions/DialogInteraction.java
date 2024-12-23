@@ -65,29 +65,40 @@ public class DialogInteraction implements ItemInteraction {
             for(int i = 0; i < sections.size(); i++) {
                 Map<String, Object> section = sections.get(i);
                 String key = MapHelper.getString(section, "input.key");
+                String type = MapHelper.getString(section, "input.type");
                 
-                if(key != null) {
-                    // TODO possibly verify input based on type
-                    String text = String.valueOf(data[i]);
-                    int max = MapHelper.getInt(section, "input.max", MapHelper.getInt(section, "input.maxlength")); // Defaults to 0 = no limit
+                if(key != null && type != null) {
                     List<String> options = MapHelper.getList(section, "input.options", Collections.EMPTY_LIST);
+                    String text = String.valueOf(data[i]);
                     
-                    // Get rid of text if player is currently muted
-                    if(player.isMuted() && MapHelper.getBoolean(section, "input.sanitize")) {
-                        text = text.replaceAll(".", "*");
+                    switch(type) {
+                    case "text":
+                        int max = MapHelper.getInt(section, "input.max", MapHelper.getInt(section, "input.maxlength")); // Defaults to 0 = no limit
+                        
+                        // Get rid of text if player is currently muted
+                        if(player.isMuted() && MapHelper.getBoolean(section, "input.sanitize")) {
+                            text = text.replaceAll(".", "*");
+                        }
+                        
+                        // Shorten text if it is too long
+                        if(max > 0 && text.length() > max) {
+                            text = text.substring(0, max);
+                        }
+                        
+                        metadata.put(key, text);
+                        break;
+                    case "text select":
+                        // Check if input matches available options
+                        if(!options.isEmpty() && !options.contains(text)) {
+                            text = options.get(0);
+                        }
+                        
+                        metadata.put(key, text);
+                        break;
+                    case "text index":
+                        metadata.put(key, Math.max(0, Math.min(options.size() - 1, data[i] instanceof Integer ? (int)data[i] : 0)));
+                        break;
                     }
-                    
-                    // Shorten text if it is too long
-                    if(max > 0 && text.length() > max) {
-                        text = text.substring(0, max);
-                    }
-                    
-                    // Check if input matches available options
-                    if(!options.isEmpty() && !options.contains(text)) {
-                        text = options.get(0);
-                    }
-                    
-                    metadata.put(key, text);
                 } else if(MapHelper.getBoolean(section, "input.mod")) {
                     List<Object> options = MapHelper.getList(section, "input.options");
                     
