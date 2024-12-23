@@ -617,6 +617,15 @@ public class Zone {
             return true;
         }
         
+        MetaBlock metaBlock = getMetaBlock(x, y);
+        
+        // Check block owner if it has a field
+        // TODO this will cause issues for field blocks that have no metadata (though conveniently, no such items exist by default)
+        // but checking the item here would cause some functions to gain chunk loading privileges.
+        if(metaBlock != null && metaBlock.getItem().hasField() && !metaBlock.isOwnedBy(player)) {
+            return true;
+        }
+        
         // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
@@ -624,7 +633,8 @@ public class Zone {
             int fY = fieldBlock.getY();
             int field = fieldBlock.getItem().getField();
             
-            if(player == null || !fieldBlock.isOwnedBy(player)) {
+            if(player == null || (!fieldBlock.isOwnedBy(player) 
+                    && !(fieldBlock.getIntProperty("t") == 1 && player.hasFollower(fieldBlock.getOwner())))) {
                 if(item.isDish()) {
                     if(MathUtils.inRange(x, y, fX, fY, field)) {
                         return true;
