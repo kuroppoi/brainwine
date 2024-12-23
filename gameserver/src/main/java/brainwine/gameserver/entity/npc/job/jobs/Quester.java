@@ -93,7 +93,7 @@ public class Quester extends DialoguerJob {
                         String categoryPrefix = Quests.titleToPrefix.get(category);
                         List<Quest> randomQuests = RandomQuests.generateRandomPlayerQuests(player, RandomQuestDomain.fromCategoryTitle(category), count - quests.size());
                         for(Quest quest : randomQuests) {
-                            String id = Integer.toString((int) (0.1000_000 + (int)Math.floor(Math.random() * 0xEFFF_FFF)), 16);
+                            String id = Integer.toString((0x1000_000 + (int)Math.floor(Math.random() * 0xEFFF_FFF)), 16);
                             quest.setId(categoryPrefix + "_random_" + id);
                             quest.setGroup(category);
 
