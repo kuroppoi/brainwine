@@ -125,7 +125,7 @@ public class Zone {
         owner = config.getOwner();
         members.addAll(config.getMembers());
         actionHistory.putAll(config.getActionHistory());
-        acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
+        acidity = config.getAcidity();
         activity = config.getActivity();
         isPrivate = config.isPrivate();
         isProtected = config.isProtected();
@@ -144,7 +144,7 @@ public class Zone {
         surface = new int[width];
         sunlight = new int[width];
         chunksExplored = new boolean[numChunksWidth * numChunksHeight];
-        acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : 1;
+        acidity = 1.0f;
         chunkManager = new ChunkManager(this);
         steamManager = new SteamManager(this);
         growthManager = new GrowthManager(this);
