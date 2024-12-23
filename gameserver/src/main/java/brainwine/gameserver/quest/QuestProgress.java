@@ -117,7 +117,8 @@ public class QuestProgress {
 
         for(int i = 0; i < quest.getTasks().size(); i++) {
             QuestTask task = quest.getTasks().get(i);
-            if(task.checkComplete(player, getTaskProgress(i))) {
+            // We are hiding that the collect inventory is complete even if it is. The actual check happens in canFinishQuest.
+            if(task.checkComplete(player, getTaskProgress(i)) && task.getCollectInventory() == null) {
                 completedIndices.add(i);
             }
         }

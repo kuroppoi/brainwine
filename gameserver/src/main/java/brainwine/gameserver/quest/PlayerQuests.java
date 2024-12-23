@@ -70,7 +70,7 @@ public class PlayerQuests {
 
             QuestTask task = quest.getTasks().get(i);
 
-            if(!task.checkComplete(player, currentQuantity)) {
+            if(!task.checkComplete(player, currentQuantity) || !task.checkCollectInventory(player)) {
                 return false;
             }
         }
