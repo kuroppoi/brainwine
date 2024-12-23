@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -54,6 +55,7 @@ import brainwine.gameserver.server.messages.EntityItemUseMessage;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.server.messages.EventMessage;
+import brainwine.gameserver.server.messages.FollowMessage;
 import brainwine.gameserver.server.messages.HealthMessage;
 import brainwine.gameserver.server.messages.HeartbeatMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
@@ -106,6 +108,8 @@ public class Player extends Entity implements CommandExecutor {
     private List<NameChange> nameChanges;
     private List<PlayerRestriction> mutes;
     private List<PlayerRestriction> bans;
+    private Set<String> followees;
+    private Set<String> followers;
     private Set<String> lootCodes;
     private Set<Achievement> achievements;
     private Map<String, Float> ignoredHints;
@@ -159,6 +163,8 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = config.getNameChanges();
         this.mutes = config.getMutes();
         this.bans = config.getBans();
+        this.followees = config.getFollowees();
+        this.followers = config.getFollowers();
         this.lootCodes = config.getLootCodes();
         this.achievements = config.getAchievements();
         this.ignoredHints = config.getIgnoredHints();
@@ -180,6 +186,8 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = new ArrayList<>();
         this.mutes = new ArrayList<>();
         this.bans = new ArrayList<>();
+        this.followees = new HashSet<>();
+        this.followers = new HashSet<>();
         this.lootCodes = new HashSet<>();
         this.achievements = new HashSet<>();
         this.ignoredHints = new HashMap<>();
@@ -947,6 +955,64 @@ public class Player extends Entity implements CommandExecutor {
     
     protected List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    public void followPlayer(Player player) {
+        if(!followees.add(player.getDocumentId())) {
+            return; // Do nothing if player is already following
+        }
+        
+        player.addFollower(this);
+        sendMessage(new FollowMessage(player, 0, true));
+    }
+    
+    public void unfollowPlayer(Player player) {
+        if(!followees.remove(player.getDocumentId())) {
+            return; // Do nothing if player is not following
+        }
+        
+        player.removeFollower(this);
+        sendMessage(new FollowMessage(player, 0, false));
+    }
+    
+    public boolean isFollowing(Player player) {
+        return isFollowing(player.getDocumentId());
+    }
+    
+    public boolean isFollowing(String followee) {
+        return followees.contains(followee);
+    }
+    
+    public Set<String> getFollowees() {
+        return Collections.unmodifiableSet(followees);
+    }
+    
+    private void addFollower(Player player) {
+        followers.add(player.getDocumentId());
+        
+        if(isOnline()) {
+            sendMessage(new FollowMessage(player, 1, true));
+        }
+    }
+    
+    private void removeFollower(Player player) {
+        followers.remove(player.getDocumentId());
+        
+        if(isOnline()) {
+            sendMessage(new FollowMessage(player, 1, false));
+        }
+    }
+    
+    public boolean hasFollower(Player player) {
+        return hasFollower(player.getDocumentId());
+    }
+    
+    public boolean hasFollower(String follower) {
+        return followers.contains(follower);
+    }
+    
+    public Set<String> getFollowers() {
+        return Collections.unmodifiableSet(followers);
     }
     
     public void addLootCode(String lootCode) {

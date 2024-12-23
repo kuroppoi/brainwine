@@ -20,6 +20,7 @@ public class DialogSection {
     private List<DialogListItem> items = new ArrayList<>();
     private String title;
     private String text;
+    private String choice;
     private String textColor;
     private double textScale;
     private Vector2i location;
@@ -51,6 +52,15 @@ public class DialogSection {
     
     public String getText() {
         return text;
+    }
+    
+    public DialogSection setChoice(String choice) {
+        this.choice = choice;
+        return this;
+    }
+    
+    public String getChoice() {
+        return choice;
     }
     
     /**
