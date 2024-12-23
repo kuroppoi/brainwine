@@ -84,11 +84,11 @@ public class QuestProgress {
         mainSection.setTitle(quest.getTitle());
 
         if(PlayerQuests.canFinishQuest(player, quest)) {
-            mainSection.addItem(new DialogListItem().setImage("shop/premium").setText("All tasks done. Visit a quester android to claim your reward!"));
+            mainSection.addItem(new DialogListItem().setText("All tasks done. Visit a quester android to claim your reward!"));
         }
 
         for(int i = 0; i < quest.getTasks().size(); i++) {
-            result.add(quest.getTasks().get(i).getDialogSection(getTaskProgress(i)));
+            result.add(quest.getTasks().get(i).getDialogSection(player, getTaskProgress(i)));
         }
 
         if(canFinishQuest) {
@@ -117,7 +117,8 @@ public class QuestProgress {
 
         for(int i = 0; i < quest.getTasks().size(); i++) {
             QuestTask task = quest.getTasks().get(i);
-            if(task.checkComplete(player, getTaskProgress(i))) {
+            // We are hiding that the collect inventory is complete even if it is. The actual check happens in canFinishQuest.
+            if(task.checkComplete(player, getTaskProgress(i)) && task.getCollectInventory() == null) {
                 completedIndices.add(i);
             }
         }
