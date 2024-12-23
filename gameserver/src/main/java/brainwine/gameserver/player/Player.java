@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -508,6 +509,13 @@ public class Player extends Entity implements CommandExecutor {
             notify("Welcome to " + zone.getName(), NotificationType.WELCOME);
         }
         
+        // Send social info
+        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
+        sendMessage(new FollowMessage(followees.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 0));
+        sendMessage(new FollowMessage(followers.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 1));
+        sendMessage(new EventMessage("socialInfoReady", null));
+        
+        // Misc stuff
         updateAchievementProgress(JourneymanAchievement.class);
         checkRegistration();
     }
