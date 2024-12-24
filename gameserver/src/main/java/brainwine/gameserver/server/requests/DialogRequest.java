@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.text.WordUtils;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
@@ -16,6 +17,7 @@ import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.RequestInfo;
+import brainwine.gameserver.zone.Zone;
 
 @RequestInfo(id = 45)
 public class DialogRequest extends PlayerRequest {
@@ -33,12 +35,15 @@ public class DialogRequest extends PlayerRequest {
         
         if(id instanceof String) {
             switch((String)id) {
-                case "skill_upgrade":
-                    onSkillUpgrade(player);
-                    break;
-                default:
-                    player.notify("Sorry, this action is not implemented yet.");
-                    break;
+            case "skill_upgrade":
+                onSkillUpgrade(player);
+                break;
+            case "player":
+                showPlayerDialog(player);
+                break;
+            default:
+                player.notify("Sorry, this action is not implemented yet.");
+                break;
             }
             return;
         } else if(id instanceof Integer) {
@@ -46,6 +51,59 @@ public class DialogRequest extends PlayerRequest {
                 player.handleDialogInput((int)id, input);
             }
         }
+    }
+    
+    private void showPlayerDialog(Player player) {
+        // Do nothing if there is no valid input data
+        if(input == null || input.length == 0 || !(input[0] instanceof String)) {
+            return;
+        }
+        
+        // Create player info dialog
+        Player subject = GameServer.getInstance().getPlayerManager().getPlayer((String)input[0]);
+        Dialog dialog = new Dialog().setTitle(subject.getName());
+        
+        // Online status section
+        if(subject.isOnline()) {
+            dialog.addSection(new DialogSection().setText(String.format("<color=#33AA33>Online</color>\nCurrently in %s", subject.getZone().getName())));
+            
+            if(player.getZone() != subject.getZone()) {
+                dialog.addSection(new DialogSection().setText(String.format("Goto %s", subject.getZone().getName())).setChoice("visit"));
+            }
+        } else {
+            dialog.addSection(new DialogSection().setText(String.format("<color=#C80000>Offline</color>", subject.getZone().getName())));
+        }
+        
+        // Follow section
+        String followText = player.isFollowing(subject) ? "Unfollow" : "Follow";
+        dialog.addSection(new DialogSection().setText(followText).setChoice(followText.toLowerCase()));
+        
+        // Show player info dialog
+        player.showDialog(dialog, input -> {
+            // Handle cancellation
+            if(input.length == 0 || (input.length == 1 && input[0].equals("cancel"))) {
+                return;
+            }
+            
+            String choice = String.valueOf(input[0]);
+            
+            // Handle selection
+            switch(choice) {
+            case "follow": player.followPlayer(subject); break;
+            case "unfollow": player.unfollowPlayer(subject); break;
+            case "visit":
+                Zone zone = subject.getZone();
+                
+                // TODO maybe perform checks in changeZone function and add a force flag for bypassing?
+                if(!zone.canJoin(player)) {
+                    player.notify("Sorry, you can't enter this world right now.");
+                    break;
+                }
+                
+                player.changeZone(subject.getZone());
+                break;
+            }
+        });
     }
     
     private void onSkillUpgrade(Player player) {

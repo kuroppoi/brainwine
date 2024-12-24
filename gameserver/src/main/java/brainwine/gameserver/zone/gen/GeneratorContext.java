@@ -1,29 +1,27 @@
 package brainwine.gameserver.zone.gen;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.util.SimplexNoise;
-import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.gen.caves.Cave;
+import brainwine.gameserver.zone.gen.models.Structure;
 import brainwine.gameserver.zone.gen.surface.SurfaceRegion;
 
 public class GeneratorContext {
     
     private final List<SurfaceRegion> surfaceRegions = new ArrayList<>();
     private final List<Cave> caves = new ArrayList<>();
-    private final Map<Vector2i, Vector2i> prefabRegions = new HashMap<>();
+    private final List<Structure> structures = new ArrayList<>();
     private final Zone zone;
     private final int seed;
     private final Random random;
@@ -61,8 +59,9 @@ public class GeneratorContext {
         y = Math.max(1, Math.min(y, getHeight() - prefab.getHeight() - 3));
         
         if(!willPrefabOverlap(prefab, x, y)) {
-            zone.placePrefab(prefab, x, y, random, seed);
-            prefabRegions.put(new Vector2i(x, y), new Vector2i(prefab.getWidth(), prefab.getHeight()));
+            boolean mirrored = random.nextBoolean();
+            zone.placePrefab(prefab, x, y, random, mirrored, seed);
+            structures.add(new Structure(prefab, x, y, mirrored));
             return true;
         }
         
@@ -147,18 +146,28 @@ public class GeneratorContext {
     }
     
     public boolean willPrefabOverlap(Prefab prefab, int x, int y) {
-        for(Entry<Vector2i, Vector2i> entry : prefabRegions.entrySet()) {
-            Vector2i position = entry.getKey();
-            Vector2i size = entry.getValue();
-            int x2 = position.getX();
-            int y2 = position.getY();
-            
-            if(x + prefab.getWidth() >= x2 && x <= x2 + size.getX() && y + prefab.getHeight() >= y2 && y <= y2 + size.getY()) {
+        for(Structure structure : structures) {
+            if(x + prefab.getWidth() >= structure.getX() && x <= structure.getX() + structure.getWidth() && y + prefab.getHeight() >= structure.getY() && y <= structure.getY() + structure.getHeight()) {
                 return true;
             }
         }
         
         return false;
+    }
+    
+    public boolean isStructureMirrored(int x, int y) {
+        Structure structure = getStructure(x, y);
+        return structure != null && structure.isMirrored();
+    }
+    
+    public Structure getStructure(int x, int y) {
+        for(Structure structure : structures) {
+            if(x >= structure.getX() && x <= structure.getX() + structure.getWidth() && y >= structure.getY() && y <= structure.getY() + structure.getHeight()) {
+                return structure;
+            }
+        }
+        
+        return null;
     }
     
     public void updateBlock(int x, int y, Layer layer, int item) {

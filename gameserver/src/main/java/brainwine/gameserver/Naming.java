@@ -5,6 +5,7 @@ package brainwine.gameserver;
  * 
  * Entity names are sourced from: https://github.com/bytebin/deepworld-gameserver/blob/master/config/fake.yml
  */
+@Deprecated
 public class Naming {
     
     private static final String[] ZONE_FIRST_NAMES = {

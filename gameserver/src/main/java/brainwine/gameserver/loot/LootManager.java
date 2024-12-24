@@ -55,7 +55,7 @@ public class LootManager {
     }
     
     public List<Loot> getEligibleLoot(Player player, Collection<String> categories) {
-        int luck = player.getSkillLevel(Skill.LUCK);
+        int luck = player.getTotalSkillLevel(Skill.LUCK);
         int minFrequency = luck > MIN_FREQUENCIES_BY_LUCK.length ? 1 : MIN_FREQUENCIES_BY_LUCK[luck - 1];
         List<Loot> eligibleLoot = lootTables.entrySet().stream()
                 .filter(entry -> categories.contains(entry.getKey()))

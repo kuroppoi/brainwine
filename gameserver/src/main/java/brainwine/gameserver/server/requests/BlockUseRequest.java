@@ -65,6 +65,9 @@ public class BlockUseRequest extends PlayerRequest {
                     case "note":
                         ItemUseType.NOTE.getInteraction().interact(zone, player, x, y, layer, item, mod, metaBlock, null, data);
                         break;
+                    case "landmark":
+                        ItemUseType.LANDMARK.getInteraction().interact(zone, player, x, y, layer, item, mod, metaBlock, null, data);
+                        break;
                     default: break;
                     }
                 } else {

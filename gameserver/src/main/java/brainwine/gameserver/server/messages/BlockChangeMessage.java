@@ -18,7 +18,11 @@ public class BlockChangeMessage extends Message {
         this.blockChanges = blockChanges;
     }
     
+    public BlockChangeMessage(int x, int y, Layer layer, int entityId, Item item, int mod) {
+        this(Arrays.asList(new BlockChangeData(x, y, layer, entityId, item, mod)));
+    }
+    
     public BlockChangeMessage(int x, int y, Layer layer, Item item, int mod) {
-        this(Arrays.asList(new BlockChangeData(x, y, layer, item, mod)));
+        this(x, y, layer, 0, item, mod);
     }
 }
