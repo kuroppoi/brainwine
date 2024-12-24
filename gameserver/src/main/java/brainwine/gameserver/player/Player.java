@@ -18,8 +18,10 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import brainwine.gameserver.quest.DailyQuests;
+import brainwine.gameserver.quest.Quest;
+import brainwine.gameserver.util.ValueWithExpiry;
 import com.fasterxml.jackson.annotation.JsonCreator;
-
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.Timer;
@@ -43,6 +45,8 @@ import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
+import brainwine.gameserver.quest.QuestEvents;
+import brainwine.gameserver.quest.QuestProgress;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.AchievementMessage;
 import brainwine.gameserver.server.messages.AchievementProgressMessage;
@@ -116,6 +120,8 @@ public class Player extends Entity implements CommandExecutor {
     private Map<Skill, Integer> skills;
     private Map<Item, List<Skill>> bumpedSkills;
     private Map<String, Object> appearance;
+    private Map<String, QuestProgress> questProgresses = new HashMap<>();
+    private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
@@ -145,7 +151,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastLandmarkVoteAt;
     private Zone nextZone;
     private Connection connection;
-    
+
     protected Player(String documentId, PlayerConfigFile config) {
         super(config.getCurrentZone());
         this.documentId = documentId;
@@ -171,6 +177,8 @@ public class Player extends Entity implements CommandExecutor {
         this.skills = config.getSkills();
         this.bumpedSkills = config.getBumpedSkills();
         this.appearance = config.getAppearance();
+        this.questProgresses = config.getQuestProgresses();
+        this.dailyQuest = config.getDailyQuest();
         health = getMaxHealth();
         inventory.setPlayer(this);
         statistics.setPlayer(this);
@@ -239,6 +247,8 @@ public class Player extends Entity implements CommandExecutor {
             sendMessage(new EntityPositionMessage(trackedEntities));
             lastTrackedEntityUpdate = now;
         }
+
+        DailyQuests.tryIssueDailyQuest(this);
     }
     
     @Override
@@ -317,10 +327,10 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
     }
-    
+
     public void applyThirst(float deltaTime) {
         long now = System.currentTimeMillis();
-        
+
         // Update thirst stat
         if(isGodMode()) {
             thirst = 0.0;
@@ -329,16 +339,16 @@ public class Player extends Entity implements CommandExecutor {
             int direction = zone.getBiome() == Biome.DESERT && !zone.isPurified() ? 1 : -1;
             thirst = MathUtils.clamp(thirst + (direction * deltaTime / thirstPeriod), 0.0, 1.0);
         }
-        
+
         // Send message if it is time
         if(now > lastThirstMessage + 1000) {
             sendMessage(new StatMessage(PlayerStat.THIRST, (float)thirst));
             lastThirstMessage = now;
         }
-        
+
         if(thirst >= 1.0) {
             Item waterJar = ItemRegistry.getItem("containers/jar-water");
-            
+
             // Consume a jar of water if the player has any and reset thirst
             if(inventory.hasItem(waterJar)) {
                 inventory.removeItem(waterJar, true);
@@ -347,7 +357,7 @@ public class Player extends Entity implements CommandExecutor {
                 thirst = 0.0;
                 return;
             }
-            
+
             // Damage the player every 3 seconds instead if they have no water in their inventory
             if(now > lastThirstDamageAt + 3000) {
                 attack(null, null, 0.25F, DamageType.FIRE, true); // Apply as true damage
@@ -355,10 +365,10 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
     }
-    
+
     public void applyFreeze(float deltaTime) {
         long now = System.currentTimeMillis();
-        
+
         // Update freeze stat
         if(isGodMode()) {
             cold = 0.0;
@@ -367,23 +377,23 @@ public class Player extends Entity implements CommandExecutor {
             int direction = zone.getBiome() == Biome.ARCTIC ? 1 : -2; // Warm back up twice as fast
             cold = MathUtils.clamp(cold + (direction * deltaTime / freezePeriod), 0.0, 1.0);
         }
-        
+
         // Send message & perform damage tick if it is time
         if(now > lastFreezeMessage + 1000) {
             if(cold >= 1.0) {
                 attack(null, null, 0.25F, DamageType.COLD, true); // Apply as true damage
             }
-            
+
             sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
             lastFreezeMessage = now;
         }
     }
-    
+
     public void applyWarmth() {
         cold = 0.0;
         sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
     }
-    
+
     @Override
     public float getAttackMultiplier(EntityAttack attack) {
         return isGodMode() ? 9999.0F : 1.0F;
@@ -514,10 +524,11 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new FollowMessage(followees.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 0));
         sendMessage(new FollowMessage(followers.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 1));
         sendMessage(new EventMessage("socialInfoReady", null));
-        
+
         // Misc stuff
         updateAchievementProgress(JourneymanAchievement.class);
         checkRegistration();
+        QuestEvents.handleEnterZone(this, zone);
     }
     
     /**
@@ -980,60 +991,60 @@ public class Player extends Entity implements CommandExecutor {
         if(!followees.add(player.getDocumentId())) {
             return; // Do nothing if player is already following
         }
-        
+
         player.addFollower(this);
         sendMessage(new FollowMessage(player, 0, true));
     }
-    
+
     public void unfollowPlayer(Player player) {
         if(!followees.remove(player.getDocumentId())) {
             return; // Do nothing if player is not following
         }
-        
+
         player.removeFollower(this);
         sendMessage(new FollowMessage(player, 0, false));
     }
-    
+
     public boolean isFollowing(Player player) {
         return isFollowing(player.getDocumentId());
     }
-    
+
     public boolean isFollowing(String followee) {
         return followees.contains(followee);
     }
-    
+
     public Set<String> getFollowees() {
         return Collections.unmodifiableSet(followees);
     }
-    
+
     private void addFollower(Player player) {
         followers.add(player.getDocumentId());
-        
+
         if(isOnline()) {
             sendMessage(new FollowMessage(player, 1, true));
         }
     }
-    
+
     private void removeFollower(Player player) {
         followers.remove(player.getDocumentId());
-        
+
         if(isOnline()) {
             sendMessage(new FollowMessage(player, 1, false));
         }
     }
-    
+
     public boolean hasFollower(Player player) {
         return hasFollower(player.getDocumentId());
     }
-    
+
     public boolean hasFollower(String follower) {
         return followers.contains(follower);
     }
-    
+
     public Set<String> getFollowers() {
         return Collections.unmodifiableSet(followers);
     }
-    
+
     public void addLootCode(String lootCode) {
         lootCodes.add(lootCode);
     }
@@ -1325,12 +1336,25 @@ public class Player extends Entity implements CommandExecutor {
     public void updateAppearance(Map<String, Object> appearance) {
         this.appearance.putAll(appearance);
         zone.sendMessage(new EntityChangeMessage(id, appearance));
+        QuestEvents.handleAppearance(this, appearance);
     }
     
     public Map<String, Object> getAppearance() {
         return Collections.unmodifiableMap(appearance);
     }
-    
+
+    public Map<String, QuestProgress> getQuestProgresses() {
+        return questProgresses;
+    }
+
+    public ValueWithExpiry<List<Quest>> getDailyQuest() {
+        return dailyQuest;
+    }
+
+    public void setDailyQuest(ValueWithExpiry<List<Quest>> dailyQuest) {
+        this.dailyQuest = dailyQuest;
+    }
+
     public void setSkillLevel(Skill skill, int level) {
         skills.put(skill, level);
         sendMessage(new SkillMessage(skill, level));
@@ -1422,6 +1446,7 @@ public class Player extends Entity implements CommandExecutor {
         
         loot.getItems().forEach((item, quantity) -> {
             inventory.addItem(item, quantity, true);
+            QuestEvents.handleCollectItem(this, item, quantity);
             section.addItem(new DialogListItem()
                     .setItem(item.getCode())
                     .setText(String.format("%s x %s", item.getTitle(), quantity)));

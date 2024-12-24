@@ -39,6 +39,7 @@ import brainwine.gameserver.player.ChatType;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.prefab.Prefab;
+import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
@@ -289,6 +290,7 @@ public class Zone {
      */
     public void sendChatMessage(Player sender, String text, ChatType type) {
         sendMessage(new ChatMessage(sender.getId(), text, type));
+        QuestEvents.handleChat(sender);
         GameServer.getInstance().notify(String.format("%s: %s", sender.getName(), text), NotificationType.CHAT);
     }
     
@@ -507,6 +509,10 @@ public class Zone {
                 double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
                 float damage = (float)(baseDamage - distance);
                 entity.attack(cause, item, damage, damageType);
+
+                if(entity.isDead() && cause != null && cause.isPlayer()) {
+                    QuestEvents.handleExplode((Player) cause, entity);
+                }
             }
         }
     }
@@ -926,6 +932,7 @@ public class Zone {
             if(guardBlocks <= 0) {
                 dungeons.remove(dungeonId);
                 destroyer.getStatistics().trackDungeonRaided();
+                QuestEvents.handleRaid(destroyer);
                 destroyer.notify("You raided a dungeon!", NotificationType.ACCOMPLISHMENT);
                 destroyer.notifyPeers(String.format("%s raided a dungeon.", destroyer.getName()), NotificationType.SYSTEM);
             } else {

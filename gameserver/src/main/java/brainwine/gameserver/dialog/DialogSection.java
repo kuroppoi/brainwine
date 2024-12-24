@@ -20,11 +20,11 @@ public class DialogSection {
     private List<DialogListItem> items = new ArrayList<>();
     private String title;
     private String text;
-    private String choice;
     private String textColor;
     private double textScale;
     private Vector2i location;
     private DialogInput input;
+    private String choice;
     
     public DialogSection addItem(DialogListItem item) {
         items.add(item);
@@ -52,15 +52,6 @@ public class DialogSection {
     
     public String getText() {
         return text;
-    }
-    
-    public DialogSection setChoice(String choice) {
-        this.choice = choice;
-        return this;
-    }
-    
-    public String getChoice() {
-        return choice;
     }
     
     /**
@@ -109,5 +100,14 @@ public class DialogSection {
     
     public DialogInput getInput() {
         return input;
+    }
+
+    public DialogSection setChoice(String choice) {
+        this.choice = choice;
+        return this;
+    }
+
+    public String getChoice() {
+        return this.choice;
     }
 }

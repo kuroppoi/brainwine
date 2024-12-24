@@ -15,6 +15,7 @@ import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.Skill;
+import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
@@ -105,6 +106,7 @@ public class BlockMineRequest extends PlayerRequest {
         
         if(digging) {
             zone.digBlock(x, y);
+            QuestEvents.handleDig(player);
             return;
         }
         
@@ -197,9 +199,11 @@ public class BlockMineRequest extends PlayerRequest {
         
         int quantity = 1;
         player.getStatistics().trackItemMined(item);
-        
+
+        boolean trackQuest = false;
         if(block.isNatural()) {
             player.getStatistics().trackItemScavenged(item);
+            trackQuest = true;
         }
         
         zone.updateBlock(x, y, layer, 0, 0, player);
@@ -223,6 +227,12 @@ public class BlockMineRequest extends PlayerRequest {
         
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem, quantity, true);
+            if(trackQuest && layer == Layer.FRONT) {
+                QuestEvents.handleCollectItem(player, inventoryItem, quantity);
+                if(!item.equals(inventoryItem)) {
+                    QuestEvents.handleCollectItem(player, item, 1);
+                }
+            }
         }
     }
     

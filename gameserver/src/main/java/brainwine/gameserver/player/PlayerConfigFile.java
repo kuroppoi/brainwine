@@ -1,12 +1,9 @@
 package brainwine.gameserver.player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import brainwine.gameserver.quest.Quest;
+import brainwine.gameserver.util.ValueWithExpiry;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -14,6 +11,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import brainwine.gameserver.achievement.Achievement;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.quest.QuestProgress;
 import brainwine.gameserver.zone.Zone;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -42,6 +40,8 @@ public class PlayerConfigFile {
     private Map<Skill, Integer> skills = new HashMap<>();
     private Map<Item, List<Skill>> bumpedSkills = new HashMap<>();
     private Map<String, Object> appearance = new HashMap<>();
+    private Map<String, QuestProgress> questProgresses = new HashMap<>();
+    private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
     
     public PlayerConfigFile(Player player) {
         this.name = player.getName();
@@ -67,6 +67,8 @@ public class PlayerConfigFile {
         this.skills = player.getSkills();
         this.bumpedSkills = player.getBumpedSkills();
         this.appearance = player.getAppearance();
+        this.questProgresses = player.getQuestProgresses();
+        this.dailyQuest = player.getDailyQuest();
     }
     
     @JsonCreator
@@ -177,5 +179,14 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public Map<String, Object> getAppearance() {
         return appearance;
+    }
+
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<String, QuestProgress> getQuestProgresses() {
+        return questProgresses;
+    }
+
+    public ValueWithExpiry<List<Quest>> getDailyQuest() {
+        return dailyQuest;
     }
 }
