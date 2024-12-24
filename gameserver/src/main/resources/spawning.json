@@ -29,55 +29,55 @@
     {
       "entity": "creatures/bluejay",
       "locale": "sky",
-      "purification": 1.0,
+      "max_acidity": 0.05,
       "frequency": 3
     },
     {
       "entity": "creatures/cardinal",
       "locale": "sky",
-      "purification": 1.0,
+      "max_acidity": 0.05,
       "frequency": 1
     },
     {
       "entity": "creatures/seagull",
       "locale": "sky",
-      "purification": 1.0,
+      "max_acidity": 0.05,
       "frequency": 2
     },
     {
       "entity": "creatures/butterfly-monarch",
       "locale": "sky",
-      "purification": 1.0,
+      "max_acidity": 0.05,
       "frequency":23
     },
     {
       "entity": "creatures/papilio-ulysses",
       "locale": "sky",
-      "purification": 1.0,
+      "max_acidity": 0.05,
       "frequency": 0.5
     },
     {
       "entity": "creatures/butterfly-swallowtail",
       "locale": "sky",
-      "purification": 1.0,
+      "max_acidity": 0.05,
       "frequency": 1
     },
     {
       "entity": "creatures/butterfly-moth",
       "locale": "sky",
-      "purification": 1.0,
+      "max_acidity": 0.05,
       "frequency": 5
     },
     {
       "entity": "creatures/butterfly-owl",
       "locale": "sky",
-      "purification": 1.0,
+      "max_acidity": 0.05,
       "frequency": 0.1
     },
     {
       "entity": "creatures/butterfly-paper-kite",
       "locale": "sky",
-      "purification": 1.0,
+      "max_acidity": 0.05,
       "frequency": 0.01
     },
     {

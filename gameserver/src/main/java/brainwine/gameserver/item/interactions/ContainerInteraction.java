@@ -37,8 +37,8 @@ public class ContainerInteraction implements ItemInteraction {
         Player player = (Player)entity;
         String dungeonId = metaBlock.getStringProperty("@");
         
-        // Check if container is protected by a dungeon
-        if(item.hasUse(ItemUseType.FIELDABLE) && dungeonId != null && zone.isDungeonIntact(dungeonId)) {
+        // Check if container is protected
+        if(item.hasUse(ItemUseType.FIELDABLE) && (zone.isBlockProtected(x, y, player) || (dungeonId != null && zone.isDungeonIntact(dungeonId)))) {
             player.notify("This container is secured by protectors in the area.");
             return;
         }

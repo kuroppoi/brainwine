@@ -13,6 +13,7 @@ public enum DamageType {
     FIRE,
     PIERCING,
     SLASHING,
+    SUFFOCATION,
     
     @JsonEnumDefaultValue
     NONE;

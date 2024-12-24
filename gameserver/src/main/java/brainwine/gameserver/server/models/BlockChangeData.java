@@ -12,14 +12,15 @@ public class BlockChangeData {
     private final int x;
     private final int y;
     private final Layer layer;
-    private final int entityId = 0;
+    private final int entityId;
     private final Item item;
     private final int mod;
     
-    public BlockChangeData(int x, int y, Layer layer, Item item, int mod) {
+    public BlockChangeData(int x, int y, Layer layer, int entityId, Item item, int mod) {
         this.x = x;
         this.y = y;
         this.layer = layer;
+        this.entityId = entityId;
         this.item = item;
         this.mod = mod;
     }

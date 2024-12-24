@@ -188,14 +188,13 @@ public class Npc extends Entity {
             
             if(!isPlayerPlaced()) {
                 // Track assists
-                for(EntityAttack recentAttack : recentAttacks) {
-                    Entity attacker = recentAttack.getAttacker();
-                    
-                    if(attacker != player && attacker.isPlayer()) {
-                        ((Player)attacker).getStatistics().trackAssist(config);
-                    }
-                }
+                recentAttacks.stream()
+                        .filter(attack -> attack.getAttacker() != killer && attack.getAttacker() instanceof Player)
+                        .map(attack -> (Player)attack.getAttacker())
+                        .distinct() // TODO might be expensive
+                        .forEach(attacker -> attacker.getStatistics().trackAssist(config));
                 
+                // Track kill
                 player.getStatistics().trackKill(config);
             }
             

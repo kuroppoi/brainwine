@@ -90,6 +90,20 @@ public class BlockMineRequest extends PlayerRequest {
             }
         }
         
+        // Check custom mine
+        if(item.hasCustomMine()) {
+            switch(item.getId()) {
+                case "mechanical/zone-teleporter":
+                    if(!player.isGodMode() && zone.getMetaBlocksWithItem("mechanical/zone-teleporter").size() < 2) {
+                        fail(player, "You must keep at least one world teleporter active.");
+                        return;
+                    }
+                    
+                    break;
+                default: break;
+            }
+        }
+        
         if(digging) {
             zone.digBlock(x, y);
             QuestEvents.handleDig(player);
@@ -103,6 +117,8 @@ public class BlockMineRequest extends PlayerRequest {
             
             // Send inventory message for v3 players
             if(player.isV3()) {
+                player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
+
                 Item decayItem = item.getDecayInventoryItem();
                 
                 if(!decayItem.isAir()) {

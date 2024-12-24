@@ -38,12 +38,17 @@ public class TargetTeleportInteraction implements ItemInteraction {
                 player.notify(String.format("Cannot locate world '%s', please recalibrate.", zoneName));
                 return;
             }
+            
+            if(!targetZone.canJoin(player)) {
+                player.notify("Sorry, you can't enter this world right now.");
+                return;
+            }
         }
         
         // Parse target position
         int targetX = -1;
         int targetY = metaBlock.getIntProperty("py") + (targetZone.getBiome() == Biome.DEEP ? -1000 : 200);
-        int centerX = zone.getWidth() / 2;
+        int centerX = targetZone.getWidth() / 2;
         
         try {
             String strX = metaBlock.getStringProperty("px");
@@ -71,10 +76,17 @@ public class TargetTeleportInteraction implements ItemInteraction {
             return;
         }
         
-        // Do nothing if target location is protected
+        // Check area protection
         if(!player.isGodMode() && targetZone.isBlockProtected(targetX, targetY, player)) {
-            player.notify("That area is protected.");
-            return;
+            Player owner = metaBlock.getOwner();
+            int setting = metaBlock.getIntProperty("pt");
+            boolean ownerCanEdit = !targetZone.isBlockProtected(targetX, targetY, owner);
+            
+            // Check protection entry setting
+            if(owner == null || !ownerCanEdit || setting == 0 || (setting == 1 && !owner.isFollowing(player))) {
+                player.notify("That area is protected.");
+                return;
+            }
         }
         
         // Teleport the player to the target location
@@ -93,7 +105,8 @@ public class TargetTeleportInteraction implements ItemInteraction {
             int _targetX = targetX;
             int _targetY = targetY;
             player.showDialog(dialog, input -> {
-                if(input.length == 1 && input[0].equals("Yes")) {
+                // TODO figure out this v2 quirk
+                if((!player.isV3() && input.length == 0) || (input.length == 1 && input[0].equals("Yes"))) {
                     player.changeZone(_targetZone, _targetX, _targetY);
                 }
             });

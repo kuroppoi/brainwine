@@ -1,6 +1,8 @@
 package brainwine.api.models;
 
 import java.time.OffsetDateTime;
+import java.util.Collections;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,28 +17,34 @@ public class ZoneInfo {
     private final String activity;
     private final boolean pvp;
     private final boolean premium;
-    private final boolean locked;
+    private final boolean isPrivate;
+    private final boolean isProtected;
     private final int playerCount;
     private final int width;
     private final int height;
     private final int[] surface;
     private final double explorationProgress;
     private final OffsetDateTime creationDate;
+    private final String owner;
+    private final List<String> members;
     
-    public ZoneInfo(String name, String biome, String activity, boolean pvp, boolean premium, boolean locked, 
-            int playerCount, int width, int height, int[] surface, double explorationProgress, OffsetDateTime creationDate) {
+    public ZoneInfo(String name, String biome, String activity, boolean pvp, boolean premium, boolean isPrivate, boolean isProtected, 
+            int playerCount, int width, int height, int[] surface, double explorationProgress, OffsetDateTime creationDate, String owner, List<String> members) {
         this.name = name;
         this.biome = biome;
         this.activity = activity;
         this.pvp = pvp;
         this.premium = premium;
-        this.locked = locked;
+        this.isPrivate = isPrivate;
+        this.isProtected = isProtected;
         this.playerCount = playerCount;
         this.width = width;
         this.height = height;
         this.surface = surface;
         this.explorationProgress = explorationProgress;
         this.creationDate = creationDate;
+        this.owner = owner;
+        this.members = members;
     }
     
     public String getName() {
@@ -59,9 +67,12 @@ public class ZoneInfo {
         return premium;
     }
     
-    @JsonProperty("protected")
-    public boolean isLocked() {
-        return locked;
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+    
+    public boolean isProtected() {
+        return !isPrivate && isProtected; // Only display protection lock if world is public
     }
     
     @JsonProperty("players")
@@ -92,5 +103,15 @@ public class ZoneInfo {
     @JsonProperty("gen_date")
     public OffsetDateTime getCreationDate() {
         return creationDate;
+    }
+    
+    @JsonIgnore
+    public String getOwner() {
+        return owner;
+    }
+    
+    @JsonIgnore
+    public List<String> getMembers() {
+        return Collections.unmodifiableList(members);
     }
 }

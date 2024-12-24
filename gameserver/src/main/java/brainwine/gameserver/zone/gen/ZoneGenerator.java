@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.Naming;
+import brainwine.gameserver.StringGenerator;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.resource.Resource;
 import brainwine.gameserver.resource.ResourceFinder;
@@ -127,18 +128,11 @@ public class ZoneGenerator {
     
     public Zone generateZone(Biome biome, int width, int height, int seed) {
         String id = generateDocumentId(seed);
-        String name = Naming.getRandomZoneName();
-        int retryCount = 0;
-        
-        while(GameServer.getInstance().getZoneManager().getZoneByName(name) != null) {
-            if(retryCount >= 10) {
-                name = id;
-                logger.warn(SERVER_MARKER, "Could not generate a unique name for zone {}", id);
-                break;
-            }
-            
-            name = Naming.getRandomZoneName();
-            retryCount++;
+        String name = StringGenerator.getRandomZoneName(x -> GameServer.getInstance().getZoneManager().getZoneByName(x) != null, 20);
+
+        if(name == null) {
+            name = id;
+            logger.warn(SERVER_MARKER, "Could not generate a unique name for zone {}", id);
         }
         
         Zone zone = new Zone(id, name, biome, width, height);
