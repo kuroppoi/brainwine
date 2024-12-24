@@ -18,14 +18,6 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import brainwine.gameserver.quest.DailyQuests;
-import brainwine.gameserver.quest.Quest;
-import brainwine.gameserver.util.ValueWithExpiry;
-import brainwine.gameserver.zone.Block;
-import brainwine.gameserver.order.OrderManager;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.Timer;
@@ -34,8 +26,8 @@ import brainwine.gameserver.achievement.AchievementManager;
 import brainwine.gameserver.achievement.JourneymanAchievement;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
-import brainwine.gameserver.dialog.DialogListItem;
 import brainwine.gameserver.dialog.DialogHelper;
+import brainwine.gameserver.dialog.DialogListItem;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.Entity;
@@ -50,6 +42,9 @@ import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
+import brainwine.gameserver.order.OrderManager;
+import brainwine.gameserver.quest.DailyQuests;
+import brainwine.gameserver.quest.Quest;
 import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.quest.QuestProgress;
 import brainwine.gameserver.server.Message;
@@ -82,11 +77,15 @@ import brainwine.gameserver.server.models.PlayerStat;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.ValueWithExpiry;
 import brainwine.gameserver.util.VersionUtils;
 import brainwine.gameserver.zone.Biome;
+import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class Player extends Entity implements CommandExecutor {
     
@@ -158,7 +157,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastLandmarkVoteAt;
     private Zone nextZone;
     private Connection connection;
-    
+
     protected Player(String documentId, PlayerConfigFile config) {
         super(config.getCurrentZone());
         this.documentId = documentId;
@@ -338,7 +337,7 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
     }
-    
+
     public void applyThirst(float deltaTime) {
         long now = System.currentTimeMillis();
 
@@ -350,16 +349,16 @@ public class Player extends Entity implements CommandExecutor {
             int direction = zone.getBiome() == Biome.DESERT && !zone.isPurified() ? 1 : -1;
             thirst = MathUtils.clamp(thirst + (direction * deltaTime / thirstPeriod), 0.0, 1.0);
         }
-        
+
         // Send message if it is time
         if(now > lastThirstMessage + 1000) {
             sendMessage(new StatMessage(PlayerStat.THIRST, (float)thirst));
             lastThirstMessage = now;
         }
-        
+
         if(thirst >= 1.0) {
             Item waterJar = ItemRegistry.getItem("containers/jar-water");
-            
+
             // Consume a jar of water if the player has any and reset thirst
             if(inventory.hasItem(waterJar)) {
                 inventory.removeItem(waterJar, true);
@@ -368,7 +367,7 @@ public class Player extends Entity implements CommandExecutor {
                 thirst = 0.0;
                 return;
             }
-            
+
             // Damage the player every 3 seconds instead if they have no water in their inventory
             if(now > lastThirstDamageAt + 3000 && health > 1.0) {
                 attack(null, null, 0.25F, DamageType.FIRE, true); // Apply as true damage
@@ -376,7 +375,7 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
     }
-    
+
     public void applyFreeze(float deltaTime) {
         long now = System.currentTimeMillis();
 
@@ -388,23 +387,23 @@ public class Player extends Entity implements CommandExecutor {
             int direction = zone.getBiome() == Biome.ARCTIC ? 1 : -2; // Warm back up twice as fast
             cold = MathUtils.clamp(cold + (direction * deltaTime / freezePeriod), 0.0, 1.0);
         }
-        
+
         // Send message & perform damage tick if it is time
         if(now > lastFreezeMessage + 1000) {
             if(cold >= 1.0 && health > 1.0) {
                 attack(null, null, 0.25F, DamageType.COLD, true); // Apply as true damage
             }
-            
+
             sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
             lastFreezeMessage = now;
         }
     }
-    
+
     public void applyWarmth() {
         cold = 0.0;
         sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
     }
-    
+
     @Override
     public float getAttackMultiplier(EntityAttack attack) {
         return isGodMode() ? 9999.0F : 1.0F;
@@ -540,6 +539,7 @@ public class Player extends Entity implements CommandExecutor {
         // Misc stuff
         updateAchievementProgress(JourneymanAchievement.class);
         checkRegistration();
+        QuestEvents.handleEnterZone(this, zone);
     }
     
     /**
@@ -634,8 +634,6 @@ public class Player extends Entity implements CommandExecutor {
         customSpawn = x != -1 && y != -1;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
-        QuestEvents.handleEnterZone(this, zone);
-        DailyQuests.tryIssueDailyQuest(this);
     }
     
     public void showDialog(Dialog dialog) {

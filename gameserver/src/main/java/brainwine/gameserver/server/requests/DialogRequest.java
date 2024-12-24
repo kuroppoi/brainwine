@@ -81,11 +81,11 @@ public class DialogRequest extends PlayerRequest {
         // Show player info dialog
         player.showDialog(dialog, input -> {
             // Handle cancellation
-            if(input.length == 1 && input[0].equals("cancel")) {
+            if(input.length == 0 || (input.length == 1 && input[0].equals("cancel"))) {
                 return;
             }
             
-            String choice = (String)input[0];
+            String choice = String.valueOf(input[0]);
             
             // Handle selection
             switch(choice) {
