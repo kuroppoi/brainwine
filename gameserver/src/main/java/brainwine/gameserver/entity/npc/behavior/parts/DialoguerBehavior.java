@@ -127,7 +127,14 @@ public class DialoguerBehavior extends Behavior {
 
                             // set entity parameters
                             entity.setName(entityName);
-                            entity.setJob("Victoria III".equals(entityName) ? JobType.FAMILY_NAME : JobType.QUESTER);
+
+                            if(entityName.toLowerCase().startsWith("victoria")) {
+                                entity.setJob(JobType.FAMILY_NAME);
+                            } else if(entityName.toLowerCase().startsWith("giovanni")) {
+                                entity.setJob(JobType.CRAFTER);
+                            } else {
+                                entity.setJob(JobType.QUESTER);
+                            }
 
                             // notify the player
                             player.notify(String.format("Android has been reconfigured as %s!", entity.getName()));
