@@ -123,6 +123,7 @@ public class Player extends Entity implements CommandExecutor {
     private Map<String, QuestProgress> questProgresses = new HashMap<>();
     private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
     private Map<String, Quest> androidQuests = new HashMap<>();
+    private String familyName = null;
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
@@ -181,6 +182,7 @@ public class Player extends Entity implements CommandExecutor {
         this.questProgresses = config.getQuestProgresses();
         this.dailyQuest = config.getDailyQuest();
         this.androidQuests = config.getAndroidQuests();
+        this.familyName = config.getFamilyName();
         health = getMaxHealth();
         inventory.setPlayer(this);
         statistics.setPlayer(this);
@@ -1359,6 +1361,14 @@ public class Player extends Entity implements CommandExecutor {
 
     public void setDailyQuest(ValueWithExpiry<List<Quest>> dailyQuest) {
         this.dailyQuest = dailyQuest;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
     }
 
     public void setSkillLevel(Skill skill, int level) {
