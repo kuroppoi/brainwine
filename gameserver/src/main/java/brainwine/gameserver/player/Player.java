@@ -79,6 +79,7 @@ import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.ZoneManager;
 
 public class Player extends Entity implements CommandExecutor {
     
@@ -522,6 +523,10 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new FollowMessage(followees.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 0));
         sendMessage(new FollowMessage(followers.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 1));
         sendMessage(new EventMessage("socialInfoReady", null));
+        
+        // Clear invalid bookmarks
+        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
+        bookmarkedZones.removeIf(bookmark -> zoneManager.getZone(bookmark) == null || !zoneManager.getZone(bookmark).canJoin(this));
         
         // Misc stuff
         updateAchievementProgress(JourneymanAchievement.class);
