@@ -126,6 +126,7 @@ public class Zone {
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
         isPrivate = config.isPrivate();
         isProtected = config.isProtected();
+        pvp = config.isPvp();
         creationDate = config.getCreationDate();
     }
     

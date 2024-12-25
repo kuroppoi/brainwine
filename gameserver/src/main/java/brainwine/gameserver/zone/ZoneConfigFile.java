@@ -39,6 +39,9 @@ public class ZoneConfigFile {
     private boolean isProtected;
     
     @JsonSetter(nulls = Nulls.SKIP)
+    private boolean pvp;
+    
+    @JsonSetter(nulls = Nulls.SKIP)
     private String owner;
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
@@ -73,6 +76,7 @@ public class ZoneConfigFile {
         this.acidity = zone.getAcidity();
         this.isPrivate = zone.isPrivate();
         this.isProtected = zone.isProtected();
+        this.pvp = zone.isPvp();
         this.owner = zone.getOwner();
         this.members = zone.getMembers();
         this.discoveredParts = zone.getDiscoveredParts();
@@ -106,6 +110,10 @@ public class ZoneConfigFile {
     
     public boolean isProtected() {
         return isProtected;
+    }
+    
+    public boolean isPvp() {
+        return pvp;
     }
     
     public String getOwner() {
