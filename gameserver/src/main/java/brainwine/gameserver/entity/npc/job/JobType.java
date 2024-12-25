@@ -11,7 +11,8 @@ public enum JobType {
     JOKER(new Joker()),
     CRAFTER(new Crafter()),
     QUESTER(new Quester()),
-    FAMILY_NAME(new FamilyName());
+    FAMILY_NAME(new FamilyName()),
+    ANDROID_DIALOG(new AndroidDialog());
 
     private Job job;
 
@@ -30,6 +31,8 @@ public enum JobType {
                 return QUESTER;
             case "family_name":
                 return FAMILY_NAME;
+            case "android_dialog":
+                return ANDROID_DIALOG;
             default:
                 return null;
         }
