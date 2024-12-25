@@ -93,7 +93,7 @@ public class Crafter extends DialoguerJob {
         // all good, commit with crafting
 
         for(CraftingRequirement requirement : requirements) {
-            player.getInventory().removeItem(requirement.getItem(), requirement.getQuantity());
+            player.getInventory().removeItem(requirement.getItem(), requirement.getQuantity(), true);
         }
 
         player.getInventory().addItem(craftItem, 1, true);
