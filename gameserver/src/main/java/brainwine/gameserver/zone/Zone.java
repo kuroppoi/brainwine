@@ -1840,6 +1840,7 @@ public class Zone {
         config.put("owner", isOwner(player));
         config.put("member", isMember(player));
         config.put("pvp", pvp);
+        config.put("bookmarked", player.isZoneBookmarked(this));
         Map<String, Object> depth = new HashMap<>();
         List<Object> earth = new ArrayList<>();
         

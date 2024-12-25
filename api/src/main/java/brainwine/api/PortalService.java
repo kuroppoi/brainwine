@@ -6,6 +6,7 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,11 @@ public class PortalService {
             return;
         }
         
-        final List<ZoneInfo> zones = (List<ZoneInfo>)dataFetcher.fetchZoneInfo(); // TODO this will probably be slow if there is a large number of zones
+        // TODO filtering is a bit convoluted, see if we can make it more efficient in the future.
+        String account = ctx.queryParam("account");
+        final List<ZoneInfo> zones = account == null ? (List<ZoneInfo>)dataFetcher.fetchZoneInfo() 
+                : account.equals("recent") ? (List<ZoneInfo>)dataFetcher.fetchRecentZoneInfo(apiToken)
+                : account.equals("bookmarked") ? (List<ZoneInfo>)dataFetcher.fetchBookmarkedZoneInfo(apiToken) : new ArrayList<>();
         zones.removeIf(zone -> zone.isPrivate() && !apiToken.equals(zone.getOwner()) && !zone.getMembers().contains(apiToken));
         
         handleQueryParam(ctx, "name", String.class, name -> {
@@ -149,10 +154,6 @@ public class PortalService {
                 zones.clear();
                 break;
             }
-        });
-        
-        handleQueryParam(ctx, "account", String.class, account -> {
-            zones.clear(); // not supported yet
         });
         
         handleQueryParam(ctx, "sort", String.class, sort -> {

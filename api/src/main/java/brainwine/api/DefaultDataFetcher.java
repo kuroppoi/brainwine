@@ -47,4 +47,14 @@ public class DefaultDataFetcher implements DataFetcher {
     public Collection<ZoneInfo> fetchZoneInfo() {
         throw exception;
     }
+    
+    @Override
+    public Collection<ZoneInfo> fetchRecentZoneInfo(String apiToken) {
+        throw exception;
+    }
+    
+    @Override
+    public Collection<ZoneInfo> fetchBookmarkedZoneInfo(String apiToken) {
+        throw exception;
+    }
 }

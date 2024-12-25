@@ -15,6 +15,7 @@ import brainwine.gameserver.server.messages.ZoneSearchMessage;
 import brainwine.gameserver.server.models.ZoneSearchData;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.ZoneManager;
 
 @RequestInfo(id = 23)
 public class ZoneSearchRequest extends PlayerRequest {
@@ -23,15 +24,33 @@ public class ZoneSearchRequest extends PlayerRequest {
     
     @Override
     public void process(Player player) {
-        Collection<Zone> allZones = GameServer.getInstance().getZoneManager().getZones();
         int searchLimit = 200;
         int displayLimit = 10;
+        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
+        Collection<String> zoneIds = null;
+        Collection<Zone> zones = null;
         
-        // Find zones matching the filter
-        List<Zone> zones = allZones.stream()
-                .filter(getFilter(player).and(zone -> zone != player.getZone()))
-                .limit(searchLimit)
-                .collect(Collectors.toList());
+         // Get list of zones to filter
+        // TODO friends
+        switch(type) {
+        case "Recent": zoneIds = player.getRecentZones(); break;
+        case "Bookmarked": zoneIds = player.getBookmarkedZones(); break;
+        default: break;
+        }
+        
+        if(zoneIds != null) {
+            // Get zones from pre-assembled list of zone IDs
+            zones = zoneIds.stream()
+                    .map(zoneManager::getZone)
+                    .filter(zone -> zone != null && zone != player.getZone() && zone.canJoin(player))
+                    .collect(Collectors.toList());
+        } else {
+            // Find zones matching the filter
+            zones = zoneManager.getZones().stream()
+                    .filter(getFilter(player).and(zone -> zone != player.getZone()))
+                    .limit(searchLimit)
+                    .collect(Collectors.toList());
+        }
         
         // Get random zones to display
         List<ZoneSearchData> data = zones.stream()
@@ -47,28 +66,28 @@ public class ZoneSearchRequest extends PlayerRequest {
     
     private Predicate<Zone> getFilter(Player player) {
         switch(type) {
-            case "Random":
-                return zone -> zone.isPublic();
-            case "Popular":
-                return zone -> zone.isPublic() && zone.isPopular();
-            case "Unexplored":
-                return zone -> zone.isPublic() && !zone.isProtected() && zone.isUnexplored();
-            case "Owned":
-                return zone -> zone.isOwner(player);
-            case "Member":
-                return zone -> zone.isMember(player);
-            case "PvP":
-                return zone -> zone.isPublic() && zone.isPvp();
-            case "Plain":
-            case "Hell":
-            case "Arctic":
-            case "Desert":
-            case "Brain":
-            case "Deep":
-            case "Space":
-                return zone -> zone.isPublic() && !zone.isProtected() && zone.getBiome() == Biome.valueOf(type.toUpperCase());
-            default:
-                return zone -> zone.isPublic() && zone.getName().toLowerCase().contains(type.toLowerCase());
+        case "Random":
+            return zone -> zone.isPublic();
+        case "Popular":
+            return zone -> zone.isPublic() && zone.isPopular();
+        case "Unexplored":
+            return zone -> zone.isPublic() && !zone.isProtected() && zone.isUnexplored();
+        case "Owned":
+            return zone -> zone.isOwner(player);
+        case "Member":
+            return zone -> zone.isMember(player);
+        case "PvP":
+            return zone -> zone.isPublic() && zone.isPvp();
+        case "Plain":
+        case "Hell":
+        case "Arctic":
+        case "Desert":
+        case "Brain":
+        case "Deep":
+        case "Space":
+            return zone -> zone.isPublic() && !zone.isProtected() && zone.getBiome() == Biome.valueOf(type.toUpperCase());
+        default:
+            return zone -> zone.isPublic() && zone.getName().toLowerCase().contains(type.toLowerCase());
         }
     }
     

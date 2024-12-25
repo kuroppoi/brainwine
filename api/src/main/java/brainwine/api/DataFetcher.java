@@ -14,4 +14,6 @@ public interface DataFetcher {
     public boolean verifyApiToken(String apiToken);
     public ZoneInfo getZoneInfo(String nameOrId);
     public Collection<ZoneInfo> fetchZoneInfo();
+    public Collection<ZoneInfo> fetchRecentZoneInfo(String apiToken);
+    public Collection<ZoneInfo> fetchBookmarkedZoneInfo(String apiToken);
 }

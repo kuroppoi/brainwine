@@ -82,6 +82,8 @@ import brainwine.gameserver.zone.Zone;
 
 public class Player extends Entity implements CommandExecutor {
     
+    public static final int RECENT_ZONE_LIMIT = 12;
+    public static final int BOOKMARKED_ZONE_LIMIT = 50;
     public static final int MAX_SKILL_LEVEL = 15;
     public static final int MAX_NATURAL_SKILL_LEVEL = 10;
     public static final int MAX_SPEED_X = 12;
@@ -108,6 +110,8 @@ public class Player extends Entity implements CommandExecutor {
     private List<NameChange> nameChanges;
     private List<PlayerRestriction> mutes;
     private List<PlayerRestriction> bans;
+    private List<String> recentZones;
+    private List<String> bookmarkedZones;
     private Set<String> followees;
     private Set<String> followers;
     private Set<String> lootCodes;
@@ -163,6 +167,8 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = config.getNameChanges();
         this.mutes = config.getMutes();
         this.bans = config.getBans();
+        this.recentZones = config.getRecentZones();
+        this.bookmarkedZones = config.getBookmarkedZones();
         this.followees = config.getFollowees();
         this.followers = config.getFollowers();
         this.lootCodes = config.getLootCodes();
@@ -186,6 +192,8 @@ public class Player extends Entity implements CommandExecutor {
         this.nameChanges = new ArrayList<>();
         this.mutes = new ArrayList<>();
         this.bans = new ArrayList<>();
+        this.recentZones = new ArrayList<>();
+        this.bookmarkedZones = new ArrayList<>();
         this.followees = new HashSet<>();
         this.followers = new HashSet<>();
         this.lootCodes = new HashSet<>();
@@ -518,6 +526,12 @@ public class Player extends Entity implements CommandExecutor {
         // Misc stuff
         updateAchievementProgress(JourneymanAchievement.class);
         checkRegistration();
+        recentZones.remove(zone.getDocumentId()); // Remove first in case the zone has already been visited recently
+        recentZones.add(0, zone.getDocumentId()); // Add at top so we don't have to reverse the list for the zone searcher
+        
+        while(recentZones.size() > RECENT_ZONE_LIMIT) {
+            recentZones.remove(recentZones.size() - 1);
+        }
     }
     
     /**
@@ -974,6 +988,44 @@ public class Player extends Entity implements CommandExecutor {
     
     protected List<String> getAuthTokens() {
         return authTokens;
+    }
+    
+    public List<String> getRecentZones() {
+        return Collections.unmodifiableList(recentZones);
+    }
+    
+    public void addZoneBookmark(Zone zone) {
+        addZoneBookmark(zone.getDocumentId());
+    }
+    
+    public void addZoneBookmark(String zone) {
+        if(!isZoneBookmarked(zone)) {
+            bookmarkedZones.add(0, zone); // Add at top for zone searcher
+        }
+    }
+    
+    public void removeZoneBookmark(Zone zone) {
+        bookmarkedZones.remove(zone.getDocumentId());
+    }
+    
+    public void removeZoneBookmark(String zone) {
+        bookmarkedZones.remove(zone);
+    }
+    
+    public boolean isZoneBookmarked(Zone zone) {
+        return isZoneBookmarked(zone.getDocumentId());
+    }
+    
+    public boolean isZoneBookmarked(String zone) {
+        return bookmarkedZones.contains(zone);
+    }
+    
+    public int getBookmarkedZoneCount() {
+        return bookmarkedZones.size();
+    }
+    
+    public List<String> getBookmarkedZones() {
+        return Collections.unmodifiableList(bookmarkedZones);
     }
     
     public void followPlayer(Player player) {
