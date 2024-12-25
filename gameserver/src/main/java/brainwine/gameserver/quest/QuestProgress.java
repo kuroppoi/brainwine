@@ -140,23 +140,35 @@ public class QuestProgress {
         if(quest == null) return null;
 
         String reason = null;
-        int count = 0;
-        for(QuestAction.Type action : new QuestAction.Type[] { QuestAction.Type.BEGIN, QuestAction.Type.INTERACT }) {
-            if(quest.getActions().containsKey(action)) {
-                if(reason == null) {
-                    reason = action.toString();
-                } else {
-                    reason += ", " + action.toString();
-                }
-            }
+        for(QuestAction.Type actionType : new QuestAction.Type[] { QuestAction.Type.BEGIN, QuestAction.Type.INTERACT }) {
+            if(quest.getActions().containsKey(actionType)) {
+                for(QuestAction action : quest.getActions().get(actionType)) {
+                    String currentReason = null;
+                    switch(action.getMethod()) {
+                        case "gift_items!":
+                            currentReason = "gifts you items";
+                            break;
+                        case "add_xp":
+                            currentReason = "gives you XP";
+                            break;
+                    }
 
-            count++;
+                    if(currentReason != null) {
+                        if (reason == null) {
+                            reason = currentReason;
+                        } else {
+                            reason += ", " + currentReason;
+                        }
+                    }
+                }
+
+            }
         }
 
         if(reason == null) {
             return null;
         } else {
-            return "Cannot cancel because the quest has the " + reason + (count == 1 ? " action." : " actions.");
+            return "Cannot cancel because the quest " + reason + ".";
         }
     }
 
