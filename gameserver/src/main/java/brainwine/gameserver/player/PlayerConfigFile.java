@@ -33,6 +33,8 @@ public class PlayerConfigFile {
     private List<NameChange> nameChanges = new ArrayList<>();
     private List<PlayerRestriction> mutes = new ArrayList<>();
     private List<PlayerRestriction> bans = new ArrayList<>();
+    private List<String> recentZones = new ArrayList<>();
+    private List<String> bookmarkedZones = new ArrayList<>();
     private Set<String> followees = new HashSet<>();
     private Set<String> followers = new HashSet<>();
     private Set<String> lootCodes = new HashSet<>();
@@ -62,6 +64,8 @@ public class PlayerConfigFile {
         this.nameChanges = player.getNameChanges();
         this.mutes = player.getMutes();
         this.bans = player.getBans();
+        this.recentZones = player.getRecentZones();
+        this.bookmarkedZones = player.getBookmarkedZones();
         this.followees = player.getFollowees();
         this.followers = player.getFollowers();
         this.lootCodes = player.getLootCodes();
@@ -119,6 +123,16 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public List<PlayerRestriction> getBans() {
         return bans;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<String> getRecentZones() {
+        return recentZones;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<String> getBookmarkedZones() {
+        return bookmarkedZones;
     }
     
     public int getExperience() {
