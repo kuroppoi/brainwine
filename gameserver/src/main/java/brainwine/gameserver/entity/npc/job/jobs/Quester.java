@@ -152,7 +152,7 @@ public class Quester extends DialoguerJob {
             player.showDialog(DialogHelper.messageDialog(quest.getStory().getComplete() == null
                     ? "You have successfully completed your quest!"
                     : quest.getStory().getComplete()
-                        .replace("$family_name", player.getFamilyName())
+                        .replace("$family_name", player.getFamilyName() == null ? "unknown" : player.getFamilyName())
             ));
 
             PlayerQuests.finishQuest(player, quest);
