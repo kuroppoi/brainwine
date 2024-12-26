@@ -73,7 +73,7 @@ public class ZoneManager {
     
     public void tick(float deltaTime) {
         for(Zone zone : getZones()) {
-            zone.tick(deltaTime);
+            if(zone.isTicking()) zone.tick(deltaTime);
         }
 
         long timeSinceLastGeneration = (System.currentTimeMillis() - lastZoneGenerationTime) / 1000;
@@ -190,6 +190,18 @@ public class ZoneManager {
         
         zones.put(id, zone);
         zonesByName.put(name.toLowerCase(), zone);
+    }
+
+    public void deleteZone(Zone zone) {
+        zone.freeze("This zone is being deleted.");
+
+        File folder = new File(dataDir, zone.getDocumentId());
+        if(folder.isDirectory()) {
+            folder.delete();
+        }
+
+        zones.remove(zone.getDocumentId());
+        zonesByName.remove(zone.getName());
     }
 
     /**

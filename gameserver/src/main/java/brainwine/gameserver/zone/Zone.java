@@ -105,6 +105,7 @@ public class Zone {
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
     private boolean modified;
+    private boolean frozen = false;
     
     protected Zone(String documentId, ZoneConfigFile config, ZoneDataFile data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
@@ -227,6 +228,26 @@ public class Zone {
         }
         
         ticksElapsed++;
+    }
+
+    public void freeze() {
+        freeze(null);
+    }
+
+    public void freeze(String reason) {
+        frozen = true;
+
+        for(Player player: getPlayers()) {
+            player.changeZone(null);
+            player.notify(reason == null ? "The zone " + getName() + " will be in maintenance for a while." : reason);
+        }
+
+        blockChanges.clear();
+    }
+
+    public void thaw() {
+        blockChanges.clear();
+        frozen = false;
     }
     
     /**
@@ -1713,7 +1734,7 @@ public class Zone {
     }
     
     public boolean canJoin(Player player) {
-        return player.isGodMode() || isPublic() || isOwner(player) || isMember(player);
+        return isTicking() && (player.isGodMode() || isPublic() || isOwner(player) || isMember(player));
     }
     
     public boolean isPublic() {
@@ -1820,6 +1841,10 @@ public class Zone {
     
     public boolean isModified() {
         return modified;
+    }
+
+    public boolean isTicking() {
+        return !frozen;
     }
     
     /**
