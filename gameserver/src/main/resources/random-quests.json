@@ -31,17 +31,6 @@
         },
         {
             "frequency": 10,
-            "type": "multistep",
-            "steps": [
-                { "type": "collect", "tasks": [{ "items": ["building/wood"], "count": 3 }] },
-                { "type": "collect", "tasks": [{ "items": ["building/brass"], "count": 6 }] },
-                { "type": "collect", "tasks": [{ "items": ["building/iron"], "count": 3 }] },
-                { "type": "craft", "tasks": [{ "items": ["building/door-wood"], "count": 3 }, { "items": ["building/door-brass"], "count": 3 }] }
-            ],
-            "reward": { "crowns": 20 }
-        },
-        {
-            "frequency": 10,
             "type": "kill",
             "categories": ["brains"],
             "task_description": "Stop the brain uprising! Kill {QUANTITY} brains of any type.",
@@ -66,15 +55,13 @@
             "reward": { "crowns": 20 }
         },
         {
-            "frequency": 70,
+            "frequency": 50,
             "type": "collect",
             "tasks": [
                 {
                     "items": {
                         "choices": [
                             "mechanical/pipe",
-                            "mechanical/pipecopper",
-                            "mechanical/pipeiron",
                             "containers/barrel",
                             "containers/barrel-tall",
                             "containers/crate-small",
@@ -85,7 +72,6 @@
                             "building/staircase",
                             "building/iron",
                             "building/copper",
-                            "building/brass",
                             "rubble/gravestone"
                         ]
                     },
@@ -95,7 +81,7 @@
             "reward": { "crowns": 20 }
         },
         {
-            "frequency": 70,
+            "frequency": 50,
             "type": "collect",
             "tasks": [
                 {
@@ -120,6 +106,38 @@
                             "vegetation/mushroom-shade",
                             "vegetation/tumbleweed",
                             "rubble/skeleton"
+                        ]
+                    },
+                    "count": { "random_between": [5, 15] }
+                }
+            ],
+            "reward": { "crowns": 20 }
+        },
+        {
+            "frequency": 40,
+            "type": "collect",
+            "tasks": [
+                {
+                    "items": {
+                        "choices": [
+                            "arctic/ice-brick",
+                            "back/ice-brick",
+                            "arctic/ice",
+                            "arctic/snow",
+                            "containers/wine-bottle",
+                            "music/piano",
+                            "furniture/chair-plush",
+                            "ammo/bullets",
+                            "ammo/gunpowder",
+                            "containers/crate-large",
+                            "containers/crate-small",
+                            "containers/sack-large",
+                            "containers/sack-small",
+                            "containers/barrel-tall",
+                            "containers/barrel",
+                            "industrial/vat",
+                            "industrial/conveyor",
+                            "industrial/conveyor-space"
                         ]
                     },
                     "count": { "random_between": [5, 15] }
