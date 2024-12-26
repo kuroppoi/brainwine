@@ -87,8 +87,6 @@
                 {
                     "items": {
                         "choices": [
-                            "music/symphonium",
-                            "music/phonograph",
                             "lighting/candle",
                             "lighting/lantern",
                             "lighting/candlelabra",
@@ -140,21 +138,6 @@
                         ]
                     },
                     "count": { "random_between": [5, 15] }
-                }
-            ],
-            "reward": { "crowns": 20 }
-        },
-        {
-            "frequency": 2,
-            "type": "collect",
-            "tasks": [
-                {
-                    "items": {
-                        "choices": [
-                            "music/piano"
-                        ]
-                    },
-                    "count": { "random_between": [1, 5] }
                 }
             ],
             "reward": { "crowns": 20 }
