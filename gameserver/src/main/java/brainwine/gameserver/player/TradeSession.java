@@ -218,7 +218,7 @@ public class TradeSession {
         }
         
         // End trade if recipient is currently unavailable
-        if(!canTrade(recipient)) {
+        if(!canRecipientTrade()) {
             initiator.showDialog(DialogHelper.messageDialog(String.format("%s cannot receive items right now -- try again in a minute.", recipient.getName())));
             end();
             return;
@@ -262,7 +262,7 @@ public class TradeSession {
         }
         
         // End trade if recipient is unavailable
-        if(!canTrade(recipient)) {
+        if(!canRecipientTrade()) {
             initiator.showDialog(DialogHelper.messageDialog(String.format("%s cannot trade right now -- try again in a minute.", recipient.getName())));
             end();
             return;
@@ -528,9 +528,9 @@ public class TradeSession {
     }
     
     /**
-     * @return {@code true} if the given player is available to trade right now, otherwise {@code false}.
+     * @return {@code true} if the recipient available to trade right now, otherwise {@code false}.
      */
-    public boolean canTrade(Player player) {
+    public boolean canRecipientTrade() {
         return recipient.isOnline() && recipient.getZone() == initiator.getZone() && !recipient.isTrading();
     }
     
