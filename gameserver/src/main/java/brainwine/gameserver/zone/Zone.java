@@ -237,10 +237,8 @@ public class Zone {
     public void freeze(String reason) {
         frozen = true;
 
-        for(Player player: getPlayers()) {
-            player.changeZone(null);
-            player.notify(reason == null ? "The zone " + getName() + " will be in maintenance for a while." : reason);
-        }
+        // TODO: The player should be spawned in a random zone they are allowed in.
+        kickAllPlayers(reason == null ? "The zone " + getName() + " will be in maintenance for a while." : reason, false);
 
         blockChanges.clear();
     }

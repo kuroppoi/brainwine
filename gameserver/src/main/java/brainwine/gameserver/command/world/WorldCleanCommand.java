@@ -67,7 +67,9 @@ public class WorldCleanCommand extends WorldCommand {
                     if(block.getBaseItem().isAir() && block.getBackItem().isAir()) {
                         int code = block.getFrontItem().getCode();
                         if(code == 510 || code == 511 || code == 512) {
-                            zone.updateBlock(x, y, Layer.FRONT, Item.AIR);
+                            if(!zone.isBlockProtected(x, y)) {
+                                zone.updateBlock(x, y, Layer.FRONT, Item.AIR);
+                            }
                         }
                     }
                 });
@@ -91,7 +93,7 @@ public class WorldCleanCommand extends WorldCommand {
         new Thread(() -> {
             try {
                 transformBlocks(zone, (x, y) -> {
-                    if (y < zone.getHeight() - 1) {
+                    if (y < zone.getHeight() - 1 && !zone.isBlockProtected(x, y)) {
                         zone.updateBlock(x, y, Layer.BASE, Item.AIR);
                         zone.updateBlock(x, y, Layer.BACK, Item.AIR);
                         zone.updateBlock(x, y, Layer.FRONT, Item.AIR);
