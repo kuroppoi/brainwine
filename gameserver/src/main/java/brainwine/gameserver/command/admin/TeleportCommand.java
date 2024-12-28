@@ -2,10 +2,12 @@ package brainwine.gameserver.command.admin;
 
 import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.PlayerManager;
 import brainwine.gameserver.zone.Zone;
 
 @CommandInfo(name = "teleport", description = "Teleports you or another player to the specified target position or player.", aliases = "tp")
@@ -18,18 +20,24 @@ public class TeleportCommand extends Command {
             return;
         }
         
+        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
         Player player = (Player)executor;
         Player subject = player; // Player that is being teleported (executor by default)
-        Zone zone = player.getZone();
+        Zone targetZone = subject.getZone();
         int x = 0;
         int y = 0;
         
         if(args.length == 1) {
             // Teleport executor to target player
-            Player target = zone.getPlayer(args[0]);
+            Player target = playerManager.getPlayer(args[0]);
             
             if(target == null) {
                 player.notify(String.format("Player '%s' not found.", args[0]));
+                return;
+            }
+            
+            if(!target.isOnline()) {
+                player.notify(String.format("Player '%s' is not online.", target.getName()));
                 return;
             }
             
@@ -40,6 +48,7 @@ public class TeleportCommand extends Command {
             
             x = target.getBlockX();
             y = target.getBlockY();
+            targetZone = target.getZone();
         } else if(args.length == 2) {
             // Teleport executor to target position OR teleport subject to player
             try {
@@ -47,11 +56,16 @@ public class TeleportCommand extends Command {
                 y = Integer.parseInt(args[1]);
             } catch(NumberFormatException e) {
                 // If first 2 params are not numbers then we are probably teleporting a player to another player
-                subject = zone.getPlayer(args[0]); // Do null check later
-                Player target = zone.getPlayer(args[1]);
+                subject = playerManager.getPlayer(args[0]); // Do null check later
+                Player target = playerManager.getPlayer(args[1]);
                 
                 if(target == null) {
                     player.notify(String.format("Player '%s' not found.", args[1]));
+                    return;
+                }
+                
+                if(!target.isOnline()) {
+                    player.notify(String.format("Player '%s' is not online.", target.getName()));
                     return;
                 }
                 
@@ -62,10 +76,11 @@ public class TeleportCommand extends Command {
                 
                 x = target.getBlockX();
                 y = target.getBlockY();
+                targetZone = target.getZone();
             }
         } else if(args.length == 3) {
             // Teleport subject to a position
-            subject = zone.getPlayer(args[0]); // Do null check later
+            subject = playerManager.getPlayer(args[0]); // Do null check later
             
             try {
                 x = Integer.parseInt(args[1]);
@@ -82,13 +97,22 @@ public class TeleportCommand extends Command {
             return;
         }
         
+        if(!subject.isOnline()) {
+            player.notify(String.format("Player '%s' is not online.", subject.getName()));
+            return;
+        }
+        
         // Check if coordinates are in bounds
         if(!player.getZone().areCoordinatesInBounds(x, y)) {
             player.notify("Cannot teleport out of bounds!", SYSTEM);
             return;
         }
         
-        subject.teleport(x, y);
+        if(targetZone == subject.getZone()) {
+            subject.teleport(x, y);
+        } else {
+            subject.changeZone(targetZone, x, y);
+        }
     }
     
     @Override
