@@ -41,6 +41,7 @@ import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
+import brainwine.gameserver.item.Tradeability;
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
@@ -819,6 +820,18 @@ public class Player extends Entity implements CommandExecutor {
     public void tradeItem(Player recipient, Item item) {
         // Cannot trade with self
         if(recipient == this) {
+            return;
+        }
+        
+        // Check if item is tradeable
+        if(!isGodMode() && item.getTradeability() == Tradeability.FALSE) {
+            notify("Sorry, you cannot trade this item.");
+            return;
+        }
+        
+        // Check if player is high enough level to trade this item
+        if(!isGodMode() && item.getTradeability() == Tradeability.LEVELED && getLevel() < 20) {
+            notify("You must be level 20+ to trade this item.");
             return;
         }
         
