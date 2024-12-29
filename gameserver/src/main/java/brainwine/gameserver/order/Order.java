@@ -35,18 +35,18 @@ public class Order {
         }
 
         if(currentLevel > initialLevel && !hidden) {
-            String title, message, peerMessage;
+            String dialogTitle, message, peerMessage;
             if(initialLevel == 0) {
-                title = OrderManager.getInductionTitle();
+                dialogTitle = OrderManager.getInductionTitle();
                 message = inductionMessage;
                 peerMessage = player.getName() + " " + OrderManager.getPeerInductionMessage() + " " + title;
             } else {
-                title = OrderManager.getAdvancementTitle();
+                dialogTitle = OrderManager.getAdvancementTitle();
                 message = advancementMessage;
                 peerMessage = player.getName() + " " + OrderManager.getPeerAdvancementMessage() + " " + title;
             }
 
-            player.showDialog(DialogHelper.messageDialog(title, message));
+            player.showDialog(DialogHelper.messageDialog(dialogTitle, message));
             player.notifyPeers(peerMessage, NotificationType.SYSTEM);
         }
     }
