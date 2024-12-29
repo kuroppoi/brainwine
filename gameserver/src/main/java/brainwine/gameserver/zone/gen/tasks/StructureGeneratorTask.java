@@ -171,7 +171,6 @@ public class StructureGeneratorTask implements GeneratorTask {
             case HELL:
                 machines.add(EcologicalMachine.PURIFIER);
                 machines.add(EcologicalMachine.EXPIATOR);
-                machines.add(EcologicalMachine.COMPOSTER);
                 break;
             case DESERT:
                 machines.add(EcologicalMachine.PURIFIER);
