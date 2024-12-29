@@ -103,7 +103,7 @@ public class TeleportCommand extends Command {
         }
         
         // Check if coordinates are in bounds
-        if(!player.getZone().areCoordinatesInBounds(x, y)) {
+        if(!targetZone.areCoordinatesInBounds(x, y)) {
             player.notify("Cannot teleport out of bounds!", SYSTEM);
             return;
         }
