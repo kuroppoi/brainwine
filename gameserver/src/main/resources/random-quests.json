@@ -50,7 +50,7 @@
                 "creatures/roach-large",
                 "creatures/bunny-ice"
             ],
-            "task_description": "Get rid of the pests! Kill {QUANTITY} pests of any kind!",
+            "task_description": "Get rid of the small animals! Kill {QUANTITY} small animals of any kind!",
             "quantity": { "random_between":  [3, 5] },
             "reward": { "crowns": 20 }
         },
