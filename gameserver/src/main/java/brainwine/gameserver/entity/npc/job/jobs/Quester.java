@@ -148,7 +148,7 @@ public class Quester extends DialoguerJob {
 
         PlayerQuests.handleQuestFinalReturn(player, quest);
 
-        if(PlayerQuests.canFinishQuest(player, quest)) {
+        if(PlayerQuests.canFinishQuest(player, quest, true)) {
             player.showDialog(DialogHelper.messageDialog(quest.getStory().getComplete() == null
                     ? "You have successfully completed your quest!"
                     : quest.getStory().getComplete()

@@ -31,7 +31,6 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.player.Player;
-import brainwine.gameserver.quest.PlayerQuests;
 import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
@@ -300,8 +299,6 @@ public class EntityManager {
             player.onZoneChanged();
             players.put(entityId, player);
             playersByName.put(player.getName().toLowerCase(), player);
-            PlayerQuests.deleteUnknownQuestProgress(player);
-            PlayerQuests.sendInitialPlayerQuestMessages(player);
             player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.ENTERING));
             player.sendMessageToPeers(new EntityPositionMessage(player));
             player.sendMessage(new EventMessage("playerIconDidChange", player.getIconEmoji()));

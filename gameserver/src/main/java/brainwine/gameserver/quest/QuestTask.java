@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import brainwine.gameserver.dialog.DialogListItem;
@@ -31,6 +32,17 @@ public class QuestTask {
 
     @JsonProperty("collect_inventory")
     private QuestTaskCollectInventory collectInventory;
+
+    @JsonIgnore
+    public boolean isReturnTask() {
+        if(getEvents() != null) for(List<Object> event : getEvents()) {
+            if(event.size() >= 1 && "return".equals(event.get(0))) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private boolean checkQualification(Player player, Object... qualification) {
         if(player == null || qualification == null || qualification.length == 0) {

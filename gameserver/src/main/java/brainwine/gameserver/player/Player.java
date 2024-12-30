@@ -45,6 +45,7 @@ import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.order.OrderManager;
 import brainwine.gameserver.quest.DailyQuests;
+import brainwine.gameserver.quest.PlayerQuests;
 import brainwine.gameserver.quest.Quest;
 import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.quest.QuestProgress;
@@ -555,6 +556,8 @@ public class Player extends Entity implements CommandExecutor {
         // Misc stuff
         updateAchievementProgress(JourneymanAchievement.class);
         checkRegistration();
+        PlayerQuests.deleteUnknownQuestProgress(this);
+        PlayerQuests.sendInitialPlayerQuestMessages(this);
         QuestEvents.handleEnterZone(this, zone);
         recentZones.remove(zone.getDocumentId()); // Remove first in case the zone has already been visited recently
         recentZones.add(0, zone.getDocumentId()); // Add at top so we don't have to reverse the list for the zone searcher

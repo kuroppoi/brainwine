@@ -52,7 +52,7 @@ public class QuestTaskCollectInventory {
         }
 
         for(Pair<String, Integer> req : requirements) {
-            player.getInventory().removeItem(ItemRegistry.getItem(req.getFirst()), req.getLast());
+            player.getInventory().removeItem(ItemRegistry.getItem(req.getFirst()), req.getLast(), true);
         }
     }
 
