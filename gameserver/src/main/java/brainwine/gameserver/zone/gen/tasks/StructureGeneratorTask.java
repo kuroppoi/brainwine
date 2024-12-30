@@ -140,7 +140,7 @@ public class StructureGeneratorTask implements GeneratorTask {
         // Fetch list of replaceable containers
         List<MetaBlock> containers = ctx.getZone().getMetaBlocks(metaBlock
                 -> ctx.isUnderground(metaBlock.getX(), metaBlock.getY())
-                && (metaBlock.getItem().hasId("containers/chest") && !metaBlock.getMetadata().containsKey("@")));
+                && (metaBlock.getItem().hasId("containers/crate-industrial-large") && !metaBlock.getMetadata().containsKey("@")));
         Collections.shuffle(containers, ctx.getRandom());
         
         // TODO
