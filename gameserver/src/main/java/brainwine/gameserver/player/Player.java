@@ -45,6 +45,7 @@ import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
+import brainwine.gameserver.quest.PlayerQuests;
 import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.quest.QuestProgress;
 import brainwine.gameserver.server.Message;
@@ -532,6 +533,8 @@ public class Player extends Entity implements CommandExecutor {
         // Misc stuff
         updateAchievementProgress(JourneymanAchievement.class);
         checkRegistration();
+        PlayerQuests.deleteUnknownQuestProgress(this);
+        PlayerQuests.sendInitialPlayerQuestMessages(this);
         QuestEvents.handleEnterZone(this, zone);
     }
     

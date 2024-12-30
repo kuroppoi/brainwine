@@ -48,7 +48,7 @@ public class QuestEvents {
                 for(List<Object> event : task.getEvents()) {
                     try {
                         if(patternMatch(event, pattern)) {
-                            questProgress.getTaskProgresses().set(i, questProgress.getTaskProgress(i) + quantity);
+                            questProgress.setTaskProgress(i, questProgress.getTaskProgress(i) + quantity);
 
                             anyProgress = true;
                             break;
@@ -62,13 +62,15 @@ public class QuestEvents {
 
             if(anyProgress) {
                 PlayerQuests.sendPlayerQuestMessage(player, questProgress);
+
+                PlayerQuests.performAction(player, quest, QuestAction.Type.DONE, false);
             }
 
-            if(PlayerQuests.canFinishQuest(player, quest)) {
+            if(quest.getId().startsWith("daily")
+                    && PlayerQuests.canFinishQuest(player, quest, true)
+            ) {
                 PlayerQuests.finishQuest(player, quest);
-                PlayerQuests.performAction(player, quest, QuestAction.Type.DONE);
             }
-
         }
     }
 

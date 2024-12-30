@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import brainwine.gameserver.dialog.DialogSection;
+import brainwine.gameserver.item.ItemRegistry;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -55,15 +57,16 @@ public class QuestAction {
         return params;
     }
 
-    public void performAction(Player player) {
+    public DialogSection performAction(Player player, boolean preventMutations) {
         try{
             switch(getMethod()) {
                 case "gift_items!":
+                    if(preventMutations) break;
                     for(Object object : getParams()) {
                         Map<String, Integer> items = JsonHelper.readValue(object, new TypeReference<Map<String, Integer>>() {});
                         for(String k : items.keySet()) {
-                            Item item = Item.get(k);
-                            if(item == null) continue;
+                            Item item = ItemRegistry.getItem(k);
+                            if(item.isAir()) continue;
                             player.getInventory().addItem(item, items.get(k));
                             player.sendMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
                         }
@@ -84,18 +87,9 @@ public class QuestAction {
                         body = (String) params.get(0);
                     }
 
-                    if(params.size() >= 2) {
-                        if(!(params.get(0) instanceof String)) throw new IllegalArgumentException();
-                        title = (String) params.get(0);
-                    }
-
-                    if(title == null) {
-                        player.showDialog(DialogHelper.messageDialog(body));
-                    } else {
-                        player.showDialog(DialogHelper.messageDialog(title, body));
-                    }
-                    break;
+                    return new DialogSection().setText(body);
                 case "add_xp":
+                    if(preventMutations) break;
                     if(params.size() >= 1) {
                         int amount = JsonHelper.readValue(params.get(0), new TypeReference<Integer>() {});
                         player.addExperience(amount);
@@ -104,11 +98,12 @@ public class QuestAction {
                 default:
                     player.notify(String.format("Unknown quest action %d", getMethod()));
             }
-            } catch(JsonProcessingException e) {
-                player.notify("Couldn't perform some actions for this quest due to JSON processing errors.");
-            } catch(IllegalArgumentException e) {
-                player.notify(String.format("Malformed quest action parameters for %d.", getMethod()));
-            }
+        } catch(JsonProcessingException e) {
+            player.notify("Couldn't perform some actions for this quest due to JSON processing errors.");
+        } catch(IllegalArgumentException e) {
+            player.notify(String.format("Malformed quest action parameters for %d.", getMethod()));
+        }
+        return null;
     }
     
 }

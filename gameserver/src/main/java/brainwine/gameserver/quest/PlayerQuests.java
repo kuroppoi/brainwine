@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.dialog.DialogHelper;
+import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.messages.QuestMessage;
 
@@ -47,10 +48,10 @@ public class PlayerQuests {
 
         player.notify("Quest has started! Use the /quests command to view your progress at any time.");
         sendPlayerQuestMessage(player, progress);
-        performAction(player, quest, QuestAction.Type.BEGIN);
+        performAction(player, quest, QuestAction.Type.BEGIN, false);
     }
 
-    public static boolean canFinishQuest(Player player, Quest quest) {
+    public static boolean canFinishQuest(Player player, Quest quest, boolean needToReturn) {
         if(player == null) return false;
         
         if(quest == null) {
@@ -69,6 +70,8 @@ public class PlayerQuests {
             int currentQuantity = player.getQuestProgresses().get(quest.getId()).getTaskProgress(i);
 
             QuestTask task = quest.getTasks().get(i);
+
+            if(!needToReturn && task.isReturnTask()) continue;
 
             if(!task.checkComplete(player, currentQuantity) || !task.checkCollectInventory(player)) {
                 return false;
@@ -102,14 +105,18 @@ public class PlayerQuests {
 
         if(progress.isComplete()) return;
 
-        for(QuestTask task : quest.getTasks()) {
+        for(int i = 0; i < quest.getTasks().size(); i++) {
+            QuestTask task = quest.getTasks().get(i);
+
+            progress.setTaskProgress(i, task.getQuantity());
+
             if(task.getCollectInventory() != null) {
                 task.getCollectInventory().removeFromPlayer(player);
             }
         }
 
         for(int i = 0; i < quest.getTasks().size(); i++) {
-            progress.getTaskProgresses().set(i, quest.getTasks().get(i).getQuantity());
+            progress.setTaskProgress(i, quest.getTasks().get(i).getQuantity());
         }
 
         quest.getReward().reward(player);
@@ -125,54 +132,37 @@ public class PlayerQuests {
 
     }
 
-    public static void performAction(Player player, Quest quest, QuestAction.Type actionType) {
-        if(quest.getActions() == null) return;
+    public static DialogSection performAction(Player player, Quest quest, QuestAction.Type actionType, boolean preventMutations) {
+        if(quest.getActions() == null) return null;
 
         List<QuestAction> actions = quest.getActions().get(actionType);
 
-        if(actions == null) return;
+        if(actions == null) return null;
 
+        DialogSection result = null;
         for(QuestAction action : actions) {
-            action.performAction(player);
+            DialogSection newSection = action.performAction(player, preventMutations);
+            if(newSection != null) result = newSection;
         }
+
+        return result;
     }
 
     public static void handleQuestFinalReturn(Player player, Quest quest) {
+        // if can't finish even with the return task done, set the return task progress to the previous value
+        if(!canFinishQuest(player, quest, false)) {
+            return;
+        }
+
         QuestProgress progress = player.getQuestProgresses().get(quest.getId());
-
         if(progress == null) return;
-
-        int found = -1;
 
         for(int i = 0; i < quest.getTasks().size(); i++) {
             QuestTask task = quest.getTasks().get(i);
 
-            if(task.getEvents() != null) {
-                for(List<Object> event : task.getEvents()) {
-                    for(Object o : event) {
-                        if("return".equals(o)) found = i;
-                        if(found != -1) break;
-                    }
-                    if(found != -1) break;
-                }
+            if(task.isReturnTask()) {
+                progress.setTaskProgress(i, quest.getTasks().get(i).getQuantity());
             }
-            if(found != -1) break;
-        }
-
-        if(found == -1) return;
-
-        int initialReturnProgress = progress.getTaskProgress(found);
-        int wantedProgress = quest.getTasks().get(found).getQuantity();
-
-        while (progress.getTaskProgresses().size() < quest.getTasks().size()) {
-            progress.getTaskProgresses().add(0);
-        }
-
-        progress.getTaskProgresses().set(found, wantedProgress);
-
-        // if can't finish even with the return task done, set the return task progress to the previous value
-        if(!canFinishQuest(player, quest)) {
-            progress.getTaskProgresses().set(found, initialReturnProgress);
         }
     }
 

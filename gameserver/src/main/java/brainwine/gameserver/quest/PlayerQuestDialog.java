@@ -80,7 +80,7 @@ public class PlayerQuestDialog {
         List<DialogSection> resultCompleted = new ArrayList<>();
         for(QuestProgress questProgress : player.getQuestProgresses().values()) {
             if(!questProgress.isComplete()) {
-                result.addAll(questProgress.getDialogSection(player, canFinishQuest));
+                result.addAll(questProgress.getDialogSection(player));
             } else if(privileged) {
                 DialogSection cancelSection = new DialogSection()
                         .setChoice(String.format("quest.%s.%s", questProgress.getQuestId(), "cancel"))

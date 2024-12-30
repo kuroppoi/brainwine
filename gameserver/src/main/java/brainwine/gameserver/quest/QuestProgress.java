@@ -43,6 +43,13 @@ public class QuestProgress {
         return getTaskProgresses().get(index);
     }
 
+    public void setTaskProgress(int index, int progress) {
+        while(getTaskProgresses().size() <= index) {
+            getTaskProgresses().add(0);
+        }
+        getTaskProgresses().set(index, progress);
+    }
+
     public String getQuestId() {
         return questId;
     }
@@ -68,7 +75,7 @@ public class QuestProgress {
         completedAt = System.currentTimeMillis();
     }
 
-    public List<DialogSection> getDialogSection(Player player, boolean canFinishQuest) {
+    public List<DialogSection> getDialogSection(Player player) {
         List<DialogSection> result = new ArrayList<>();
         DialogSection mainSection = new DialogSection();
         result.add(mainSection);
@@ -83,16 +90,8 @@ public class QuestProgress {
 
         mainSection.setTitle(quest.getTitle());
 
-        if(PlayerQuests.canFinishQuest(player, quest)) {
-            mainSection.addItem(new DialogListItem().setText("All tasks done. Visit a quester android to claim your reward!"));
-        }
-
         for(int i = 0; i < quest.getTasks().size(); i++) {
             result.add(quest.getTasks().get(i).getDialogSection(player, getTaskProgress(i)));
-        }
-
-        if(canFinishQuest) {
-            result.add(new DialogSection().setText("Finish Quest").setChoice(getActionChoice("finish")));
         }
 
         DialogSection cancelSection = new DialogSection().setChoice(getActionChoice("cancel"));
