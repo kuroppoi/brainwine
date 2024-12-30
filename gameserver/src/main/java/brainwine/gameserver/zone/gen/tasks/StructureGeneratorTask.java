@@ -140,16 +140,23 @@ public class StructureGeneratorTask implements GeneratorTask {
         // Fetch list of replaceable containers
         List<MetaBlock> containers = ctx.getZone().getMetaBlocks(metaBlock
                 -> ctx.isUnderground(metaBlock.getX(), metaBlock.getY())
-                && (metaBlock.getItem().hasId("containers/chest-mechanical-large") 
-                || (metaBlock.getItem().hasId("containers/chest") && !metaBlock.getMetadata().containsKey("@"))));
+                && (metaBlock.getItem().hasId("containers/chest") && !metaBlock.getMetadata().containsKey("@")));
         Collections.shuffle(containers, ctx.getRandom());
         
         // TODO
         placeComponentChests(ctx, containers);
-        placeBrokenTeleporters(ctx, containers);
+
+        List<MetaBlock> mechPositions = ctx.getZone().getMetaBlocks(metaBlock
+                -> ctx.isUnderground(metaBlock.getX(), metaBlock.getY())
+                && (metaBlock.getItem().hasId("containers/chest-mechanical-large")));
+        Collections.shuffle(mechPositions, ctx.getRandom());
+
+        // TODO
+        placeBrokenTeleporters(ctx, mechPositions);
         
         if(ctx.getZone().getBiome() == Biome.HELL) {
-            placeInfernalProtectors(ctx, containers);
+            Collections.shuffle(mechPositions, ctx.getRandom());
+            placeInfernalProtectors(ctx, mechPositions);
         }
         
     }
