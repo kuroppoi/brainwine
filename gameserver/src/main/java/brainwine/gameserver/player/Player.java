@@ -40,6 +40,7 @@ import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
+import brainwine.gameserver.item.Tradeability;
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.order.OrderManager;
@@ -848,6 +849,19 @@ public class Player extends Entity implements CommandExecutor {
 
         if(zone != null && !zone.isMarket()) {
             showDialog(DialogHelper.messageDialog("Trade at the Market!", "Trading is only allowed in Market worlds and private worlds. Ask the player to join you in a Market world."));
+            return;
+        }
+
+
+        // Check if item is tradeable
+        if(!isGodMode() && item.getTradeability() == Tradeability.FALSE) {
+            notify("Sorry, you cannot trade this item.");
+            return;
+        }
+
+        // Check if player is high enough level to trade this item
+        if(!isGodMode() && item.getTradeability() == Tradeability.LEVELED && getLevel() < 20) {
+            notify("You must be level 20+ to trade this item.");
             return;
         }
 

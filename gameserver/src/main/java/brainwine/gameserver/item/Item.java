@@ -42,6 +42,9 @@ public class Item {
     @JsonProperty("fieldable")
     private Fieldability fieldability = Fieldability.TRUE;
     
+    @JsonProperty("tradeable")
+    private Tradeability tradeability = Tradeability.TRUE;
+    
     @JsonProperty("loot_graphic")
     private DialogType lootGraphic = DialogType.STANDARD;
     
@@ -293,6 +296,10 @@ public class Item {
     
     public Fieldability getFieldability() {
         return fieldability;
+    }
+    
+    public Tradeability getTradeability() {
+        return tradeability;
     }
     
     public DialogType getLootGraphic() {
