@@ -26,6 +26,7 @@ import brainwine.gameserver.Timer;
 import brainwine.gameserver.achievement.Achievement;
 import brainwine.gameserver.achievement.AchievementManager;
 import brainwine.gameserver.achievement.JourneymanAchievement;
+import brainwine.gameserver.achievement.PositionAchievement;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogListItem;
@@ -292,6 +293,12 @@ public class Player extends Entity implements CommandExecutor {
     public void setHealth(float health) {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
+    }
+    
+    @Override
+    public void blockPositionChanged() {
+        super.blockPositionChanged();
+        updateAchievementProgress(PositionAchievement.class); // TODO check on interval rather than every block position change
     }
 
     public double getBreathCapacity() {
@@ -1320,7 +1327,7 @@ public class Player extends Entity implements CommandExecutor {
     public <T extends Achievement> void updateAchievementProgress(Class<T> achievementType) {
         List<Achievement> achievementsToCheck = AchievementManager.getAchievements().stream()
                 .filter(achievement -> !hasAchievement(achievement) 
-                && achievementType.isAssignableFrom(achievement.getClass())
+                && achievementType == achievement.getClass()
                 && (achievement.getPrevious() == null || hasAchievement(achievement.getPrevious())))
                 .collect(Collectors.toList());
         
