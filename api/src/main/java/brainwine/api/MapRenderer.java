@@ -49,16 +49,19 @@ public class MapRenderer {
         return null;
     }
     
+    public static BufferedImage drawSurfaceMap(ZoneInfo zone) {
+        return drawSurfaceMap(zone.getWidth(), zone.getHeight(), zone.getBiome(), zone.getSurface());
+    }
+    
     /**
      * Creates a surface map render that is visually almost identical to V2 client map renders.
      */
-    public static BufferedImage drawSurfaceMap(ZoneInfo zone) {
-        BufferedImage image = ImageUtils.createImage(300000, zone.getWidth(), zone.getHeight());
+    public static BufferedImage drawSurfaceMap(int width, int height, String biome, int[] surfaceArray) {
+        BufferedImage image = ImageUtils.createImage(300000, width, height);
         Graphics2D g2d = image.createGraphics();
-        int[] surfaceArray = zone.getSurface();
-        int[] colors = colorMap.getOrDefault(zone.getBiome(), colorMap.get("plain"));
+        int[] colors = colorMap.getOrDefault(biome.toLowerCase(), colorMap.get("plain"));
         int[] raster = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
-        int surfaceMin = zone.getHeight();
+        int surfaceMin = height;
         int surfaceMax = 0;
         
         // Find highest & lowest surface points
@@ -68,8 +71,8 @@ public class MapRenderer {
         }
         
         int surfaceCenter = (int)Math.floor((surfaceMax - surfaceMin) * 0.5 + surfaceMin);
-        double scaleX = (double)image.getWidth() / zone.getWidth();
-        double scaleY = (double)image.getHeight() / zone.getHeight();
+        double scaleX = (double)image.getWidth() / width;
+        double scaleY = (double)image.getHeight() / height;
         
         // Fill raster with background color fast
         int length = (int)(surfaceMax * scaleY) * image.getWidth();
@@ -84,12 +87,12 @@ public class MapRenderer {
         for(int i = 0; i < image.getWidth(); i++) {            
             int surface = surfaceArray[(int)(i / scaleX)];
             int distanceToPeak = surface - surfaceMin;
-            double y = (zone.getHeight() - surface) * scaleY;
+            double y = (height - surface) * scaleY;
             double layerHeight = 1.0;
             int start = image.getHeight() - (int)(y * layerHeight);
             
             for(int j = 0; j < depths.length; j++) {
-                double scale = (double)distanceToPeak / zone.getHeight() / depths.length * (j < 2 ? 2.0 : 0.5);
+                double scale = (double)distanceToPeak / height / depths.length * (j < 2 ? 2.0 : 0.5);
                 layerHeight -= (depths[j] - scale);
                 int end = j + 1 >= depths.length ? image.getHeight() : image.getHeight() - (int)(y * layerHeight);
                 g2d.setColor(new Color(colors[j > 0 || surface < surfaceCenter ? j : 1])); // Only use snow color if surface is above surface center
