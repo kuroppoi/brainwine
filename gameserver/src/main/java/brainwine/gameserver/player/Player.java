@@ -1,5 +1,7 @@
 package brainwine.gameserver.player;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -678,7 +680,7 @@ public class Player extends Entity implements CommandExecutor {
             try {
                 handler.accept(input);
             } catch(Exception e) {
-                logger.error("An error occured while handling dialog input", e);
+                logger.error(SERVER_MARKER, "An error occured while handling dialog input", e);
                 notify("Oops! There was a problem processing your input.");
             }
         }

@@ -128,7 +128,7 @@ public class PlayerManager {
         }
         
         if(currentToken != null && !apiTokens.remove(currentToken, player)) {
-            logger.warn("Could not unindex API token {} for player {}", currentToken, player.getDocumentId());
+            logger.warn(SERVER_MARKER, "Could not unindex API token {} for player {}", currentToken, player.getDocumentId());
         }
         
         player.setApiToken(apiToken);
@@ -157,7 +157,7 @@ public class PlayerManager {
     
     public void changePlayerName(Player player, String name) {
         if(playersByName.containsKey(name)) {
-            logger.warn("Tried to rename player {} to already existing name {}", player.getDocumentId(), name);
+            logger.warn(SERVER_MARKER, "Tried to rename player {} to already existing name {}", player.getDocumentId(), name);
             return;
         }
         
