@@ -84,6 +84,7 @@ public class Zone {
     private boolean isPrivate;
     private boolean isProtected;
     private boolean pvp;
+    private String entryCode;
     private String owner;
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
@@ -120,6 +121,7 @@ public class Zone {
         steamManager.setData(data.getSteamData());
         machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
+        entryCode = config.getEntryCode();
         owner = config.getOwner();
         members.addAll(config.getMembers());
         actionHistory.putAll(config.getActionHistory());
@@ -1744,6 +1746,18 @@ public class Zone {
     
     public boolean isPvp() {
         return pvp;
+    }
+    
+    protected void setEntryCode(String entryCode) {
+        this.entryCode = entryCode;
+    }
+    
+    public boolean hasEntryCode() {
+        return entryCode != null;
+    }
+    
+    public String getEntryCode() {
+        return entryCode;
     }
     
     public boolean isOwner(Player player) {

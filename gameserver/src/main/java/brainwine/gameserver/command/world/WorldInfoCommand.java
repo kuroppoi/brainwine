@@ -27,7 +27,7 @@ public class WorldInfoCommand extends WorldCommand {
             .addSection(new DialogSection().setTitle("World Info"))
             .addSection(new DialogSection().setText(" "))
             .addSection(new DialogSection().setText(player.isV3() ? "<color=#4d5b82>Entry Code</color>" : "Entry Code").setTextColor("4d5b82"))
-            .addSection(new DialogSection().setText("Entry codes are currently unavailable."))
+            .addSection(new DialogSection().setText(zone.hasEntryCode() ? zone.getEntryCode() : "Use /wrecode to generate an entry code"))
             .addSection(new DialogSection().setText(" "))
             .addSection(new DialogSection().setText(player.isV3() ? "<color=#4d5b82>Members</color>" : "Members").setTextColor("4d5b82"))
             .addSection(new DialogSection().setText(memberNames.isEmpty() ? "None :(" : memberNames.toString().replaceAll("[\\[+\\]]", "")));
