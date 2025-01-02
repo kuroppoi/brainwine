@@ -99,7 +99,7 @@ public class DirectDataFetcher implements DataFetcher {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
     
-    private static ZoneInfo createZoneInfo(Zone zone) {
+    static ZoneInfo createZoneInfo(Zone zone) {
         return new ZoneInfo(zone.getName(), 
                 zone.getBiome().getId(), 
                 null,

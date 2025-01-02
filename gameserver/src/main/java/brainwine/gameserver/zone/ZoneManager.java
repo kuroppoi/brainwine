@@ -100,6 +100,7 @@ public class ZoneManager {
                     generator.generateZoneAsync(biome, zone -> {
                         if (zone != null) {
                             this.addZone(zone);
+                            GameServer.getInstance().getPusher().handleZoneDiscovered(zone);
                             lastZoneGenerationTime = System.currentTimeMillis();
                         } else {
                             logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");

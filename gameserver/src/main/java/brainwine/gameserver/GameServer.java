@@ -5,6 +5,8 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import brainwine.gameserver.server.DefaultPusher;
+import brainwine.gameserver.server.Pusher;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,6 +37,7 @@ public class GameServer implements CommandExecutor {
     private final ZoneManager zoneManager;
     private final PlayerManager playerManager;
     private final Server server;
+    private Pusher pusher;
     private long lastTick = System.currentTimeMillis();
     private long lastSave = lastTick;
     private volatile boolean shouldStop;
@@ -56,6 +59,7 @@ public class GameServer implements CommandExecutor {
         zoneManager = new ZoneManager();
         zoneManager.tryGenerateDefaultZone();
         playerManager = new PlayerManager();
+        pusher = new DefaultPusher();
         NetworkRegistry.init();
         server = new Server();
         server.addEndpoint(5002);
@@ -143,5 +147,13 @@ public class GameServer implements CommandExecutor {
     
     public PlayerManager getPlayerManager() {
         return playerManager;
+    }
+
+    public Pusher getPusher() {
+        return pusher;
+    }
+
+    public void setPusher(Pusher pusher) {
+        this.pusher = pusher;
     }
 }
