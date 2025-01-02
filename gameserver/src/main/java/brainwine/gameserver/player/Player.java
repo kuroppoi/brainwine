@@ -1237,7 +1237,8 @@ public class Player extends Entity implements CommandExecutor {
     
     public void addExperience(int amount, String message) {
         if(amount > 0) {
-            setExperience(experience + amount, message);
+            double zoneXpMultiplier = getZone() == null ? 1.0 : getZone().getXpMultiplier();
+            setExperience((int) Math.round(experience + zoneXpMultiplier * amount), message);
         }
     }
     

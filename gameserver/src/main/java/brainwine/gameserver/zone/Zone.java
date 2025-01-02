@@ -107,6 +107,7 @@ public class Zone {
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
     private boolean modified;
+    private double xpMultiplier = 1.0;
     
     protected Zone(String documentId, ZoneConfigFile config, ZoneDataFile data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
@@ -1863,7 +1864,15 @@ public class Zone {
     public boolean isModified() {
         return modified;
     }
-    
+
+    public double getXpMultiplier() {
+        return xpMultiplier;
+    }
+
+    public void setXpMultiplier(double xpMultiplier) {
+        this.xpMultiplier = xpMultiplier;
+    }
+
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link ConfigurationMessage}.
      */

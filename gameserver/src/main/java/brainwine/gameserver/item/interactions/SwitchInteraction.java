@@ -161,7 +161,10 @@ public class SwitchInteraction implements ItemInteraction {
         // Create explosion
         DamageType damageType = type.equalsIgnoreCase("electric") ? DamageType.ENERGY : DamageType.fromName(type);
         String effect = String.format("bomb-%s", type.toLowerCase());
+
+        zone.setXpMultiplier(0.1);
         zone.explode(x, y, 6, entity, false, 6, damageType, effect);
+        zone.setXpMultiplier(1.0);
     }
     
     private void switchSign(Zone zone, Entity entity, MetaBlock metaBlock, MetaBlock switchMeta) {
