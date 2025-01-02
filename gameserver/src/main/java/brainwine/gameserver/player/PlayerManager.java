@@ -118,13 +118,13 @@ public class PlayerManager {
         return authToken;
     }
     
-    protected void issueApiToken(Player player) {
+    public boolean issueApiToken(Player player) {
         String apiToken = TokenGenerator.generateToken(10, apiTokens::containsKey);
         String currentToken = player.getApiToken();
         
         if(apiToken == null) {
             player.notify("Oops, we couldn't issue an API token for you.", NotificationType.SYSTEM);
-            return;
+            return false;
         }
         
         if(currentToken != null && !apiTokens.remove(currentToken, player)) {
@@ -133,6 +133,7 @@ public class PlayerManager {
         
         player.setApiToken(apiToken);
         apiTokens.put(apiToken, player);
+        return true;
     }
         
     public boolean verifyAuthToken(String name, String authToken) {

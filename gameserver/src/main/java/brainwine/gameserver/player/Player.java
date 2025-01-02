@@ -1009,7 +1009,7 @@ public class Player extends Entity implements CommandExecutor {
         this.apiToken = apiToken;
     }
     
-    protected String getApiToken() {
+    public String getApiToken() {
         return apiToken;
     }
     
