@@ -29,12 +29,12 @@ public class DefaultDataFetcher implements DataFetcher {
     }
     
     @Override
-    public boolean verifyAuthToken(String name, String token) {
+    public String fetchPlayerId(String apiToken) {
         throw exception;
     }
-
+    
     @Override
-    public boolean verifyApiToken(String apiToken) {
+    public boolean verifyAuthToken(String name, String token) {
         throw exception;
     }
     

@@ -63,6 +63,10 @@ public class PlayerManager {
             
             playersById.put(id, player);
             playersByName.put(name.toLowerCase(), player);
+            
+            if(player.getApiToken() != null) {
+                apiTokens.put(player.getApiToken(), player);
+            }
         } catch (Exception e) {
             logger.error(SERVER_MARKER, "Could not load configuration for player id {}", id, e);
         }
@@ -190,6 +194,10 @@ public class PlayerManager {
     
     public Player getPlayerById(String id) {
         return playersById.get(id);
+    }
+    
+    public Player getPlayerByApiToken(String apiToken) {
+        return apiTokens.get(apiToken);
     }
     
     public Collection<Player> getPlayers() {
