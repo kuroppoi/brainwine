@@ -102,6 +102,7 @@ public class Player extends Entity implements CommandExecutor {
     private final String documentId;
     private String email;
     private String password;
+    private String apiToken;
     private boolean admin;
     private int experience;
     private int skillPoints;
@@ -159,6 +160,7 @@ public class Player extends Entity implements CommandExecutor {
         this.name = config.getName();
         this.email = config.getEmail();
         this.password = config.getPasswordHash();
+        this.apiToken = config.getApiToken();
         this.admin = config.isAdmin();
         this.experience = config.getExperience();
         this.skillPoints = config.getSkillPoints();
@@ -484,6 +486,14 @@ public class Player extends Entity implements CommandExecutor {
             inventory.moveItemToContainer(jetpack, ContainerType.ACCESSORIES, 0);
         }
         
+        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
+        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
+        
+        // Issue an API token if the player doesn't have one
+        if(apiToken == null) {
+            playerManager.issueApiToken(this);
+        }
+        
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig(this)));
         zone.sendMachineStatus(this);
@@ -527,13 +537,11 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         // Send social info
-        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
         sendMessage(new FollowMessage(followees.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 0));
         sendMessage(new FollowMessage(followers.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 1));
         sendMessage(new EventMessage("socialInfoReady", null));
         
         // Clear invalid bookmarks
-        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
         bookmarkedZones.removeIf(bookmark -> zoneManager.getZone(bookmark) == null || !zoneManager.getZone(bookmark).canJoin(this));
         
         // Misc stuff
@@ -995,6 +1003,14 @@ public class Player extends Entity implements CommandExecutor {
     
     protected String getPassword() {
         return password;
+    }
+    
+    protected void setApiToken(String apiToken) {
+        this.apiToken = apiToken;
+    }
+    
+    protected String getApiToken() {
+        return apiToken;
     }
     
     protected void clearAuthTokens() {
@@ -1664,7 +1680,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("deaths", statistics.getDeaths());
         config.put("appearance", appearance);
         config.put("settings", settings);
-        config.put("api_token", documentId); // Use document ID for now
+        config.put("api_token", apiToken);
         return config;
     }
 }

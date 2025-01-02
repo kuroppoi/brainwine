@@ -18,6 +18,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.shared.JsonHelper;
+import brainwine.shared.TokenGenerator;
 
 public class PlayerManager {
     
@@ -26,6 +27,7 @@ public class PlayerManager {
     private static final Logger logger = LogManager.getLogger();
     private final Map<String, Player> playersById = new HashMap<>();
     private final Map<String, Player> playersByName = new HashMap<>();
+    private final Map<String, Player> apiTokens = new HashMap<>();
     private final List<Player> onlinePlayers = new ArrayList<>();
     
     public PlayerManager() {
@@ -112,6 +114,23 @@ public class PlayerManager {
         return authToken;
     }
     
+    protected void issueApiToken(Player player) {
+        String apiToken = TokenGenerator.generateToken(10, apiTokens::containsKey);
+        String currentToken = player.getApiToken();
+        
+        if(apiToken == null) {
+            player.notify("Oops, we couldn't issue an API token for you.", NotificationType.SYSTEM);
+            return;
+        }
+        
+        if(currentToken != null && !apiTokens.remove(currentToken, player)) {
+            logger.warn("Could not unindex API token {} for player {}", currentToken, player.getDocumentId());
+        }
+        
+        player.setApiToken(apiToken);
+        apiTokens.put(apiToken, player);
+    }
+        
     public boolean verifyAuthToken(String name, String authToken) {
         Player player = getPlayer(name);
         
