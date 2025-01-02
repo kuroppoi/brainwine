@@ -104,7 +104,7 @@ public class PortalService {
         String apiToken = ctx.queryParam("api_token");
         String playerId = apiToken != null ? dataFetcher.fetchPlayerId(apiToken) : null;
         
-        if(playerId == null && (ctx.queryParam("account") == null || ctx.queryParam("residency") == null)) {
+        if(playerId == null && (ctx.queryParam("account") != null || ctx.queryParam("residency") != null)) {
             error(ctx, "Request contains one or more parameters that require a valid API token.");
             return;
         }

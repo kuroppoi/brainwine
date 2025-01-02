@@ -23,10 +23,8 @@ public class ApiCommand extends Command {
                 return;
             }
             
-            if("reissue".equals(input[0])) {
-                if(GameServer.getInstance().getPlayerManager().issueApiToken(player)) {
-                    player.kick("API token reissued", true);
-                }
+            if("reissue".equals(input[0]) && GameServer.getInstance().getPlayerManager().issueApiToken(player)) {
+                player.kick("API token changed.", true);
             }
         });
     }
