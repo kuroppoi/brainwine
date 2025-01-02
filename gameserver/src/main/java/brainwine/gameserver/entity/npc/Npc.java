@@ -200,14 +200,16 @@ public class Npc extends Entity {
                 // Track kill
                 player.getStatistics().trackKill(config);
             }
-            
-            EntityLoot loot = getRandomLoot(player, cause.getWeapon());
-            
-            if(loot != null) {
-                Item item = loot.getItem();
-                
-                if(!item.isAir()) {
-                    player.getInventory().addItem(item, loot.getQuantity(), true);
+
+            if(zone != null && zone.entityShouldDrop()) {
+                EntityLoot loot = getRandomLoot(player, cause.getWeapon());
+
+                if (loot != null) {
+                    Item item = loot.getItem();
+
+                    if (!item.isAir()) {
+                        player.getInventory().addItem(item, loot.getQuantity(), true);
+                    }
                 }
             }
         }

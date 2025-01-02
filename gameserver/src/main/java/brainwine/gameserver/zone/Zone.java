@@ -108,6 +108,7 @@ public class Zone {
     private int ticksElapsed;
     private boolean modified;
     private double xpMultiplier = 1.0;
+    private boolean entityShouldDrop = true;
     
     protected Zone(String documentId, ZoneConfigFile config, ZoneDataFile data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
@@ -1865,12 +1866,21 @@ public class Zone {
         return modified;
     }
 
+    // Bunch of methods that exploits the fact that multiple zone updates within one zone are not concurrent, used to mitigate farming.
     public double getXpMultiplier() {
         return xpMultiplier;
     }
 
     public void setXpMultiplier(double xpMultiplier) {
         this.xpMultiplier = xpMultiplier;
+    }
+
+    public boolean entityShouldDrop() {
+        return entityShouldDrop;
+    }
+
+    public void setEntityShouldDrop(boolean entityShouldDrop) {
+        this.entityShouldDrop = entityShouldDrop;
     }
 
     /**

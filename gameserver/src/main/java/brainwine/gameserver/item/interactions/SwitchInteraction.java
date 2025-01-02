@@ -23,7 +23,6 @@ import brainwine.gameserver.zone.Zone;
  * Interaction handler for switches
  */
 public class SwitchInteraction implements ItemInteraction {
-    
     @Override
     public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
@@ -162,9 +161,25 @@ public class SwitchInteraction implements ItemInteraction {
         DamageType damageType = type.equalsIgnoreCase("electric") ? DamageType.ENERGY : DamageType.fromName(type);
         String effect = String.format("bomb-%s", type.toLowerCase());
 
+        // Farm mitigation
         zone.setXpMultiplier(0.1);
+        zone.setEntityShouldDrop(countExploderDrops(metaBlock));
         zone.explode(x, y, 6, entity, false, 6, damageType, effect);
+        zone.setEntityShouldDrop(true);
         zone.setXpMultiplier(1.0);
+    }
+
+    /** Prevents the explosion from giving loot unless it is every few interactions. */
+    private boolean countExploderDrops(MetaBlock metaBlock) {
+        int current = metaBlock.getIntProperty("d");
+        boolean result = current + 1 >= 10;
+        if(result) {
+            metaBlock.setProperty("d", 0);
+        } else {
+            metaBlock.setProperty("d", current + 1);
+        }
+
+        return result;
     }
     
     private void switchSign(Zone zone, Entity entity, MetaBlock metaBlock, MetaBlock switchMeta) {
