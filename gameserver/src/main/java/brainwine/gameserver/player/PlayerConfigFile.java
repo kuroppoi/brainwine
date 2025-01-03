@@ -20,6 +20,7 @@ public class PlayerConfigFile {
     private String name;
     private String email;
     private String passwordHash;
+    private String apiToken;
     private Zone currentZone;
     private boolean admin;
     private int experience;
@@ -53,6 +54,7 @@ public class PlayerConfigFile {
         this.name = player.getName();
         this.email = player.getEmail();
         this.passwordHash = player.getPassword();
+        this.apiToken = player.getApiToken();
         this.currentZone = player.getZone();
         this.admin = player.isAdmin();
         this.experience = player.getExperience();
@@ -97,6 +99,10 @@ public class PlayerConfigFile {
     
     public String getPasswordHash() {
         return passwordHash;
+    }
+    
+    public String getApiToken() {
+        return apiToken;
     }
     
     public Zone getCurrentZone() {

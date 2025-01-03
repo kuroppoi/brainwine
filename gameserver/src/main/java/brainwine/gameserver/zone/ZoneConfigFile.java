@@ -45,6 +45,9 @@ public class ZoneConfigFile {
     private boolean pvp;
     
     @JsonSetter(nulls = Nulls.SKIP)
+    private String entryCode;
+    
+    @JsonSetter(nulls = Nulls.SKIP)
     private String owner;
 
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
@@ -81,6 +84,7 @@ public class ZoneConfigFile {
         this.isPrivate = zone.isPrivate();
         this.isProtected = zone.isProtected();
         this.pvp = zone.isPvp();
+        this.entryCode = zone.getEntryCode();
         this.owner = zone.getOwner();
         this.members = zone.getMembers();
         this.discoveredParts = zone.getDiscoveredParts();
@@ -122,6 +126,10 @@ public class ZoneConfigFile {
     
     public boolean isPvp() {
         return pvp;
+    }
+    
+    public String getEntryCode() {
+        return entryCode;
     }
     
     public String getOwner() {

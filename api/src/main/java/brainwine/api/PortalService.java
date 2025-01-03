@@ -55,16 +55,9 @@ public class PortalService {
     
     /**
      * Handler function for map render requests.
-     * TODO throttle
+     * TODO add throttle & ownership privacy
      */
     private void handleMapRequest(Context ctx) throws IOException {
-        String apiToken = ctx.queryParam("api_token");
-        
-        if(apiToken == null || !dataFetcher.verifyApiToken(apiToken)) {
-            error(ctx, "A valid api token is required for this request.");
-            return;
-        }
-                
         ZoneInfo zone = dataFetcher.getZoneInfo(ctx.pathParam("zone"));
         
         if(zone == null) {
@@ -109,9 +102,10 @@ public class PortalService {
      */
     private void handleZoneSearch(Context ctx) {
         String apiToken = ctx.queryParam("api_token");
+        String playerId = apiToken != null ? dataFetcher.fetchPlayerId(apiToken) : null;
         
-        if(apiToken == null || !dataFetcher.verifyApiToken(apiToken)) {
-            error(ctx, "A valid api token is required for this request.");
+        if(playerId == null && (ctx.queryParam("account") != null || ctx.queryParam("residency") != null)) {
+            error(ctx, "Request contains one or more parameters that require a valid API token.");
             return;
         }
         
@@ -120,7 +114,7 @@ public class PortalService {
         final List<ZoneInfo> zones = account == null ? (List<ZoneInfo>)dataFetcher.fetchZoneInfo() 
                 : account.equals("recent") ? (List<ZoneInfo>)dataFetcher.fetchRecentZoneInfo(apiToken)
                 : account.equals("bookmarked") ? (List<ZoneInfo>)dataFetcher.fetchBookmarkedZoneInfo(apiToken) : new ArrayList<>();
-        zones.removeIf(zone -> zone.isPrivate() && !apiToken.equals(zone.getOwner()) && !zone.getMembers().contains(apiToken));
+        zones.removeIf(zone -> zone.isPrivate() && (playerId == null || (!playerId.equals(zone.getOwner()) && !zone.getMembers().contains(playerId))));
         
         handleQueryParam(ctx, "name", String.class, name -> {
             zones.removeIf(zone -> !zone.getName().toLowerCase().contains(name.toLowerCase()));
@@ -145,10 +139,10 @@ public class PortalService {
         handleQueryParam(ctx, "residency", String.class, residency -> {
             switch(residency) {
             case "owned":
-                zones.removeIf(zone -> !apiToken.equals(zone.getOwner()));
+                zones.removeIf(zone -> !playerId.equals(zone.getOwner()));
                 break;
             case "member":
-                zones.removeIf(zone -> !zone.getMembers().contains(apiToken));
+                zones.removeIf(zone -> !zone.getMembers().contains(playerId));
                 break;
             default:
                 zones.clear();

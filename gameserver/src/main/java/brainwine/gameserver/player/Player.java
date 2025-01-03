@@ -1,5 +1,7 @@
 package brainwine.gameserver.player;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -24,6 +26,7 @@ import brainwine.gameserver.Timer;
 import brainwine.gameserver.achievement.Achievement;
 import brainwine.gameserver.achievement.AchievementManager;
 import brainwine.gameserver.achievement.JourneymanAchievement;
+import brainwine.gameserver.achievement.PositionAchievement;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
@@ -109,6 +112,7 @@ public class Player extends Entity implements CommandExecutor {
     private final String documentId;
     private String email;
     private String password;
+    private String apiToken;
     private boolean admin;
     private int experience;
     private int skillPoints;
@@ -172,6 +176,7 @@ public class Player extends Entity implements CommandExecutor {
         this.name = config.getName();
         this.email = config.getEmail();
         this.password = config.getPasswordHash();
+        this.apiToken = config.getApiToken();
         this.admin = config.isAdmin();
         this.experience = config.getExperience();
         this.skillPoints = config.getSkillPoints();
@@ -315,6 +320,12 @@ public class Player extends Entity implements CommandExecutor {
     public void setHealth(float health) {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
+    }
+
+    @Override
+    public void blockPositionChanged() {
+        super.blockPositionChanged();
+        updateAchievementProgress(PositionAchievement.class); // TODO check on interval rather than every block position change
     }
 
     public double getBreathCapacity() {
@@ -501,6 +512,14 @@ public class Player extends Entity implements CommandExecutor {
             inventory.moveItemToContainer(jetpack, ContainerType.ACCESSORIES, 0);
         }
         
+        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
+        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
+
+        // Issue an API token if the player doesn't have one
+        if(apiToken == null) {
+            playerManager.issueApiToken(this);
+        }
+
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig(this)));
         zone.sendMachineStatus(this);
@@ -544,13 +563,11 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         // Send social info
-        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
         sendMessage(new FollowMessage(followees.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 0));
         sendMessage(new FollowMessage(followers.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 1));
         sendMessage(new EventMessage("socialInfoReady", null));
         
         // Clear invalid bookmarks
-        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
         bookmarkedZones.removeIf(bookmark -> zoneManager.getZone(bookmark) == null || !zoneManager.getZone(bookmark).canJoin(this));
         
         // Misc stuff
@@ -690,7 +707,7 @@ public class Player extends Entity implements CommandExecutor {
             try {
                 handler.accept(input);
             } catch(Exception e) {
-                logger.error("An error occured while handling dialog input", e);
+                logger.error(SERVER_MARKER, "An error occured while handling dialog input", e);
                 notify("Oops! There was a problem processing your input.");
             }
         }
@@ -1025,6 +1042,14 @@ public class Player extends Entity implements CommandExecutor {
         return password;
     }
     
+    protected void setApiToken(String apiToken) {
+        this.apiToken = apiToken;
+    }
+
+    public String getApiToken() {
+        return apiToken;
+    }
+
     protected void clearAuthTokens() {
         authTokens.clear();
     }
@@ -1356,7 +1381,7 @@ public class Player extends Entity implements CommandExecutor {
     public <T extends Achievement> void updateAchievementProgress(Class<T> achievementType) {
         List<Achievement> achievementsToCheck = AchievementManager.getAchievements().stream()
                 .filter(achievement -> !hasAchievement(achievement) 
-                && achievementType.isAssignableFrom(achievement.getClass())
+                && achievementType == achievement.getClass()
                 && (achievement.getPrevious() == null || hasAchievement(achievement.getPrevious())))
                 .collect(Collectors.toList());
         
@@ -1751,7 +1776,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("appearance", appearance);
         config.put("settings", settings);
         config.put("ni", getIcon());
-        config.put("api_token", documentId); // Use document ID for now
+        config.put("api_token", apiToken);
         return config;
     }
 }

@@ -35,6 +35,7 @@ import brainwine.gameserver.entity.npc.NpcData;
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
 import brainwine.shared.JsonHelper;
+import brainwine.shared.TokenGenerator;
 
 public class ZoneManager {
     private final double ZONE_EXPLORATION_THRESHOLD = 0.25;
@@ -52,11 +53,12 @@ public class ZoneManager {
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
+    private Map<String, Zone> entryCodes = new HashMap<>();
     private long lastZoneGenerationTime = System.currentTimeMillis();
     private boolean generatingZone = false;
     private Set<String> unexploredZones = new HashSet<>();
     private Biome lastGeneratedBiome = Biome.PLAIN;
-        
+
     public ZoneManager() {
         logger.info(SERVER_MARKER, "Loading zone data ...");
         dataDir.mkdirs();
@@ -161,7 +163,7 @@ public class ZoneManager {
                 && !zone.isOwned()
                 && zone.getBiome() != Biome.HELL && zone.getBiome() != Biome.DEEP;
     }
-    
+
     public void onShutdown() {
         for(Zone zone : zones.values()) {
             saveZone(zone);
@@ -244,6 +246,10 @@ public class ZoneManager {
         if(shouldTrackExplorationOfZone(zone) && !checkExplorationOfZone(zone)) {
             unexploredZones.add(zone.getDocumentId());
         }
+
+        if(zone.hasEntryCode()) {
+            entryCodes.put(zone.getEntryCode(), zone);
+        }
     }
     
     /**
@@ -266,6 +272,28 @@ public class ZoneManager {
         return true;
     }
     
+    /**
+     * Generates a new entry code for the specified zone and re-indexes it.
+     *
+     * @return {@code true} if the entry code was generated successfully, otherwise {@code false}.
+     */
+    public boolean issueEntryCode(Zone zone) {
+        String entryCode = String.format("z%s", TokenGenerator.generateToken(6, entryCodes::containsKey));
+        String currentCode = zone.getEntryCode();
+
+        if(entryCode == null) {
+            return false;
+        }
+
+        if(currentCode != null && !entryCodes.remove(currentCode, zone)) {
+            logger.warn(SERVER_MARKER, "Could not unindex entry code {} for zone {}", currentCode, zone.getDocumentId());
+        }
+
+        zone.setEntryCode(entryCode);
+        entryCodes.put(entryCode, zone);
+        return true;
+    }
+
     public Zone getZone(String id) {
         return zones.get(id);
     }
@@ -278,6 +306,10 @@ public class ZoneManager {
         return zonesByName.get(name.toLowerCase());
     }
     
+    public Zone getZoneByEntryCode(String entryCode) {
+        return entryCodes.get(entryCode);
+    }
+
     /**
      * @return A public, non-owned, recently-generated temperate world (with players if possible) or {@code null} if no such world exists.
      */

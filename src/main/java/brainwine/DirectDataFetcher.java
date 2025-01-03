@@ -44,15 +44,16 @@ public class DirectDataFetcher implements DataFetcher {
         Player player = playerManager.getPlayer(name);
         return player == null ? null : player.getName();
     }
+    
+    @Override
+    public String fetchPlayerId(String apiToken) {
+        Player player = playerManager.getPlayerByApiToken(apiToken);
+        return player == null ? null : player.getDocumentId();
+    }
 
     @Override
     public boolean verifyAuthToken(String name, String token) {
         return playerManager.verifyAuthToken(name, token);
-    }
-    
-    @Override
-    public boolean verifyApiToken(String apiToken) {
-        return true; // TODO
     }
     
     @Override
@@ -83,13 +84,13 @@ public class DirectDataFetcher implements DataFetcher {
 
     @Override
     public Collection<ZoneInfo> fetchRecentZoneInfo(String apiToken) {
-        Player player = playerManager.getPlayerById(apiToken);
+        Player player = playerManager.getPlayerByApiToken(apiToken);
         return player == null ? new ArrayList<>() : createZoneInfo(player.getRecentZones());
     }
     
     @Override
     public Collection<ZoneInfo> fetchBookmarkedZoneInfo(String apiToken) {
-        Player player = playerManager.getPlayerById(apiToken);
+        Player player = playerManager.getPlayerByApiToken(apiToken);
         return player == null ? new ArrayList<>() : createZoneInfo(player.getBookmarkedZones());
     }
     
