@@ -1,5 +1,6 @@
 package brainwine.gameserver.order;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.player.NotificationType;
@@ -48,6 +49,7 @@ public class Order {
 
             player.showDialog(DialogHelper.messageDialog(dialogTitle, message));
             player.notifyPeers(peerMessage, NotificationType.SYSTEM);
+            GameServer.getInstance().getPusher().handlePlayerMessage(player, peerMessage);
         }
     }
 
