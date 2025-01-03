@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import brainwine.gameserver.GameServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
@@ -148,14 +147,12 @@ public class PlayerManager {
     public void onPlayerConnect(Player player) {
         onlinePlayers.add(player);
         logger.info(SERVER_MARKER, "{} logged into zone {}", player.getName(), player.getZone().getName());
-        GameServer.getInstance().getPusher().handlePlayerJoin(player);
     }
     
     public void onPlayerDisconnect(Player player) {
         Connection connection = player.getConnection();
         onlinePlayers.remove(player);
         logger.info(SERVER_MARKER, "{} disconnected: {}", player.getName(), connection.getDisconnectReason());
-        GameServer.getInstance().getPusher().handlePlayerLeave(player);
     }
     
     public boolean isEmailTaken(String email) {
