@@ -12,4 +12,7 @@ public class DefaultPusher implements Pusher {
 
     @Override
     public void handleZoneDiscovered(Zone zone) {}
+
+    @Override
+    public void handlePlayerMessage(Player player, String message) {}
 }

@@ -5,6 +5,9 @@ import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.Pusher;
 import brainwine.gameserver.zone.Zone;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DirectPusher implements Pusher {
     Api api;
 
@@ -29,5 +32,14 @@ public class DirectPusher implements Pusher {
     @Override
     public void handleZoneDiscovered(Zone zone) {
         broadcast("zone_discovered", DirectDataFetcher.createZoneInfo(zone));
+    }
+
+    // Open to discussion
+    @Override
+    public void handlePlayerMessage(Player player, String message) {
+        Map<String, Object> msg = new HashMap<>();
+        msg.put("player", player.getStatusConfig());
+        msg.put("message", message);
+        broadcast("player_message", msg);
     }
 }
