@@ -8,16 +8,15 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.imageio.ImageIO;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import io.javalin.websocket.WsConfig;
-import io.javalin.websocket.WsConnectContext;
 import io.javalin.websocket.WsContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -40,7 +39,7 @@ public class PortalService {
     private final Map<String, BufferedImage> surfaceMapCache = new HashMap<>();
     private final DataFetcher dataFetcher;
     private final Javalin portal;
-    private final Set<WsConnectContext> wsConnections = new HashSet<>();
+    private final Set<WsContext> wsConnections = ConcurrentHashMap.newKeySet();
     
     public PortalService(Api api, int port) {
         this.dataFetcher = api.getDataFetcher();
@@ -184,9 +183,8 @@ public class PortalService {
     }
 
     private void handleWsConfig(WsConfig config) {
-        config.onConnect(context -> {
-            synchronized(wsConnections) { wsConnections.add(context); }
-        });
+        config.onConnect(wsConnections::add);
+        config.onClose(wsConnections::remove);
 
         config.onMessage(context -> {
             Map<String, Object> message = JsonHelper.MAPPER.readValue(context.message(), new TypeReference<Map<String, Object>>() {});
@@ -198,10 +196,6 @@ public class PortalService {
                 default:
                     wsError(context, "Unknown message type: " + (String)messageTypeObj);
             }
-        });
-
-        config.onClose(context -> {
-            synchronized (wsConnections) { wsConnections.remove(context); }
         });
     }
 
@@ -219,11 +213,9 @@ public class PortalService {
         Map<String, Object> msg = new HashMap<>();
         msg.put("type", type);
         msg.put("data", data);
-        synchronized(wsConnections) {
-            for(WsContext context : wsConnections) {
-                if(context.session.isOpen()) {
-                    context.send(msg);
-                }
+        for(WsContext context : wsConnections) {
+            if(context.session.isOpen()) {
+                context.send(msg);
             }
         }
     }
