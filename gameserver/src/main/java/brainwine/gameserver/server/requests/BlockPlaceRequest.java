@@ -113,16 +113,7 @@ public class BlockPlaceRequest extends PlayerRequest {
         if(layer == Layer.LIQUID) {
             mod = 5;
         } else if(item.getMod() == ModType.ROTATION && !item.isMirrorable()) {
-            // Automatically orient rotatable blocks based on adjacent block
-            if(zone.isChunkLoaded(x, y + 1) && zone.getBlock(x, y + 1).getFrontItem().isWhole()) {
-                mod = 0;
-            } else if(zone.isChunkLoaded(x, y - 1) && zone.getBlock(x, y - 1).getFrontItem().isWhole()) {
-                mod = 2;
-            } else if(zone.isChunkLoaded(x - 1, y) && zone.getBlock(x - 1, y).getFrontItem().isWhole()) {
-                mod = 1;
-            } else if(zone.isChunkLoaded(x + 1, y) && zone.getBlock(x + 1, y).getFrontItem().isWhole()) {
-                mod = 3;
-            }
+            mod = findRotationMod(zone, x, y, item.getBlockWidth(), item.getBlockHeight());
         }
         
         zone.updateBlock(x, y, layer, item, mod, player);
@@ -146,6 +137,31 @@ public class BlockPlaceRequest extends PlayerRequest {
         } else if(item.getGroup() == ItemGroup.CAGE) {
             processTrapping(zone, player);
         }
+    }
+    
+    /**
+     * Automatically finds a suitable rotation mod based on adjacent blocks.
+     * Priority order is bottom -> top -> left -> right.
+     */
+    private int findRotationMod(Zone zone, int x, int y, int width, int height) {
+        boolean bottom = true;
+        boolean top = true;
+        boolean left = true;
+        boolean right = true;
+        
+        // Check top and bottom
+        for(int i = 0; i < width; i++) {
+            bottom &= zone.isChunkLoaded(x + i, y + 1) && zone.getBlock(x + i, y + 1).getFrontItem().isWhole();
+            top &= zone.isChunkLoaded(x + i, y - height) && zone.getBlock(x + i, y - height).getFrontItem().isWhole();
+        }
+        
+        // Check left and right
+        for(int i = 0; i < height; i++) {
+            left &= zone.isChunkLoaded(x - 1, y - i) && zone.getBlock(x - 1, y - i).getFrontItem().isWhole();
+            right &= zone.isChunkLoaded(x + width, y - i) && zone.getBlock(x + width, y - i).getFrontItem().isWhole();
+        }
+        
+        return bottom ? 0 : top ? 2 : left ? 1 : right ? 3 : 0;
     }
     
     private void processTrapping(Zone zone, Player player) {
