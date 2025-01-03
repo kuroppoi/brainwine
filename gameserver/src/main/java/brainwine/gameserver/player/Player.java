@@ -96,9 +96,9 @@ public class Player extends Entity implements CommandExecutor {
     public static final int HEARTBEAT_TIMEOUT = 30000;
     public static final int MAX_AUTH_TOKENS = 3;
     public static final int TRACKED_ENTITY_UPDATE_INTERVAL = 100;
-    public static final int REGEN_NO_DAMAGE_TIME = 10000;
     public static final float ENTITY_VISIBILITY_RANGE = 40;
-    public static final float BASE_REGEN_AMOUNT = 0.1F;
+    public static final int BASE_REGEN_INTERVAL = 30000;
+    public static final float BASE_REGEN_AMOUNT = 1.0F / 3.0F;
     private static final Logger logger = LogManager.getLogger();
     private static int dialogDiscriminator;
     private final String documentId;
@@ -153,6 +153,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private long lastLandmarkVoteAt;
+    private long lastHealthRegenAt;
     private Zone nextZone;
     private Connection connection;
     
@@ -229,9 +230,10 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
         
-        // Regenerate health out of combat
-        if(!isDead() && now >= lastDamagedAt + REGEN_NO_DAMAGE_TIME) {
-            heal(BASE_REGEN_AMOUNT * deltaTime);
+        // Regenerate health out of combat        
+        if(!isDead() && now >= Math.max(lastHealthRegenAt, lastDamagedAt) + BASE_REGEN_INTERVAL) {
+            heal(BASE_REGEN_AMOUNT);
+            lastHealthRegenAt = now;
         }
 
         if(!isDead()) {
