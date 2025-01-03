@@ -132,11 +132,12 @@ public class ZoneManager {
             generator.generateZoneAsync(lastGeneratedBiome, zone -> {
                 if (zone != null) {
                     this.addZone(zone);
+                    GameServer.getInstance().getPusher().handleZoneDiscovered(zone);
+                    if(GameServer.getInstance().getPlayerManager() != null) for(Player player : GameServer.getInstance().getPlayerManager().getPlayers()) {
+                        player.notify(String.format("A new zone has been discovered! Check out \"%s\"!", zone.getName()), SYSTEM);
+                    }
                 } else {
                     logger.warn(SERVER_MARKER, "Automatic zone generation failed. See the previous logs for more information.");
-                }
-                if(GameServer.getInstance().getPlayerManager() != null) for(Player player : GameServer.getInstance().getPlayerManager().getPlayers()) {
-                    player.notify(String.format("A new zone has been discovered! Check out \"%s\"!", zone.getName()), SYSTEM);
                 }
                 generatingZone = false;
             });

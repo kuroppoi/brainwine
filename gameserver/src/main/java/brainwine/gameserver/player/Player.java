@@ -1427,9 +1427,11 @@ public class Player extends Entity implements CommandExecutor {
             int experience = achievement.getExperience();
             String title = achievement.getTitle();
             addExperience(experience);
-            sendMessage(new AchievementMessage(title, experience)); 
-            notifyPeers(String.format("%s has earned the %s achievement.", name, title), NotificationType.SYSTEM);
-            
+            sendMessage(new AchievementMessage(title, experience));
+            String message = String.format("%s has earned the %s achievement.", name, title);
+            notifyPeers(message, NotificationType.SYSTEM);
+            GameServer.getInstance().getPusher().handlePlayerMessage(this, message);
+
             if(isV3()) {
                 notify(title, NotificationType.ACHIEVEMENT);
             }

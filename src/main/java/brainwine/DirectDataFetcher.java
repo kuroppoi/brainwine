@@ -101,7 +101,7 @@ public class DirectDataFetcher implements DataFetcher {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
     
-    private static ZoneInfo createZoneInfo(Zone zone) {
+    public static ZoneInfo createZoneInfo(Zone zone) {
         return new ZoneInfo(zone.getName(),
                 zone.getBiome().getId(),
                 zone.getActivity() == null || zone.getActivity() == ZoneActivity.NONE ? null : zone.getActivity().toString().toLowerCase(),

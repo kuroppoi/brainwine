@@ -20,7 +20,7 @@ public class Api {
     private final DataFetcher dataFetcher;
     private final GatewayService gatewayService;
     private final PortalService portalService;
-    
+
     public Api() {
         this(new DefaultDataFetcher());
     }
@@ -61,6 +61,10 @@ public class Api {
         }
         
         return ApiConfig.DEFAULT_CONFIG;
+    }
+
+    public void broadcast(String type, Object data) {
+        portalService.broadcast(type, data);
     }
     
     public List<NewsEntry> getNews() {

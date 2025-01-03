@@ -8,11 +8,17 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.imageio.ImageIO;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import io.javalin.websocket.WsConfig;
+import io.javalin.websocket.WsConnectContext;
+import io.javalin.websocket.WsContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,6 +40,7 @@ public class PortalService {
     private final Map<String, BufferedImage> surfaceMapCache = new HashMap<>();
     private final DataFetcher dataFetcher;
     private final Javalin portal;
+    private final Set<WsConnectContext> wsConnections = new HashSet<>();
     
     public PortalService(Api api, int port) {
         this.dataFetcher = api.getDataFetcher();
@@ -42,6 +49,7 @@ public class PortalService {
             .exception(Exception.class, this::handleException)
             .get("/v1/map/{zone}", this::handleMapRequest)
             .get("/v1/worlds", this::handleZoneSearch)
+            .ws("/v1/listen", this::handleWsConfig)
             .start(port);
     }
     
@@ -167,6 +175,51 @@ public class PortalService {
         int fromIndex = (page - 1) * zoneSearchPageSize;
         int toIndex = page * zoneSearchPageSize;
         ctx.json(zones.subList(fromIndex < 0 ? 0 : fromIndex > zones.size() ? zones.size() : fromIndex, toIndex > zones.size() ? zones.size() : toIndex));
+    }
+
+    private void handleWsConfig(WsConfig config) {
+        config.onConnect(context -> {
+            synchronized(wsConnections) { wsConnections.add(context); }
+        });
+
+        config.onMessage(context -> {
+            Map<String, Object> message = JsonHelper.MAPPER.readValue(context.message(), new TypeReference<Map<String, Object>>() {});
+            Object messageTypeObj = message.get("type");
+            if(!(messageTypeObj instanceof String)) {
+                wsError(context, "Bad message type.");
+            }
+            switch((String)messageTypeObj) {
+                default:
+                    wsError(context, "Unknown message type: " + (String)messageTypeObj);
+            }
+        });
+
+        config.onClose(context -> {
+            synchronized (wsConnections) { wsConnections.remove(context); }
+        });
+    }
+
+    private void wsError(WsContext context, String message) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", "error");
+        map.put("data", message);
+
+        if(context.session.isOpen()) {
+            context.send(map);
+        }
+    }
+
+    public void broadcast(String type, Object data) {
+        Map<String, Object> msg = new HashMap<>();
+        msg.put("type", type);
+        msg.put("data", data);
+        synchronized(wsConnections) {
+            for(WsContext context : wsConnections) {
+                if(context.session.isOpen()) {
+                    context.send(msg);
+                }
+            }
+        }
     }
     
     /**
