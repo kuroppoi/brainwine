@@ -23,7 +23,7 @@ public class BlocksRequest extends PlayerRequest {
         Zone zone = player.getZone();
         
         // TODO threshold should probably be based on chunk size & perception level
-        if(!player.isGodMode() && player.getActiveChunkCount() > 64) {
+        if(!player.isGodMode() && player.getActiveChunkCount() > 128) {
             return;
         }
         
