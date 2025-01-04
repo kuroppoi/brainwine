@@ -19,7 +19,7 @@ public class ZoneSearchData {
     public final int explorationProgress;
     public final Biome biome;
     public final String status;
-    public final String accessibility; // 'a' = all, 'p' = premium
+    public final String accessibility; // 'a' = all, 'p' = premium, 'i' = inaccessible
     public final int protectionLevel;
     public final String scenario; // Market, PvP, etc.
     

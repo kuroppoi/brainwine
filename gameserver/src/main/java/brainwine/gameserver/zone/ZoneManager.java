@@ -29,6 +29,7 @@ import brainwine.gameserver.entity.npc.NpcData;
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
 import brainwine.shared.JsonHelper;
+import brainwine.shared.TokenGenerator;
 
 public class ZoneManager {
     
@@ -38,6 +39,7 @@ public class ZoneManager {
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
+    private Map<String, Zone> entryCodes = new HashMap<>();
     private long lastZoneGenerationTime = System.currentTimeMillis();
     private boolean generatingZone = false;
         
@@ -190,6 +192,10 @@ public class ZoneManager {
         
         zones.put(id, zone);
         zonesByName.put(name.toLowerCase(), zone);
+        
+        if(zone.hasEntryCode()) {
+            entryCodes.put(zone.getEntryCode(), zone);
+        }
     }
 
     public void deleteZone(Zone zone) {
@@ -234,6 +240,28 @@ public class ZoneManager {
         return true;
     }
     
+    /**
+     * Generates a new entry code for the specified zone and re-indexes it.
+     * 
+     * @return {@code true} if the entry code was generated successfully, otherwise {@code false}.
+     */
+    public boolean issueEntryCode(Zone zone) {
+        String entryCode = String.format("z%s", TokenGenerator.generateToken(6, entryCodes::containsKey));
+        String currentCode = zone.getEntryCode();
+        
+        if(entryCode == null) {
+            return false;
+        }
+        
+        if(currentCode != null && !entryCodes.remove(currentCode, zone)) {
+            logger.warn(SERVER_MARKER, "Could not unindex entry code {} for zone {}", currentCode, zone.getDocumentId());
+        }
+        
+        zone.setEntryCode(entryCode);
+        entryCodes.put(entryCode, zone);
+        return true;
+    }
+    
     public Zone getZone(String id) {
         return zones.get(id);
     }
@@ -244,6 +272,10 @@ public class ZoneManager {
     
     public Zone getZoneByName(String name) {
         return zonesByName.get(name.toLowerCase());
+    }
+    
+    public Zone getZoneByEntryCode(String entryCode) {
+        return entryCodes.get(entryCode);
     }
     
     /**

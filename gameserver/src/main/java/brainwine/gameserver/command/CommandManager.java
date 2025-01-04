@@ -110,7 +110,7 @@ public class CommandManager {
         try {
             command = type.getConstructor().newInstance();
         } catch(ReflectiveOperationException e) {
-            logger.error("Failed to not instantiate command '{}'", type.getSimpleName(), e);
+            logger.error(SERVER_MARKER, "Failed to instantiate command '{}'", type.getSimpleName(), e);
             return;
         }
         

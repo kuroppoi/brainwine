@@ -294,7 +294,7 @@ public class EntityManager {
         
         if(entity instanceof Player) {
             Player player = (Player)entity;
-            player.onZoneChanged();
+            player.onZoneEntered();
             players.put(entityId, player);
             playersByName.put(player.getName().toLowerCase(), player);
             player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.ENTERING));

@@ -1,5 +1,7 @@
 package brainwine.gameserver.player;
 
+import static brainwine.shared.LogMarkers.SERVER_MARKER;
+
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ import brainwine.gameserver.Timer;
 import brainwine.gameserver.achievement.Achievement;
 import brainwine.gameserver.achievement.AchievementManager;
 import brainwine.gameserver.achievement.JourneymanAchievement;
+import brainwine.gameserver.achievement.PositionAchievement;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogListItem;
@@ -41,6 +44,7 @@ import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
+import brainwine.gameserver.item.Tradeability;
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.server.Message;
@@ -92,14 +96,15 @@ public class Player extends Entity implements CommandExecutor {
     public static final int HEARTBEAT_TIMEOUT = 30000;
     public static final int MAX_AUTH_TOKENS = 3;
     public static final int TRACKED_ENTITY_UPDATE_INTERVAL = 100;
-    public static final int REGEN_NO_DAMAGE_TIME = 10000;
     public static final float ENTITY_VISIBILITY_RANGE = 40;
-    public static final float BASE_REGEN_AMOUNT = 0.1F;
+    public static final int BASE_REGEN_INTERVAL = 30000;
+    public static final float BASE_REGEN_AMOUNT = 1.0F / 3.0F;
     private static final Logger logger = LogManager.getLogger();
     private static int dialogDiscriminator;
     private final String documentId;
     private String email;
     private String password;
+    private String apiToken;
     private boolean admin;
     private int experience;
     private int skillPoints;
@@ -133,8 +138,8 @@ public class Player extends Entity implements CommandExecutor {
     private double breath = 1.0;
     private double thirst;
     private double cold;
-    private int spawnX;
-    private int spawnY;
+    private int spawnX = -1;
+    private int spawnY = -1;
     private int teleportX;
     private int teleportY;
     private boolean stealth;
@@ -148,6 +153,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private long lastLandmarkVoteAt;
+    private long lastHealthRegenAt;
     private Zone nextZone;
     private Connection connection;
     
@@ -157,6 +163,7 @@ public class Player extends Entity implements CommandExecutor {
         this.name = config.getName();
         this.email = config.getEmail();
         this.password = config.getPasswordHash();
+        this.apiToken = config.getApiToken();
         this.admin = config.isAdmin();
         this.experience = config.getExperience();
         this.skillPoints = config.getSkillPoints();
@@ -223,9 +230,10 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
         
-        // Regenerate health out of combat
-        if(!isDead() && now >= lastDamagedAt + REGEN_NO_DAMAGE_TIME) {
-            heal(BASE_REGEN_AMOUNT * deltaTime);
+        // Regenerate health out of combat        
+        if(!isDead() && now >= Math.max(lastHealthRegenAt, lastDamagedAt) + BASE_REGEN_INTERVAL) {
+            heal(BASE_REGEN_AMOUNT);
+            lastHealthRegenAt = now;
         }
 
         if(!isDead()) {
@@ -291,6 +299,12 @@ public class Player extends Entity implements CommandExecutor {
     public void setHealth(float health) {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
+    }
+    
+    @Override
+    public void blockPositionChanged() {
+        super.blockPositionChanged();
+        updateAchievementProgress(PositionAchievement.class); // TODO check on interval rather than every block position change
     }
 
     public double getBreathCapacity() {
@@ -432,29 +446,26 @@ public class Player extends Entity implements CommandExecutor {
     /**
      * Called by {@link Zone#addEntity(Entity)} when the player is added to it.
      */
-    public void onZoneChanged() {
-        // Set spawn location        
-        if(customSpawn) {
+    public void onZoneEntered() {
+        // Find a random new spawn if one isn't assigned yet
+        if(spawnX == -1 || spawnY == -1) {
+            MetaBlock spawn = zone.getRandomSpawnBlock();
+            
+            if(spawn == null) {
+                spawnX = zone.getWidth() / 2;
+                spawnY = 2;
+            } else {
+                spawnX = spawn.getX() + 1;
+                spawnY = spawn.getY();
+            }
+        }
+        
+        // Set the player's location to their spawn location if no custom spawn is set or if they are out of bounds
+        if(!customSpawn || !zone.areCoordinatesInBounds(blockX, blockY)) {
             x = spawnX;
             y = spawnY;
+            customSpawn = true; // Remember position until zone changes
         }
-        
-        MetaBlock spawn = zone.getRandomSpawnBlock();
-        
-        if(spawn == null) {
-            spawnX = zone.getWidth() / 2;
-            spawnY = 2;
-        } else {
-            spawnX = spawn.getX() + 1;
-            spawnY = spawn.getY();
-        }
-        
-        if(!customSpawn) {
-            x = spawnX;
-            y = spawnY;
-        }
-        
-        customSpawn = false;
         
         // Set skills for new players
         for(Skill skill : Skill.values()) {
@@ -474,6 +485,14 @@ public class Player extends Entity implements CommandExecutor {
             inventory.moveItemToContainer(pickaxe, ContainerType.HOTBAR, 0);
             inventory.moveItemToContainer(pistol, ContainerType.HOTBAR, 1);
             inventory.moveItemToContainer(jetpack, ContainerType.ACCESSORIES, 0);
+        }
+        
+        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
+        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
+        
+        // Issue an API token if the player doesn't have one
+        if(apiToken == null) {
+            playerManager.issueApiToken(this);
         }
         
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
@@ -519,13 +538,11 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         // Send social info
-        PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
         sendMessage(new FollowMessage(followees.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 0));
         sendMessage(new FollowMessage(followers.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 1));
         sendMessage(new EventMessage("socialInfoReady", null));
         
         // Clear invalid bookmarks
-        ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
         bookmarkedZones.removeIf(bookmark -> zoneManager.getZone(bookmark) == null || !zoneManager.getZone(bookmark).canJoin(this));
         
         // Misc stuff
@@ -626,9 +643,11 @@ public class Player extends Entity implements CommandExecutor {
     public void changeZone(Zone zone, int x, int y) {
         changingZones = true;
         nextZone = zone;
-        spawnX = x;
-        spawnY = y;
+        spawnX = -1;
+        spawnY = -1;
         customSpawn = x != -1 && y != -1;
+        this.x = x;
+        this.y = y;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
     }
@@ -662,7 +681,7 @@ public class Player extends Entity implements CommandExecutor {
             try {
                 handler.accept(input);
             } catch(Exception e) {
-                logger.error("An error occured while handling dialog input", e);
+                logger.error(SERVER_MARKER, "An error occured while handling dialog input", e);
                 notify("Oops! There was a problem processing your input.");
             }
         }
@@ -822,6 +841,18 @@ public class Player extends Entity implements CommandExecutor {
             return;
         }
         
+        // Check if item is tradeable
+        if(!isGodMode() && item.getTradeability() == Tradeability.FALSE) {
+            notify("Sorry, you cannot trade this item.");
+            return;
+        }
+        
+        // Check if player is high enough level to trade this item
+        if(!isGodMode() && item.getTradeability() == Tradeability.LEVELED && getLevel() < 20) {
+            notify("You must be level 20+ to trade this item.");
+            return;
+        }
+        
         // Cancel the current trade if the player is initiating a new trade
         if(isTrading() && !tradeSession.isParticipant(recipient)) {
             tradeSession.cancel(this);
@@ -975,6 +1006,14 @@ public class Player extends Entity implements CommandExecutor {
     
     protected String getPassword() {
         return password;
+    }
+    
+    protected void setApiToken(String apiToken) {
+        this.apiToken = apiToken;
+    }
+    
+    public String getApiToken() {
+        return apiToken;
     }
     
     protected void clearAuthTokens() {
@@ -1307,7 +1346,7 @@ public class Player extends Entity implements CommandExecutor {
     public <T extends Achievement> void updateAchievementProgress(Class<T> achievementType) {
         List<Achievement> achievementsToCheck = AchievementManager.getAchievements().stream()
                 .filter(achievement -> !hasAchievement(achievement) 
-                && achievementType.isAssignableFrom(achievement.getClass())
+                && achievementType == achievement.getClass()
                 && (achievement.getPrevious() == null || hasAchievement(achievement.getPrevious())))
                 .collect(Collectors.toList());
         
@@ -1644,7 +1683,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("deaths", statistics.getDeaths());
         config.put("appearance", appearance);
         config.put("settings", settings);
-        config.put("api_token", documentId); // Use document ID for now
+        config.put("api_token", apiToken);
         return config;
     }
 }

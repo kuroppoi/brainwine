@@ -5,7 +5,6 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -31,7 +30,7 @@ public class ShopManager {
     
     private static final Logger logger = LogManager.getLogger();
     private static final Map<String, ShopSection> sections = new LinkedHashMap<>();
-    private static final Map<String, Product> products = new HashMap<>();
+    private static final Map<String, Product> products = new LinkedHashMap<>();
     
     public static void loadShopData() {
         logger.info(SERVER_MARKER, "Loading shop data ...");
@@ -42,7 +41,7 @@ public class ShopManager {
             URL url = ResourceFinder.getResourceUrl("shop.json");
             Map<String, Object> data = JsonHelper.readValue(url, new TypeReference<Map<String, Object>>(){});
             sections.putAll(JsonHelper.readValue(data.getOrDefault("sections", Collections.emptyMap()), new TypeReference<LinkedHashMap<String, ShopSection>>(){}));
-            products.putAll(JsonHelper.readValue(data.getOrDefault("products", Collections.emptyMap()), new TypeReference<Map<String, Product>>(){}));
+            products.putAll(JsonHelper.readValue(data.getOrDefault("products", Collections.emptyMap()), new TypeReference<LinkedHashMap<String, Product>>(){}));
         } catch(Exception e) {
             logger.error(SERVER_MARKER, "Could not load shop data", e);
             return;

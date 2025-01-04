@@ -84,6 +84,7 @@ public class Zone {
     private boolean isPrivate;
     private boolean isProtected;
     private boolean pvp;
+    private String entryCode;
     private String owner;
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
@@ -121,6 +122,7 @@ public class Zone {
         steamManager.setData(data.getSteamData());
         machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
+        entryCode = config.getEntryCode();
         owner = config.getOwner();
         members.addAll(config.getMembers());
         actionHistory.putAll(config.getActionHistory());
@@ -632,17 +634,21 @@ public class Zone {
     }
     
     public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+        // Check bounds
+        if(!areCoordinatesInBounds(x, y)) {
+            return true;
+        }
+        
         // Check protection at zone level
         if(player != null && isProtected(player)) {
             return true;
         }
         
+        Item frontItem = getBlock(x, y).getFrontItem(); // TODO can load chunks!
         MetaBlock metaBlock = getMetaBlock(x, y);
         
         // Check block owner if it has a field
-        // TODO this will cause issues for field blocks that have no metadata (though conveniently, no such items exist by default)
-        // but checking the item here would cause some functions to gain chunk loading privileges.
-        if(metaBlock != null && metaBlock.getItem().hasField() && !metaBlock.isOwnedBy(player)) {
+        if(frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
             return true;
         }
         
@@ -1763,6 +1769,18 @@ public class Zone {
     
     public boolean isPvp() {
         return pvp;
+    }
+    
+    protected void setEntryCode(String entryCode) {
+        this.entryCode = entryCode;
+    }
+    
+    public boolean hasEntryCode() {
+        return entryCode != null;
+    }
+    
+    public String getEntryCode() {
+        return entryCode;
     }
     
     public boolean isOwner(Player player) {
