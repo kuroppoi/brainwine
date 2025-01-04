@@ -446,7 +446,7 @@ public class Player extends Entity implements CommandExecutor {
     /**
      * Called by {@link Zone#addEntity(Entity)} when the player is added to it.
      */
-    public void onZoneChanged() {
+    public void onZoneEntered() {
         // Find a random new spawn if one isn't assigned yet
         if(spawnX == -1 || spawnY == -1) {
             MetaBlock spawn = zone.getRandomSpawnBlock();
