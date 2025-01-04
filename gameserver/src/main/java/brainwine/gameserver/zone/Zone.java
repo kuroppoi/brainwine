@@ -110,7 +110,7 @@ public class Zone {
     private boolean modified;
     private double xpMultiplier = 1.0;
     private boolean entityShouldDrop = true;
-    
+
     protected Zone(String documentId, ZoneConfigFile config, ZoneDataFile data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
         int[] surface = data.getSurface();
@@ -625,17 +625,21 @@ public class Zone {
     }
     
     public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+        // Check bounds
+        if(!areCoordinatesInBounds(x, y)) {
+            return true;
+        }
+
         // Check protection at zone level
         if(player != null && isProtected(player)) {
             return true;
         }
 
+        Item frontItem = getBlock(x, y).getFrontItem(); // TODO can load chunks!
         MetaBlock metaBlock = getMetaBlock(x, y);
 
         // Check block owner if it has a field
-        // TODO this will cause issues for field blocks that have no metadata (though conveniently, no such items exist by default)
-        // but checking the item here would cause some functions to gain chunk loading privileges.
-        if(metaBlock != null && metaBlock.getItem().hasField() && !metaBlock.isOwnedBy(player)) {
+        if(frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
             return true;
         }
 

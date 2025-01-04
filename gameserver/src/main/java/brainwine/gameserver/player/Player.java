@@ -104,9 +104,9 @@ public class Player extends Entity implements CommandExecutor {
     public static final int HEARTBEAT_TIMEOUT = 30000;
     public static final int MAX_AUTH_TOKENS = 3;
     public static final int TRACKED_ENTITY_UPDATE_INTERVAL = 100;
-    public static final int REGEN_NO_DAMAGE_TIME = 10000;
     public static final float ENTITY_VISIBILITY_RANGE = 40;
-    public static final float BASE_REGEN_AMOUNT = 0.1F;
+    public static final int BASE_REGEN_INTERVAL = 30000;
+    public static final float BASE_REGEN_AMOUNT = 1.0F / 3.0F;
     private static final Logger logger = LogManager.getLogger();
     private static int dialogDiscriminator;
     private final String documentId;
@@ -152,8 +152,8 @@ public class Player extends Entity implements CommandExecutor {
     private double breath = 1.0;
     private double thirst;
     private double cold;
-    private int spawnX;
-    private int spawnY;
+    private int spawnX = -1;
+    private int spawnY = -1;
     private int teleportX;
     private int teleportY;
     private boolean stealth;
@@ -167,6 +167,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private long lastLandmarkVoteAt;
+    private long lastHealthRegenAt;
     private Zone nextZone;
     private Connection connection;
 
@@ -249,9 +250,10 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
         
-        // Regenerate health out of combat
-        if(!isDead() && now >= lastDamagedAt + REGEN_NO_DAMAGE_TIME) {
-            heal(BASE_REGEN_AMOUNT * deltaTime);
+        // Regenerate health out of combat        
+        if(!isDead() && now >= Math.max(lastHealthRegenAt, lastDamagedAt) + BASE_REGEN_INTERVAL) {
+            heal(BASE_REGEN_AMOUNT);
+            lastHealthRegenAt = now;
         }
 
         if(!isDead()) {
@@ -468,29 +470,26 @@ public class Player extends Entity implements CommandExecutor {
     /**
      * Called by {@link Zone#addEntity(Entity)} when the player is added to it.
      */
-    public void onZoneChanged() {
-        // Set spawn location        
-        if(customSpawn) {
+    public void onZoneEntered() {
+        // Find a random new spawn if one isn't assigned yet
+        if(spawnX == -1 || spawnY == -1) {
+            MetaBlock spawn = zone.getRandomSpawnBlock();
+            
+            if(spawn == null) {
+                spawnX = zone.getWidth() / 2;
+                spawnY = 2;
+            } else {
+                spawnX = spawn.getX() + 1;
+                spawnY = spawn.getY();
+            }
+        }
+        
+        // Set the player's location to their spawn location if no custom spawn is set or if they are out of bounds
+        if(!customSpawn || !zone.areCoordinatesInBounds(blockX, blockY)) {
             x = spawnX;
             y = spawnY;
+            customSpawn = true; // Remember position until zone changes
         }
-        
-        MetaBlock spawn = zone.getRandomSpawnBlock();
-        
-        if(spawn == null) {
-            spawnX = zone.getWidth() / 2;
-            spawnY = 2;
-        } else {
-            spawnX = spawn.getX() + 1;
-            spawnY = spawn.getY();
-        }
-        
-        if(!customSpawn) {
-            x = spawnX;
-            y = spawnY;
-        }
-        
-        customSpawn = false;
         
         // Set skills for new players
         for(Skill skill : Skill.values()) {
@@ -671,9 +670,11 @@ public class Player extends Entity implements CommandExecutor {
     public void changeZone(Zone zone, int x, int y) {
         changingZones = true;
         nextZone = zone;
-        spawnX = x;
-        spawnY = y;
+        spawnX = -1;
+        spawnY = -1;
         customSpawn = x != -1 && y != -1;
+        this.x = x;
+        this.y = y;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
     }
