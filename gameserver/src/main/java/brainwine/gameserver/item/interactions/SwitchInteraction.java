@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import brainwine.gameserver.anticheat.AnticheatManager;
+import brainwine.gameserver.anticheat.ExploderFarm;
 import org.apache.commons.text.WordUtils;
 
 import brainwine.gameserver.entity.Entity;
@@ -162,17 +164,21 @@ public class SwitchInteraction implements ItemInteraction {
         String effect = String.format("bomb-%s", type.toLowerCase());
 
         // Farm mitigation
-        zone.setXpMultiplier(0.1);
-        zone.setEntityShouldDrop(countExploderDrops(metaBlock));
+        ExploderFarm exploderFarm = AnticheatManager.getConfig().getExploderFarm();
+        if(exploderFarm.isEnabled()) {
+            zone.setXpMultiplier(exploderFarm.getXpFactor());
+            zone.setEntityShouldDrop(countExploderDrops(metaBlock, exploderFarm.getLootCounterMax()));
+        }
+
         zone.explode(x, y, 6, entity, false, 6, damageType, effect);
         zone.setEntityShouldDrop(true);
         zone.setXpMultiplier(1.0);
     }
 
     /** Prevents the explosion from giving loot unless it is every few interactions. */
-    private boolean countExploderDrops(MetaBlock metaBlock) {
+    private boolean countExploderDrops(MetaBlock metaBlock, int every) {
         int current = metaBlock.getIntProperty("d");
-        boolean result = current + 1 >= 10;
+        boolean result = current + 1 >= every;
         if(result) {
             metaBlock.setProperty("d", 0);
         } else {

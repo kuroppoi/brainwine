@@ -5,6 +5,7 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import brainwine.gameserver.anticheat.AnticheatManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,6 +61,7 @@ public class GameServer implements CommandExecutor {
         GrowthManager.loadGrowthData();
         Quests.loadQuests();
         Fake.loadFake();
+        AnticheatManager.loadConfig();
         lootManager = new LootManager();
         prefabManager = new PrefabManager();
         ZoneGenerator.init();
