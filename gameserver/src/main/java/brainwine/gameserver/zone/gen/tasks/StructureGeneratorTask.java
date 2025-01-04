@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
 import brainwine.gameserver.item.Item;
@@ -136,11 +137,18 @@ public class StructureGeneratorTask implements GeneratorTask {
                 }
             }
         }
+
+        final List<String> ecoContainers = Stream.of(
+            "containers/crate-large",
+            "furniture/crate-broken-large",
+            "containers/crate-industrial-large",
+            "containers/sack-large"
+        ).collect(Collectors.toList());
         
         // Fetch list of replaceable containers
         List<MetaBlock> containers = ctx.getZone().getMetaBlocks(metaBlock
                 -> ctx.isUnderground(metaBlock.getX(), metaBlock.getY())
-                && (metaBlock.getItem().hasId("containers/crate-industrial-large") && !metaBlock.getMetadata().containsKey("@")));
+                && (ecoContainers.contains(metaBlock.getItem().getId())) && !metaBlock.getMetadata().containsKey("@"));
         Collections.shuffle(containers, ctx.getRandom());
         
         // TODO
