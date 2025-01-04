@@ -138,8 +138,8 @@ public class Player extends Entity implements CommandExecutor {
     private double breath = 1.0;
     private double thirst;
     private double cold;
-    private int spawnX;
-    private int spawnY;
+    private int spawnX = -1;
+    private int spawnY = -1;
     private int teleportX;
     private int teleportY;
     private boolean stealth;
@@ -447,28 +447,25 @@ public class Player extends Entity implements CommandExecutor {
      * Called by {@link Zone#addEntity(Entity)} when the player is added to it.
      */
     public void onZoneChanged() {
-        // Set spawn location        
-        if(customSpawn) {
-            x = spawnX;
-            y = spawnY;
+        // Find a random new spawn if one isn't assigned yet
+        if(spawnX == -1 || spawnY == -1) {
+            MetaBlock spawn = zone.getRandomSpawnBlock();
+            
+            if(spawn == null) {
+                spawnX = zone.getWidth() / 2;
+                spawnY = 2;
+            } else {
+                spawnX = spawn.getX() + 1;
+                spawnY = spawn.getY();
+            }
         }
         
-        MetaBlock spawn = zone.getRandomSpawnBlock();
-        
-        if(spawn == null) {
-            spawnX = zone.getWidth() / 2;
-            spawnY = 2;
-        } else {
-            spawnX = spawn.getX() + 1;
-            spawnY = spawn.getY();
-        }
-        
+        // Set the player's location to their spawn location if no custom spawn is set
         if(!customSpawn) {
             x = spawnX;
             y = spawnY;
+            customSpawn = true; // Remember position until zone changes
         }
-        
-        customSpawn = false;
         
         // Set skills for new players
         for(Skill skill : Skill.values()) {
@@ -646,9 +643,11 @@ public class Player extends Entity implements CommandExecutor {
     public void changeZone(Zone zone, int x, int y) {
         changingZones = true;
         nextZone = zone;
-        spawnX = x;
-        spawnY = y;
+        spawnX = -1;
+        spawnY = -1;
         customSpawn = x != -1 && y != -1;
+        this.x = x;
+        this.y = y;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
     }
