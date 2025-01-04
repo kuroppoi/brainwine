@@ -460,8 +460,8 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
         
-        // Set the player's location to their spawn location if no custom spawn is set
-        if(!customSpawn) {
+        // Set the player's location to their spawn location if no custom spawn is set or if they are out of bounds
+        if(!customSpawn || !zone.areCoordinatesInBounds(blockX, blockY)) {
             x = spawnX;
             y = spawnY;
             customSpawn = true; // Remember position until zone changes
