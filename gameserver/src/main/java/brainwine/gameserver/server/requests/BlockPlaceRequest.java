@@ -118,7 +118,7 @@ public class BlockPlaceRequest extends PlayerRequest {
             );
             return;
         }
-        
+
         if(!player.isGodMode() && item.isDish() && zone.willDishOverlap(x, y, item.getField(), player)) {
             fail(player, "Dish will overlap another protector.");
             return;
@@ -135,6 +135,7 @@ public class BlockPlaceRequest extends PlayerRequest {
         player.trackPlacement(x, y, item);
 
         boolean isBlockPlaced = false;
+
         // Process jar use if applicable
         if(item.getPlaceTransform() != null) {
             Block block = zone.getBlock(x, y);
@@ -161,7 +162,21 @@ public class BlockPlaceRequest extends PlayerRequest {
         if(!isBlockPlaced) {
             zone.updateBlock(x, y, layer, item, mod, player);
         }
-        
+
+        // Disintegrate earth-like blocks if they don't have a back layer
+        Block block = zone.getBlock(x, y);
+        if(zone.getRules().isAutoCleanEnabled()
+                && (item.getCode() == 510 || item.getCode() == 511 || item.getCode() == 512)
+                && block.getBase() == 0 && block.getBack() == 0
+        ) {
+            zone.addBlockTimer(x, y, 60000, () -> {
+                zone.updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
+                zone.addBlockTimer(x, y, 60000, () -> {
+                    zone.updateBlock(x, y, Layer.FRONT, 0);
+                });
+            });
+        }
+
         // Create block timer if applicable
         if(item.hasTimer()) {
             createBlockTimer(zone, player);

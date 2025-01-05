@@ -65,6 +65,9 @@ public class ZoneConfigFile {
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime lastActiveDate = OffsetDateTime.now();
 
+    @JsonSetter(nulls = Nulls.SKIP)
+    private ZoneRules rules = null;
+
     @JsonCreator
     private ZoneConfigFile(@JsonProperty(value = "name", required = true) String name,
             @JsonProperty(value = "width", required = true) int width,
@@ -90,6 +93,7 @@ public class ZoneConfigFile {
         this.discoveredParts = zone.getDiscoveredParts();
         this.actionHistory = zone.getActionHistory();
         this.creationDate = zone.getCreationDate();
+        this.rules = zone.getRules();
     }
 
     public String getName() {
@@ -154,5 +158,9 @@ public class ZoneConfigFile {
     
     public OffsetDateTime getLastActiveDate() {
         return lastActiveDate;
+    }
+
+    public ZoneRules getRules() {
+        return rules;
     }
 }
