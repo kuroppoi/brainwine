@@ -115,8 +115,20 @@ public class BlockPlaceRequest extends PlayerRequest {
         } else if(item.getMod() == ModType.ROTATION && !item.isMirrorable()) {
             mod = findRotationMod(zone, x, y, item.getBlockWidth(), item.getBlockHeight());
         }
-        
-        zone.updateBlock(x, y, layer, item, mod, player);
+
+        boolean isBlockPlaced = false;
+
+        // Disintegrate earth-like blocks if they don't have a back layer
+        if(zone.getRules().isAutoCleanEnabled() && (item.getCode() == 510 || item.getCode() == 511 || item.getCode() == 512) && zone.getBlock(x, y).getBase() == 0) {
+            zone.updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
+            zone.addBlockTimer(x, y, 3000, () -> zone.updateBlock(x, y, Layer.FRONT, 0));
+            isBlockPlaced = true;
+        }
+
+        if(!isBlockPlaced) {
+            zone.updateBlock(x, y, layer, item, mod, player);
+        }
+
         player.getInventory().removeItem(item);
         player.getStatistics().trackItemPlaced();
         player.trackPlacement(x, y, item);

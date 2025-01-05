@@ -86,6 +86,7 @@ public class Zone {
     private boolean pvp;
     private String entryCode;
     private String owner;
+    private ZoneRules rules = new ZoneRules();
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
     private final GrowthManager growthManager;
@@ -131,6 +132,7 @@ public class Zone {
         isProtected = config.isProtected();
         pvp = config.isPvp();
         creationDate = config.getCreationDate();
+        rules = config.getRules();
     }
     
     public Zone(String documentId, String name, Biome biome, int width, int height) {
@@ -1774,7 +1776,11 @@ public class Zone {
     public boolean isPvp() {
         return pvp;
     }
-    
+
+    public ZoneRules getRules() {
+        return rules;
+    }
+
     protected void setEntryCode(String entryCode) {
         this.entryCode = entryCode;
     }
