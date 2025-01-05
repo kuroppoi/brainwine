@@ -8,6 +8,14 @@ public class ZoneRules extends RuleRecord {
     @Rule("do-hostile-entity-spawns")
     public boolean hostileEntitySpawnsEnabled = false;
 
+    public static ZoneRules getPrivateDefaults() {
+        ZoneRules rules = new ZoneRules();
+
+        rules.autoCleanEnabled = false;
+
+        return rules;
+    }
+
     public boolean isAutoCleanEnabled() {
         return autoCleanEnabled;
     }

@@ -1781,6 +1781,10 @@ public class Zone {
         return rules;
     }
 
+    public void setRules(ZoneRules rules) {
+        this.rules = rules;
+    }
+
     protected void setEntryCode(String entryCode) {
         this.entryCode = entryCode;
     }
