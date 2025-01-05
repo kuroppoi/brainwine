@@ -7,9 +7,11 @@ import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.input.DialogSelectInput;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
@@ -70,15 +72,23 @@ public class WorldCleanCommand extends WorldCommand {
     private List<DialogSection> getForm() {
         List<DialogSection> result = new ArrayList<>();
 
-        result.add(new DialogSection().setText("Should keep player protected areas: ").setInput(new DialogSelectInput().setOptions("Yes", "No").setKey("player-protected-areas")));
-        result.add(new DialogSection().setText("Should keep naturally protected areas: ").setInput(new DialogSelectInput().setOptions("Yes", "No").setKey("naturally-protected-areas")));
+        result.add(new DialogSection().setText("Should these blocks remain in player-protected areas? ").setInput(new DialogSelectInput().setOptions("Yes", "No").setKey("player-protected-areas")));
+        result.add(new DialogSection().setText("Should these blocks remain in naturally-protected areas? ").setInput(new DialogSelectInput().setOptions("Yes", "No").setKey("naturally-protected-areas")));
 
         return result;
     }
 
+    private boolean shouldKeepPlayerProtectedAreas(Object[] ans) {
+        return "Yes".equals(ans[0]);
+    }
+
+    private boolean shouldKeepNaturallyProtectedAreas(Object[] ans) {
+        return "Yes".equals(ans[1]);
+    }
+
     private List<MetaBlock> getProtectors(Zone zone, Object[] ans) {
-        final boolean playerProtectedAreas = "Yes".equals(ans[0]);
-        final boolean naturallyProtectedAreas = "Yes".equals(ans[1]);
+        final boolean playerProtectedAreas = shouldKeepPlayerProtectedAreas(ans);
+        final boolean naturallyProtectedAreas = shouldKeepNaturallyProtectedAreas(ans);
         return zone.getMetaBlocks(m ->
                 playerProtectedAreas && m.getOwner() != null ||
                 naturallyProtectedAreas && m.getOwner() == null
@@ -109,7 +119,6 @@ public class WorldCleanCommand extends WorldCommand {
                         }
                     }
                 });
-                Arrays.fill(zone.getChunksExplored(), true);
                 player.notify("Zone " + zone.getName() + " is now cleaned up.", NotificationType.SYSTEM);
             } catch (Exception e) {
                 logger.error(e);
@@ -121,6 +130,8 @@ public class WorldCleanCommand extends WorldCommand {
         }).start();
     }
 
+    // followUpAll has a lot more mitigation than followUpJunk even if the implementations look similar,
+    // so be mindful when refactoring.
     private void followUpAll(Player player, Zone zone, Object[] ans) {
         if(cancelled(ans)) {
             return;
@@ -130,12 +141,29 @@ public class WorldCleanCommand extends WorldCommand {
         new Thread(() -> {
             try {
                 final List<MetaBlock> protectors = getProtectors(zone, ans);
+                final boolean naturallyProtectedAreas = shouldKeepNaturallyProtectedAreas(ans);
                 transformBlocks(zone, (x, y) -> {
-                    if (y < zone.getHeight() - 1 && !zone.isBlockProtected(x, y, null, protectors)) {
-                        zone.updateBlock(x, y, Layer.BASE, Item.AIR);
-                        zone.updateBlock(x, y, Layer.BACK, Item.AIR);
-                        zone.updateBlock(x, y, Layer.FRONT, Item.AIR);
-                        zone.updateBlock(x, y, Layer.LIQUID, Item.AIR);
+                    // Do not delete bedrock layers.
+                    if(y < zone.getHeight() - 1 && (zone.getBiome() != Biome.DEEP || y > 0)) {
+                        Item frontItem = zone.getBlock(x, y).getFrontItem();
+                        MetaBlock metaBlock = zone.getMetaBlock(x, y);
+
+                        // We need to delete natural protectors to prevent players from raiding dug out dungeons.
+                        if(
+                                (
+                                    !naturallyProtectedAreas
+                                            && !frontItem.hasUse(ItemUseType.ZONE_TELEPORT)
+                                            && frontItem.hasField()
+                                            && metaBlock != null
+                                            && !metaBlock.hasOwner()
+                                )
+                                || !zone.isBlockProtected(x, y, null, protectors)
+                        ) {
+                            zone.updateBlock(x, y, Layer.BASE, Item.AIR);
+                            zone.updateBlock(x, y, Layer.BACK, Item.AIR);
+                            zone.updateBlock(x, y, Layer.FRONT, Item.AIR);
+                            zone.updateBlock(x, y, Layer.LIQUID, Item.AIR);
+                        }
                     }
                 });
                 Arrays.fill(zone.getChunksExplored(), true);
