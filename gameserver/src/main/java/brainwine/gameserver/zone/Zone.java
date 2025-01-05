@@ -137,7 +137,7 @@ public class Zone {
         isProtected = config.isProtected();
         pvp = config.isPvp();
         creationDate = config.getCreationDate();
-        rules = config.getRules();
+        setRules(config.getRules());
     }
     
     public Zone(String documentId, String name, Biome biome, int width, int height) {
@@ -1826,7 +1826,15 @@ public class Zone {
     }
 
     public void setRules(ZoneRules rules) {
-        this.rules = rules;
+        if(rules == null) {
+            if(isPrivate() && isOwned()) {
+                this.rules = ZoneRules.getPrivateDefaults();
+            } else {
+                this.rules = new ZoneRules();
+            }
+        } else {
+            this.rules = rules;
+        }
     }
 
     protected void setEntryCode(String entryCode) {

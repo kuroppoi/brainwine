@@ -66,7 +66,7 @@ public class ZoneConfigFile {
     private OffsetDateTime lastActiveDate = OffsetDateTime.now();
 
     @JsonSetter(nulls = Nulls.SKIP)
-    private ZoneRules rules = new ZoneRules();
+    private ZoneRules rules = null;
 
     @JsonCreator
     private ZoneConfigFile(@JsonProperty(value = "name", required = true) String name,
