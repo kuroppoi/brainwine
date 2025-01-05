@@ -88,6 +88,7 @@ public class Zone {
     private boolean pvp;
     private String entryCode;
     private String owner;
+    private ZoneRules rules = new ZoneRules();
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
     private final GrowthManager growthManager;
@@ -108,6 +109,7 @@ public class Zone {
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
     private boolean modified;
+    private boolean frozen = false;
     private double xpMultiplier = 1.0;
     private boolean entityShouldDrop = true;
 
@@ -135,6 +137,7 @@ public class Zone {
         isProtected = config.isProtected();
         pvp = config.isPvp();
         creationDate = config.getCreationDate();
+        rules = config.getRules();
     }
     
     public Zone(String documentId, String name, Biome biome, int width, int height) {
@@ -235,7 +238,29 @@ public class Zone {
         
         ticksElapsed++;
     }
-    
+
+    public void freeze() {
+        freeze(null);
+    }
+
+    public void freeze(String reason) {
+        frozen = true;
+
+        String playerMessage = reason == null ? "The zone " + getName() + " will be in maintenance for a while." : reason;
+
+        for(Player player : getPlayers()) {
+            player.changeZone(null);
+            player.kick(playerMessage, true);
+        }
+
+        blockChanges.clear();
+    }
+
+    public void thaw() {
+        blockChanges.clear();
+        frozen = false;
+    }
+
     /**
      * Simulate happenings that take longer periods of time
      */
@@ -1763,7 +1788,7 @@ public class Zone {
     }
     
     public boolean canJoin(Player player) {
-        return player.isGodMode() || isPublic() || isOwner(player) || isMember(player);
+        return isTicking() && (player.isGodMode() || isPublic() || isOwner(player) || isMember(player));
     }
     
     public boolean isPublic() {
@@ -1795,7 +1820,11 @@ public class Zone {
     public boolean isPvp() {
         return pvp;
     }
-    
+
+    public ZoneRules getRules() {
+        return rules;
+    }
+
     protected void setEntryCode(String entryCode) {
         this.entryCode = entryCode;
     }
@@ -1899,6 +1928,10 @@ public class Zone {
 
     public void setEntityShouldDrop(boolean entityShouldDrop) {
         this.entityShouldDrop = entityShouldDrop;
+    }
+
+    public boolean isTicking() {
+        return !frozen;
     }
 
     /**
