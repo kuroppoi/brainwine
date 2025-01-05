@@ -65,8 +65,6 @@ public class WorldCleanCommand extends WorldCommand {
             }
             player.showDialog(dialog, ans -> followUpAll(player, zone, ans));
         }
-
-        zone.recordActionTime(ACTION_ID);
     }
 
     private List<DialogSection> getForm() {
