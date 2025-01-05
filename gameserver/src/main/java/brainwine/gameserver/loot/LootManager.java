@@ -51,7 +51,11 @@ public class LootManager {
     }
     
     public List<Loot> getLootTable(String category) {
-        return lootTables.getOrDefault(category, Collections.emptyList());
+        return lootTables.get(category);
+    }
+    
+    public Set<String> getLootCategories() {
+        return Collections.unmodifiableSet(lootTables.keySet());
     }
     
     public List<Loot> getEligibleLoot(Biome biome, Set<Item> ignore, String... categories) {
