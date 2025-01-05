@@ -68,7 +68,6 @@
                             "containers/crate-large",
                             "containers/crate-industrial-small",
                             "containers/crate-industrial-large",
-                            "lighting/floorlamp",
                             "building/staircase",
                             "building/iron",
                             "building/copper",
@@ -119,7 +118,6 @@
                     "items": {
                         "choices": [
                             "arctic/ice-brick",
-                            "back/ice-brick",
                             "arctic/ice",
                             "arctic/snow",
                             "containers/wine-bottle",
