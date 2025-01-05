@@ -56,7 +56,7 @@ public class GeneratorContext {
     
     public boolean placePrefab(Prefab prefab, int x, int y) {
         x = Math.max(1, Math.min(x, getWidth() - prefab.getWidth() - 1));
-        y = Math.max(1, Math.min(y, getHeight() - prefab.getHeight() - 3));
+        y = Math.max(3, Math.min(y, getHeight() - prefab.getHeight() - 3));
         
         if(!willPrefabOverlap(prefab, x, y)) {
             boolean mirrored = random.nextBoolean();
