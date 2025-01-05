@@ -49,7 +49,7 @@ public class RuleRecord {
                     f -> f.getAnnotation(Rule.class) != null && f.getAnnotation(Rule.class).value().equals(lower)
             ).findFirst();
 
-            if(fieldOpt.isEmpty()) {
+            if(!fieldOpt.isPresent()) {
                 return "Rule " + key + " not found";
             }
 
