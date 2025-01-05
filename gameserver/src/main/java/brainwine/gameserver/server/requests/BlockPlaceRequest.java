@@ -135,12 +135,6 @@ public class BlockPlaceRequest extends PlayerRequest {
         player.trackPlacement(x, y, item);
 
         boolean isBlockPlaced = false;
-        // Disintegrate earth-like blocks if they don't have a back layer
-        if(zone.getRules().isAutoCleanEnabled() && (item.getCode() == 510 || item.getCode() == 511 || item.getCode() == 512) && zone.getBlock(x, y).getBase() == 0) {
-            zone.updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
-            zone.addBlockTimer(x, y, 3000, () -> zone.updateBlock(x, y, Layer.FRONT, 0));
-            isBlockPlaced = true;
-        }
 
         // Process jar use if applicable
         if(item.getPlaceTransform() != null) {
@@ -167,6 +161,20 @@ public class BlockPlaceRequest extends PlayerRequest {
         // Place the item as a block if no block had been placed yet
         if(!isBlockPlaced) {
             zone.updateBlock(x, y, layer, item, mod, player);
+        }
+
+        // Disintegrate earth-like blocks if they don't have a back layer
+        Block block = zone.getBlock(x, y);
+        if(zone.getRules().isAutoCleanEnabled()
+                && (item.getCode() == 510 || item.getCode() == 511 || item.getCode() == 512)
+                && block.getBase() == 0 && block.getBack() == 0
+        ) {
+            zone.addBlockTimer(x, y, 60000, () -> {
+                zone.updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
+                zone.addBlockTimer(x, y, 60000, () -> {
+                    zone.updateBlock(x, y, Layer.FRONT, 0);
+                });
+            });
         }
 
         // Create block timer if applicable
