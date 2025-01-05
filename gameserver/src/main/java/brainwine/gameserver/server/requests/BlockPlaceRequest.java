@@ -116,17 +116,20 @@ public class BlockPlaceRequest extends PlayerRequest {
             mod = findRotationMod(zone, x, y, item.getBlockWidth(), item.getBlockHeight());
         }
 
-        boolean isBlockPlaced = false;
+        zone.updateBlock(x, y, layer, item, mod, player);
 
         // Disintegrate earth-like blocks if they don't have a back layer
-        if(zone.getRules().isAutoCleanEnabled() && (item.getCode() == 510 || item.getCode() == 511 || item.getCode() == 512) && zone.getBlock(x, y).getBase() == 0) {
-            zone.updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
-            zone.addBlockTimer(x, y, 3000, () -> zone.updateBlock(x, y, Layer.FRONT, 0));
-            isBlockPlaced = true;
-        }
-
-        if(!isBlockPlaced) {
-            zone.updateBlock(x, y, layer, item, mod, player);
+        Block block = zone.getBlock(x, y);
+        if(zone.getRules().isAutoCleanEnabled()
+                && (item.getCode() == 510 || item.getCode() == 511 || item.getCode() == 512)
+                && block.getBase() == 0 && block.getBack() == 0
+        ) {
+            zone.addBlockTimer(x, y, 3000, () -> {
+                zone.updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
+                zone.addBlockTimer(x, y, 3000, () -> {
+                    zone.updateBlock(x, y, Layer.FRONT, 0);
+                });
+            });
         }
 
         player.getInventory().removeItem(item);
