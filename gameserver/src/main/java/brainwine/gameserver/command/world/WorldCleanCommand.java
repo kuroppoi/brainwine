@@ -134,6 +134,17 @@ public class WorldCleanCommand extends WorldCommand {
         if(cancelled(ans)) {
             return;
         }
+
+        if(!player.isGodMode() && zone.getMetaBlocks().stream()
+                .anyMatch(p -> p.getItem().hasField() && p.hasOwner() && !p.isOwnedBy(player))) {
+            player.showDialog(DialogHelper.messageDialog(
+                    "Cannot Clean Zone",
+                    "This zone contains protectors that belong to other players. " +
+                            "Please tell them to remove their protectors first or ask an admin for help."
+            ));
+            return;
+        }
+
         zone.freeze();
 
         new Thread(() -> {
