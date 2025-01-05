@@ -3,9 +3,11 @@ package brainwine.gameserver.player;
 import java.beans.ConstructorProperties;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
@@ -172,8 +174,8 @@ public class Inventory {
         return accessories;
     }
     
-    public List<Item> getWardrobe() {
-        return items.keySet().stream().filter(item -> item.isClothing() && hasItem(item)).collect(Collectors.toList());
+    public Set<Item> getWardrobe() {
+        return items.keySet().stream().filter(item -> item.isClothing() && hasItem(item)).collect(Collectors.toCollection(HashSet::new));
     }
     
     @JsonValue
