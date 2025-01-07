@@ -27,13 +27,13 @@ public class Kill extends RandomQuest {
     @RandomListItemType(String.class)
     private RandomList<String> entityIds = null;
     @JsonProperty("quantity")
-    private RandomInteger quantity = null;
+    private RandomInteger quantity = new RandomInteger(1);
     @JsonProperty("category_quantity")
-    private RandomInteger categoryQuantity = new RandomInteger(1);
+    private RandomInteger categoryQuantity = null;
     @JsonProperty("code_quantity")
-    private RandomInteger codeQuantity = new RandomInteger(1);
+    private RandomInteger codeQuantity = null;
     @JsonProperty("entity_quantity")
-    private RandomInteger entityIdQuantity = new RandomInteger(1);
+    private RandomInteger entityIdQuantity = null;
     @JsonProperty("task_description")
     private String taskDescription = null;
     @JsonProperty("actions")
