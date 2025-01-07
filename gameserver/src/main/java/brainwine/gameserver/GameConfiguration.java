@@ -134,15 +134,23 @@ public class GameConfiguration {
                     }
                 }
                 
-                // Map skill bonuses
+                // Map stat bonuses
                 Map<String, Object> bonuses = MapHelper.getMap(config, "bonus");
                 
                 if(bonuses != null) {
                     Map<String, Integer> skillBonuses = new HashMap<>();
                     
-                    bonuses.forEach((type, amount) -> {
-                        if(amount instanceof Integer && Skill.fromId(type) != null) {
-                            skillBonuses.put(type, (int)amount);
+                    bonuses.forEach((type, value) -> {
+                        if(!(value instanceof Number)) {
+                            return;
+                        }
+                        
+                        Number amount = (Number)value;
+                        
+                        if(Skill.fromId(type) != null) {
+                            skillBonuses.put(type, amount.intValue());
+                        } else if("regen".equals(type)) {
+                            config.put("regen_bonus", amount.doubleValue());
                         }
                     });
                     

@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -172,6 +173,16 @@ public class Inventory {
     
     public ItemContainer getAccessories() {
         return accessories;
+    }
+    
+    // TODO hidden accessories
+    public int getSkillBonus(Skill skill) {
+        return Stream.of(accessories.getItems()).map(item -> item.getSkillBonus(skill)).max(Integer::compareTo).orElse(0);
+    }
+    
+    // TODO hidden accessories
+    public double getRegenBonus() {
+        return Stream.of(accessories.getItems()).map(Item::getRegenBonus).min(Double::compareTo).orElse(1.0);
     }
     
     public Set<Item> getWardrobe() {

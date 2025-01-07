@@ -159,6 +159,9 @@ public class Item {
     @JsonProperty("loot")
     private String[] lootCategories = {};
     
+    @JsonProperty("regen_bonus")
+    private double regenBonus = 1.0;
+    
     @JsonProperty("tool_bonus")
     private double toolBonus;
     
@@ -526,6 +529,10 @@ public class Item {
     
     public String[] getLootCategories() {
         return lootCategories;
+    }
+    
+    public double getRegenBonus() {
+        return regenBonus;
     }
     
     public double getToolBonus() {

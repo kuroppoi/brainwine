@@ -231,7 +231,7 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         // Regenerate health out of combat        
-        if(!isDead() && now >= Math.max(lastHealthRegenAt, lastDamagedAt) + BASE_REGEN_INTERVAL) {
+        if(!isDead() && health < getMaxHealth() && now >= Math.max(lastHealthRegenAt, lastDamagedAt) + BASE_REGEN_INTERVAL * inventory.getRegenBonus()) {
             heal(BASE_REGEN_AMOUNT);
             lastHealthRegenAt = now;
         }
@@ -1433,19 +1433,7 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public int getTotalSkillLevel(Skill skill) {
-        int accessorySkillLevel = 0;
-        
-        // Get the highest skill bonus accessory
-        for(Item accessory : inventory.getAccessories().getItems()) {
-            int skillBonus = accessory.getSkillBonuses().getOrDefault(skill, 0);
-            
-            if(skillBonus > accessorySkillLevel) {
-                accessorySkillLevel = skillBonus;
-            }
-        }
-        
-        // TODO account for exoskeleton bonuses
-        return getSkillLevel(skill) + accessorySkillLevel;
+        return getSkillLevel(skill) + inventory.getSkillBonus(skill);
     }
     
     public float getNormalizedSkill(Skill skill) {
