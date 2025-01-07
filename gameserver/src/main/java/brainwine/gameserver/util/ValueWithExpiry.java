@@ -68,6 +68,15 @@ public class ValueWithExpiry<T> {
         return expiresAt == null || expiresAt.before(now);
     }
 
+    /**Return the time until expiry in milliseconds
+     *
+     * @param currentTime the time since epoch
+     * @return
+     */
+    public long getTimeUntilExpiry(long currentTime) {
+        return expiresAt.getTimeInMillis() - currentTime;
+    }
+
     /**Return the wrapped value. This doesn't check if the value is expired
      *
      * @return

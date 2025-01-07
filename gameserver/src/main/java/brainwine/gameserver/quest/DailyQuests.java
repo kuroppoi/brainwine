@@ -42,4 +42,32 @@ public class DailyQuests {
             }
         }
     }
+
+    public static void sendDailyQuestTime(Player player, long timeLeft) {
+        ValueWithExpiry<List<Quest>> currentV = player.getDailyQuest();
+
+        String timeString;
+        if(timeLeft >= 3600000) {
+            long val = (timeLeft / 3600000L);
+            timeString = val == 1 ? val + " hour" : val + " hours";
+        } else {
+            long val = (timeLeft / 60000L);
+            timeString = val == 1 ? val + " minute" : val + " minutes";
+        }
+
+        if(currentV != null && currentV.getValue() != null) {
+            for(Quest quest : currentV.getValue()) {
+                QuestProgress progress = player.getQuestProgresses().get(quest.getId());
+                if(progress == null) continue;
+
+                quest.clearDetailsCache();
+                String oldDescription = quest.getDescription();
+                quest.setDescription("(expires in " + timeString + ") " + oldDescription);
+
+                PlayerQuests.sendPlayerQuestMessage(player, progress);
+
+                quest.setDescription(oldDescription);
+            }
+        }
+    }
 }

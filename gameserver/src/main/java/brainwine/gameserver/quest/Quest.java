@@ -85,6 +85,11 @@ public class Quest {
         }
     }
 
+    public void clearDetailsCache() {
+        pcDetails = null;
+        mobileDetails = null;
+    }
+
     @JsonIgnore
     public Map<String, Object> getPcDetails() {
         computeClientDetailsIfAbsent();
