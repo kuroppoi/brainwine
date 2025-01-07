@@ -471,6 +471,10 @@ public class Item {
         return membership;
     }
     
+    public int getSkillBonus(Skill skill) {
+        return skillBonuses.getOrDefault(skill, 0);
+    }
+    
     public Map<Skill, Integer> getSkillBonuses() {
         return skillBonuses;
     }
