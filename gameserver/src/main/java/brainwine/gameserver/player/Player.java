@@ -149,6 +149,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private long lastLandmarkVoteAt;
+    private long lastQuestTimeMessageAt;
     private Zone nextZone;
     private Connection connection;
 
@@ -249,6 +250,13 @@ public class Player extends Entity implements CommandExecutor {
         }
 
         DailyQuests.tryIssueDailyQuest(this);
+
+        long dailyQuestTimeLeft = getDailyQuest().getTimeUntilExpiry(System.currentTimeMillis());
+        long dailyQuestRequiredInterval = dailyQuestTimeLeft >= 3600000 ? 600000 : 30000;
+        if(System.currentTimeMillis() >= lastQuestTimeMessageAt + dailyQuestRequiredInterval) {
+            lastQuestTimeMessageAt = System.currentTimeMillis();
+            DailyQuests.sendDailyQuestTime(this, dailyQuestTimeLeft);
+        }
     }
     
     @Override
