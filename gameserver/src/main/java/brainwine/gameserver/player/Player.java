@@ -464,7 +464,6 @@ public class Player extends Entity implements CommandExecutor {
         if(!customSpawn || !zone.areCoordinatesInBounds(blockX, blockY)) {
             x = spawnX;
             y = spawnY;
-            customSpawn = true; // Remember position until zone changes
         }
         
         // Set skills for new players
@@ -535,6 +534,11 @@ public class Player extends Entity implements CommandExecutor {
             notify("Welcome to " + zone.getName(), NotificationType.LARGE);
         } else {
             notify("Welcome to " + zone.getName(), NotificationType.WELCOME);
+        }
+        
+        if(!customSpawn) {
+            zone.spawnEffect(x + 0.5F, y - 0.75F, "spawn", 20);
+            customSpawn = true; // Remember position until zone changes
         }
         
         // Send social info
@@ -750,7 +754,7 @@ public class Player extends Entity implements CommandExecutor {
         
         sendMessage(new PlayerPositionMessage(spawnX, spawnY));
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.REVIVED));
-        zone.spawnEffect(spawnX, spawnY, "spawn", 20);
+        zone.spawnEffect(spawnX + 0.5F, spawnY - 0.75F, "spawn", 20);
     }
     
     /**
