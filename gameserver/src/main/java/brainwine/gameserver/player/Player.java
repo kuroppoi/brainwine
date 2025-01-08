@@ -1195,7 +1195,7 @@ public class Player extends Entity implements CommandExecutor {
     
     public void ban(Player issuer, String reason, OffsetDateTime endDate) {
         bans.add(new PlayerRestriction(issuer, reason, endDate));
-        kick(String.format("You have been banned: %s", reason));
+        kick(String.format("You have been banned: %s", reason), true);
     }
     
     public void unban() {

@@ -1,14 +1,17 @@
 package brainwine.gameserver.server.requests;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.PlayerManager;
 import brainwine.gameserver.player.PlayerRestriction;
 import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.RequestInfo;
+import brainwine.gameserver.server.messages.NotificationMessage;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.zone.Zone;
 
@@ -44,22 +47,28 @@ public class AuthenticateRequest extends Request {
                 PlayerRestriction ban = player.getCurrentBan();
                 Zone zone = player.getZone();
                 
-                // Deny access if the player is currently banned
                 if(ban != null) {
-                    connection.kick(String.format("You are banned from the server until %s for: %s", 
-                            ban.getEndDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), ban.getReason()));
-                    return;
-                }
-                
-                // Try to put player in a random zone if current zone is null or cannot be joined
-                if(zone == null || !zone.canJoin(player)) {
+                    // Send player to jail world if they're banned
+                    zone = server.getZoneManager().getZoneByName("Hell");
+                    String banMessage = String.format("You are banned from the server until\n%s for: %s", 
+                            ban.getEndDate().format(DateTimeFormatter.ofPattern("d MMMM uuuu HH:mm:ss", Locale.ENGLISH)), ban.getReason());
+                    
+                    // Kick player with ban message if no jail world exists
+                    if(zone == null) {
+                        connection.kick(banMessage);
+                        return;
+                    }
+                    
+                    connection.sendDelayedMessage(new NotificationMessage(banMessage, NotificationType.MAINTENANCE), 5000); // Slightly hacky but shouldn't cause any issues
+                } else if(zone == null || !zone.canJoin(player)) {
+                    // Try to put player in a random zone if current zone is null or cannot be joined
                     zone = server.getZoneManager().findBeginnerZone();
-                }
-                
-                // Kick player if zone is still null (aka it failed to find a suitable random zone)
-                if(zone == null) {
-                    connection.kick("No default zone could be found.");
-                    return;
+                    
+                    // Kick player if zone is still null (aka it failed to find a suitable random zone)
+                    if(zone == null) {
+                        connection.kick("Sorry, we couldn't find a world for you to join.");
+                        return;
+                    }
                 }
                 
                 player.setConnection(connection);
