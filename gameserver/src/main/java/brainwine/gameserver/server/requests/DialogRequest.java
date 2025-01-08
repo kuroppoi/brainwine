@@ -71,7 +71,7 @@ public class DialogRequest extends PlayerRequest {
                 dialog.addSection(new DialogSection().setText(String.format("Goto %s", subject.getZone().getName())).setChoice("visit"));
             }
         } else {
-            dialog.addSection(new DialogSection().setText(String.format("<color=#C80000>Offline</color>", subject.getZone().getName())));
+            dialog.addSection(new DialogSection().setText("<color=#C80000>Offline</color>"));
         }
         
         // Follow section
