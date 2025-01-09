@@ -6,6 +6,7 @@ public enum ModType {
     
     DECAY,
     ROTATION,
+    STACK,
     
     @JsonEnumDefaultValue
     NONE;

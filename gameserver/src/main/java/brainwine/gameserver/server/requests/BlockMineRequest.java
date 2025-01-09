@@ -202,6 +202,11 @@ public class BlockMineRequest extends PlayerRequest {
             player.getStatistics().trackItemScavenged(item);
         }
         
+        // Check stack mod
+        if(item.getMod() == ModType.STACK) {
+            quantity = Math.max(1, block.getMod(layer));
+        }
+        
         zone.updateBlock(x, y, layer, 0, 0, player);
         
         // Apply mining bonus if there is one
