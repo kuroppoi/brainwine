@@ -481,6 +481,14 @@ public class Player extends Entity implements CommandExecutor {
         
         customSpawn = false;
         
+        // Rescue player if they're out of bounds somehow
+        // blockX and blockY might not be assigned yet so we check the absolute position
+        if(!zone.areCoordinatesInBounds((int)x, (int)y)) {
+            x = spawnX;
+            y = spawnY;
+            spawnEffect = true;
+        }
+        
         // Set skills for new players
         for(Skill skill : Skill.values()) {
             if(!skills.containsKey(skill)) {
