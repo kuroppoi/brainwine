@@ -138,8 +138,10 @@ public class Player extends Entity implements CommandExecutor {
     private double breath = 1.0;
     private double thirst;
     private double cold;
-    private int spawnX = -1;
-    private int spawnY = -1;
+    private int spawnX;
+    private int spawnY;
+    private int enterX;
+    private int enterY;
     private int teleportX;
     private int teleportY;
     private boolean stealth;
@@ -154,6 +156,7 @@ public class Player extends Entity implements CommandExecutor {
     private long lastTrackedEntityUpdate;
     private long lastLandmarkVoteAt;
     private long lastHealthRegenAt;
+    private Zone previousZone;
     private Zone nextZone;
     private Connection connection;
     
@@ -447,8 +450,10 @@ public class Player extends Entity implements CommandExecutor {
      * Called by {@link Zone#addEntity(Entity)} when the player is added to it.
      */
     public void onZoneEntered() {
-        // Find a random new spawn if one isn't assigned yet
-        if(spawnX == -1 || spawnY == -1) {
+        boolean spawnEffect = false;
+        
+        // Find new spawn point if zone has changed
+        if(zone != previousZone) {
             MetaBlock spawn = zone.getRandomSpawnBlock();
             
             if(spawn == null) {
@@ -458,13 +463,23 @@ public class Player extends Entity implements CommandExecutor {
                 spawnX = spawn.getX() + 1;
                 spawnY = spawn.getY();
             }
-        }
-        
-        // Set the player's location to their spawn location if no custom spawn is set or if they are out of bounds
-        if(!customSpawn || !zone.areCoordinatesInBounds(blockX, blockY)) {
+            
             x = spawnX;
             y = spawnY;
+            spawnEffect = true;
         }
+        
+        // Handle custom spawn location
+        if(zone != nextZone) {
+            x = spawnX;
+            y = spawnY;
+            spawnEffect = true;
+        } else if(customSpawn && zone == nextZone) {
+            x = enterX;
+            y = enterY;
+        }
+        
+        customSpawn = false;
         
         // Set skills for new players
         for(Skill skill : Skill.values()) {
@@ -536,9 +551,8 @@ public class Player extends Entity implements CommandExecutor {
             notify("Welcome to " + zone.getName(), NotificationType.WELCOME);
         }
         
-        if(!customSpawn) {
+        if(spawnEffect) {
             zone.spawnEffect(x + 0.5F, y - 0.75F, "spawn", 20);
-            customSpawn = true; // Remember position until zone changes
         }
         
         // Send social info
@@ -569,6 +583,7 @@ public class Player extends Entity implements CommandExecutor {
         lastHeartbeat = 0;
         lastPlacement = null;
         clientVersion = null;
+        previousZone = zone;
         
         if(zone != null) {
             zone.removeEntity(this);
@@ -577,8 +592,9 @@ public class Player extends Entity implements CommandExecutor {
         // Are we switching zones? Then set the new zone.
         if(changingZones) {
             zone = nextZone;
-            nextZone = null;
             changingZones = false;
+        } else {
+            nextZone = zone;
         }
         
         // Cancel existing trade session
@@ -646,12 +662,10 @@ public class Player extends Entity implements CommandExecutor {
     
     public void changeZone(Zone zone, int x, int y) {
         changingZones = true;
-        nextZone = zone;
-        spawnX = -1;
-        spawnY = -1;
         customSpawn = x != -1 && y != -1;
-        this.x = x;
-        this.y = y;
+        nextZone = zone;
+        enterX = x;
+        enterY = y;
         sendMessage(new EventMessage("playerWillChangeZone", null));
         kick("Teleporting...", true);
     }
