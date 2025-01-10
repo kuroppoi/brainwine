@@ -80,7 +80,9 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
     
     public void sendDelayedMessage(Message message, int delay) {
         channel.eventLoop().schedule(() -> {
-            sendMessage(message);
+            if(channel.isOpen()) {
+                sendMessage(message);
+            }
         }, delay, TimeUnit.MILLISECONDS);
     }
     

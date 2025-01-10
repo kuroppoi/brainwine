@@ -165,6 +165,9 @@ public class Item {
     @JsonProperty("loot")
     private String[] lootCategories = {};
     
+    @JsonProperty("regen_bonus")
+    private double regenBonus = 1.0;
+    
     @JsonProperty("tool_bonus")
     private double toolBonus;
     
@@ -478,6 +481,10 @@ public class Item {
         return membership;
     }
     
+    public int getSkillBonus(Skill skill) {
+        return skillBonuses.getOrDefault(skill, 0);
+    }
+    
     public Map<Skill, Integer> getSkillBonuses() {
         return skillBonuses;
     }
@@ -536,6 +543,10 @@ public class Item {
     
     public String[] getLootCategories() {
         return lootCategories;
+    }
+    
+    public double getRegenBonus() {
+        return regenBonus;
     }
     
     public double getToolBonus() {
