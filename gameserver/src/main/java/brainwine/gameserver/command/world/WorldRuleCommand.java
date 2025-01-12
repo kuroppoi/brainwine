@@ -33,7 +33,8 @@ public class WorldRuleCommand extends WorldCommand {
                 if(NumberUtils.isDigits(args[0])) {
                     page = Math.max(1, Math.min(pageCount, Integer.parseInt(args[0])));
                 } else {
-                    player.notify(args[0] + " is not a valid page number.");
+                    player.notify(zone.getRules().getRule(player, args[0]), SYSTEM);
+                    return;
                 }
             }
 
