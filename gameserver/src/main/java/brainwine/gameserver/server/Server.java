@@ -96,6 +96,6 @@ public class Server {
     
     public void close() {
         logger.info(SERVER_MARKER, "Closing endpoints ...");
-        eventLoopGroup.shutdownGracefully();
+        eventLoopGroup.shutdownGracefully().awaitUninterruptibly();
     }
 }

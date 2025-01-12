@@ -49,14 +49,11 @@ public class AsyncZoneGenerator extends Thread {
                 
                 if(callback != null) {
                     GameServer gameServer = GameServer.getInstance();
+                    gameServer.queueSynchronousTask(() -> callback.accept(generated));
                     
+                    // Shouldn't be an issue, but log a warning anyway.
                     if(gameServer.shouldStop()) {
-                        logger.warn(SERVER_MARKER, "Server shutdown has been requested while generating a zone!"
-                                + " Callback will be fired immediately on the async zone generator thread."
-                                + " Don't blame me for what happens!");
-                        callback.accept(generated);
-                    } else {
-                        gameServer.queueSynchronousTask(() -> callback.accept(generated));
+                        logger.warn(SERVER_MARKER, "Server shutdown has been requested while generating a zone!");
                     }
                 }
             }

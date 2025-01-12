@@ -147,24 +147,16 @@ public class ChunkManager {
         List<Chunk> inactiveChunks = new ArrayList<>();
         
         for(Chunk chunk : chunks.values()) {
-            saveChunk(chunk);
-            boolean active = false;
-            
-            for(Player player : zone.getPlayers()) {
-                if(player.isChunkActive(chunk)) {
-                    active = true;
-                    break;
-                }
-            }
-            
-            if(!active) {
+            if(!isChunkActive(chunk)) {
                 inactiveChunks.add(chunk);
+                zone.onChunkUnloaded(chunk); // Perform cleanup *before* the chunk is saved and unindexed in case any last-minute changes need to be made
             }
+            
+            saveChunk(chunk);
         }
         
         for(Chunk chunk : inactiveChunks) {
             chunks.remove(getChunkIndex(chunk.getX(), chunk.getY()));
-            zone.onChunkUnloaded(chunk);
         }
     }
     
@@ -245,6 +237,18 @@ public class ChunkManager {
             chunk.setModified(true);
             chunks.put(index, chunk);
         }
+    }
+    
+    public boolean isChunkActive(int x, int y) {
+        return zone.areCoordinatesInBounds(x, y) && isChunkActive(getChunkIndex(x, y));
+    }
+    
+    public boolean isChunkActive(int index) {
+        return zone.getPlayers().stream().anyMatch(player -> player.isChunkActive(index));
+    }
+    
+    public boolean isChunkActive(Chunk chunk) {
+        return zone.getPlayers().stream().anyMatch(player -> player.isChunkActive(chunk));
     }
     
     public boolean isChunkLoaded(int x, int y) {
