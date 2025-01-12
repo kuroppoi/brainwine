@@ -3,6 +3,8 @@ package brainwine.gameserver.zone;
 import brainwine.gameserver.util.RuleRecord;
 
 public class ZoneRules extends RuleRecord {
+    @Rule("purgeable")
+    private boolean purgeable = true;
     @Rule("auto-clean")
     private boolean autoCleanEnabled = true;
     @Rule(value="auto-clean-duration", minValue=500, maxValue=120000)
@@ -16,6 +18,7 @@ public class ZoneRules extends RuleRecord {
         ZoneRules rules = new ZoneRules();
 
         rules.autoCleanEnabled = false;
+        rules.purgeable = false;
 
         return rules;
     }
