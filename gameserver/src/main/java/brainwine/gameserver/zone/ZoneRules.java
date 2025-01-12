@@ -4,9 +4,13 @@ import brainwine.gameserver.util.RuleRecord;
 
 public class ZoneRules extends RuleRecord {
     @Rule("auto-clean")
-    public boolean autoCleanEnabled = true;
+    private boolean autoCleanEnabled = true;
+    @Rule(value="auto-clean-duration", minValue=500, maxValue=120000)
+    private int autoCleanDuration = 60000;
     @Rule("do-hostile-entity-spawns")
-    public boolean hostileEntitySpawnsEnabled = false;
+    private boolean hostileEntitySpawnsEnabled = false;
+    @Rule(value="do-peaceful-entity-spawns", adminOnly=true)
+    private boolean peacefulEntitySpawnsEnabled = false;
 
     public static ZoneRules getPrivateDefaults() {
         ZoneRules rules = new ZoneRules();
@@ -20,8 +24,15 @@ public class ZoneRules extends RuleRecord {
         return autoCleanEnabled;
     }
 
+    public int getAutoCleanDuration() {
+        return autoCleanDuration;
+    }
+
     public boolean isHostileEntitySpawnsEnabled() {
         return hostileEntitySpawnsEnabled;
     }
 
+    public boolean isPeacefulEntitySpawnsEnabled() {
+        return peacefulEntitySpawnsEnabled;
+    }
 }

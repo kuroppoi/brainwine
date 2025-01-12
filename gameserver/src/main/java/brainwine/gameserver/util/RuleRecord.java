@@ -1,15 +1,17 @@
 package brainwine.gameserver.util;
 
+import brainwine.gameserver.command.CommandExecutor;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Field;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 /**A class that defines a set of rules that can be set by the player.
  * Class fields annotated with the <code>Rule</code> annotation should not be final.
@@ -25,35 +27,85 @@ public class RuleRecord {
     @Target(ElementType.FIELD)
     protected @interface Rule {
         String value();
+        boolean adminOnly() default false;
         int minValue() default Integer.MIN_VALUE;
         int maxValue() default Integer.MAX_VALUE;
     }
 
-    @JsonIgnore
-    public List<String> getRules() {
-        return Arrays.stream(this.getClass().getFields()).map(
-                f -> f.getAnnotation(Rule.class)
-        ).filter(Objects::nonNull).map(Rule::value).collect(Collectors.toList());
+    private Map<String, Field> getAccessibleRules(CommandExecutor executor) {
+        Map<String, Field> result = new HashMap<>();
+        for(Field f : getClass().getDeclaredFields()) {
+            Rule rule = f.getAnnotation(Rule.class);
+            if(rule == null) continue;
+            if(rule.adminOnly() && !executor.isAdmin()) continue;
+            f.setAccessible(true);
+            result.put(rule.value(), f);
+        }
+
+        return result;
     }
 
-    public String setRule(String key, String value) {
+    @JsonIgnore
+    public List<String> getRules(CommandExecutor executor) {
+        Map<String, Field> accessibleRules = getAccessibleRules(executor);
+
+        List<String> result = new ArrayList<>(accessibleRules.size());
+        for(String key : accessibleRules.keySet()) {
+            try {
+                result.add(ruleToString(accessibleRules.get(key)));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                result.add("Error while processing rule " + key);
+            }
+        }
+
+        return result;
+    }
+
+    public String getRule(CommandExecutor executor, String key) {
+        Map<String, Field> accessibleRules = getAccessibleRules(executor);
+        Field field = accessibleRules.get(key);
+
+        if(field == null) return "Rule " + key + " not found or you don't have access to it";
+
+        try {
+            return ruleToString(field);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return "Error while processing rule " + key;
+        }
+    }
+
+    private String ruleToString(Field field) throws IllegalAccessException {
+        Rule rule = field.getAnnotation(Rule.class);
+        if(rule == null) throw new IllegalAccessException("Rule annotation is missing.");
+        String current = rule.value();
+
+        current += " " + field.get(this);
+
+        List<String> notes = new ArrayList<>();
+        if(rule.minValue() != Integer.MIN_VALUE) notes.add("min " + rule.minValue());
+        if(rule.minValue() != Integer.MIN_VALUE) notes.add("max " + rule.maxValue());
+
+        if(!notes.isEmpty()) current += " (" + String.join(", ", notes) + ")";
+        return current;
+    }
+
+    public String setRule(CommandExecutor executor, String key, String value) {
         if(key == null) {
             return "Rule key is null";
         }
 
         final String lower = key.toLowerCase();
         try {
-            System.out.println(this.getClass());
-            Arrays.stream(this.getClass().getFields()).map(f -> f.getName()).forEach(System.out::println);
-            Optional<Field> fieldOpt = Arrays.stream(this.getClass().getFields()).filter(
-                    f -> f.getAnnotation(Rule.class) != null && f.getAnnotation(Rule.class).value().equals(lower)
-            ).findFirst();
+            Map<String, Field> accessibleRules = getAccessibleRules(executor);
 
-            if(!fieldOpt.isPresent()) {
-                return "Rule " + key + " not found";
+            Field field = accessibleRules.get(key);
+
+            if(field == null) {
+                return "Rule " + key + " not found or you don't have access to it";
             }
 
-            Field field = fieldOpt.get();
             Rule rule = field.getAnnotation(Rule.class);
 
             if(Boolean.TYPE.equals(field.getType())) {

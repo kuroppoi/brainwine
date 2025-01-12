@@ -19,11 +19,11 @@ public class WorldRuleCommand extends WorldCommand {
         }
 
         if(args.length == 2) {
-            String message = zone.getRules().setRule(args[0], args[1]);
+            String message = zone.getRules().setRule(player, args[0], args[1]);
 
             player.notify(message == null ? "Successfully set rule" : message, SYSTEM);
         } else {
-            List<String> rules = zone.getRules().getRules();
+            List<String> rules = zone.getRules().getRules(player);
             int pageSize = 10;
             int pageCount = (int)Math.ceil((double)rules.size() / pageSize);
 
@@ -33,7 +33,7 @@ public class WorldRuleCommand extends WorldCommand {
                 if(NumberUtils.isDigits(args[0])) {
                     page = Math.max(1, Math.min(pageCount, Integer.parseInt(args[0])));
                 } else {
-                    player.notify(args[0] + "is not a valid page number.");
+                    player.notify(args[0] + " is not a valid page number.");
                 }
             }
 
@@ -43,7 +43,7 @@ public class WorldRuleCommand extends WorldCommand {
             player.notify(String.format("========== Command List (Page %s of %s) ==========", page, pageCount), SYSTEM);
 
             for(String rule : rulesToDisplay) {
-                player.notify("/wrule " + rule + " [on|off]", SYSTEM);
+                player.notify("/wrule " + rule, SYSTEM);
             }
         }
     }
