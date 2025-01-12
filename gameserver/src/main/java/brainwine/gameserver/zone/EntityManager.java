@@ -77,7 +77,10 @@ public class EntityManager {
                 .flatMap(Collection::stream)
                 .filter(spawn -> locale.equalsIgnoreCase(spawn.getLocale())
                         && depth >= spawn.getMinDepth() && depth <= spawn.getMaxDepth()
-                        && (rules.isHostileEntitySpawnsEnabled() || (acidity >= spawn.getMinAcidity() && acidity <= spawn.getMaxAcidity()))
+                        && (
+                                (rules.isHostileEntitySpawnsEnabled() || acidity >= spawn.getMinAcidity()) &&
+                                (rules.isPeacefulEntitySpawnsEnabled() || acidity <= spawn.getMaxAcidity())
+                        )
                         && ((!baseItem.hasId("base/maw") && !baseItem.hasId("base/pipe")) || spawn.getOrifice() == baseItem))
                 .collect(Collectors.toList());
     }

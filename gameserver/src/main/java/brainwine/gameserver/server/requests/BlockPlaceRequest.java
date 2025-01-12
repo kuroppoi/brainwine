@@ -124,9 +124,9 @@ public class BlockPlaceRequest extends PlayerRequest {
                 && (item.getCode() == 510 || item.getCode() == 511 || item.getCode() == 512)
                 && block.getBase() == 0 && block.getBack() == 0
         ) {
-            zone.addBlockTimer(x, y, 60000, () -> {
+            zone.addBlockTimer(x, y, zone.getRules().getAutoCleanDuration(), () -> {
                 zone.updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
-                zone.addBlockTimer(x, y, 60000, () -> {
+                zone.addBlockTimer(x, y, zone.getRules().getAutoCleanDuration(), () -> {
                     zone.updateBlock(x, y, Layer.FRONT, 0);
                 });
             });
