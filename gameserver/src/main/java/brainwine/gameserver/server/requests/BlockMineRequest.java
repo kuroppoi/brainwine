@@ -188,13 +188,10 @@ public class BlockMineRequest extends PlayerRequest {
             player.getStatistics().trackItemScavenged(item);
         }
         
-        zone.updateBlock(x, y, layer, 0, 0, player);
-        
         // Apply mining bonus if there is one
         if(item.hasMiningBonus()) {
             MiningBonus bonus = item.getMiningBonus();
-            
-            if(Math.random() < player.getMiningBonusChance(bonus)) {
+            if(Math.random() < player.getMiningBonusChance(bonus) && bonus.getMod() <= block.getMod(layer)) {
                 if(!bonus.computeItem(item).isAir()) {
                     inventoryItem = bonus.computeItem(item);
                 }
@@ -206,6 +203,8 @@ public class BlockMineRequest extends PlayerRequest {
                 player.notify(bonus.getNotification(), NotificationType.FANCY_EMOTE);
             }
         }
+
+        zone.updateBlock(x, y, layer, 0, 0, player);
         
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem, quantity, true);
