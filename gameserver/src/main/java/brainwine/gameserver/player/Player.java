@@ -1045,7 +1045,7 @@ public class Player extends Entity implements CommandExecutor {
 
         double accessoryBonus = getInventory().findAccessoryWithUse(ItemUseType.DOWSING).isAir() ? 1.0 : 2.0;
 
-        return bonus.getChance() * (getTotalSkillLevel(bonus.getSkill()) / (double)MAX_SKILL_LEVEL) * heldItem.getToolBonus() * accessoryBonus;
+        return bonus.getChance() * getNormalizedSkill(bonus.getSkill()) * heldItem.getToolBonus() * accessoryBonus;
     }
     
     /**

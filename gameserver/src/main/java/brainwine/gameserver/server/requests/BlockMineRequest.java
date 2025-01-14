@@ -98,12 +98,12 @@ public class BlockMineRequest extends PlayerRequest {
                         fail(player, "You must keep at least one world teleporter active.");
                         return;
                     }
-                    
+
                     break;
                 default: break;
             }
         }
-        
+
         if(digging) {
             zone.digBlock(x, y);
             QuestEvents.handleDig(player);
@@ -211,13 +211,10 @@ public class BlockMineRequest extends PlayerRequest {
             quantity = Math.max(1, block.getMod(layer));
         }
         
-        zone.updateBlock(x, y, layer, 0, 0, player);
-        
         // Apply mining bonus if there is one
         if(item.hasMiningBonus()) {
             MiningBonus bonus = item.getMiningBonus();
-            
-            if(Math.random() < player.getMiningBonusChance(bonus)) {
+            if(Math.random() < player.getMiningBonusChance(bonus) && bonus.getMod() <= block.getMod(layer)) {
                 if(!bonus.computeItem(item).isAir()) {
                     inventoryItem = bonus.computeItem(item);
                 }
@@ -229,7 +226,9 @@ public class BlockMineRequest extends PlayerRequest {
                 player.notify(bonus.getNotification(), NotificationType.FANCY_EMOTE);
             }
         }
-        
+
+        zone.updateBlock(x, y, layer, 0, 0, player);
+
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem, quantity, true);
             if(trackQuest && layer == Layer.FRONT) {

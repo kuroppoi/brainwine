@@ -12,10 +12,11 @@ public class MiningBonus {
     private double chance;
     private Skill skill;
     private ItemGroup tool;
+    private ItemUseType accessory;
+    private int mod = -1;
     private String item;
     private boolean doubleLoot;
     private String notification;
-    private ItemUseType accessory;
     
     @JsonCreator
     private MiningBonus() {}
@@ -34,6 +35,10 @@ public class MiningBonus {
 
     public ItemUseType getAccessory() {
         return accessory;
+    }
+
+    public int getMod() {
+        return mod;
     }
 
     public String getItem() {
