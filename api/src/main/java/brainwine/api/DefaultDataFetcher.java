@@ -29,12 +29,12 @@ public class DefaultDataFetcher implements DataFetcher {
     }
     
     @Override
-    public boolean verifyAuthToken(String name, String token) {
+    public String fetchPlayerId(String apiToken) {
         throw exception;
     }
-
+    
     @Override
-    public boolean verifyApiToken(String apiToken) {
+    public boolean verifyAuthToken(String name, String token) {
         throw exception;
     }
     
@@ -45,6 +45,16 @@ public class DefaultDataFetcher implements DataFetcher {
     
     @Override
     public Collection<ZoneInfo> fetchZoneInfo() {
+        throw exception;
+    }
+    
+    @Override
+    public Collection<ZoneInfo> fetchRecentZoneInfo(String apiToken) {
+        throw exception;
+    }
+    
+    @Override
+    public Collection<ZoneInfo> fetchBookmarkedZoneInfo(String apiToken) {
         throw exception;
     }
 }

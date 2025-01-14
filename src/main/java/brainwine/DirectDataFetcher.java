@@ -3,6 +3,8 @@ package brainwine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import brainwine.api.DataFetcher;
 import brainwine.api.models.ZoneInfo;
@@ -41,15 +43,16 @@ public class DirectDataFetcher implements DataFetcher {
         Player player = playerManager.getPlayer(name);
         return player == null ? null : player.getName();
     }
+    
+    @Override
+    public String fetchPlayerId(String apiToken) {
+        Player player = playerManager.getPlayerByApiToken(apiToken);
+        return player == null ? null : player.getDocumentId();
+    }
 
     @Override
     public boolean verifyAuthToken(String name, String token) {
         return playerManager.verifyAuthToken(name, token);
-    }
-    
-    @Override
-    public boolean verifyApiToken(String apiToken) {
-        return true; // TODO
     }
     
     @Override
@@ -63,6 +66,9 @@ public class DirectDataFetcher implements DataFetcher {
         return zone == null ? null : createZoneInfo(zone);
     }
     
+    /**
+     * TODO this will probably be slow if there is a large number of zones
+     */
     @Override
     public Collection<ZoneInfo> fetchZoneInfo() {
         List<ZoneInfo> zoneInfo = new ArrayList<>();
@@ -74,19 +80,41 @@ public class DirectDataFetcher implements DataFetcher {
         
         return zoneInfo;
     }
+
+    @Override
+    public Collection<ZoneInfo> fetchRecentZoneInfo(String apiToken) {
+        Player player = playerManager.getPlayerByApiToken(apiToken);
+        return player == null ? new ArrayList<>() : createZoneInfo(player.getRecentZones());
+    }
+    
+    @Override
+    public Collection<ZoneInfo> fetchBookmarkedZoneInfo(String apiToken) {
+        Player player = playerManager.getPlayerByApiToken(apiToken);
+        return player == null ? new ArrayList<>() : createZoneInfo(player.getBookmarkedZones());
+    }
+    
+    private List<ZoneInfo> createZoneInfo(Collection<String> zoneIds) {
+        return zoneIds.stream().map(zoneManager::getZone)
+                .filter(Objects::nonNull)
+                .map(DirectDataFetcher::createZoneInfo)
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
     
     private static ZoneInfo createZoneInfo(Zone zone) {
         return new ZoneInfo(zone.getName(), 
                 zone.getBiome().getId(), 
                 null,
+                zone.isPvp(),
                 false,
-                false,
-                false,
+                zone.isPrivate(),
+                zone.isProtected(),
                 zone.getPlayers().size(),
                 zone.getWidth(),
                 zone.getHeight(),
                 zone.getSurface(),
                 zone.getExplorationProgress(),
-                zone.getCreationDate());
+                zone.getCreationDate(),
+                zone.getOwner(),
+                zone.getMembers());
     }
 }

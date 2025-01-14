@@ -30,7 +30,7 @@ public class InventoryUseRequest extends PlayerRequest {
     @Override
     public void process(Player player) {
         // Don't do anything if the player is dead or doesn't own this item
-        if(player.isDead() || (!item.isAir() && !player.getInventory().hasItem(item))) {
+        if((player.isDead() && status == 1) || (!item.isAir() && !player.getInventory().hasItem(item))) {
             return;
         }
         
@@ -45,35 +45,35 @@ public class InventoryUseRequest extends PlayerRequest {
                 player.setHeldItem(item);
             }
             
-            // Send item use data to other players in the zone
-            player.sendMessageToTrackers(new EntityItemUseMessage(player.getId(), type, item, status));
-            
             // Lovely type ambiguity. Always nice.
             if(item.isWeapon() && status == 1) {
                 Collection<?> entityIds = details instanceof Collection ? (Collection<?>)details
                         : details instanceof Integer ? Arrays.asList((int)details) : null;
                 
-                // Skip if null aka details was of an invalid type
-                if(entityIds == null) {
-                    return;
-                }
-                
-                int maxTargetableEntities = player.getMaxTargetableEntities();
-                
-                for(Object id : entityIds) {
-                    if(id instanceof Integer) {
-                        Npc npc = player.getZone().getNpc((int)id);
+                // Attack enemies if details are present
+                if(entityIds != null && !entityIds.isEmpty()) {
+                    int maxTargetableEntities = player.getMaxTargetableEntities();
+                    
+                    for(Object id : entityIds) {
+                        if(id instanceof Integer) {
+                            Npc npc = player.getZone().getNpc((int)id);
+                            
+                            if(npc != null && (player.isGodMode() || (player.canSee(npc) && !npc.wasAttackedRecently(player, Entity.ATTACK_INVINCIBLE_TIME)))) {
+                                npc.attack(player, item, item.getDamage(), item.getDamageType());
+                            }
+                        }
                         
-                        if(npc != null && (player.isGodMode() || (player.canSee(npc) && !npc.wasAttackedRecently(player, Entity.ATTACK_INVINCIBLE_TIME)))) {
-                            npc.attack(player, item, item.getDamage(), item.getDamageType());
+                        if(--maxTargetableEntities <= 0) {
+                            break;
                         }
                     }
                     
-                    if(--maxTargetableEntities <= 0) {
-                        break;
-                    }
+                    return;
                 }
             }
+            
+            // Send item use data to other players in the zone if no details are present
+            player.sendMessageToTrackers(new EntityItemUseMessage(player.getId(), type, item, status));
         }
     }
 }

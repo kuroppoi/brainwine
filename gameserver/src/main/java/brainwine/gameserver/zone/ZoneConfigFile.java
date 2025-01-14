@@ -1,6 +1,7 @@
 package brainwine.gameserver.zone;
 
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,29 +32,35 @@ public class ZoneConfigFile {
     @JsonSetter(nulls = Nulls.SKIP)
     private float acidity = 1.0F;
     
+    @JsonSetter(value = "private")
+    private boolean isPrivate;
+    
+    @JsonSetter(value = "protected")
+    private boolean isProtected;
+    
+    @JsonSetter(nulls = Nulls.SKIP)
+    private boolean pvp;
+    
+    @JsonSetter(nulls = Nulls.SKIP)
+    private String entryCode;
+    
+    @JsonSetter(nulls = Nulls.SKIP)
+    private String owner;
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private List<String> members = new ArrayList<>();
+    
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     private Map<EcologicalMachine, List<Item>> discoveredParts = new HashMap<>();
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    private Map<String, OffsetDateTime> actionHistory = new HashMap<>();
     
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime creationDate = OffsetDateTime.now();
     
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime lastActiveDate = OffsetDateTime.now();
-    
-    public ZoneConfigFile(Zone zone) {
-        this(zone.getName(), zone.getBiome(), zone.getWidth(), zone.getHeight(), zone.getAcidity(), zone.getDiscoveredParts(), zone.getCreationDate());
-    }
-    
-    public ZoneConfigFile(String name, Biome biome, int width, int height, float acidity,
-            Map<EcologicalMachine, List<Item>> discoveredParts, OffsetDateTime creationDate) {
-        this.name = name;
-        this.biome = biome;
-        this.width = width;
-        this.height = height;
-        this.acidity = acidity;
-        this.discoveredParts = discoveredParts;
-        this.creationDate = creationDate;
-    }
     
     @JsonCreator
     private ZoneConfigFile(@JsonProperty(value = "name", required = true) String name,
@@ -62,6 +69,23 @@ public class ZoneConfigFile {
         this.name = name;
         this.width = width;
         this.height = height;
+    }
+    
+    public ZoneConfigFile(Zone zone) {
+        this.name = zone.getName();
+        this.biome = zone.getBiome();
+        this.width = zone.getWidth();
+        this.height = zone.getHeight();
+        this.acidity = zone.getAcidity();
+        this.isPrivate = zone.isPrivate();
+        this.isProtected = zone.isProtected();
+        this.pvp = zone.isPvp();
+        this.entryCode = zone.getEntryCode();
+        this.owner = zone.getOwner();
+        this.members = zone.getMembers();
+        this.discoveredParts = zone.getDiscoveredParts();
+        this.actionHistory = zone.getActionHistory();
+        this.creationDate = zone.getCreationDate();
     }
     
     public String getName() {
@@ -84,8 +108,36 @@ public class ZoneConfigFile {
         return acidity;
     }
     
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+    
+    public boolean isProtected() {
+        return isProtected;
+    }
+    
+    public boolean isPvp() {
+        return pvp;
+    }
+    
+    public String getEntryCode() {
+        return entryCode;
+    }
+    
+    public String getOwner() {
+        return owner;
+    }
+    
+    public List<String> getMembers() {
+        return members;
+    }
+    
     public Map<EcologicalMachine, List<Item>> getDiscoveredParts() {
         return discoveredParts;
+    }
+    
+    public Map<String, OffsetDateTime> getActionHistory() {
+        return actionHistory;
     }
     
     public OffsetDateTime getCreationDate() {

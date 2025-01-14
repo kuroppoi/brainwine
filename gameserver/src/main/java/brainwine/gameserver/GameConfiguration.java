@@ -27,6 +27,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.Skill;
+import brainwine.gameserver.shop.ShopManager;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.VersionUtils;
 import brainwine.shared.JsonHelper;
@@ -53,6 +54,7 @@ public class GameConfiguration {
         loadConfigOverrides();
         logger.info(SERVER_MARKER, "Configuring ...");
         configure();
+        ShopManager.loadShopData();
         logger.info(SERVER_MARKER, "Caching versioned configurations ...");
         cacheVersionedConfigs();
         logger.info(SERVER_MARKER, "Load complete! Took {} milliseconds", System.currentTimeMillis() - startTime);
@@ -76,6 +78,10 @@ public class GameConfiguration {
         // Client wants this
         MapHelper.put(baseConfig, "shop.currency", new HashMap<>());
         Map<String, Object> items = MapHelper.getMap(baseConfig, "items");
+        
+        // Clear shop data
+        MapHelper.put(baseConfig, "shop.sections", new ArrayList<>());
+        MapHelper.put(baseConfig, "shop.items", new ArrayList<>());
         
         // Add custom commands to the client config
         CommandManager.getCommandNames().forEach(command -> {
@@ -128,15 +134,23 @@ public class GameConfiguration {
                     }
                 }
                 
-                // Map skill bonuses
+                // Map stat bonuses
                 Map<String, Object> bonuses = MapHelper.getMap(config, "bonus");
                 
                 if(bonuses != null) {
                     Map<String, Integer> skillBonuses = new HashMap<>();
                     
-                    bonuses.forEach((type, amount) -> {
-                        if(amount instanceof Integer && Skill.fromId(type) != null) {
-                            skillBonuses.put(type, (int)amount);
+                    bonuses.forEach((type, value) -> {
+                        if(!(value instanceof Number)) {
+                            return;
+                        }
+                        
+                        Number amount = (Number)value;
+                        
+                        if(Skill.fromId(type) != null) {
+                            skillBonuses.put(type, amount.intValue());
+                        } else if("regen".equals(type)) {
+                            config.put("regen_bonus", amount.doubleValue());
                         }
                     });
                     

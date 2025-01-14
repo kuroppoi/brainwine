@@ -29,6 +29,7 @@ import brainwine.gameserver.entity.npc.NpcData;
 import brainwine.gameserver.util.ZipUtils;
 import brainwine.gameserver.zone.gen.ZoneGenerator;
 import brainwine.shared.JsonHelper;
+import brainwine.shared.TokenGenerator;
 
 public class ZoneManager {
     
@@ -38,6 +39,7 @@ public class ZoneManager {
     private final File dataDir = new File("zones");
     private Map<String, Zone> zones = new HashMap<>();
     private Map<String, Zone> zonesByName = new HashMap<>();
+    private Map<String, Zone> entryCodes = new HashMap<>();
     private long lastZoneGenerationTime = System.currentTimeMillis();
     private boolean generatingZone = false;
         
@@ -190,31 +192,90 @@ public class ZoneManager {
         
         zones.put(id, zone);
         zonesByName.put(name.toLowerCase(), zone);
+        
+        if(zone.hasEntryCode()) {
+            entryCodes.put(zone.getEntryCode(), zone);
+        }
     }
 
-    /**Should the game create a new world because all the worlds are established?
-     *
-     * @return true iff the game should create a new world at next opportunity
+    /**
+     * Should the automatic zone generator generate a new zone?
+     * TODO could be slow, it might be a better idea to just check the most recently auto-generated zone instead.
+     * 
+     * @return {@code true} if all unowned worlds are at least 40% explored, otherwise {@code false}.
      */
     public boolean shouldGenerateUnexploredZone() {
-        return getZones().stream().allMatch(zone -> zone.getExplorationProgress() >= 0.4);
+        return getZones().stream().filter(zone -> !zone.isOwned()).allMatch(zone -> zone.getExplorationProgress() >= 0.4);
+    }
+    
+    /**
+     * Renames the specified zone and re-indexes it.
+     * 
+     * @return {@code true} if the renaming was successful, otherwise {@code false}.
+     */
+    @SuppressWarnings("deprecation")
+    public boolean renameZone(Zone zone, String name) {
+        if(doesZoneExist(name)) {
+            return false; // Return false if name is already taken
+        }
+        
+        if(!zonesByName.remove(zone.getName().toLowerCase(), zone)) {
+            return false; // Sanity check
+        }
+        
+        zone.setName(name);
+        zonesByName.put(name.toLowerCase(), zone);
+        return true;
+    }
+    
+    /**
+     * Generates a new entry code for the specified zone and re-indexes it.
+     * 
+     * @return {@code true} if the entry code was generated successfully, otherwise {@code false}.
+     */
+    public boolean issueEntryCode(Zone zone) {
+        String entryCode = String.format("z%s", TokenGenerator.generateToken(6, entryCodes::containsKey));
+        String currentCode = zone.getEntryCode();
+        
+        if(entryCode == null) {
+            return false;
+        }
+        
+        if(currentCode != null && !entryCodes.remove(currentCode, zone)) {
+            logger.warn(SERVER_MARKER, "Could not unindex entry code {} for zone {}", currentCode, zone.getDocumentId());
+        }
+        
+        zone.setEntryCode(entryCode);
+        entryCodes.put(entryCode, zone);
+        return true;
     }
     
     public Zone getZone(String id) {
         return zones.get(id);
     }
     
+    public boolean doesZoneExist(String name) {
+        return zonesByName.containsKey(name.toLowerCase());
+    }
+    
     public Zone getZoneByName(String name) {
         return zonesByName.get(name.toLowerCase());
     }
     
-    public Zone getRandomZone() {
-        return getRandomZone(null);
+    public Zone getZoneByEntryCode(String entryCode) {
+        return entryCodes.get(entryCode);
     }
     
-    public Zone getRandomZone(Predicate<Zone> predicate) {
-        List<Zone> zones = searchZones(predicate);
-        return zones.get((int)(Math.random() * zones.size()));
+    /**
+     * @return A public, non-owned, recently-generated temperate world (with players if possible) or {@code null} if no such world exists.
+     */
+    public Zone findBeginnerZone() {
+        return zones.values().stream()
+                .filter(zone -> zone.isPublic() && !zone.isOwned() && zone.isUnexplored() && zone.getBiome() == Biome.PLAIN)
+                .sorted((a, b) -> b.getCreationDate().compareTo(a.getCreationDate()))
+                .limit(50)
+                .sorted((a, b) -> Integer.compare(b.getPlayerCount(), a.getPlayerCount())) 
+                .findFirst().orElse(null);
     }
     
     public List<Zone> searchZones(Predicate<Zone> predicate) {

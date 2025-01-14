@@ -64,6 +64,28 @@ public class BlockPlaceRequest extends PlayerRequest {
             return;
         }
         
+        if(!player.isGodMode() && item.requiresOwnership() && !zone.isOwner(player)) {
+            fail(player, "You can only place this in worlds you own.");
+            return;
+        }
+        
+        if(!player.isGodMode() && item.requiresMembership() && !zone.isOwner(player) && !zone.isMember(player)) {
+            fail(player, "You can only place these in owned or member worlds.");
+            return;
+        }
+        
+        if(!player.isGodMode() && item.hasSpawnSpacing() && zone.isSpawnInRange(x, y, item.getSpawnSpacing())) {
+            fail(player, String.format("%s must be at least %s blocks away from spawns.", item.getTitle(), item.getSpawnSpacing()));
+            return;
+        }
+        
+        if(!player.isGodMode() && item.hasSpacing() && zone.getMetaBlocks().stream().anyMatch(block 
+                -> (item.hasSpacingItems() ? item.getSpacingItems().contains(block.getItem()) : block.getItem() == item) 
+                && MathUtils.inRange(block.getX(), block.getY(), x, y, item.getSpacing()))) {
+            fail(player, String.format("%s must be at least %s blocks away from other %ss.", item.getTitle(), item.getSpacing(), item.getTitle().toLowerCase()));
+            return;
+        }
+        
         if(!player.isGodMode() && !item.canPlaceInField() && zone.isBlockProtected(x, y, player)) {
             fail(player, "This block is protected.");
             return;
@@ -91,16 +113,7 @@ public class BlockPlaceRequest extends PlayerRequest {
         if(layer == Layer.LIQUID) {
             mod = 5;
         } else if(item.getMod() == ModType.ROTATION && !item.isMirrorable()) {
-            // Automatically orient rotatable blocks based on adjacent block
-            if(zone.isChunkLoaded(x, y + 1) && zone.getBlock(x, y + 1).getFrontItem().isWhole()) {
-                mod = 0;
-            } else if(zone.isChunkLoaded(x, y - 1) && zone.getBlock(x, y - 1).getFrontItem().isWhole()) {
-                mod = 2;
-            } else if(zone.isChunkLoaded(x - 1, y) && zone.getBlock(x - 1, y).getFrontItem().isWhole()) {
-                mod = 1;
-            } else if(zone.isChunkLoaded(x + 1, y) && zone.getBlock(x + 1, y).getFrontItem().isWhole()) {
-                mod = 3;
-            }
+            mod = findRotationMod(zone, x, y, item.getBlockWidth(), item.getBlockHeight());
         }
         
         zone.updateBlock(x, y, layer, item, mod, player);
@@ -124,6 +137,31 @@ public class BlockPlaceRequest extends PlayerRequest {
         } else if(item.getGroup() == ItemGroup.CAGE) {
             processTrapping(zone, player);
         }
+    }
+    
+    /**
+     * Automatically finds a suitable rotation mod based on adjacent blocks.
+     * Priority order is bottom -> top -> left -> right.
+     */
+    private int findRotationMod(Zone zone, int x, int y, int width, int height) {
+        boolean bottom = true;
+        boolean top = true;
+        boolean left = true;
+        boolean right = true;
+        
+        // Check top and bottom
+        for(int i = 0; i < width; i++) {
+            bottom &= zone.isChunkLoaded(x + i, y + 1) && zone.getBlock(x + i, y + 1).getFrontItem().isWhole();
+            top &= zone.isChunkLoaded(x + i, y - height) && zone.getBlock(x + i, y - height).getFrontItem().isWhole();
+        }
+        
+        // Check left and right
+        for(int i = 0; i < height; i++) {
+            left &= zone.isChunkLoaded(x - 1, y - i) && zone.getBlock(x - 1, y - i).getFrontItem().isWhole();
+            right &= zone.isChunkLoaded(x + width, y - i) && zone.getBlock(x + width, y - i).getFrontItem().isWhole();
+        }
+        
+        return bottom ? 0 : top ? 2 : left ? 1 : right ? 3 : 0;
     }
     
     private void processTrapping(Zone zone, Player player) {

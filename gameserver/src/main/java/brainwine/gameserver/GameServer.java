@@ -80,10 +80,7 @@ public class GameServer implements CommandExecutor {
         long now = System.currentTimeMillis();
         float deltaTime = (now - lastTick) / 1000.0F; // in seconds
         lastTick = now;
-        
-        while(!tasks.isEmpty()) {
-            tasks.poll().run();
-        }
+        pollTasks();
         
         if(lastSave + GLOBAL_SAVE_INTERVAL < System.currentTimeMillis()) {
             zoneManager.saveZones();
@@ -109,12 +106,23 @@ public class GameServer implements CommandExecutor {
     }
     
     /**
+     * Polls and executes all currently queued tasks.
+     */
+    private void pollTasks() {
+        while(!tasks.isEmpty()) {
+            tasks.poll().run();
+        }
+    }
+    
+    /**
      * Called by the bootstrapper when the program closes.
      */
     public void onShutdown() {
         logger.info(SERVER_MARKER, "Shutting down GameServer ...");
+        playerManager.getOnlinePlayers().forEach(player -> player.kick("Server is shutting down."));
         server.close();
         ZoneGenerator.stopAsyncZoneGenerator(true);
+        pollTasks(); // Run any remaining tasks to ensure everything is cleaned up properly
         logger.info(SERVER_MARKER, "Saving zone data ...");
         zoneManager.onShutdown();
         logger.info(SERVER_MARKER, "Saving player data ...");

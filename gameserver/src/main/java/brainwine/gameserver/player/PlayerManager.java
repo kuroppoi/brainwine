@@ -16,9 +16,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
 
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.shared.JsonHelper;
+import brainwine.shared.TokenGenerator;
 
 public class PlayerManager {
     
@@ -27,6 +27,7 @@ public class PlayerManager {
     private static final Logger logger = LogManager.getLogger();
     private final Map<String, Player> playersById = new HashMap<>();
     private final Map<String, Player> playersByName = new HashMap<>();
+    private final Map<String, Player> apiTokens = new HashMap<>();
     private final List<Player> onlinePlayers = new ArrayList<>();
     
     public PlayerManager() {
@@ -53,11 +54,6 @@ public class PlayerManager {
         try {
             PlayerConfigFile configFile = JsonHelper.readValue(file, PlayerConfigFile.class);
             Player player = new Player(id, configFile);
-            
-            if(player.getZone() == null) {
-                player.setZone(GameServer.getInstance().getZoneManager().getRandomZone());
-            }
-            
             String name = player.getName();
             
             if(playersByName.containsKey(name)) {
@@ -67,6 +63,10 @@ public class PlayerManager {
             
             playersById.put(id, player);
             playersByName.put(name.toLowerCase(), player);
+            
+            if(player.getApiToken() != null) {
+                apiTokens.put(player.getApiToken(), player);
+            }
         } catch (Exception e) {
             logger.error(SERVER_MARKER, "Could not load configuration for player id {}", id, e);
         }
@@ -94,7 +94,7 @@ public class PlayerManager {
         }
         
         String id = UUID.randomUUID().toString();
-        Player player = new Player(id, name, GameServer.getInstance().getZoneManager().getRandomZone()); // TODO tutorial zone
+        Player player = new Player(id, name, null); // TODO tutorial zone
         playersById.put(id, player);
         playersByName.put(name.toLowerCase(), player);
         String authToken = UUID.randomUUID().toString();
@@ -118,6 +118,24 @@ public class PlayerManager {
         return authToken;
     }
     
+    public boolean issueApiToken(Player player) {
+        String apiToken = TokenGenerator.generateToken(10, apiTokens::containsKey);
+        String currentToken = player.getApiToken();
+        
+        if(apiToken == null) {
+            player.notify("Oops, we couldn't issue an API token for you.", NotificationType.SYSTEM);
+            return false;
+        }
+        
+        if(currentToken != null && !apiTokens.remove(currentToken, player)) {
+            logger.warn(SERVER_MARKER, "Could not unindex API token {} for player {}", currentToken, player.getDocumentId());
+        }
+        
+        player.setApiToken(apiToken);
+        apiTokens.put(apiToken, player);
+        return true;
+    }
+        
     public boolean verifyAuthToken(String name, String authToken) {
         Player player = getPlayer(name);
         
@@ -139,7 +157,7 @@ public class PlayerManager {
     
     public void changePlayerName(Player player, String name) {
         if(playersByName.containsKey(name)) {
-            logger.warn("Tried to rename player {} to already existing name {}", player.getDocumentId(), name);
+            logger.warn(SERVER_MARKER, "Tried to rename player {} to already existing name {}", player.getDocumentId(), name);
             return;
         }
         
@@ -151,9 +169,8 @@ public class PlayerManager {
     }
     
     public void onPlayerConnect(Player player) {
-        Connection connection = player.getConnection();
         onlinePlayers.add(player);
-        logger.info(SERVER_MARKER, "{} logged into zone {} from {}", player.getName(), player.getZone().getName(), connection.getAddress());
+        logger.info(SERVER_MARKER, "{} logged into zone {}", player.getName(), player.getZone().getName());
     }
     
     public void onPlayerDisconnect(Player player) {
@@ -178,6 +195,10 @@ public class PlayerManager {
     
     public Player getPlayerById(String id) {
         return playersById.get(id);
+    }
+    
+    public Player getPlayerByApiToken(String apiToken) {
+        return apiTokens.get(apiToken);
     }
     
     public Collection<Player> getPlayers() {

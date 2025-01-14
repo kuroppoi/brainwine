@@ -22,6 +22,7 @@ public class PlayerConfigFile {
     private String name;
     private String email;
     private String passwordHash;
+    private String apiToken;
     private Zone currentZone;
     private boolean admin;
     private int experience;
@@ -34,6 +35,10 @@ public class PlayerConfigFile {
     private List<NameChange> nameChanges = new ArrayList<>();
     private List<PlayerRestriction> mutes = new ArrayList<>();
     private List<PlayerRestriction> bans = new ArrayList<>();
+    private List<String> recentZones = new ArrayList<>();
+    private List<String> bookmarkedZones = new ArrayList<>();
+    private Set<String> followees = new HashSet<>();
+    private Set<String> followers = new HashSet<>();
     private Set<String> lootCodes = new HashSet<>();
     private Set<Achievement> achievements = new HashSet<>();
     private Map<String, Float> ignoredHints = new HashMap<>();
@@ -45,6 +50,7 @@ public class PlayerConfigFile {
         this.name = player.getName();
         this.email = player.getEmail();
         this.passwordHash = player.getPassword();
+        this.apiToken = player.getApiToken();
         this.currentZone = player.getZone();
         this.admin = player.isAdmin();
         this.experience = player.getExperience();
@@ -57,6 +63,10 @@ public class PlayerConfigFile {
         this.nameChanges = player.getNameChanges();
         this.mutes = player.getMutes();
         this.bans = player.getBans();
+        this.recentZones = player.getRecentZones();
+        this.bookmarkedZones = player.getBookmarkedZones();
+        this.followees = player.getFollowees();
+        this.followers = player.getFollowers();
         this.lootCodes = player.getLootCodes();
         this.achievements = player.getAchievements();
         this.ignoredHints = player.getIgnoredHints();
@@ -79,6 +89,10 @@ public class PlayerConfigFile {
     
     public String getPasswordHash() {
         return passwordHash;
+    }
+    
+    public String getApiToken() {
+        return apiToken;
     }
     
     public Zone getCurrentZone() {
@@ -109,6 +123,16 @@ public class PlayerConfigFile {
         return bans;
     }
     
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<String> getRecentZones() {
+        return recentZones;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<String> getBookmarkedZones() {
+        return bookmarkedZones;
+    }
+    
     public int getExperience() {
         return experience;
     } 
@@ -133,6 +157,16 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP)
     public PlayerStatistics getStatistics() {
         return statistics;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Set<String> getFollowees() {
+        return followees;
+    }
+    
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Set<String> getFollowers() {
+        return followers;
     }
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)

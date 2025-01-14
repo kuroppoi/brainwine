@@ -12,13 +12,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.Naming;
 import brainwine.gameserver.StringGenerator;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.resource.Resource;
 import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.gen.models.TerrainType;
 import brainwine.gameserver.zone.gen.tasks.CaveGeneratorTask;
 import brainwine.gameserver.zone.gen.tasks.DecorGeneratorTask;
 import brainwine.gameserver.zone.gen.tasks.GeneratorTask;
@@ -32,6 +32,7 @@ public class ZoneGenerator {
     private static final Map<String, ZoneGenerator> generators = new HashMap<>();
     private static final ZoneGenerator defaultGenerator = new ZoneGenerator();
     private static AsyncZoneGenerator asyncGenerator;
+    private final GeneratorConfig config;
     private final GeneratorTask terrainGenerator;
     private final GeneratorTask caveGenerator;
     private final GeneratorTask decorGenerator;
@@ -42,6 +43,7 @@ public class ZoneGenerator {
     }
     
     public ZoneGenerator(GeneratorConfig config) {
+        this.config = config;
         terrainGenerator = new TerrainGeneratorTask(config);
         caveGenerator = new CaveGeneratorTask(config);
         decorGenerator = new DecorGeneratorTask(config);
@@ -145,6 +147,10 @@ public class ZoneGenerator {
         // Bedrock
         for(int x = 0; x < width; x++) {
             ctx.updateBlock(x, height - 1, Layer.FRONT, "ground/bedrock");
+            
+            if(config.getTerrainType() == TerrainType.FILLED) {
+                ctx.updateBlock(x, 0, Layer.FRONT, "ground/bedrock");
+            }
         }
         
         return zone;
