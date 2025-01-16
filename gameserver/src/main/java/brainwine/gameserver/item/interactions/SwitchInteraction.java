@@ -165,7 +165,7 @@ public class SwitchInteraction implements ItemInteraction {
     }
     
     private void switchSign(Zone zone, Entity entity, MetaBlock metaBlock, MetaBlock switchMeta) {
-        String message = switchMeta.hasProperty("m") ? switchMeta.getStringProperty("m").trim() : "";
+        String message = interpolateMessage(entity, switchMeta.hasProperty("m") ? switchMeta.getStringProperty("m").trim() : "");
         boolean lock = metaBlock.hasProperty("lock") && metaBlock.getStringProperty("lock").equalsIgnoreCase("yes");
         Item item = metaBlock.getItem();
         
@@ -212,5 +212,23 @@ public class SwitchInteraction implements ItemInteraction {
         float effectY = metaBlock.getY() - (float)item.getBlockHeight() / 2 + 1;
         zone.spawnEffect(effectX, effectY, "area steam", 10);
         zone.sendBlockMetaUpdate(metaBlock);
+    }
+
+    private String interpolateMessage(Entity entity, String message) {
+        String current = message;
+
+        if(entity != null) {
+            String entityName;
+
+            if(entity.isPlayer()) {
+                entityName = entity.getName() == null ? "Anon" : entity.getName();
+            } else {
+                entityName = "entity";
+            }
+
+            current = current.replaceAll("\\*(player|mob)\\*", entityName);
+        }
+
+        return current;
     }
 }
