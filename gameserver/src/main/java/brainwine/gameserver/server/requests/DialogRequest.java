@@ -68,7 +68,11 @@ public class DialogRequest extends PlayerRequest {
             dialog.addSection(new DialogSection().setText(String.format("<color=#33AA33>Online</color>\nCurrently in %s", subject.getZone().getName())));
             
             if(player.getZone() != subject.getZone()) {
-                dialog.addSection(new DialogSection().setText(String.format("Goto %s", subject.getZone().getName())).setChoice("visit"));
+                if(subject.getZone() == null) {
+                    dialog.addSection(new DialogSection().setText("Online but not in a zone."));
+                } else {
+                    dialog.addSection(new DialogSection().setText(String.format("Goto %s", subject.getZone().getName())).setChoice("visit"));
+                }
             }
         } else {
             dialog.addSection(new DialogSection().setText("<color=#C80000>Offline</color>"));
