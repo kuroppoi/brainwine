@@ -239,6 +239,7 @@ public class SwitchInteraction implements ItemInteraction {
     }
 
     private String interpolateMessage(Entity entity, String message) {
+        if(message == null) return null;
         String current = message;
 
         if(entity != null) {
@@ -257,7 +258,7 @@ public class SwitchInteraction implements ItemInteraction {
                 }
             }
 
-            current = current.replaceAll("\\*(player|mob)\\*", entityName == null ? "null" : entityName);
+            current = current.replaceAll("\\*(player|mob)\\*", entityName);
         }
 
         return current;
