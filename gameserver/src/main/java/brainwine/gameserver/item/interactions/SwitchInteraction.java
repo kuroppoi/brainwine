@@ -41,7 +41,7 @@ public class SwitchInteraction implements ItemInteraction {
         }
         
         // Show configured message to nearby players
-        String message = metaBlock.getStringProperty("m");
+        String message = interpolateMessage(entity, metaBlock.getStringProperty("m"));
         
         if(message != null && !message.isEmpty()) {
             float effectX = x + item.getBlockWidth() / 2.0F;
@@ -189,7 +189,7 @@ public class SwitchInteraction implements ItemInteraction {
     }
     
     private void switchSign(Zone zone, Entity entity, MetaBlock metaBlock, MetaBlock switchMeta) {
-        String message = switchMeta.hasProperty("m") ? switchMeta.getStringProperty("m").trim() : "";
+        String message = interpolateMessage(entity, switchMeta.hasProperty("m") ? switchMeta.getStringProperty("m").trim() : "");
         boolean lock = metaBlock.hasProperty("lock") && metaBlock.getStringProperty("lock").equalsIgnoreCase("yes");
         Item item = metaBlock.getItem();
         
@@ -236,5 +236,30 @@ public class SwitchInteraction implements ItemInteraction {
         float effectY = metaBlock.getY() - (float)item.getBlockHeight() / 2 + 1;
         zone.spawnEffect(effectX, effectY, "area steam", 10);
         zone.sendBlockMetaUpdate(metaBlock);
+    }
+
+    private String interpolateMessage(Entity entity, String message) {
+        String current = message;
+
+        if(entity != null) {
+            String entityName;
+
+            if(entity.isPlayer()) {
+                entityName = entity.getName() == null ? "Anon" : entity.getName();
+            } else {
+                Npc npc = (Npc) entity;
+                if(npc.getName() == null) {
+                    entityName = npc.getConfig() != null
+                            ? npc.getConfig().getTitle()
+                            : "Unknown";
+                } else {
+                    entityName = npc.getName();
+                }
+            }
+
+            current = current.replaceAll("\\*(player|mob)\\*", entityName == null ? "null" : entityName);
+        }
+
+        return current;
     }
 }
