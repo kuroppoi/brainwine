@@ -40,7 +40,7 @@ public class SwitchInteraction implements ItemInteraction {
         }
         
         // Show configured message to nearby players
-        String message = metaBlock.getStringProperty("m");
+        String message = interpolateMessage(entity, metaBlock.getStringProperty("m"));
         
         if(message != null && !message.isEmpty()) {
             float effectX = x + item.getBlockWidth() / 2.0F;
@@ -223,10 +223,17 @@ public class SwitchInteraction implements ItemInteraction {
             if(entity.isPlayer()) {
                 entityName = entity.getName() == null ? "Anon" : entity.getName();
             } else {
-                entityName = "entity";
+                Npc npc = (Npc) entity;
+                if(npc.getName() == null) {
+                    entityName = npc.getConfig() != null
+                            ? npc.getConfig().getTitle()
+                            : "Unknown";
+                } else {
+                    entityName = npc.getName();
+                }
             }
 
-            current = current.replaceAll("\\*(player|mob)\\*", entityName);
+            current = current.replaceAll("\\*(player|mob)\\*", entityName == null ? "null" : entityName);
         }
 
         return current;
