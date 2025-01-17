@@ -185,11 +185,7 @@ public class SwitchInteraction implements ItemInteraction {
         }
         
         // Update sign text
-        String name = entity.getName();
-        
-        if(name != null) {
-            message = message.replaceAll("%t%", name);
-        }
+        message = interpolateMessage(entity, message);
         
         String separator = "\n";
         String[] keys = {"t1", "t2", "t3", "t4"};
@@ -216,27 +212,21 @@ public class SwitchInteraction implements ItemInteraction {
 
     private String interpolateMessage(Entity entity, String message) {
         if(message == null) return null;
-        String current = message;
 
         if(entity != null) {
-            String entityName;
-
+            String name;
             if(entity.isPlayer()) {
-                entityName = entity.getName() == null ? "Anon" : entity.getName();
+                name = entity.getName();
             } else {
                 Npc npc = (Npc) entity;
-                if(npc.getName() == null) {
-                    entityName = npc.getConfig() != null
-                            ? npc.getConfig().getTitle()
-                            : "Unknown";
-                } else {
-                    entityName = npc.getName();
-                }
+                name = npc.getName() == null ? npc.getConfig().getTitle() : npc.getName();
             }
 
-            current = current.replaceAll("\\*(player|mob)\\*", entityName);
+            if(name != null) {
+                message = message.replaceAll("\\*(player|mob)\\*", name);
+            }
         }
 
-        return current;
+        return message;
     }
 }
