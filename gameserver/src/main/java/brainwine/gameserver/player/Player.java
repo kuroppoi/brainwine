@@ -1230,6 +1230,10 @@ public class Player extends Entity implements CommandExecutor {
         if(currentBan != null) {
             currentBan.pardon(issuer);
         }
+        
+        if(isOnline()) {
+            changeZone(null);
+        }
     }
     
     public boolean isBanned() {
