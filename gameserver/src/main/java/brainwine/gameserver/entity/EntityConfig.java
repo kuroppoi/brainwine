@@ -26,6 +26,7 @@ public class EntityConfig {
     
     private final String name;
     private final int type;
+    private String title = "Unknown";
     private int experienceYield;
     private float maxHealth = Entity.DEFAULT_HEALTH;
     private float baseSpeed = 3;
@@ -68,7 +69,11 @@ public class EntityConfig {
     public int getType() {
         return type;
     }
-    
+
+    public String getTitle() {
+        return title;
+    }
+
     @JsonProperty("xp")
     public int getExperienceYield() {
         return experienceYield;

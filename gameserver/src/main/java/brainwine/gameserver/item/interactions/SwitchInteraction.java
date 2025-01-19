@@ -40,7 +40,7 @@ public class SwitchInteraction implements ItemInteraction {
         }
         
         // Show configured message to nearby players
-        String message = metaBlock.getStringProperty("m");
+        String message = interpolateMessage(entity, metaBlock.getStringProperty("m"));
         
         if(message != null && !message.isEmpty()) {
             float effectX = x + item.getBlockWidth() / 2.0F;
@@ -165,7 +165,7 @@ public class SwitchInteraction implements ItemInteraction {
     }
     
     private void switchSign(Zone zone, Entity entity, MetaBlock metaBlock, MetaBlock switchMeta) {
-        String message = switchMeta.hasProperty("m") ? switchMeta.getStringProperty("m").trim() : "";
+        String message = interpolateMessage(entity, switchMeta.hasProperty("m") ? switchMeta.getStringProperty("m").trim() : "");
         boolean lock = metaBlock.hasProperty("lock") && metaBlock.getStringProperty("lock").equalsIgnoreCase("yes");
         Item item = metaBlock.getItem();
         
@@ -184,13 +184,7 @@ public class SwitchInteraction implements ItemInteraction {
             }
         }
         
-        // Update sign text
-        String name = entity.getName();
-        
-        if(name != null) {
-            message = message.replaceAll("%t%", name);
-        }
-        
+        // Update sign text        
         String separator = "\n";
         String[] keys = {"t1", "t2", "t3", "t4"};
         String[] segments = WordUtils.wrap(message, 20, separator, true).split(separator, 4);
@@ -212,5 +206,25 @@ public class SwitchInteraction implements ItemInteraction {
         float effectY = metaBlock.getY() - (float)item.getBlockHeight() / 2 + 1;
         zone.spawnEffect(effectX, effectY, "area steam", 10);
         zone.sendBlockMetaUpdate(metaBlock);
+    }
+
+    private String interpolateMessage(Entity entity, String message) {
+        if(message == null) return null;
+
+        if(entity != null) {
+            String name;
+            if(entity.isPlayer()) {
+                name = entity.getName();
+            } else {
+                Npc npc = (Npc) entity;
+                name = npc.getName() == null ? npc.getConfig().getTitle() : npc.getName();
+            }
+
+            if(name != null) {
+                message = message.replaceAll("\\*(player|mob)\\*", name);
+            }
+        }
+
+        return message;
     }
 }
