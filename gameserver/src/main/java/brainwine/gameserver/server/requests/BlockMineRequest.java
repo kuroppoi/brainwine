@@ -1,7 +1,5 @@
 package brainwine.gameserver.server.requests;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
 import brainwine.gameserver.entity.Entity;
@@ -132,19 +130,11 @@ public class BlockMineRequest extends PlayerRequest {
             
             // Check if block is a natural switch with an active door
             if(!player.isGodMode() && !metaBlock.hasOwner() && item.hasUse(ItemUseType.SWITCH)) {
-                List<List<Integer>> positions = MapHelper.getList(metadata, ">", Collections.emptyList());
-                
-                for(List<Integer> position : positions) {
-                    Block target = zone.getBlock(position.get(0), position.get(1));
-                    
-                    if(target != null) {
-                        Item switchedItem = target.getFrontItem();
-                        
-                        if(switchedItem.hasUse(ItemUseType.SWITCHED)) {
-                            fail(player, String.format("This switch cannot be mined before its %s.", switchedItem.getTitle().toLowerCase()));
-                            return;
-                        }
-                    }
+                Item switchedItem = zone.getSwitchedItem(metaBlock);
+
+                if(!switchedItem.isAir()) {
+                    fail(player, String.format("This switch cannot be mined before its %s.", switchedItem.getTitle().toLowerCase()));
+                    return;
                 }
             }
             

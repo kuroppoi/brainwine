@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -444,7 +445,7 @@ public class Zone {
                     if(processed.contains(index)) {
                         continue;
                     }
-                                        
+                    
                     // Skip if not in bounds
                     if(!areCoordinatesInBounds(positionX, positionY)) {
                         break;
@@ -469,6 +470,9 @@ public class Zone {
                         break;
                     }
                     
+                    // Only count as processed if the ray can no longer be stopped
+                    processed.add(index);
+                    
                     // Metadata check
                     MetaBlock metaBlock = getMetaBlock(positionX, positionY);
                     
@@ -478,11 +482,13 @@ public class Zone {
                             continue;
                         }
                         
-                        // TODO dungeon switch check
+                        // Do not destroy block if it is a natural dungeon switch with an active linked item
+                        if(!metaBlock.hasOwner() && !getSwitchedItem(metaBlock).isAir()) {
+                            continue;
+                        }
                     }
                     
                     affectedBlocks.add(position);
-                    processed.add(index);
                 }
             }
 
@@ -542,6 +548,22 @@ public class Zone {
                 }
             }
         }
+    }
+    
+    public Item getSwitchedItem(MetaBlock metaBlock) {
+        // Do nothing if meta block is not a switch
+        if(!metaBlock.getItem().hasUse(ItemUseType.SWITCH)) {
+            return Item.AIR;
+        }
+        
+        // TODO this implementation assumes that all switched items have metadata
+        List<List<Integer>> positions = MapHelper.getList(metaBlock.getMetadata(), ">", Collections.emptyList());
+        return positions.stream()
+            .map(position -> getMetaBlock(position.get(0), position.get(1))) // Map to meta block
+            .filter(Objects::nonNull) // Remove null meta blocks
+            .map(MetaBlock::getItem) // Map to item
+            .filter(item -> item.hasUse(ItemUseType.SWITCHED)) // Remove non-switched items
+            .findFirst().orElse(Item.AIR); // Return first entry or air if none exist
     }
     
     public boolean isBlockWhole(int x, int y) {
