@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.server.messages.EventMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -70,20 +71,23 @@ public class EntityManager {
         }
     }
     
-    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, double acidity, Item baseItem) {
+    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, double acidity, Item baseItem, ZoneRules rules) {
         return spawns.entrySet().stream()
                 .filter(entry -> entry.getKey() == biome)
                 .map(Entry::getValue)
                 .flatMap(Collection::stream)
                 .filter(spawn -> locale.equalsIgnoreCase(spawn.getLocale())
                         && depth >= spawn.getMinDepth() && depth <= spawn.getMaxDepth()
-                        && acidity >= spawn.getMinAcidity() && acidity <= spawn.getMaxAcidity()
+                        && (
+                                (rules.isHostileEntitySpawnsEnabled() || acidity >= spawn.getMinAcidity()) &&
+                                (rules.isPeacefulEntitySpawnsEnabled() || acidity <= spawn.getMaxAcidity())
+                        )
                         && ((!baseItem.hasId("base/maw") && !baseItem.hasId("base/pipe")) || spawn.getOrifice() == baseItem))
                 .collect(Collectors.toList());
     }
     
-    private static EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, double acidity, Item baseItem) {
-        return new WeightedMap<>(getEligibleEntitySpawns(biome, locale, depth, acidity, baseItem), EntitySpawn::getFrequency).next();
+    private static EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, double acidity, Item baseItem, ZoneRules rules) {
+        return new WeightedMap<>(getEligibleEntitySpawns(biome, locale, depth, acidity, baseItem, rules), EntitySpawn::getFrequency).next();
     }
     
     public void tick(float deltaTime) {
@@ -133,7 +137,7 @@ public class EntityManager {
                 Block block = chunk.getBlock(x, y);
                 String locale = block.getBaseItem().isAir() ? "sky" : "cave";
                 EntitySpawn spawn = getRandomEligibleEntitySpawn(
-                        zone.getBiome(), locale, y / (double)zone.getHeight(), zone.getAcidity(), block.getBaseItem());
+                        zone.getBiome(), locale, y / (double)zone.getHeight(), zone.getAcidity(), block.getBaseItem(), zone.getRules());
                 
                 if(immediate) {
                     if(tryBustOrifice(x, y, Layer.BACK) || tryBustOrifice(x, y, Layer.FRONT)) {
@@ -250,6 +254,7 @@ public class EntityManager {
             
             Npc npc = new Npc(zone, entry.getType());
             npc.setName(entry.getName());
+            npc.setJob(entry.getJob());
             spawnEntity(npc, entry.getX(), entry.getY());
         }
     }
@@ -299,6 +304,7 @@ public class EntityManager {
             playersByName.put(player.getName().toLowerCase(), player);
             player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.ENTERING));
             player.sendMessageToPeers(new EntityPositionMessage(player));
+            player.sendMessage(new EventMessage("playerIconDidChange", player.getIconEmoji()));
         } else if(entity instanceof Npc) {
             npcs.put(entityId, (Npc)entity);
         }

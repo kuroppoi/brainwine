@@ -20,8 +20,6 @@ import java.util.stream.Collectors;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.Timer;
@@ -31,6 +29,7 @@ import brainwine.gameserver.achievement.JourneymanAchievement;
 import brainwine.gameserver.achievement.PositionAchievement;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.dialog.Dialog;
+import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogListItem;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.DialogType;
@@ -47,6 +46,12 @@ import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.item.Tradeability;
 import brainwine.gameserver.item.consumables.Consumable;
 import brainwine.gameserver.loot.Loot;
+import brainwine.gameserver.order.OrderManager;
+import brainwine.gameserver.quest.DailyQuests;
+import brainwine.gameserver.quest.PlayerQuests;
+import brainwine.gameserver.quest.Quest;
+import brainwine.gameserver.quest.QuestEvents;
+import brainwine.gameserver.quest.QuestProgress;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.AchievementMessage;
 import brainwine.gameserver.server.messages.AchievementProgressMessage;
@@ -77,6 +82,7 @@ import brainwine.gameserver.server.models.PlayerStat;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.ValueWithExpiry;
 import brainwine.gameserver.util.VersionUtils;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Block;
@@ -84,6 +90,8 @@ import brainwine.gameserver.zone.Chunk;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 public class Player extends Entity implements CommandExecutor {
     
@@ -96,9 +104,9 @@ public class Player extends Entity implements CommandExecutor {
     public static final int HEARTBEAT_TIMEOUT = 30000;
     public static final int MAX_AUTH_TOKENS = 3;
     public static final int TRACKED_ENTITY_UPDATE_INTERVAL = 100;
+    public static final int REGEN_NO_DAMAGE_TIME = 10000;
     public static final float ENTITY_VISIBILITY_RANGE = 40;
-    public static final int BASE_REGEN_INTERVAL = 30000;
-    public static final float BASE_REGEN_AMOUNT = 1.0F / 3.0F;
+    public static final float BASE_REGEN_AMOUNT = 0.1F;
     private static final Logger logger = LogManager.getLogger();
     private static int dialogDiscriminator;
     private final String documentId;
@@ -122,10 +130,16 @@ public class Player extends Entity implements CommandExecutor {
     private Set<String> followers;
     private Set<String> lootCodes;
     private Set<Achievement> achievements;
+    private Map<String, Integer> orders = new HashMap<>();
+    private String displayedOrder = null;
     private Map<String, Float> ignoredHints;
     private Map<Skill, Integer> skills;
     private Map<Item, List<Skill>> bumpedSkills;
     private Map<String, Object> appearance;
+    private Map<String, QuestProgress> questProgresses = new HashMap<>();
+    private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
+    private Map<String, Quest> androidQuests = new HashMap<>();
+    private String familyName = null;
     private final Map<String, Object> settings = new HashMap<>();
     private final Set<Integer> activeChunks = new HashSet<>();
     private final Map<Integer, Consumer<Object[]>> dialogs = new HashMap<>();
@@ -155,11 +169,11 @@ public class Player extends Entity implements CommandExecutor {
     private long lastHeartbeat;
     private long lastTrackedEntityUpdate;
     private long lastLandmarkVoteAt;
-    private long lastHealthRegenAt;
+    private long lastQuestTimeMessageAt;
     private Zone previousZone;
     private Zone nextZone;
     private Connection connection;
-    
+
     protected Player(String documentId, PlayerConfigFile config) {
         super(config.getCurrentZone());
         this.documentId = documentId;
@@ -172,6 +186,7 @@ public class Player extends Entity implements CommandExecutor {
         this.skillPoints = config.getSkillPoints();
         this.karma = config.getKarma();
         this.crowns = config.getCrowns();
+        this.displayedOrder = config.getDisplayedOrder();
         this.inventory = config.getInventory();
         this.statistics = config.getStatistics();
         this.authTokens = config.getAuthTokens();
@@ -184,10 +199,15 @@ public class Player extends Entity implements CommandExecutor {
         this.followers = config.getFollowers();
         this.lootCodes = config.getLootCodes();
         this.achievements = config.getAchievements();
+        this.orders = config.getOrders();
         this.ignoredHints = config.getIgnoredHints();
         this.skills = config.getSkills();
         this.bumpedSkills = config.getBumpedSkills();
         this.appearance = config.getAppearance();
+        this.questProgresses = config.getQuestProgresses();
+        this.dailyQuest = config.getDailyQuest();
+        this.androidQuests = config.getAndroidQuests();
+        this.familyName = config.getFamilyName();
         health = getMaxHealth();
         inventory.setPlayer(this);
         statistics.setPlayer(this);
@@ -232,17 +252,17 @@ public class Player extends Entity implements CommandExecutor {
                 kick("Connection timed out.");
             }
         }
-        
-        // Regenerate health out of combat        
-        if(!isDead() && health < getMaxHealth() && now >= Math.max(lastHealthRegenAt, lastDamagedAt) + BASE_REGEN_INTERVAL * inventory.getRegenBonus()) {
-            heal(BASE_REGEN_AMOUNT);
-            lastHealthRegenAt = now;
+
+        // Regenerate health out of combat
+        if(!isDead() && now >= lastDamagedAt + REGEN_NO_DAMAGE_TIME) {
+            heal(BASE_REGEN_AMOUNT * deltaTime);
         }
 
         if(!isDead()) {
             applyBreath(deltaTime);
             applyThirst(deltaTime);
             applyFreeze(deltaTime);
+            OrderManager.advance(this);
         }
 
         // Try to timeout trade
@@ -258,6 +278,15 @@ public class Player extends Entity implements CommandExecutor {
             updateTrackedEntities();
             sendMessage(new EntityPositionMessage(trackedEntities));
             lastTrackedEntityUpdate = now;
+        }
+
+        DailyQuests.tryIssueDailyQuest(this);
+
+        long dailyQuestTimeLeft = getDailyQuest().getTimeUntilExpiry(System.currentTimeMillis());
+        long dailyQuestRequiredInterval = dailyQuestTimeLeft >= 3600000 ? 600000 : 30000;
+        if(System.currentTimeMillis() >= lastQuestTimeMessageAt + dailyQuestRequiredInterval) {
+            lastQuestTimeMessageAt = System.currentTimeMillis();
+            DailyQuests.sendDailyQuestTime(this, dailyQuestTimeLeft);
         }
     }
     
@@ -303,7 +332,7 @@ public class Player extends Entity implements CommandExecutor {
         super.setHealth(health);
         sendMessage(new HealthMessage(health));
     }
-    
+
     @Override
     public void blockPositionChanged() {
         super.blockPositionChanged();
@@ -343,10 +372,10 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
     }
-    
+
     public void applyThirst(float deltaTime) {
         long now = System.currentTimeMillis();
-        
+
         // Update thirst stat
         if(isGodMode()) {
             thirst = 0.0;
@@ -355,16 +384,16 @@ public class Player extends Entity implements CommandExecutor {
             int direction = zone.getBiome() == Biome.DESERT && !zone.isPurified() ? 1 : -1;
             thirst = MathUtils.clamp(thirst + (direction * deltaTime / thirstPeriod), 0.0, 1.0);
         }
-        
+
         // Send message if it is time
         if(now > lastThirstMessage + 1000) {
             sendMessage(new StatMessage(PlayerStat.THIRST, (float)thirst));
             lastThirstMessage = now;
         }
-        
+
         if(thirst >= 1.0) {
             Item waterJar = ItemRegistry.getItem("containers/jar-water");
-            
+
             // Consume a jar of water if the player has any and reset thirst
             if(inventory.hasItem(waterJar)) {
                 inventory.removeItem(waterJar, true);
@@ -373,18 +402,18 @@ public class Player extends Entity implements CommandExecutor {
                 thirst = 0.0;
                 return;
             }
-            
+
             // Damage the player every 3 seconds instead if they have no water in their inventory
-            if(now > lastThirstDamageAt + 3000) {
+            if(now > lastThirstDamageAt + 3000 && health > 1.0) {
                 attack(null, null, 0.25F, DamageType.FIRE, true); // Apply as true damage
                 lastThirstDamageAt = now;
             }
         }
     }
-    
+
     public void applyFreeze(float deltaTime) {
         long now = System.currentTimeMillis();
-        
+
         // Update freeze stat
         if(isGodMode()) {
             cold = 0.0;
@@ -393,23 +422,23 @@ public class Player extends Entity implements CommandExecutor {
             int direction = zone.getBiome() == Biome.ARCTIC ? 1 : -2; // Warm back up twice as fast
             cold = MathUtils.clamp(cold + (direction * deltaTime / freezePeriod), 0.0, 1.0);
         }
-        
+
         // Send message & perform damage tick if it is time
         if(now > lastFreezeMessage + 1000) {
-            if(cold >= 1.0) {
+            if(cold >= 1.0 && health > 1.0) {
                 attack(null, null, 0.25F, DamageType.COLD, true); // Apply as true damage
             }
-            
+
             sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
             lastFreezeMessage = now;
         }
     }
-    
+
     public void applyWarmth() {
         cold = 0.0;
         sendMessage(new StatMessage(PlayerStat.FREEZE, (float)cold));
     }
-    
+
     @Override
     public float getAttackMultiplier(EntityAttack attack) {
         return isGodMode() ? 9999.0F : 1.0F;
@@ -443,6 +472,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("id", documentId);
         config.putAll(appearance);
         config.put("u", inventory.findJetpack().getCode());
+        config.put("ni", getIcon());
         return config;
     }
     
@@ -451,7 +481,7 @@ public class Player extends Entity implements CommandExecutor {
      */
     public void onZoneEntered() {
         boolean spawnEffect = false;
-        
+
         // Find new spawn point if zone has changed
         if(zone != previousZone) {
             MetaBlock spawn = zone.getRandomSpawnBlock();
@@ -463,12 +493,12 @@ public class Player extends Entity implements CommandExecutor {
                 spawnX = spawn.getX() + 1;
                 spawnY = spawn.getY();
             }
-            
+
             x = spawnX;
             y = spawnY;
             spawnEffect = true;
         }
-        
+
         // Handle custom spawn location
         if(zone != nextZone) {
             x = spawnX;
@@ -480,7 +510,7 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         customSpawn = false;
-        
+
         // Rescue player if they're out of bounds somehow
         // blockX and blockY might not be assigned yet so we check the absolute position
         if(!zone.areCoordinatesInBounds((int)x, (int)y)) {
@@ -511,12 +541,12 @@ public class Player extends Entity implements CommandExecutor {
         
         ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
         PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
-        
+
         // Issue an API token if the player doesn't have one
         if(apiToken == null) {
             playerManager.issueApiToken(this);
         }
-        
+
         sendMessage(new ConfigurationMessage(id, getClientConfig(), GameConfiguration.getClientConfig(this), zone.getClientConfig(this)));
         sendMessage(new ZoneStatusMessage(zone.getStatusConfig(this)));
         zone.sendMachineStatus(this);
@@ -562,7 +592,7 @@ public class Player extends Entity implements CommandExecutor {
         if(spawnEffect) {
             zone.spawnEffect(x + 0.5F, y - 0.75F, "spawn", 20);
         }
-        
+
         // Send social info
         sendMessage(new FollowMessage(followees.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 0));
         sendMessage(new FollowMessage(followers.stream().map(playerManager::getPlayerById).filter(Objects::nonNull).collect(Collectors.toList()), 1));
@@ -574,6 +604,9 @@ public class Player extends Entity implements CommandExecutor {
         // Misc stuff
         updateAchievementProgress(JourneymanAchievement.class);
         checkRegistration();
+        PlayerQuests.deleteUnknownQuestProgress(this);
+        PlayerQuests.sendInitialPlayerQuestMessages(this);
+        QuestEvents.handleEnterZone(this, zone);
         recentZones.remove(zone.getDocumentId()); // Remove first in case the zone has already been visited recently
         recentZones.add(0, zone.getDocumentId()); // Add at top so we don't have to reverse the list for the zone searcher
         
@@ -592,7 +625,7 @@ public class Player extends Entity implements CommandExecutor {
         lastPlacement = null;
         clientVersion = null;
         previousZone = zone;
-        
+
         if(zone != null) {
             zone.removeEntity(this);
         }
@@ -866,19 +899,25 @@ public class Player extends Entity implements CommandExecutor {
         if(recipient == this) {
             return;
         }
-        
+
+        if(zone != null && !zone.isMarket()) {
+            showDialog(DialogHelper.messageDialog("Trade at the Market!", "Trading is only allowed in Market worlds and private worlds. Ask the player to join you in a Market world."));
+            return;
+        }
+
+
         // Check if item is tradeable
         if(!isGodMode() && item.getTradeability() == Tradeability.FALSE) {
             notify("Sorry, you cannot trade this item.");
             return;
         }
-        
+
         // Check if player is high enough level to trade this item
         if(!isGodMode() && item.getTradeability() == Tradeability.LEVELED && getLevel() < 20) {
             notify("You must be level 20+ to trade this item.");
             return;
         }
-        
+
         // Cancel the current trade if the player is initiating a new trade
         if(isTrading() && !tradeSession.isParticipant(recipient)) {
             tradeSession.cancel(this);
@@ -1003,8 +1042,10 @@ public class Player extends Entity implements CommandExecutor {
         if(heldItem.getGroup() != bonus.getTool()) {
             return 0.0;
         }
-        
-        return bonus.getChance() * (getTotalSkillLevel(bonus.getSkill()) / (double)MAX_SKILL_LEVEL) * heldItem.getToolBonus();
+
+        double accessoryBonus = getInventory().findAccessoryWithUse(ItemUseType.DOWSING).isAir() ? 1.0 : 2.0;
+
+        return bonus.getChance() * getNormalizedSkill(bonus.getSkill()) * heldItem.getToolBonus() * accessoryBonus;
     }
     
     /**
@@ -1037,11 +1078,11 @@ public class Player extends Entity implements CommandExecutor {
     protected void setApiToken(String apiToken) {
         this.apiToken = apiToken;
     }
-    
+
     public String getApiToken() {
         return apiToken;
     }
-    
+
     protected void clearAuthTokens() {
         authTokens.clear();
     }
@@ -1102,60 +1143,60 @@ public class Player extends Entity implements CommandExecutor {
         if(!followees.add(player.getDocumentId())) {
             return; // Do nothing if player is already following
         }
-        
+
         player.addFollower(this);
         sendMessage(new FollowMessage(player, 0, true));
     }
-    
+
     public void unfollowPlayer(Player player) {
         if(!followees.remove(player.getDocumentId())) {
             return; // Do nothing if player is not following
         }
-        
+
         player.removeFollower(this);
         sendMessage(new FollowMessage(player, 0, false));
     }
-    
+
     public boolean isFollowing(Player player) {
         return isFollowing(player.getDocumentId());
     }
-    
+
     public boolean isFollowing(String followee) {
         return followees.contains(followee);
     }
-    
+
     public Set<String> getFollowees() {
         return Collections.unmodifiableSet(followees);
     }
-    
+
     private void addFollower(Player player) {
         followers.add(player.getDocumentId());
-        
+
         if(isOnline()) {
             sendMessage(new FollowMessage(player, 1, true));
         }
     }
-    
+
     private void removeFollower(Player player) {
         followers.remove(player.getDocumentId());
-        
+
         if(isOnline()) {
             sendMessage(new FollowMessage(player, 1, false));
         }
     }
-    
+
     public boolean hasFollower(Player player) {
         return hasFollower(player.getDocumentId());
     }
-    
+
     public boolean hasFollower(String follower) {
         return followers.contains(follower);
     }
-    
+
     public Set<String> getFollowers() {
         return Collections.unmodifiableSet(followers);
     }
-    
+
     public void addLootCode(String lootCode) {
         lootCodes.add(lootCode);
     }
@@ -1258,7 +1299,8 @@ public class Player extends Entity implements CommandExecutor {
     
     public void addExperience(int amount, String message) {
         if(amount > 0) {
-            setExperience(experience + amount, message);
+            double zoneXpMultiplier = getZone() == null ? 1.0 : getZone().getXpMultiplier();
+            setExperience((int) Math.round(experience + zoneXpMultiplier * amount), message);
         }
     }
     
@@ -1422,9 +1464,11 @@ public class Player extends Entity implements CommandExecutor {
             int experience = achievement.getExperience();
             String title = achievement.getTitle();
             addExperience(experience);
-            sendMessage(new AchievementMessage(title, experience)); 
-            notifyPeers(String.format("%s has earned the %s achievement.", name, title), NotificationType.SYSTEM);
-            
+            sendMessage(new AchievementMessage(title, experience));
+            String message = String.format("%s has earned the %s achievement.", name, title);
+            notifyPeers(message, NotificationType.SYSTEM);
+            GameServer.getInstance().getPusher().handlePlayerMessage(this, message);
+
             if(isV3()) {
                 notify(title, NotificationType.ACHIEVEMENT);
             }
@@ -1442,7 +1486,38 @@ public class Player extends Entity implements CommandExecutor {
     public Set<Achievement> getAchievements() {
         return Collections.unmodifiableSet(achievements);
     }
-    
+
+    public Map<String, Integer> getOrders() {
+        return orders;
+    }
+
+    public String getDisplayedOrder() {
+        return displayedOrder;
+    }
+
+    /** Get value for the entity status "ni" field. Use {@code Player#getIconEmoji} when sending a playerIconDidChange EventMessage */
+    public String getIcon() {
+        if(getDisplayedOrder() == null
+                || !OrderManager.getOrders().containsKey(getDisplayedOrder())
+                || orders.getOrDefault(getDisplayedOrder(), 0) == 0) {
+            return null;
+        }
+        return String.format("orders/%s-%d",
+                getDisplayedOrder(),
+                getOrders().getOrDefault(getDisplayedOrder(), 0)
+        );
+    }
+
+    /** Icon for sending a playerIconDidChange EventMessage. Use {@code Player#getIcon} for the entity status "ni" field. */
+    public String getIconEmoji() {
+        String icon = getIcon();
+        return icon == null ? null : "emoji/" + icon;
+    }
+
+    public void setDisplayedOrder(String displayedOrder) {
+        this.displayedOrder = displayedOrder;
+    }
+
     public void randomizeAppearance() {
         appearance.putAll(Appearance.getRandomAppearance(this));
         zone.sendMessage(new EntityChangeMessage(id, appearance));
@@ -1451,12 +1526,37 @@ public class Player extends Entity implements CommandExecutor {
     public void updateAppearance(Map<String, Object> appearance) {
         this.appearance.putAll(appearance);
         zone.sendMessage(new EntityChangeMessage(id, appearance));
+        QuestEvents.handleAppearance(this, appearance);
     }
     
     public Map<String, Object> getAppearance() {
         return Collections.unmodifiableMap(appearance);
     }
-    
+
+    public Map<String, QuestProgress> getQuestProgresses() {
+        return questProgresses;
+    }
+
+    public ValueWithExpiry<List<Quest>> getDailyQuest() {
+        return dailyQuest;
+    }
+
+    public Map<String, Quest> getAndroidQuests() {
+        return androidQuests;
+    }
+
+    public void setDailyQuest(ValueWithExpiry<List<Quest>> dailyQuest) {
+        this.dailyQuest = dailyQuest;
+    }
+
+    public String getFamilyName() {
+        return familyName;
+    }
+
+    public void setFamilyName(String familyName) {
+        this.familyName = familyName;
+    }
+
     public void setSkillLevel(Skill skill, int level) {
         skills.put(skill, level);
         sendMessage(new SkillMessage(skill, level));
@@ -1536,6 +1636,7 @@ public class Player extends Entity implements CommandExecutor {
         
         loot.getItems().forEach((item, quantity) -> {
             inventory.addItem(item, quantity, true);
+            QuestEvents.handleCollectItem(this, item, quantity);
             section.addItem(new DialogListItem()
                     .setItem(item.getCode())
                     .setText(String.format("%s x %s", item.getTitle(), quantity)));
@@ -1701,6 +1802,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("deaths", statistics.getDeaths());
         config.put("appearance", appearance);
         config.put("settings", settings);
+        config.put("ni", getIcon());
         config.put("api_token", apiToken);
         return config;
     }

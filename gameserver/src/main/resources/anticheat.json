@@ -1,0 +1,7 @@
+{
+  "exploder_farm": {
+    "enabled": false,
+    "xp_factor": 0.1,
+    "loot_counter_max": 10
+  }
+}

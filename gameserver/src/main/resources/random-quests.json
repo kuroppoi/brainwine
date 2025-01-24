@@ -1,0 +1,207 @@
+{
+    "daily_quest_interval": "24h",
+    "daily_quest_count": 5,
+    "strings": {
+        "kill_description": [
+            "Today you've gotta kill some critters!",
+            "Alright stop. It's hammer time!",
+            "Blow them up for some crowns!",
+            "There's nothing better for stress relief by putting your weapons to good use!"
+        ],
+        "collect_description": [
+            "Time to do some scavenging.",
+            "The shelves in your father's thrift store are empty. Help him stock it back up!",
+            "Head out into the wastes and see what's lying around.",
+            "Time to fill your pockets with loot from the wastes!"
+        ],
+        "craft_description": [
+            "Time to do some crafting!",
+            "Put those crafting skills to good use by crafting these items!",
+            "Craft these items for some crowns!",
+            "The mayor of Cakeland needs you to craft these items!"
+        ]
+    },
+    "quests": [
+        {
+            "frequency": 10,
+            "type": "kill",
+            "categories": [ "terrapus" ],
+            "quantity": { "random_between": [ 5, 10 ] },
+            "reward": { "crowns": 20 }
+        },
+        {
+            "frequency": 10,
+            "type": "kill",
+            "categories": ["brains"],
+            "task_description": "Stop the brain uprising! Kill {QUANTITY} brains of any type.",
+            "quantity": { "random_between":  [3, 5] },
+            "reward": { "crowns": 20 }
+        },
+        {
+            "frequency": 50,
+            "type": "kill",
+            "entities": [
+                "creatures/crow",
+                "creatures/crow-auto",
+                "creatures/armadillo",
+                "creatures/rat",
+                "creatures/skunk",
+                "creatures/roach",
+                "creatures/roach-large",
+                "creatures/bunny-ice"
+            ],
+            "task_description": "Get rid of the small animals! Kill {QUANTITY} small animals of any kind!",
+            "quantity": { "random_between":  [3, 5] },
+            "reward": { "crowns": 20 }
+        },
+        {
+            "frequency": 50,
+            "type": "collect",
+            "tasks": [
+                {
+                    "items": {
+                        "choices": [
+                            "mechanical/pipe",
+                            "containers/barrel",
+                            "containers/barrel-tall",
+                            "containers/crate-small",
+                            "containers/crate-large",
+                            "containers/crate-industrial-small",
+                            "containers/crate-industrial-large",
+                            "building/staircase",
+                            "building/iron",
+                            "building/copper",
+                            "rubble/gravestone"
+                        ]
+                    },
+                    "count": { "random_between": [5, 15] }
+                }
+            ],
+            "reward": { "crowns": 20 }
+        },
+        {
+            "frequency": 50,
+            "type": "collect",
+            "tasks": [
+                {
+                    "items": {
+                        "choices": [
+                            "lighting/candle",
+                            "lighting/lantern",
+                            "lighting/candlelabra",
+                            "furniture/hatrack",
+                            "vegetation/mushrooms-tiny",
+                            "vegetation/mushroom-portabella",
+                            "vegetation/mushroom-oyster",
+                            "vegetation/mushroom-porcini",
+                            "vegetation/mushroom-willow-tall",
+                            "vegetation/mushroom-amanita-tall",
+                            "vegetation/mushroom-chanterelle",
+                            "vegetation/mushroom-acid",
+                            "vegetation/mushroom-lava",
+                            "vegetation/mushroom-apostate",
+                            "vegetation/mushroom-shade",
+                            "vegetation/tumbleweed",
+                            "rubble/skeleton"
+                        ]
+                    },
+                    "count": { "random_between": [5, 15] }
+                }
+            ],
+            "reward": { "crowns": 20 }
+        },
+        {
+            "frequency": 40,
+            "type": "collect",
+            "tasks": [
+                {
+                    "items": {
+                        "choices": [
+                            "arctic/ice-brick",
+                            "arctic/ice",
+                            "arctic/snow",
+                            "containers/wine-bottle",
+                            "furniture/chair-plush",
+                            "ammo/bullets",
+                            "ammo/gunpowder",
+                            "containers/crate-large",
+                            "containers/crate-small",
+                            "containers/sack-large",
+                            "containers/sack-small",
+                            "containers/barrel-tall",
+                            "containers/barrel",
+                            "industrial/vat",
+                            "industrial/conveyor",
+                            "industrial/conveyor-space"
+                        ]
+                    },
+                    "count": { "random_between": [5, 15] }
+                }
+            ],
+            "reward": { "crowns": 20 }
+        },
+        {
+            "frequency": 40,
+            "type": "collect",
+            "tasks": [
+                {
+                    "items": {
+                        "choices": [
+                            "ground/crystal-blue-small",
+                            "ground/crystal-purple-1",
+                            "ground/crystal-red-1",
+                            "ground/crystal-orange-small",
+                            "ground/yellow-crystal-small",
+                            "ground/crystal-green-small",
+                            "ground/crystal-white-small"
+                        ]
+                    },
+                    "count": { "random_between": [1, 5] }
+                }
+            ],
+            "reward": { "crowns": 20 }
+        },
+        {
+            "frequency": 100,
+            "type": "craft",
+            "tasks": [
+                {
+                    "items": {
+                        "choices": [
+                            "furniture/snowman",
+                            "building/tiles-checkered",
+                            "back/checkered",
+                            "furniture/bed",
+                            "furniture/bed-covered",
+                            "furniture/bidet",
+                            "furniture/bathtub",
+                            "furniture/fridge",
+                            "furniture/book-stand",
+                            "furniture/umbrella",
+                            "mechanical/bomb",
+                            "mechanical/bomb-incendiary",
+                            "mechanical/bomb-electric",
+                            "tools/pistol",
+                            "tools/musket",
+                            "consumables/jerky-power",
+                            "containers/chest",
+                            "building/door-brass",
+                            "mechanical/door-beefy-closed-copper",
+                            "mechanical/door-beefy-closed-iron",
+                            "tools/cane",
+                            "tools/pickaxe-fine",
+                            "building/mailbox",
+                            "containers/wine-bottle",
+                            "building/plug",
+                            "containers/crate-industrial-small",
+                            "containers/crate-industrial-large",
+                            "building/scarecrow",
+                            "building/tinman"
+                        ]
+                    }
+                }
+            ],
+            "reward": { "crowns": 20 }
+        }
+    ]
+}

@@ -1,13 +1,16 @@
 {
   "sections": {
-    "utilities": {
-      "name": "Utilities",
+    "Accessories, Skills and Equipment": {
+      "name": "Accessories, Skills and Equipment",
       "icon": "icon-profile-equipment",
       "products": [
-        "brain-wine",
+        "makeup-kit",
         "skill-book",
+        "brain-wine",
         "skill-reset",
-        "name-change"
+        "teleporter",
+        "stealth-pack",
+        "power-up-pack"
       ]
     },
     "protectors": {
@@ -50,60 +53,83 @@
     }
   },
   "products": {
-    "brain-wine": {
+    "power-up-pack": {
       "type": "item",
-      "name": "Brain Wine",
-      "cost": 75,
-      "description": "Upgrade any skill by one point with this carefully brewed essence of brain! Note: each skill can only be upgraded once via brain wine, and only to Level 10.",
-      "image": [
-        { "sprite": "inventory/consumables/brain-wine" },
-        { "sprite": "shop/banner", "color": "AAFF66" },
-        { "sprite": "shop/banner-text-sale" }
-      ],
+      "name": "Jerky Pack",
+      "description": "Grab a quick bite to eat and keep your place in battle with this stash of extra jerky!",
+      "image": "inventory/consumables/jerky",
+      "cost": 10,
       "items": {
-        "consumables/brain-wine": 1
+        "consumables/jerky": 10,
+        "consumables/jerky-power": 5
       }
     },
-    "skill-book": {
+    "stealth-pack": {
       "type": "item",
-      "name": "Skill Book",
-      "cost": 75,
-      "description": "Upgrade any skill by one point with this lovely tome of knowledge! Note: each skill can only be upgraded once via books, and only to Level 10.",
-      "image": [
-        { "sprite": "inventory/consumables/book-skill" },
-        { "sprite": "shop/banner", "color": "AAFF66" },
-        { "sprite": "shop/banner-text-sale" }
-      ],
+      "name": "Stealth Pack",
+      "description": "Sneak around like a pro with this collection of stealth cloaks. Those brains won't know you were ever there!",
+      "image": "inventory/consumables/cloak",
+      "cost": 30,
       "items": {
-        "consumables/book-skill": 1
+        "consumables/cloak": 5
       }
     },
     "skill-reset": {
       "type": "item",
       "name": "Skill Reset",
-      "cost": 100,
-      "description": "Go back in time a little with this handy skill reset! Reclaim all of your skill points and re-apply them however you like.",
+      "description": "Go back in time with this handy skill reset! Reclaim all of your skill points from each skill and re-apply them however you like.",
       "image": "inventory/consumables/skill-reset",
+      "cost": 100,
       "items": {
         "consumables/skill-reset": 1
       }
     },
-    "name-change": {
+    "skill-book": {
       "type": "item",
-      "name": "Name Change",
-      "cost": 125,
-      "description": "Want to change your player name? Grab this handy name tag and get creative!",
-      "image": "inventory/consumables/name-change",
+      "name": "Skill Book",
+      "description": "Upgrade any skill by one point with this lovely tome of knowledge! Note: each skill can only be upgraded once via books, and only to Level 10.",
+      "image": "inventory/consumables/book-skill",
+      "cost": 250,
       "items": {
-        "consumables/name-change": 1
+        "consumables/book-skill": 1
+      }
+    },
+    "brain-wine": {
+      "type": "item",
+      "name": "Brain Wine",
+      "description": "Upgrade any skill by one point with this carefully brewed essence of brain! Note: each skill can only be upgraded once via brain wine, and only to Level 10.",
+      "image": "inventory/consumables/brain-wine",
+      "cost": 250,
+      "items": {
+        "consumables/brain-wine": 1
+      }
+    },
+    "makeup-kit": {
+      "type": "item",
+      "name": "Makeup Kit",
+      "description": "Revolutionize your look with all new skin tones and hair colors. Your friends will be green with envy once you're actually green!",
+      "image": "inventory/accessories/makeup",
+      "cost": 400,
+      "items": {
+        "accessories/makeup": 1
+      }
+    },
+    "teleporter": {
+      "type": "item",
+      "name": "Teleporter",
+      "description": "Drop a teleporter to allow quick access to your home or anywhere else.",
+      "image": "inventory/mechanical/teleporter",
+      "cost": 40,
+      "items": {
+        "mechanical/teleporter": 1
       }
     },
     "giga-protector": {
       "type": "item",
       "name": "Giga Protector",
-      "cost": 225,
       "description": "Protect your creations and valuables from being mined by other players with this giga protector! When placed, it will emit a protective field that protects blocks within a 120 block radius.",
       "image": "inventory/mechanical/dish-giga",
+      "cost": 500,
       "items": {
         "mechanical/dish-giga": 1
       }
@@ -111,9 +137,9 @@
     "mega-protector": {
       "type": "item",
       "name": "Mega Protector",
-      "cost": 125,
       "description": "Protect your creations and valuables from being mined by other players with this mega protector! When placed, it will emit a protective field that protects blocks within a 60 block radius.",
       "image": "inventory/mechanical/dish-mega",
+      "cost": 250,
       "items": {
         "mechanical/dish-mega": 1
       }
@@ -121,9 +147,9 @@
     "large-protector": {
       "type": "item",
       "name": "Large Protector",
-      "cost": 50,
       "description": "Protect your creations and valuables from being mined by other players with this large protector! When placed, it will emit a protective field that protects blocks within a 30 block radius.",
       "image": "inventory/mechanical/dish-large",
+      "cost": 100,
       "items": {
         "mechanical/dish-large": 1
       }
@@ -131,21 +157,21 @@
     "small-protector": {
       "type": "item",
       "name": "Small Protector",
-      "cost": 20,
       "description": "Protect your creations and valuables from being mined by other players with this small protector! When placed, it will emit a protective field that protects blocks within a 15 block radius.",
       "image": "inventory/mechanical/dish",
+      "cost": 50,
       "items": {
         "mechanical/dish": 1
       }
     },
     "micro-protector-pack": {
       "type": "item",
-      "name": "Micro Protector Pack",
-      "cost": 20,
-      "description": "Protect your creations and valuables from being mined by other players with these micro protectors! When placed, each dish will emit a protective field that protects blocks within a 5 block radius.",
+      "name": "Micro Protector",
+      "description": "Protect your creations and valuables from being mined by other players with this micro protector! When placed, it will emit a protective field that protects blocks within a 5 block radius.",
       "image": "inventory/mechanical/dish-micro",
+      "cost": 25,
       "items": {
-        "mechanical/dish-micro": 4
+        "mechanical/dish-micro": 1
       }
     },
     "private-world-small": {

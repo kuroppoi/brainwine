@@ -23,13 +23,13 @@ public class WorldRenameCommand extends WorldCommand {
         if(!checkArgumentCount(player, args, 1)) {
             return;
         }
-        
+
         // Check if command is on cooldown
         if(!player.isGodMode() && zone.isActionOnCooldown(ACTION_ID, 1, ChronoUnit.DAYS)) {
             player.notify("Sorry, you can rename your world only once a day.");
             return;
         }
-        
+
         ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
         String name = String.join(" ", args).trim().replaceAll(" +", " ");
         
@@ -56,7 +56,7 @@ public class WorldRenameCommand extends WorldCommand {
             player.notify("An unexpected problem occured while renaming your world.", SYSTEM);
             return;
         }
-        
+
         zone.recordActionTime(ACTION_ID);
     }
 

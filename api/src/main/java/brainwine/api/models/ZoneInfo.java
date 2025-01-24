@@ -27,8 +27,8 @@ public class ZoneInfo {
     private final OffsetDateTime creationDate;
     private final String owner;
     private final List<String> members;
-    
-    public ZoneInfo(String name, String biome, String activity, boolean pvp, boolean premium, boolean isPrivate, boolean isProtected, 
+
+    public ZoneInfo(String name, String biome, String activity, boolean pvp, boolean premium, boolean isPrivate, boolean isProtected,
             int playerCount, int width, int height, int[] surface, double explorationProgress, OffsetDateTime creationDate, String owner, List<String> members) {
         this.name = name;
         this.biome = biome;
@@ -70,7 +70,7 @@ public class ZoneInfo {
     public boolean isPrivate() {
         return isPrivate;
     }
-    
+
     public boolean isProtected() {
         return !isPrivate && isProtected; // Only display protection lock if world is public
     }
@@ -104,12 +104,12 @@ public class ZoneInfo {
     public OffsetDateTime getCreationDate() {
         return creationDate;
     }
-    
+
     @JsonIgnore
     public String getOwner() {
         return owner;
     }
-    
+
     @JsonIgnore
     public List<String> getMembers() {
         return Collections.unmodifiableList(members);

@@ -31,13 +31,16 @@ public class ZoneConfigFile {
     
     @JsonSetter(nulls = Nulls.SKIP)
     private float acidity = 1.0F;
-    
+
+    @JsonSetter(nulls = Nulls.DEFAULT)
+    private ZoneActivity activity;
+
     @JsonSetter(value = "private")
     private boolean isPrivate;
-    
+
     @JsonSetter(value = "protected")
     private boolean isProtected;
-    
+
     @JsonSetter(nulls = Nulls.SKIP)
     private boolean pvp;
     
@@ -46,22 +49,25 @@ public class ZoneConfigFile {
     
     @JsonSetter(nulls = Nulls.SKIP)
     private String owner;
-    
+
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     private List<String> members = new ArrayList<>();
-    
+
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     private Map<EcologicalMachine, List<Item>> discoveredParts = new HashMap<>();
     
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     private Map<String, OffsetDateTime> actionHistory = new HashMap<>();
-    
+
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime creationDate = OffsetDateTime.now();
     
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime lastActiveDate = OffsetDateTime.now();
-    
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    private ZoneRules rules = null;
+
     @JsonCreator
     private ZoneConfigFile(@JsonProperty(value = "name", required = true) String name,
             @JsonProperty(value = "width", required = true) int width,
@@ -77,6 +83,7 @@ public class ZoneConfigFile {
         this.width = zone.getWidth();
         this.height = zone.getHeight();
         this.acidity = zone.getAcidity();
+        this.activity = zone.getActivity();
         this.isPrivate = zone.isPrivate();
         this.isProtected = zone.isProtected();
         this.pvp = zone.isPvp();
@@ -86,8 +93,9 @@ public class ZoneConfigFile {
         this.discoveredParts = zone.getDiscoveredParts();
         this.actionHistory = zone.getActionHistory();
         this.creationDate = zone.getCreationDate();
+        this.rules = zone.getRules();
     }
-    
+
     public String getName() {
         return name;
     }
@@ -107,11 +115,15 @@ public class ZoneConfigFile {
     public float getAcidity() {
         return acidity;
     }
-    
+
+    public ZoneActivity getActivity() {
+        return activity;
+    }
+
     public boolean isPrivate() {
         return isPrivate;
     }
-    
+
     public boolean isProtected() {
         return isProtected;
     }
@@ -127,11 +139,11 @@ public class ZoneConfigFile {
     public String getOwner() {
         return owner;
     }
-    
+
     public List<String> getMembers() {
         return members;
     }
-    
+
     public Map<EcologicalMachine, List<Item>> getDiscoveredParts() {
         return discoveredParts;
     }
@@ -139,12 +151,16 @@ public class ZoneConfigFile {
     public Map<String, OffsetDateTime> getActionHistory() {
         return actionHistory;
     }
-    
+
     public OffsetDateTime getCreationDate() {
         return creationDate;
     }
     
     public OffsetDateTime getLastActiveDate() {
         return lastActiveDate;
+    }
+
+    public ZoneRules getRules() {
+        return rules;
     }
 }

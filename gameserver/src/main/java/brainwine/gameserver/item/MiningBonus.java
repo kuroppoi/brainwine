@@ -12,7 +12,9 @@ public class MiningBonus {
     private double chance;
     private Skill skill;
     private ItemGroup tool;
-    private LazyItemGetter item;
+    private ItemUseType accessory;
+    private int mod = -1;
+    private String item;
     private boolean doubleLoot;
     private String notification;
     
@@ -30,9 +32,27 @@ public class MiningBonus {
     public ItemGroup getTool() {
         return tool;
     }
-    
-    public Item getItem() {
-        return item == null ? Item.AIR : item.get();
+
+    public ItemUseType getAccessory() {
+        return accessory;
+    }
+
+    public int getMod() {
+        return mod;
+    }
+
+    public String getItem() {
+        return item;
+    }
+
+    public Item computeItem(Item minedItem) {
+        if(this.item == null) {
+            return Item.AIR;
+        }
+        if(this.item.startsWith("-") && minedItem != null) {
+            return ItemRegistry.getItem(minedItem.getId() + this.item);
+        }
+        return ItemRegistry.getItem(this.item);
     }
     
     @JsonProperty("double")

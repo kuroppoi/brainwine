@@ -1,5 +1,6 @@
 package brainwine.gameserver.shop;
 
+import brainwine.gameserver.zone.ZoneRules;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -46,6 +47,7 @@ public class ZoneProduct extends Product {
             zone.setOwner(player);
             zone.setPrivate(true);
             zone.setProtected(true);
+            zone.setRules(ZoneRules.getPrivateDefaults());
             GameServer.getInstance().getZoneManager().addZone(zone);
             
             // Ask player if they want to travel to their newly purchased world

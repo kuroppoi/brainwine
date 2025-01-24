@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import brainwine.gameserver.anticheat.AnticheatManager;
+import brainwine.gameserver.anticheat.ExploderFarm;
 import org.apache.commons.text.WordUtils;
 
 import brainwine.gameserver.entity.Entity;
@@ -23,7 +25,6 @@ import brainwine.gameserver.zone.Zone;
  * Interaction handler for switches
  */
 public class SwitchInteraction implements ItemInteraction {
-    
     @Override
     public void interact(Zone zone, Entity entity, int x, int y, Layer layer, Item item, int mod, MetaBlock metaBlock,
             Object config, Object[] data) {
@@ -161,7 +162,30 @@ public class SwitchInteraction implements ItemInteraction {
         // Create explosion
         DamageType damageType = type.equalsIgnoreCase("electric") ? DamageType.ENERGY : DamageType.fromName(type);
         String effect = String.format("bomb-%s", type.toLowerCase());
+
+        // Farm mitigation
+        ExploderFarm exploderFarm = AnticheatManager.getConfig().getExploderFarm();
+        if(exploderFarm.isEnabled()) {
+            zone.setXpMultiplier(exploderFarm.getXpFactor());
+            zone.setEntityShouldDrop(countExploderDrops(metaBlock, exploderFarm.getLootCounterMax()));
+        }
+
         zone.explode(x, y, 6, entity, false, 6, damageType, effect);
+        zone.setEntityShouldDrop(true);
+        zone.setXpMultiplier(1.0);
+    }
+
+    /** Prevents the explosion from giving loot unless it is every few interactions. */
+    private boolean countExploderDrops(MetaBlock metaBlock, int every) {
+        int current = metaBlock.getIntProperty("d");
+        boolean result = current + 1 >= every;
+        if(result) {
+            metaBlock.setProperty("d", 0);
+        } else {
+            metaBlock.setProperty("d", current + 1);
+        }
+
+        return result;
     }
     
     private void switchSign(Zone zone, Entity entity, MetaBlock metaBlock, MetaBlock switchMeta) {
@@ -184,7 +208,7 @@ public class SwitchInteraction implements ItemInteraction {
             }
         }
         
-        // Update sign text        
+        // Update sign text
         String separator = "\n";
         String[] keys = {"t1", "t2", "t3", "t4"};
         String[] segments = WordUtils.wrap(message, 20, separator, true).split(separator, 4);

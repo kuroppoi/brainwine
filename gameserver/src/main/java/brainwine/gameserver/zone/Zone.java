@@ -40,6 +40,7 @@ import brainwine.gameserver.player.ChatType;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.prefab.Prefab;
+import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
@@ -82,11 +83,13 @@ public class Zone {
     private float time = (float)Math.random(); // TODO temporary
     private float temperature;
     private float acidity;
+    private ZoneActivity activity;
     private boolean isPrivate;
     private boolean isProtected;
     private boolean pvp;
     private String entryCode;
     private String owner;
+    private ZoneRules rules = new ZoneRules();
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
     private final GrowthManager growthManager;
@@ -107,7 +110,10 @@ public class Zone {
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
     private boolean modified;
-    
+    private boolean frozen = false;
+    private double xpMultiplier = 1.0;
+    private boolean entityShouldDrop = true;
+
     protected Zone(String documentId, ZoneConfigFile config, ZoneDataFile data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
         int[] surface = data.getSurface();
@@ -126,11 +132,13 @@ public class Zone {
         owner = config.getOwner();
         members.addAll(config.getMembers());
         actionHistory.putAll(config.getActionHistory());
-        acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
+        acidity = config.getAcidity();
+        activity = config.getActivity();
         isPrivate = config.isPrivate();
         isProtected = config.isProtected();
         pvp = config.isPvp();
         creationDate = config.getCreationDate();
+        setRules(config.getRules());
     }
     
     public Zone(String documentId, String name, Biome biome, int width, int height) {
@@ -145,7 +153,7 @@ public class Zone {
         surface = new int[width];
         sunlight = new int[width];
         chunksExplored = new boolean[numChunksWidth * numChunksHeight];
-        acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : 1;
+        acidity = 1.0f;
         chunkManager = new ChunkManager(this);
         steamManager = new SteamManager(this);
         growthManager = new GrowthManager(this);
@@ -231,7 +239,29 @@ public class Zone {
         
         ticksElapsed++;
     }
-    
+
+    public void freeze() {
+        freeze(null);
+    }
+
+    public void freeze(String reason) {
+        frozen = true;
+
+        String playerMessage = reason == null ? "The zone " + getName() + " will be in maintenance for a while." : reason;
+
+        for(Player player : getPlayers()) {
+            player.changeZone(null);
+            player.kick(playerMessage, true);
+        }
+
+        blockChanges.clear();
+    }
+
+    public void thaw() {
+        blockChanges.clear();
+        frozen = false;
+    }
+
     /**
      * Simulate happenings that take longer periods of time
      */
@@ -293,6 +323,7 @@ public class Zone {
      */
     public void sendChatMessage(Player sender, String text, ChatType type) {
         sendMessage(new ChatMessage(sender.getId(), text, type));
+        QuestEvents.handleChat(sender);
         GameServer.getInstance().notify(String.format("%s: %s", sender.getName(), text), NotificationType.CHAT);
     }
     
@@ -516,6 +547,10 @@ public class Zone {
                 double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
                 float damage = (float)(baseDamage - distance);
                 entity.attack(cause, item, damage, damageType);
+
+                if(entity.isDead() && cause != null && cause.isPlayer()) {
+                    QuestEvents.handleExplode((Player) cause, entity);
+                }
             }
         }
     }
@@ -641,20 +676,20 @@ public class Zone {
         if(!areCoordinatesInBounds(x, y)) {
             return true;
         }
-        
+
         // Check protection at zone level
         if(player != null && isProtected(player)) {
             return true;
         }
-        
+
         Item frontItem = getBlock(x, y).getFrontItem(); // TODO can load chunks!
         MetaBlock metaBlock = getMetaBlock(x, y);
-        
+
         // Check block owner if it has a field
         if(frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
             return true;
         }
-        
+
         // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
@@ -662,7 +697,7 @@ public class Zone {
             int fY = fieldBlock.getY();
             int field = fieldBlock.getItem().getField();
             
-            if(player == null || (!fieldBlock.isOwnedBy(player) 
+            if(player == null || (!fieldBlock.isOwnedBy(player)
                     && !(fieldBlock.getIntProperty("t") == 1 && player.hasFollower(fieldBlock.getOwner())))) {
                 if(item.isDish()) {
                     if(MathUtils.inRange(x, y, fX, fY, field)) {
@@ -766,9 +801,9 @@ public class Zone {
                 }
             }
         });
-        
-        for(int i = 0; i < width; i++) {
-            for(int j = 0; j < height; j++) {
+
+        for(int j = 0; j < height; j++) {
+            for(int i = 0; i < width; i++) {
                 // Skip ruined bits
                 if(prefab.isRuin() && SimplexNoise.noise2(seed, (x + i) / 8.0, (y + j) / 8.0, 2) > 0.4) {
                     continue;
@@ -814,12 +849,33 @@ public class Zone {
                     }
                     
                     // Try to place rubble
-                    if(decay && frontItem.isWhole() && !isBlockOccupied(x + i, y + j - 1, Layer.FRONT) && random.nextDouble() <= 0.2) {
+                    if(decay && frontItem.isWhole() && !isBlockOccupied(x + i, y + j - 1, Layer.FRONT)
+                            && random.nextDouble() <= 0.2 && findBlock(x + i, y + j - 1, b -> !b.getFrontItem().isAir()) == null) {
+                        // Find the width of the surface available to place the rubble
+                        int maxRubbleWidth;
+                        for(maxRubbleWidth = 2; maxRubbleWidth <= Math.min(3, width - i); maxRubbleWidth++) {
+                            int currentIndex = index + (mirrored ? -1 : 1) * (maxRubbleWidth - 1);
+                            if(currentIndex < 0 || currentIndex >= blocks.length
+                                    || !blocks[currentIndex].isSolid()
+                                    || findBlock(x + i + maxRubbleWidth - 1, y + j - 1, b -> !b.getFrontItem().isAir()) != null) {
+                                maxRubbleWidth--;
+                                break;
+                            }
+                        }
+
+                        // Find the rubble items that fit the available surface
                         RubbleType[] types = RubbleType.values();
                         RubbleType type = types[random.nextInt(types.length)];
-                        String[] itemIds = type.getItemIds();
-                        Item item = ItemRegistry.getItem(itemIds[random.nextInt(itemIds.length)]);
-                        updateBlock(x + i, y + j - 1, Layer.FRONT, item);
+                        final int filterMaxRubbleWidth = maxRubbleWidth;
+                        List<String> items = Arrays.stream(type.getItemIds()).filter(id -> {{
+                            Item item = ItemRegistry.getItem(id);
+                            return item != null && item.getBlockWidth() <= filterMaxRubbleWidth;
+                        }
+                        }).collect(Collectors.toList());
+                        if(!items.isEmpty()) {
+                            Item item = ItemRegistry.getItem(items.get(random.nextInt(items.size())));
+                            updateBlock(x + i, y + j - 1, Layer.FRONT, item);
+                        }
                     }
                     
                     int offset = mirrored ? -(frontItem.getBlockWidth() - 1) : 0;
@@ -921,11 +977,11 @@ public class Zone {
             } else {
                 int effectiveGuardLevel = guardLevel + depth / 200;
                 String[][] groups = {
-                    {"creatures/bat-auto", "creatures/bat-auto"},
+                    {"brains/tiny-crawler", "brains/tiny-crawler"},
                     {"brains/small"},
-                    {"brains/small", "creatures/bat-auto"},
-                    {"brains/small", "creatures/bat-auto"},
-                    {"brains/small", "creatures/bat-auto"},
+                    {"brains/small", "brains/tiny-crawler"},
+                    {"brains/small", "brains/tiny-crawler"},
+                    {"brains/small", "brains/tiny-crawler"},
                     {"brains/medium"},
                     {"brains/medium"},
                     {"brains/medium", "brains/small"},
@@ -955,6 +1011,7 @@ public class Zone {
             if(guardBlocks <= 0) {
                 dungeons.remove(dungeonId);
                 destroyer.getStatistics().trackDungeonRaided();
+                QuestEvents.handleRaid(destroyer);
                 destroyer.notify("You raided a dungeon!", NotificationType.ACCOMPLISHMENT);
                 destroyer.notifyPeers(String.format("%s raided a dungeon.", destroyer.getName()), NotificationType.SYSTEM);
             } else {
@@ -1734,14 +1791,26 @@ public class Zone {
     public float getAcidity() {
         return acidity;
     }
-    
+
+    public void setActivity(ZoneActivity activity) {
+        this.activity = activity;
+    }
+
+    public ZoneActivity getActivity() {
+        return activity;
+    }
+
+    public boolean isMarket() {
+        return this.activity == ZoneActivity.MARKET;
+    }
+
     public void setPrivate(boolean value) {
         this.isPrivate = value;
         kickAllPlayers("Accessibility status changed.", true); // The login handler will kick non-members out of the zone if the world is made private
     }
     
     public boolean canJoin(Player player) {
-        return player.isGodMode() || isPublic() || isOwner(player) || isMember(player);
+        return isTicking() && (player.isGodMode() || isPublic() || isOwner(player) || isMember(player));
     }
     
     public boolean isPublic() {
@@ -1773,7 +1842,23 @@ public class Zone {
     public boolean isPvp() {
         return pvp;
     }
-    
+
+    public ZoneRules getRules() {
+        return rules;
+    }
+
+    public void setRules(ZoneRules rules) {
+        if(rules == null) {
+            if(isPrivate() && isOwned()) {
+                this.rules = ZoneRules.getPrivateDefaults();
+            } else {
+                this.rules = new ZoneRules();
+            }
+        } else {
+            this.rules = rules;
+        }
+    }
+
     protected void setEntryCode(String entryCode) {
         this.entryCode = entryCode;
     }
@@ -1861,7 +1946,28 @@ public class Zone {
     public boolean isModified() {
         return modified;
     }
-    
+
+    // Bunch of methods that exploits the fact that multiple zone updates within one zone are not concurrent, used to mitigate farming.
+    public double getXpMultiplier() {
+        return xpMultiplier;
+    }
+
+    public void setXpMultiplier(double xpMultiplier) {
+        this.xpMultiplier = xpMultiplier;
+    }
+
+    public boolean entityShouldDrop() {
+        return entityShouldDrop;
+    }
+
+    public void setEntityShouldDrop(boolean entityShouldDrop) {
+        this.entityShouldDrop = entityShouldDrop;
+    }
+
+    public boolean isTicking() {
+        return !frozen;
+    }
+
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link ConfigurationMessage}.
      */

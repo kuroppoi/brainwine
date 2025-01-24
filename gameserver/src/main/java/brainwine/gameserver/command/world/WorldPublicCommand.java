@@ -11,7 +11,7 @@ import brainwine.gameserver.zone.Zone;
 public class WorldPublicCommand extends WorldCommand {
     
     public static final String ACTION_ID = "wpublic";
-    
+
     @Override
     public void execute(Zone zone, Player player, String[] args) {
         if(!checkArgumentCount(player, args, 1)) {
@@ -23,7 +23,7 @@ public class WorldPublicCommand extends WorldCommand {
             player.notify("Sorry, you can toggle accessibility only once an hour.");
             return;
         }
-        
+
         if(!args[0].equalsIgnoreCase("on") && !args[0].equalsIgnoreCase("off")) {
             sendUsageMessage(player);
             return;

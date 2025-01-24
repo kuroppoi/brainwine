@@ -16,7 +16,9 @@ import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityLoot;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.FacingDirection;
+import brainwine.gameserver.entity.npc.behavior.BehaviorMessage;
 import brainwine.gameserver.entity.npc.behavior.SequenceBehavior;
+import brainwine.gameserver.entity.npc.job.JobType;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
@@ -52,6 +54,7 @@ public class Npc extends Entity {
     private Entity owner;
     private Entity target;
     private boolean artificial;
+    private JobType job;
     private long lastBehavedAt = System.currentTimeMillis();
     private long lastTrackedAt = System.currentTimeMillis();
     
@@ -197,14 +200,16 @@ public class Npc extends Entity {
                 // Track kill
                 player.getStatistics().trackKill(config);
             }
-            
-            EntityLoot loot = getRandomLoot(player, cause.getWeapon());
-            
-            if(loot != null) {
-                Item item = loot.getItem();
-                
-                if(!item.isAir()) {
-                    player.getInventory().addItem(item, loot.getQuantity(), true);
+
+            if(zone != null && zone.entityShouldDrop()) {
+                EntityLoot loot = getRandomLoot(player, cause.getWeapon());
+
+                if (loot != null) {
+                    Item item = loot.getItem();
+
+                    if (!item.isAir()) {
+                        player.getInventory().addItem(item, loot.getQuantity(), true);
+                    }
                 }
             }
         }
@@ -238,6 +243,14 @@ public class Npc extends Entity {
         }
         
         return config;
+    }
+
+    public void interact(Player player, Object... data) {
+        interact(BehaviorMessage.INTERACT, player, data);
+    }
+
+    public void interact(BehaviorMessage message, Player player, Object... data) {
+        behaviorTree.react(message, player, data);
     }
     
     public void move(int x, int y) {
@@ -406,6 +419,14 @@ public class Npc extends Entity {
     
     public int getMoveY() {
         return moveY;
+    }
+
+    public JobType getJob() {
+        return job;
+    }
+
+    public void setJob(JobType job) {
+        this.job = job;
     }
     
     public long getLastTrackedAt() {

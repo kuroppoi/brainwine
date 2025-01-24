@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 import java.util.stream.Collectors;
 
 import brainwine.gameserver.item.Item;
@@ -136,20 +137,34 @@ public class StructureGeneratorTask implements GeneratorTask {
                 }
             }
         }
+
+        final List<String> ecoContainers = Stream.of(
+            "containers/crate-large",
+            "furniture/crate-broken-large",
+            "containers/crate-industrial-large",
+            "containers/sack-large"
+        ).collect(Collectors.toList());
         
         // Fetch list of replaceable containers
         List<MetaBlock> containers = ctx.getZone().getMetaBlocks(metaBlock
                 -> ctx.isUnderground(metaBlock.getX(), metaBlock.getY())
-                && (metaBlock.getItem().hasId("containers/chest-mechanical-large") 
-                || (metaBlock.getItem().hasId("containers/chest") && !metaBlock.getMetadata().containsKey("@"))));
+                && (ecoContainers.contains(metaBlock.getItem().getId())) && !metaBlock.getMetadata().containsKey("@"));
         Collections.shuffle(containers, ctx.getRandom());
         
         // TODO
         placeComponentChests(ctx, containers);
-        placeBrokenTeleporters(ctx, containers);
+
+        List<MetaBlock> mechPositions = ctx.getZone().getMetaBlocks(metaBlock
+                -> ctx.isUnderground(metaBlock.getX(), metaBlock.getY())
+                && (metaBlock.getItem().hasId("containers/chest-mechanical-large")));
+        Collections.shuffle(mechPositions, ctx.getRandom());
+
+        // TODO
+        placeBrokenTeleporters(ctx, mechPositions);
         
         if(ctx.getZone().getBiome() == Biome.HELL) {
-            placeInfernalProtectors(ctx, containers);
+            Collections.shuffle(mechPositions, ctx.getRandom());
+            placeInfernalProtectors(ctx, mechPositions);
         }
         
     }
@@ -162,12 +177,14 @@ public class StructureGeneratorTask implements GeneratorTask {
         switch(biome) {
             case PLAIN:
                 machines.add(EcologicalMachine.PURIFIER);
-                machines.add(ctx.nextDouble() < 0.5 ? EcologicalMachine.RECYCLER : EcologicalMachine.COMPOSTER);
+                machines.add(EcologicalMachine.COMPOSTER);
                 break;
             case ARCTIC:
+                machines.add(EcologicalMachine.PURIFIER);
                 machines.add(EcologicalMachine.RECYCLER);
                 break;
             case HELL:
+                machines.add(EcologicalMachine.PURIFIER);
                 machines.add(EcologicalMachine.EXPIATOR);
                 break;
             case DESERT:
@@ -176,6 +193,15 @@ public class StructureGeneratorTask implements GeneratorTask {
                 break;
             case DEEP:
                 machines.add(EcologicalMachine.PURIFIER);
+                machines.add(EcologicalMachine.COMPOSTER);
+                break;
+            case BRAIN:
+                machines.add(EcologicalMachine.PURIFIER);
+                machines.add(EcologicalMachine.RECYCLER);
+                break;
+            case SPACE:
+                machines.add(EcologicalMachine.PURIFIER);
+                machines.add(EcologicalMachine.RECYCLER);
                 break;
             default:
                 break;

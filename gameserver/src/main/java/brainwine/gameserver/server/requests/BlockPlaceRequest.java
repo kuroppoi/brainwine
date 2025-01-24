@@ -2,11 +2,13 @@ package brainwine.gameserver.server.requests;
 
 import java.util.UUID;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemGroup;
+import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
@@ -104,7 +106,19 @@ public class BlockPlaceRequest extends PlayerRequest {
                 return;
             }
         }
-        
+
+        Integer itemLimit = GameServer.getInstance().getZoneActivityManager().getPlayerItemLimits(zone.getActivity()).get(item.getId());
+        if(!player.isGodMode() && itemLimit != null && (itemLimit == 0 || zone.getMetaBlocksWithItem(item).stream()
+                .filter(x -> player.equals(x.getOwner()))
+                .count() >= itemLimit)
+        ) {
+            fail(player, itemLimit == 0
+                    ? "This item cannot be placed in this world."
+                    : "You can only place " + itemLimit + " of these in this world."
+            );
+            return;
+        }
+
         if(!player.isGodMode() && item.isDish() && zone.willDishOverlap(x, y, item.getField(), player)) {
             fail(player, "Dish will overlap another protector.");
             return;
@@ -115,12 +129,54 @@ public class BlockPlaceRequest extends PlayerRequest {
         } else if(item.getMod() == ModType.ROTATION && !item.isMirrorable()) {
             mod = findRotationMod(zone, x, y, item.getBlockWidth(), item.getBlockHeight());
         }
-        
-        zone.updateBlock(x, y, layer, item, mod, player);
+
         player.getInventory().removeItem(item);
         player.getStatistics().trackItemPlaced();
         player.trackPlacement(x, y, item);
-        
+
+        boolean isBlockPlaced = false;
+
+        // Process jar use if applicable
+        if(item.getPlaceTransform() != null) {
+            Block block = zone.getBlock(x, y);
+            if(block == null) return;
+
+            for(String originalId : item.getPlaceTransform().keySet()) {
+                Item original = ItemRegistry.getItem(originalId);
+                Item replacement = ItemRegistry.getItem(item.getPlaceTransform().get(originalId));
+
+                if(original == null || replacement == null) continue;
+
+                if(block.getItem(original.getLayer()).equals(original)) {
+                    if(original.getLayer() != replacement.getLayer()) {
+                        zone.updateBlock(x, y, original.getLayer(), Item.AIR);
+                    }
+                    zone.updateBlock(x, y, replacement.getLayer(), replacement);
+                    isBlockPlaced = true;
+                    break;
+                }
+            }
+        }
+
+        // Place the item as a block if no block had been placed yet
+        if(!isBlockPlaced) {
+            zone.updateBlock(x, y, layer, item, mod, player);
+        }
+
+        // Disintegrate earth-like blocks if they don't have a back layer
+        Block block = zone.getBlock(x, y);
+        if(zone.getRules().isAutoCleanEnabled()
+                && (item.getCode() == 510 || item.getCode() == 511 || item.getCode() == 512)
+                && block.getBase() == 0 && block.getBack() == 0
+        ) {
+            zone.addBlockTimer(x, y, zone.getRules().getAutoCleanDuration(), () -> {
+                zone.updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
+                zone.addBlockTimer(x, y, zone.getRules().getAutoCleanDuration(), () -> {
+                    zone.updateBlock(x, y, Layer.FRONT, 0);
+                });
+            });
+        }
+
         // Create block timer if applicable
         if(item.hasTimer()) {
             createBlockTimer(zone, player);

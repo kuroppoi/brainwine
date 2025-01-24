@@ -5,9 +5,14 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
+import brainwine.gameserver.anticheat.AnticheatManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import brainwine.gameserver.order.OrderManager;
+import brainwine.gameserver.server.DefaultPusher;
+import brainwine.gameserver.server.Pusher;
+import brainwine.gameserver.zone.ZoneActivityManager;
 import brainwine.gameserver.achievement.AchievementManager;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandManager;
@@ -16,6 +21,7 @@ import brainwine.gameserver.loot.LootManager;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.PlayerManager;
 import brainwine.gameserver.prefab.PrefabManager;
+import brainwine.gameserver.quest.Quests;
 import brainwine.gameserver.server.NetworkRegistry;
 import brainwine.gameserver.server.Server;
 import brainwine.gameserver.zone.EntityManager;
@@ -33,8 +39,10 @@ public class GameServer implements CommandExecutor {
     private final LootManager lootManager;
     private final PrefabManager prefabManager;
     private final ZoneManager zoneManager;
+    private final ZoneActivityManager zoneActivityManager;
     private final PlayerManager playerManager;
     private final Server server;
+    private Pusher pusher;
     private long lastTick = System.currentTimeMillis();
     private long lastSave = lastTick;
     private volatile boolean shouldStop;
@@ -47,15 +55,21 @@ public class GameServer implements CommandExecutor {
         CommandManager.init();
         GameConfiguration.init();
         AchievementManager.loadAchievements();
+        OrderManager.loadOrders();
         EntityRegistry.init();
         EntityManager.loadEntitySpawns();
         GrowthManager.loadGrowthData();
+        Quests.loadQuests();
+        Fake.loadFake();
+        AnticheatManager.loadConfig();
         lootManager = new LootManager();
         prefabManager = new PrefabManager();
         ZoneGenerator.init();
         zoneManager = new ZoneManager();
         zoneManager.tryGenerateDefaultZone();
+        zoneActivityManager = new ZoneActivityManager();
         playerManager = new PlayerManager();
+        pusher = new DefaultPusher();
         NetworkRegistry.init();
         server = new Server();
         server.addEndpoint(5002);
@@ -148,8 +162,20 @@ public class GameServer implements CommandExecutor {
     public ZoneManager getZoneManager() {
         return zoneManager;
     }
-    
+
+    public ZoneActivityManager getZoneActivityManager() {
+        return zoneActivityManager;
+    }
+
     public PlayerManager getPlayerManager() {
         return playerManager;
+    }
+
+    public Pusher getPusher() {
+        return pusher;
+    }
+
+    public void setPusher(Pusher pusher) {
+        this.pusher = pusher;
     }
 }

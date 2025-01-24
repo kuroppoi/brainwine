@@ -82,7 +82,7 @@ public class GameConfiguration {
         // Clear shop data
         MapHelper.put(baseConfig, "shop.sections", new ArrayList<>());
         MapHelper.put(baseConfig, "shop.items", new ArrayList<>());
-        
+
         // Add custom commands to the client config
         CommandManager.getCommandNames().forEach(command -> {
             MapHelper.put(baseConfig, String.format("commands.%s", command), true);
@@ -165,6 +165,9 @@ public class GameConfiguration {
                 case "liquid":
                     config.put("layer", category);
                     break;
+                case "shields":
+                case "accessories":
+                    break;
                 default: // Big brain or big stupid?
                     config.put("layer", "front");
                     break;
@@ -193,7 +196,7 @@ public class GameConfiguration {
             Reflections reflections = new Reflections(new ConfigurationBuilder()
                     .setUrls(ClasspathHelper.forPackage("brainwine.gameserver"))
                     .setScanners(Scanners.Resources));
-            Set<String> fileNames = reflections.getResources("^config.*\\.yml$");
+            Set<String> fileNames = reflections.getResources("^(config|quests).*\\.yml$");
             
             for(String fileName : fileNames) {
                 Map<String, Object> config = yaml.load(GameConfiguration.class.getResourceAsStream(String.format("/%s", fileName)));

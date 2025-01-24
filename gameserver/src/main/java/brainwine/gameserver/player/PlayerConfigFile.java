@@ -1,12 +1,9 @@
 package brainwine.gameserver.player;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
+import brainwine.gameserver.quest.Quest;
+import brainwine.gameserver.util.ValueWithExpiry;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -14,6 +11,7 @@ import com.fasterxml.jackson.annotation.Nulls;
 
 import brainwine.gameserver.achievement.Achievement;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.quest.QuestProgress;
 import brainwine.gameserver.zone.Zone;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -29,6 +27,7 @@ public class PlayerConfigFile {
     private int skillPoints;
     private int karma;
     private int crowns;
+    private String displayedOrder = null;
     private Inventory inventory = new Inventory();
     private PlayerStatistics statistics = new PlayerStatistics();
     private List<String> authTokens = new ArrayList<>();
@@ -41,10 +40,15 @@ public class PlayerConfigFile {
     private Set<String> followers = new HashSet<>();
     private Set<String> lootCodes = new HashSet<>();
     private Set<Achievement> achievements = new HashSet<>();
+    private Map<String, Integer> orders = new HashMap<>();
     private Map<String, Float> ignoredHints = new HashMap<>();
     private Map<Skill, Integer> skills = new HashMap<>();
     private Map<Item, List<Skill>> bumpedSkills = new HashMap<>();
     private Map<String, Object> appearance = new HashMap<>();
+    private Map<String, QuestProgress> questProgresses = new HashMap<>();
+    private ValueWithExpiry<List<Quest>> dailyQuest = ValueWithExpiry.getExpired();
+    private Map<String, Quest> androidQuests = new HashMap<>();
+    private String familyName = null;
     
     public PlayerConfigFile(Player player) {
         this.name = player.getName();
@@ -69,10 +73,16 @@ public class PlayerConfigFile {
         this.followers = player.getFollowers();
         this.lootCodes = player.getLootCodes();
         this.achievements = player.getAchievements();
+        this.orders = player.getOrders();
+        this.displayedOrder = player.getDisplayedOrder();
         this.ignoredHints = player.getIgnoredHints();
         this.skills = player.getSkills();
         this.bumpedSkills = player.getBumpedSkills();
         this.appearance = player.getAppearance();
+        this.questProgresses = player.getQuestProgresses();
+        this.dailyQuest = player.getDailyQuest();
+        this.androidQuests = player.getAndroidQuests();
+        this.familyName = player.getFamilyName();
     }
     
     @JsonCreator
@@ -148,7 +158,11 @@ public class PlayerConfigFile {
     public int getCrowns() {
         return crowns;
     }
-    
+
+    public String getDisplayedOrder() {
+        return displayedOrder;
+    }
+
     @JsonSetter(nulls = Nulls.SKIP)
     public Inventory getInventory() {
         return inventory;
@@ -178,7 +192,12 @@ public class PlayerConfigFile {
     public Set<Achievement> getAchievements() {
         return achievements;
     }
-    
+
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<String, Integer> getOrders() {
+        return orders;
+    }
+
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public Map<String, Float> getIgnoredHints() {
         return ignoredHints;
@@ -197,5 +216,22 @@ public class PlayerConfigFile {
     @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public Map<String, Object> getAppearance() {
         return appearance;
+    }
+
+    @JsonSetter(nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public Map<String, QuestProgress> getQuestProgresses() {
+        return questProgresses;
+    }
+
+    public ValueWithExpiry<List<Quest>> getDailyQuest() {
+        return dailyQuest;
+    }
+
+    public Map<String, Quest> getAndroidQuests() {
+        return androidQuests;
+    }
+
+    public String getFamilyName() {
+        return familyName;
     }
 }

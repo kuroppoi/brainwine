@@ -11,6 +11,7 @@ import brainwine.api.models.ZoneInfo;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.PlayerManager;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.ZoneActivity;
 import brainwine.gameserver.zone.ZoneManager;
 
 public class DirectDataFetcher implements DataFetcher {
@@ -100,15 +101,15 @@ public class DirectDataFetcher implements DataFetcher {
                 .collect(Collectors.toCollection(ArrayList::new));
     }
     
-    private static ZoneInfo createZoneInfo(Zone zone) {
-        return new ZoneInfo(zone.getName(), 
-                zone.getBiome().getId(), 
-                null,
+    public static ZoneInfo createZoneInfo(Zone zone) {
+        return new ZoneInfo(zone.getName(),
+                zone.getBiome().getId(),
+                zone.getActivity() == null || zone.getActivity() == ZoneActivity.NONE ? null : zone.getActivity().toString().toLowerCase(),
                 zone.isPvp(),
                 false,
                 zone.isPrivate(),
                 zone.isProtected(),
-                zone.getPlayers().size(),
+                zone.getPlayerCount(),
                 zone.getWidth(),
                 zone.getHeight(),
                 zone.getSurface(),

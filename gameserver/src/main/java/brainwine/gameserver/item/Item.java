@@ -116,6 +116,9 @@ public class Item {
     
     @JsonProperty("field_place")
     private boolean fieldPlace;
+
+    @JsonProperty("place_transform")
+    private Map<String, String> placeTransform;
     
     @JsonProperty("base")
     private boolean base;
@@ -152,6 +155,9 @@ public class Item {
     
     @JsonProperty("mod_inventory")
     private Pair<Integer, LazyItemGetter> modInventoryItem;
+
+    @JsonProperty("craft")
+    private Craft craft = null;
     
     @JsonProperty("crafting quantity")
     private int craftingQuantity = 1;
@@ -438,7 +444,11 @@ public class Item {
     public boolean canPlaceInField() {
         return fieldPlace;
     }
-    
+
+    public Map<String, String> getPlaceTransform() {
+        return placeTransform;
+    }
+
     public boolean isWhole() {
         return whole;
     }
@@ -549,6 +559,10 @@ public class Item {
     
     public MiningBonus getMiningBonus() {
         return miningBonus;
+    }
+
+    public Craft getCraft() {
+        return craft;
     }
     
     public int getCraftingQuantity() {

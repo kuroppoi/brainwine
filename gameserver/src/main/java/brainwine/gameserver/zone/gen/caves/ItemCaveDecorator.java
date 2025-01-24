@@ -3,6 +3,7 @@ package brainwine.gameserver.zone.gen.caves;
 import java.util.HashMap;
 import java.util.Map;
 
+import brainwine.gameserver.item.Layer;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -10,6 +11,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
+import brainwine.gameserver.zone.Block;
 import brainwine.gameserver.zone.gen.GeneratorContext;
 
 public class ItemCaveDecorator extends CaveDecorator {
@@ -90,8 +92,34 @@ public class ItemCaveDecorator extends CaveDecorator {
                     mod = ctx.isSolid(x - 1, y) ? 1 : 3;
                 }
             }
-            
+
+            // Clear anything that might cover up the item
+            for(int i = 0; i < item.getBlockWidth(); i++) {
+                for(int j = 0; j < item.getBlockHeight(); j++) {
+                    ctx.updateBlock(x + i, y - j, Layer.FRONT, Item.AIR);
+                }
+            }
+
             ctx.updateBlock(block.getX(), block.getY(), item.getLayer(), item, mod);
+
+            // Get the supporting block and repeat it towards the right if the decoration is floating
+            if(this.floor && item.getBlockWidth() > 1) {
+                Block bottomLeft = ctx.getBlock(x, y + 1);
+                Block bottomRight = ctx.getBlock(x + item.getBlockWidth() - 1, y + 1);
+                Item toRepeat = bottomLeft != null && bottomLeft.isSolid()
+                        ? bottomLeft.getFrontItem()
+                        : bottomRight != null ? bottomRight.getFrontItem() : Item.get(512);
+                for(int i = 0; i < item.getBlockWidth(); i++) {
+                    if(ctx.inBounds(i + x, y + 1)) {
+                        if(ctx.isSolid(i + x, y + 1)) {
+                            toRepeat = ctx.getBlock(i + x, y + 1).getFrontItem();
+                        } else {
+                            ctx.updateBlock(i + x, y + 1, Layer.FRONT, toRepeat);
+                        }
+                    }
+                }
+            }
+
             itemCount++;
             
             // Stop if we've reached the maximum amount of items

@@ -13,6 +13,7 @@ import brainwine.gameserver.item.ModType;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.Skill;
+import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.server.PlayerRequest;
 import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
@@ -95,14 +96,15 @@ public class BlockMineRequest extends PlayerRequest {
                         fail(player, "You must keep at least one world teleporter active.");
                         return;
                     }
-                    
+
                     break;
                 default: break;
             }
         }
-        
+
         if(digging) {
             zone.digBlock(x, y);
+            QuestEvents.handleDig(player);
             return;
         }
         
@@ -187,9 +189,11 @@ public class BlockMineRequest extends PlayerRequest {
         
         int quantity = 1;
         player.getStatistics().trackItemMined(item);
-        
+
+        boolean trackQuest = false;
         if(block.isNatural()) {
             player.getStatistics().trackItemScavenged(item);
+            trackQuest = true;
         }
         
         // Check stack mod
@@ -197,15 +201,12 @@ public class BlockMineRequest extends PlayerRequest {
             quantity = Math.max(1, block.getMod(layer));
         }
         
-        zone.updateBlock(x, y, layer, 0, 0, player);
-        
         // Apply mining bonus if there is one
         if(item.hasMiningBonus()) {
             MiningBonus bonus = item.getMiningBonus();
-            
-            if(Math.random() < player.getMiningBonusChance(bonus)) {
-                if(!bonus.getItem().isAir()) {
-                    inventoryItem = bonus.getItem();
+            if(Math.random() < player.getMiningBonusChance(bonus) && bonus.getMod() <= block.getMod(layer)) {
+                if(!bonus.computeItem(item).isAir()) {
+                    inventoryItem = bonus.computeItem(item);
                 }
                 
                 if(bonus.isDoubleLoot()) {
@@ -215,9 +216,17 @@ public class BlockMineRequest extends PlayerRequest {
                 player.notify(bonus.getNotification(), NotificationType.FANCY_EMOTE);
             }
         }
-        
+
+        zone.updateBlock(x, y, layer, 0, 0, player);
+
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem, quantity, true);
+            if(trackQuest && layer == Layer.FRONT) {
+                QuestEvents.handleCollectItem(player, inventoryItem, quantity);
+                if(!item.equals(inventoryItem)) {
+                    QuestEvents.handleCollectItem(player, item, 1);
+                }
+            }
         }
     }
     
