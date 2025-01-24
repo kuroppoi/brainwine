@@ -74,7 +74,7 @@ public class EntityConfig {
     public String getTitle() {
         return title;
     }
-
+  
     @JsonIgnore
     public String getCategory() {
         String id = getName();
@@ -82,7 +82,7 @@ public class EntityConfig {
         int index = id.indexOf('/');
         return index > 1 ? id.substring(0, index) : null;
     }
-
+  
     @JsonProperty("xp")
     public int getExperienceYield() {
         return experienceYield;
