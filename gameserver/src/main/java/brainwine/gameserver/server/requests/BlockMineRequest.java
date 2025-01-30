@@ -72,6 +72,11 @@ public class BlockMineRequest extends PlayerRequest {
             fail(player, "This block cannot be mined.");
             return;
         }
+
+        if(layer == Layer.BASE && player.getHeldItem().getAction() != Action.SCRUB) {
+            fail(player, "You need a scrubber to mine this item.");
+            return;
+        }
         
         if(!player.isGodMode() && item.isEntity()) {
             fail(player, "You must destroy the entity instead of its mount.");
@@ -103,6 +108,12 @@ public class BlockMineRequest extends PlayerRequest {
         
         if(digging) {
             zone.digBlock(x, y);
+            return;
+        }
+
+        // Scrub the base layer if block is being mined with a scrubber
+        if(layer == Layer.BASE && player.getHeldItem().getAction() == Action.SCRUB && block.getBack() == 0 && block.getFront() == 0) {
+            zone.updateBlock(x, y, Layer.BASE, Item.AIR, 0);
             return;
         }
         
