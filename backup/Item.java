@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.dialog.DialogType;
-import brainwine.gameserver.player.Skill;
+import brainwine.gameserver.entity.player.Skill;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
@@ -41,9 +41,6 @@ public class Item {
     
     @JsonProperty("fieldable")
     private Fieldability fieldability = Fieldability.TRUE;
-    
-    @JsonProperty("tradeable")
-    private Tradeability tradeability = Tradeability.TRUE;
     
     @JsonProperty("loot_graphic")
     private DialogType lootGraphic = DialogType.STANDARD;
@@ -81,12 +78,6 @@ public class Item {
     @JsonProperty("guard")
     private int guardLevel;
     
-    @JsonProperty("spacing")
-    private int spacing;
-    
-    @JsonProperty("spawn_spacing")
-    private int spawnSpacing;
-    
     @JsonProperty("power")
     private float power;
     
@@ -107,9 +98,6 @@ public class Item {
     
     @JsonProperty("placeover")
     private boolean placeover;
-    
-    @JsonProperty("custom_mine")
-    private boolean customMine;
     
     @JsonProperty("custom_place")
     private boolean customPlace;
@@ -138,29 +126,17 @@ public class Item {
     @JsonProperty("steam")
     private boolean steam;
     
-    @JsonProperty("ownership")
-    private boolean ownership;
-    
-    @JsonProperty("membership")
-    private boolean membership;
-    
     @JsonProperty("inventory")
     private LazyItemGetter inventoryItem;
     
     @JsonProperty("decay inventory")
     private LazyItemGetter decayInventoryItem;
     
-    @JsonProperty("mod_inventory")
-    private Pair<Integer, LazyItemGetter> modInventoryItem;
-    
     @JsonProperty("crafting quantity")
     private int craftingQuantity = 1;
     
     @JsonProperty("loot")
     private String[] lootCategories = {};
-    
-    @JsonProperty("regen_bonus")
-    private double regenBonus = 1.0;
     
     @JsonProperty("tool_bonus")
     private double toolBonus;
@@ -194,12 +170,6 @@ public class Item {
     
     @JsonProperty("timer_mine")
     private boolean processTimerOnBreak;
-    
-    @JsonProperty("field_damage")
-    private FieldDamage fieldDamage;
-    
-    @JsonProperty("spacing_items")
-    private List<LazyItemGetter> spacingItems = new ArrayList<>();
     
     @JsonProperty("ingredients")
     private List<CraftingRequirement> craftingIngredients = new ArrayList<>();
@@ -295,10 +265,6 @@ public class Item {
         return fieldability;
     }
     
-    public Tradeability getTradeability() {
-        return tradeability;
-    }
-    
     public DialogType getLootGraphic() {
         return lootGraphic;
     }
@@ -308,7 +274,7 @@ public class Item {
     }
     
     public boolean isPlacable() {
-        return layer == Layer.BASE || layer == Layer.BACK || layer == Layer.FRONT;
+        return layer == Layer.BACK || layer == Layer.FRONT;
     }
     
     public Layer getLayer() {
@@ -379,22 +345,6 @@ public class Item {
         return guardLevel;
     }
     
-    public boolean hasSpacing() {
-        return spacing > 0;
-    }
-    
-    public int getSpacing() {
-        return spacing;
-    }
-    
-    public boolean hasSpawnSpacing() {
-        return spawnSpacing > 0;
-    }
-    
-    public int getSpawnSpacing() {
-        return spawnSpacing;
-    }
-    
     public float getPower() {
         return power;
     }
@@ -427,10 +377,6 @@ public class Item {
         return placeover;
     }
     
-    public boolean hasCustomMine() {
-        return customMine;
-    }
-    
     public boolean hasCustomPlace() {
         return customPlace;
     }
@@ -461,18 +407,6 @@ public class Item {
     
     public boolean usesSteam() {
         return steam;
-    }
-    
-    public boolean requiresOwnership() {
-        return ownership;
-    }
-    
-    public boolean requiresMembership() {
-        return membership;
-    }
-    
-    public int getSkillBonus(Skill skill) {
-        return skillBonuses.getOrDefault(skill, 0);
     }
     
     public Map<Skill, Integer> getSkillBonuses() {
@@ -523,20 +457,8 @@ public class Item {
         return decayInventoryItem == null ? this : decayInventoryItem.get();
     }
     
-    public boolean hasModInventoryItem() {
-        return modInventoryItem != null;
-    }
-    
-    public Item getModInventoryItem(int mod) {
-        return modInventoryItem == null ? this : mod >= modInventoryItem.getFirst() ? modInventoryItem.getLast().get() : Item.AIR;
-    }
-    
     public String[] getLootCategories() {
         return lootCategories;
-    }
-    
-    public double getRegenBonus() {
-        return regenBonus;
     }
     
     public double getToolBonus() {
@@ -562,6 +484,10 @@ public class Item {
     public float getDamage() {
         return isWeapon() ? damageInfo.getLast() : 0;
     }
+
+    public String getRotation() {
+        return rotation;
+    }
     
     public boolean hasTimer() {
         return timer != null;
@@ -581,22 +507,6 @@ public class Item {
     
     public boolean shouldProcessTimerOnBreak() {
         return processTimerOnBreak;
-    }
-    
-    public boolean hasFieldDamage() {
-        return fieldDamage != null;
-    }
-    
-    public FieldDamage getFieldDamage() {
-        return fieldDamage;
-    }
-    
-    public boolean hasSpacingItems() {
-        return !spacingItems.isEmpty();
-    }
-    
-    public List<Item> getSpacingItems() {
-        return spacingItems.stream().map(LazyItemGetter::get).collect(Collectors.toList());
     }
     
     public boolean isCraftable() {
