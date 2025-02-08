@@ -87,6 +87,8 @@ public class Zone {
     private boolean pvp;
     private String entryCode;
     private String owner;
+    private MassSpawnerConfiguration massSpawnerConfiguration;
+    private MassTeleporterConfiguration massTeleporterConfiguration;
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
     private final GrowthManager growthManager;
@@ -131,6 +133,8 @@ public class Zone {
         isProtected = config.isProtected();
         pvp = config.isPvp();
         creationDate = config.getCreationDate();
+        massSpawnerConfiguration = config.getMassSpawnerConfiguration();
+        massTeleporterConfiguration = config.getMassTeleporterConfiguration();
     }
     
     public Zone(String documentId, String name, Biome biome, int width, int height) {
@@ -1773,7 +1777,15 @@ public class Zone {
     public boolean isPvp() {
         return pvp;
     }
-    
+
+    public MassSpawnerConfiguration getMassSpawnerConfiguration() {
+        return massSpawnerConfiguration;
+    }
+
+    public MassTeleporterConfiguration getMassTeleporterConfiguration() {
+        return massTeleporterConfiguration;
+    }
+
     protected void setEntryCode(String entryCode) {
         this.entryCode = entryCode;
     }

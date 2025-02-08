@@ -61,6 +61,12 @@ public class ZoneConfigFile {
     
     @JsonSetter(nulls = Nulls.SKIP)
     private OffsetDateTime lastActiveDate = OffsetDateTime.now();
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    private MassSpawnerConfiguration massSpawnerConfiguration = new MassSpawnerConfiguration();
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    private MassTeleporterConfiguration massTeleporterConfiguration = new MassTeleporterConfiguration();
     
     @JsonCreator
     private ZoneConfigFile(@JsonProperty(value = "name", required = true) String name,
@@ -86,6 +92,8 @@ public class ZoneConfigFile {
         this.discoveredParts = zone.getDiscoveredParts();
         this.actionHistory = zone.getActionHistory();
         this.creationDate = zone.getCreationDate();
+        this.massSpawnerConfiguration = zone.getMassSpawnerConfiguration();
+        this.massTeleporterConfiguration = zone.getMassTeleporterConfiguration();
     }
     
     public String getName() {
@@ -146,5 +154,13 @@ public class ZoneConfigFile {
     
     public OffsetDateTime getLastActiveDate() {
         return lastActiveDate;
+    }
+
+    public MassSpawnerConfiguration getMassSpawnerConfiguration() {
+        return massSpawnerConfiguration;
+    }
+
+    public MassTeleporterConfiguration getMassTeleporterConfiguration() {
+        return massTeleporterConfiguration;
     }
 }
