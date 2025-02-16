@@ -3,6 +3,7 @@ package brainwine.gameserver.command;
 import static brainwine.gameserver.player.NotificationType.SYSTEM;
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,7 +58,7 @@ public class CommandManager {
         if(commandLine.isEmpty()) {
             return;
         }
-        
+
         commandLine.trim().replaceAll(" +", " ");
         String[] sections = commandLine.split(" ", 2);
         
@@ -86,8 +87,37 @@ public class CommandManager {
             Player player = (Player)executor;
             logger.info(SERVER_MARKER, "{} used command '/{}'", player.getName(), commandName + (args.length == 0 ? "" : " " + String.join(" ", args)));
         }
-        
-        command.execute(executor, args);
+
+        if(command.useSmartArguments()) {
+            ArrayList<String> newArgs = new ArrayList<>();
+            String joinedArgs = String.join(" ", args);
+
+            int currentIndex = 0;
+            while(true) {
+                if(joinedArgs.charAt(currentIndex) == '"') {
+                    int endIndex = joinedArgs.indexOf('"', currentIndex + 1);
+                    if(endIndex == -1) {
+                        executor.notify("Command parsing failed: unbalanced quotes.", SYSTEM);
+                        return;
+                    }
+                    newArgs.add(joinedArgs.substring(currentIndex + 1, endIndex));
+                    currentIndex = endIndex + 1;
+                } else {
+                    int endIndex = joinedArgs.indexOf(' ', currentIndex + 1);
+                    if(endIndex == -1) {
+                        newArgs.add(joinedArgs.substring(currentIndex).trim());
+                        break;
+                    } else {
+                        newArgs.add(joinedArgs.substring(currentIndex, endIndex).trim());
+                        currentIndex = endIndex + 1;
+                    }
+                }
+            }
+            command.execute(executor, newArgs.toArray(new String[0]));
+        } else {
+            command.execute(executor, args);
+        }
+
     }
     
     public static void registerCommand(Class<? extends Command> type) {

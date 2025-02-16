@@ -1419,6 +1419,10 @@ public class Zone {
     public Map<String, OffsetDateTime> getActionHistory() {
         return Collections.unmodifiableMap(actionHistory);
     }
+
+    public int getGroundHeight() {
+        return biome == Biome.DEEP ? -1000 : 200;
+    }
     
     /**
      * @return The specified coordinates in a player-readable format
@@ -1426,7 +1430,7 @@ public class Zone {
      */
     public String getReadableCoordinates(int x, int y) {
         int center = width / 2;
-        int surface = biome == Biome.DEEP ? -1000 : 200;
+        int surface = this.getGroundHeight();
         String directionX = x < center ? "west" : x > center ? "east" : "central";
         String directionY = y > surface ? "below" : "above";
         String coordX = String.format("%s %s", Math.abs(x - center), directionX);
