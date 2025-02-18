@@ -67,7 +67,7 @@ public class WorldMachineInteraction implements ItemInteraction {
     public void deactivateNaturalTeleporters(Player player, Zone zone) {
         if(canInteract(player, zone)) {
             for (MetaBlock metaBlock : zone.getMetaBlocksWithUse(ItemUseType.TELEPORT)) {
-                if (!metaBlock.hasOwner() && !metaBlock.getItem().hasUse(ItemUseType.ZONE_TELEPORT)) {
+                if(!metaBlock.hasOwner() && !metaBlock.getItem().hasUse(ItemUseType.ZONE_TELEPORT)) {
                     zone.updateBlock(metaBlock.getX(), metaBlock.getY(), Layer.FRONT, Item.AIR);
                 }
             }

@@ -663,7 +663,7 @@ public class Zone {
         MetaBlock metaBlock = getMetaBlock(x, y);
 
         // Check block owner if it has a field
-        if (!skipSelf && frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
+        if(!skipSelf && frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
             return true;
         }
         

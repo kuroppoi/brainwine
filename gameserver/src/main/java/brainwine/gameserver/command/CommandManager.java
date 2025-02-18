@@ -94,10 +94,10 @@ public class CommandManager {
                 String joinedArgs = String.join(" ", args);
 
                 int currentIndex = 0;
-                while (currentIndex < joinedArgs.length()) {
-                    if (joinedArgs.charAt(currentIndex) == '"') {
+                while(currentIndex < joinedArgs.length()) {
+                    if(joinedArgs.charAt(currentIndex) == '"') {
                         int endIndex = joinedArgs.indexOf('"', currentIndex + 1);
-                        if (endIndex == -1) {
+                        if(endIndex == -1) {
                             executor.notify("Command parsing failed: unbalanced quotes.", SYSTEM);
                             return;
                         }
@@ -105,7 +105,7 @@ public class CommandManager {
                         currentIndex = endIndex + 1;
                     } else {
                         int endIndex = joinedArgs.indexOf(' ', currentIndex + 1);
-                        if (endIndex == -1) {
+                        if(endIndex == -1) {
                             newArgs.add(joinedArgs.substring(currentIndex).trim());
                             break;
                         } else {
@@ -115,7 +115,7 @@ public class CommandManager {
                     }
                 }
                 command.execute(executor, newArgs.toArray(new String[0]));
-            } catch (Exception e) {
+            } catch(Exception e) {
                 e.printStackTrace();
                 executor.notify("There has been an error parsing the smart command arguments.", SYSTEM);
             }
