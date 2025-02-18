@@ -637,10 +637,18 @@ public class Zone {
     }
     
     public boolean isBlockProtected(int x, int y, Player player) {
-        return isBlockProtected(x, y, player, fieldBlocks.values());
+        return isBlockProtected(x, y, player, false);
+    }
+
+    public boolean isBlockProtected(int x, int y, Player player, boolean skipSelf) {
+        return isBlockProtected(x, y, player, skipSelf, fieldBlocks.values());
+    }
+
+    public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+        return isBlockProtected(x, y, player, false, fieldBlocks);
     }
     
-    public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+    public boolean isBlockProtected(int x, int y, Player player, boolean skipSelf, Collection<MetaBlock> fieldBlocks) {
         // Check bounds
         if(!areCoordinatesInBounds(x, y)) {
             return true;
@@ -650,17 +658,20 @@ public class Zone {
         if(player != null && isProtected(player)) {
             return true;
         }
-        
+
         Item frontItem = getBlock(x, y).getFrontItem(); // TODO can load chunks!
         MetaBlock metaBlock = getMetaBlock(x, y);
-        
+
         // Check block owner if it has a field
-        if(frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
+        if (!skipSelf && frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
             return true;
         }
         
         // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
+            // Skip block if it is the current block and we need to skip it
+            if(skipSelf && fieldBlock == metaBlock) continue;
+
             Item item = fieldBlock.getItem();
             int fX = fieldBlock.getX();
             int fY = fieldBlock.getY();

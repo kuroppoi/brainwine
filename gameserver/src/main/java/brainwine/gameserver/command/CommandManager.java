@@ -89,31 +89,36 @@ public class CommandManager {
         }
 
         if(command.useSmartArguments()) {
-            ArrayList<String> newArgs = new ArrayList<>();
-            String joinedArgs = String.join(" ", args);
+            try {
+                ArrayList<String> newArgs = new ArrayList<>();
+                String joinedArgs = String.join(" ", args);
 
-            int currentIndex = 0;
-            while(true) {
-                if(joinedArgs.charAt(currentIndex) == '"') {
-                    int endIndex = joinedArgs.indexOf('"', currentIndex + 1);
-                    if(endIndex == -1) {
-                        executor.notify("Command parsing failed: unbalanced quotes.", SYSTEM);
-                        return;
-                    }
-                    newArgs.add(joinedArgs.substring(currentIndex + 1, endIndex));
-                    currentIndex = endIndex + 1;
-                } else {
-                    int endIndex = joinedArgs.indexOf(' ', currentIndex + 1);
-                    if(endIndex == -1) {
-                        newArgs.add(joinedArgs.substring(currentIndex).trim());
-                        break;
-                    } else {
-                        newArgs.add(joinedArgs.substring(currentIndex, endIndex).trim());
+                int currentIndex = 0;
+                while (currentIndex < joinedArgs.length()) {
+                    if (joinedArgs.charAt(currentIndex) == '"') {
+                        int endIndex = joinedArgs.indexOf('"', currentIndex + 1);
+                        if (endIndex == -1) {
+                            executor.notify("Command parsing failed: unbalanced quotes.", SYSTEM);
+                            return;
+                        }
+                        newArgs.add(joinedArgs.substring(currentIndex + 1, endIndex));
                         currentIndex = endIndex + 1;
+                    } else {
+                        int endIndex = joinedArgs.indexOf(' ', currentIndex + 1);
+                        if (endIndex == -1) {
+                            newArgs.add(joinedArgs.substring(currentIndex).trim());
+                            break;
+                        } else {
+                            newArgs.add(joinedArgs.substring(currentIndex, endIndex).trim());
+                            currentIndex = endIndex + 1;
+                        }
                     }
                 }
+                command.execute(executor, newArgs.toArray(new String[0]));
+            } catch (Exception e) {
+                e.printStackTrace();
+                executor.notify("There has been an error parsing the smart command arguments.", SYSTEM);
             }
-            command.execute(executor, newArgs.toArray(new String[0]));
         } else {
             command.execute(executor, args);
         }

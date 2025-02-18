@@ -2,6 +2,7 @@ package brainwine.gameserver.command.admin;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
+import brainwine.gameserver.command.CommandAccessLevel;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.item.ItemUseType;
@@ -11,6 +12,9 @@ import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
@@ -22,7 +26,7 @@ public class TeleportCommand extends Command {
             executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
-        
+
         Player player = (Player)executor;
         PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
         ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
@@ -36,7 +40,11 @@ public class TeleportCommand extends Command {
                 teleportToCoordinates(player, player, player.getZone(), x, y);
             } catch(NumberFormatException e) {
                 Player subject = playerManager.getPlayer(args[0]);
-                teleportToPlayerOrPlaque(player, subject, player.getZone(), args[1]);
+                if(subject != null) {
+                    teleportToPlayerOrPlaque(player, subject, player.getZone(), args[1]);
+                } else {
+                    player.notify(String.format("Player '%s' not found."));
+                }
             }
         } else if(args.length == 3) {
             Zone targetZone = null;
@@ -113,7 +121,20 @@ public class TeleportCommand extends Command {
         }
     }
 
-    public boolean checkSubjectAndZone(Player player, Player subject, Zone targetZone) {
+    private boolean isPrivileged(CommandExecutor executor, Zone zone, CommandAccessLevel needed) {
+        if(executor == null || zone == null || needed == null) return false;
+        if(executor instanceof GameServer) return true;
+        if(executor.isAdmin()) return true;
+
+        Player player = (Player)executor;
+        if(needed == CommandAccessLevel.OWNERS) return zone.isOwner(player);
+        if(needed == CommandAccessLevel.MEMBERS) return zone.isOwner(player) || zone.isMember(player);
+
+        return true;
+
+    }
+
+    private boolean checkSubjectAndZone(Player player, Player subject, Zone targetZone) {
         if(targetZone == null) {
             player.notify("Sorry, the target world is null.");
             return false;
@@ -124,7 +145,7 @@ public class TeleportCommand extends Command {
                 return false;
             }
 
-            if(subject.getZone() != targetZone && player.getZone() != targetZone) {
+            if(subject.getZone() != targetZone || player.getZone() != targetZone) {
                 player.notify("Sorry, only admins can teleport players out of and across worlds.");
                 return false;
             }
@@ -133,23 +154,23 @@ public class TeleportCommand extends Command {
         return true;
     }
 
-    public void teleportToPlayerOrPlaque(Player player, Player subject, Zone targetZone, String name) {
+    private void teleportToPlayerOrPlaque(Player player, Player subject, Zone targetZone, String name) {
         if(!checkSubjectAndZone(player, subject, targetZone)) return;
 
         Player target = GameServer.getInstance().getPlayerManager().getPlayer(name);
         if(target != null) {
-            if(player == subject && !this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getTeleportToPlayerAccess())) {
+            if(!this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getTeleportToPlayerAccess())) {
                 player.notify("You are not allowed to teleport to players in the target world.");
-                return;
-            }
-
-            if(player == target && !this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getSummonOtherPlayerAccess())) {
-                player.notify("You are not allowed to summon other players in this world.");
                 return;
             }
 
             if(!target.isOnline()) {
                 player.notify(String.format("Player '%s' is not online.", target.getName()));
+                return;
+            }
+
+            if(subject.getZone() != target.getZone() && !this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getSummonOtherPlayerAccess())) {
+                player.notify("You are not allowed to summon other players in this world.");
                 return;
             }
 
@@ -164,6 +185,10 @@ public class TeleportCommand extends Command {
 
         Vector2i targetPosition = this.getLandmarkPosition(targetZone, name);
         if(targetPosition != null) {
+            if(!this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getTeleportToPlaqueAccess())) {
+                player.notify("You are not allowed to teleport to plaques in this world.");
+                return;
+            }
             doTeleport(player, subject, targetZone, targetPosition.getX(), targetPosition.getY());
             return;
         }
@@ -171,7 +196,7 @@ public class TeleportCommand extends Command {
         player.notify(String.format("Player or landmark '%s' not found.", name));
     }
 
-    public void teleportToCoordinates(Player player, Player subject, Zone targetZone, int x, int y) {
+    private void teleportToCoordinates(Player player, Player subject, Zone targetZone, int x, int y) {
         if(!player.isAdmin()) {
             player.notify("Only admins are allowed to teleport to exact coordinates.");
             return;
@@ -182,23 +207,34 @@ public class TeleportCommand extends Command {
         doTeleport(player, subject, targetZone, x, y);
     }
 
-    public void doTeleport(Player player, Player subject, Zone targetZone, int x, int y) {
-        // Check if coordinates are in bounds
-        if(!targetZone.areCoordinatesInBounds(x, y)) {
-            player.notify("Cannot teleport out of bounds!", SYSTEM);
+    private void doTeleport(Player player, Player subject, Zone targetZone, int x, int y) {
+        if(!subject.isOnline()) {
+            player.notify(String.format("Player '%s' is not online.", subject.getName()));
             return;
         }
 
         if(!player.isAdmin()) {
-            if(targetZone.isBlockSolid(x, y) || targetZone.isBlockSolid(x, y - 1)) {
-                player.notify("Teleportation destination is obstructed!");
+            if(!targetZone.isAreaExplored(x, y)) {
+                player.notify("That area hasn't been explored yet.");
                 return;
             }
 
-            if(!this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getTeleportInProtectedAreaAccess()) && targetZone.isBlockProtected(x, y, player)) {
+            if(targetZone.isChunkLoaded(x, y) && (targetZone.isBlockSolid(x, y) || targetZone.isBlockSolid(x, y - 1))) {
+                player.notify("Teleportation destination is obstructed.");
+                return;
+            }
+
+            // We don't consider single blocks to be protected against teleportation.
+            if(!this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getTeleportInProtectedAreaAccess()) && targetZone.isBlockProtected(x, y, player, true)) {
                 player.notify("Sorry, you can't teleport to areas protected against you in this world.");
                 return;
             }
+        }
+
+        // Check if coordinates are in bounds
+        if(!targetZone.areCoordinatesInBounds(x, y)) {
+            player.notify("Cannot teleport out of bounds!", SYSTEM);
+            return;
         }
 
         if(targetZone == subject.getZone()) {
@@ -208,15 +244,15 @@ public class TeleportCommand extends Command {
         }
     }
 
-    public int parseXCoordinate(String value, Zone targetZone) throws NumberFormatException {
+    private int parseXCoordinate(String value, Zone targetZone) throws NumberFormatException {
         return parseNumberWithDirection(value, targetZone.getWidth() / 2, new String[] { "left", "west", "l", "w" }, new String[] { "right", "east", "r", "e" } );
     }
 
-    public int parseYCoordinate(String value, Zone targetZone) throws NumberFormatException {
+    private int parseYCoordinate(String value, Zone targetZone) throws NumberFormatException {
         return parseNumberWithDirection(value, targetZone.getGroundHeight(), new String[] { "above", "up", "a", "u" }, new String[] { "below", "down", "b", "d" } );
     }
 
-    public int parseNumberWithDirection(String value, int offset, String[] lowerDirection, String[] upperDirection) throws NumberFormatException {
+    private int parseNumberWithDirection(String value, int offset, String[] lowerDirection, String[] upperDirection) throws NumberFormatException {
         int direction = 0;
         int unitLength = 0;
 

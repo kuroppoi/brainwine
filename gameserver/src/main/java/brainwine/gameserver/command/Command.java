@@ -1,9 +1,5 @@
 package brainwine.gameserver.command;
 
-import brainwine.gameserver.GameServer;
-import brainwine.gameserver.player.Player;
-import brainwine.gameserver.zone.Zone;
-
 import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
 public abstract class Command {
@@ -44,16 +40,4 @@ public abstract class Command {
         executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
     }
 
-    protected boolean isPrivileged(CommandExecutor executor, Zone zone, CommandAccessLevel needed) {
-        if(executor == null || zone == null || needed == null) return false;
-        if(executor instanceof GameServer) return true;
-        if(executor.isAdmin()) return true;
-
-        Player player = (Player)executor;
-        if(needed == CommandAccessLevel.OWNERS) return zone.isOwner(player);
-        if(needed == CommandAccessLevel.MEMBERS) return zone.isOwner(player) || zone.isMember(player);
-
-        return true;
-
-    }
 }
