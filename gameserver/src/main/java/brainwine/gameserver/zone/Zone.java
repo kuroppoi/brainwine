@@ -87,8 +87,8 @@ public class Zone {
     private boolean pvp;
     private String entryCode;
     private String owner;
-    private MassSpawnerConfiguration massSpawnerConfiguration;
-    private MassTeleporterConfiguration massTeleporterConfiguration;
+    private MassSpawnerConfiguration massSpawnerConfiguration = new MassSpawnerConfiguration();
+    private MassTeleporterConfiguration massTeleporterConfiguration = new MassTeleporterConfiguration();
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
     private final GrowthManager growthManager;
@@ -135,6 +135,7 @@ public class Zone {
         creationDate = config.getCreationDate();
         massSpawnerConfiguration = config.getMassSpawnerConfiguration();
         massTeleporterConfiguration = config.getMassTeleporterConfiguration();
+        entityManager.updateSpawnRates();
     }
     
     public Zone(String documentId, String name, Biome biome, int width, int height) {
@@ -153,6 +154,7 @@ public class Zone {
         chunkManager = new ChunkManager(this);
         steamManager = new SteamManager(this);
         growthManager = new GrowthManager(this);
+        entityManager.updateSpawnRates();
         Arrays.fill(surface, height);
         Arrays.fill(sunlight, height);
     }
@@ -1413,6 +1415,18 @@ public class Zone {
     
     public Map<EcologicalMachine, List<Item>> getDiscoveredParts() {
         return machineManager.getDiscoveredParts();
+    }
+
+    public boolean hasMassTeleporter() {
+        return machineManager.hasMassTeleporter();
+    }
+
+    public boolean hasMassSpawner() {
+        return machineManager.hasMassSpawner();
+    }
+
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
     
     public MachineManager getMachineManager() {

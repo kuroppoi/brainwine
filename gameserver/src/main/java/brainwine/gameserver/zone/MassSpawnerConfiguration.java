@@ -32,6 +32,14 @@ public class MassSpawnerConfiguration {
         return dialog;
     }
 
+    public void reset(Zone zone) {
+        difficulty = 3;
+        mawSpawningEnabled = true;
+        areaSpawningEnabled = true;
+        evokeAccess = CommandAccessLevel.OWNERS;
+        onUpdate(zone);
+    }
+
     public void configureFromDialog(Player player, Object... ans) {
         if(ans.length < 4) return;
         try {
@@ -42,6 +50,10 @@ public class MassSpawnerConfiguration {
         } catch(Exception e) {
             player.notify("An unexpected error occurred while configuring the world.");
         }
+    }
+
+    private void onUpdate(Zone zone) {
+        zone.getEntityManager().updateSpawnRates();
     }
 
     public int getDifficulty() {

@@ -32,6 +32,7 @@ public class EntityConfig {
     private float baseSpeed = 3;
     private boolean character;
     private boolean human;
+    private boolean friendly;
     private boolean named;
     private boolean trappable;
     private Item trappablePetItem;
@@ -100,7 +101,11 @@ public class EntityConfig {
     public boolean isNamed() {
         return named;
     }
-    
+
+    public boolean isFriendly() {
+        return friendly;
+    }
+
     public boolean isTrappable() {
         return trappable;
     }

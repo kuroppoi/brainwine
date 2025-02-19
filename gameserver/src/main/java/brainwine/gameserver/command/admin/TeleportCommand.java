@@ -139,7 +139,13 @@ public class TeleportCommand extends Command {
             player.notify("Sorry, the target world is null.");
             return false;
         }
+
         if(!player.isAdmin()) {
+            if(!targetZone.hasMassTeleporter()) {
+                player.notify("No mass teleportation machine is operational in this world.");
+                return false;
+            }
+
             if(player != subject) {
                 player.notify("Only admins can teleport other players.");
                 return false;

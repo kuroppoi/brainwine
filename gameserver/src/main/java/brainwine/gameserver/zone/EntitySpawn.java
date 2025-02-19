@@ -1,5 +1,7 @@
 package brainwine.gameserver.zone;
 
+import brainwine.gameserver.entity.EntityRegistry;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -11,7 +13,7 @@ import brainwine.gameserver.item.Item;
 public class EntitySpawn {
     
     @JsonProperty("entity")
-    private EntityConfig entity;
+    private String entity;
     
     @JsonProperty("locale")
     private String locale;
@@ -33,8 +35,22 @@ public class EntitySpawn {
     
     @JsonProperty("frequency")
     private double frequency = 1;
+
+    @JsonIgnore
+    private double originalFrequency = frequency;
+
+    @JsonIgnore
+    private EntityConfig entityConfig = null;
     
-    public EntityConfig getEntity() {
+    public EntityConfig getEntityConfig() {
+        if(entityConfig == null) {
+            entityConfig = EntityRegistry.getEntityConfig(entity);
+        }
+
+        return entityConfig;
+    }
+
+    public String getEntity() {
         return entity;
     }
     
@@ -64,6 +80,14 @@ public class EntitySpawn {
     
     public double getFrequency() {
         return frequency;
+    }
+
+    public void setFrequency(double frequency) {
+        this.frequency = frequency;
+    }
+
+    public void resetFrequency() {
+        this.frequency = originalFrequency;
     }
 
 }

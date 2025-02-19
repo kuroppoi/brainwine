@@ -44,7 +44,8 @@ public class EntityManager {
     public static final long SPAWN_INTERVAL = 200;
     private static final Logger logger = LogManager.getLogger();
     private static final ThreadLocalRandom random = ThreadLocalRandom.current();
-    private static final Map<Biome, List<EntitySpawn>> spawns = new HashMap<>();
+    private static final Map<Biome, List<EntitySpawn>> globalSpawns = new HashMap<>();
+    private final List<EntitySpawn> spawns = new ArrayList<>();
     private final Map<Integer, Entity> entities = new ConcurrentHashMap<>(); // TODO is there a better solution?
     private final Map<Integer, Npc> npcs = new HashMap<>();
     private final Map<Integer, Npc> mountedNpcs = new HashMap<>();
@@ -59,22 +60,64 @@ public class EntityManager {
     }
     
     public static void loadEntitySpawns() {
-        spawns.clear();
+        globalSpawns.clear();
         logger.info(SERVER_MARKER, "Loading entity spawns ...");
         
         try {
             URL url = ResourceFinder.getResourceUrl("spawning.json", true);
-            spawns.putAll(JsonHelper.readValue(url, new TypeReference<Map<Biome, List<EntitySpawn>>>(){}));
+            Map<Biome, List<EntitySpawn>> loaded = JsonHelper.readValue(url, new TypeReference<Map<Biome, List<EntitySpawn>>>(){});
+
+            // Validate all entity spawns.
+            for(Map.Entry<Biome, List<EntitySpawn>> entry : loaded.entrySet()) {
+                List<EntitySpawn> validSpawns = new ArrayList<>(entry.getValue().size());
+                for(EntitySpawn spawn : entry.getValue()) {
+                    if(spawn.getEntityConfig() != null) {
+                        validSpawns.add(spawn);
+                    } else {
+                        logger.warn("Entity " + spawn.getEntity() + " not found for " + entry.getKey() + " spawns.");
+                    }
+                }
+                globalSpawns.put(entry.getKey(), validSpawns);
+            }
+
         } catch (IOException e) {
             logger.error(SERVER_MARKER, "Failed to load entity spawns", e);
         }
     }
+
+    public void updateSpawnRates() {
+        if(spawns.isEmpty()) {
+            try {
+                spawns.addAll(
+                        JsonHelper.readValue(
+                                JsonHelper.writeValueAsString(globalSpawns.get(zone.getBiome())),
+                                new TypeReference<List<EntitySpawn>>() {}
+                        )
+                );
+            } catch(Exception e) {
+                throw new RuntimeException("Cannot initialize individual zone entity spawns.", e);
+            }
+        }
+
+        int difficulty = zone.getMassSpawnerConfiguration() != null
+                ? zone.getMassSpawnerConfiguration().getDifficulty()
+                : 3;
+
+        for(EntitySpawn spawn : spawns) {
+            spawn.resetFrequency();
+
+            boolean isFriendly = spawn.getEntityConfig().isFriendly();
+            boolean isHostile = !isFriendly;
+
+            if(difficulty == 1 && isHostile) spawn.setFrequency(0.0);
+            if(difficulty == 2 && isFriendly) spawn.setFrequency(2.0 * spawn.getFrequency());
+            if(difficulty == 4 && isHostile) spawn.setFrequency(2.0 * spawn.getFrequency());
+            if(difficulty == 5 && isHostile) spawn.setFrequency(3.0 * spawn.getFrequency());
+        }
+    }
     
-    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, double acidity, Item baseItem) {
-        return spawns.entrySet().stream()
-                .filter(entry -> entry.getKey() == biome)
-                .map(Entry::getValue)
-                .flatMap(Collection::stream)
+    private List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, double acidity, Item baseItem) {
+        return spawns.stream()
                 .filter(spawn -> locale.equalsIgnoreCase(spawn.getLocale())
                         && depth >= spawn.getMinDepth() && depth <= spawn.getMaxDepth()
                         && acidity >= spawn.getMinAcidity() && acidity <= spawn.getMaxAcidity()
@@ -82,7 +125,7 @@ public class EntityManager {
                 .collect(Collectors.toList());
     }
     
-    private static EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, double acidity, Item baseItem) {
+    private EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, double acidity, Item baseItem) {
         return new WeightedMap<>(getEligibleEntitySpawns(biome, locale, depth, acidity, baseItem), EntitySpawn::getFrequency).next();
     }
     
@@ -109,18 +152,22 @@ public class EntityManager {
         List<Chunk> visibleChunks = zone.getVisibleChunks();
         List<Chunk> chunks = immediate ? visibleChunks : zone.getLoadedChunks().stream()
                 .filter(chunk -> !visibleChunks.contains(chunk)).collect(Collectors.toList());
-        
+
+        boolean isNotConfigured = zone.getMassSpawnerConfiguration() == null;
+        boolean doMaws = isNotConfigured || zone.getMassSpawnerConfiguration().isMawSpawningEnabled();
+        boolean doAreas = isNotConfigured || zone.getMassSpawnerConfiguration().isAreaSpawningEnabled();
+
         if(!chunks.isEmpty()) {
             List<Vector2i> eligiblePositions = new ArrayList<>();
             Chunk chunk = chunks.get(random.nextInt(chunks.size()));
-            
-            for(int x = chunk.getX(); x < chunk.getX() +  chunk.getWidth(); x++) {
+
+            for(int x = chunk.getX(); x < chunk.getX() + chunk.getWidth(); x++) {
                 for(int y = chunk.getY(); y < chunk.getY() + chunk.getHeight(); y++) {
                     Block block = chunk.getBlock(x, y);
                     Item baseItem = block.getBaseItem();
                     
-                    if((immediate && baseItem.hasId("base/maw") || baseItem.hasId("base/pipe")) || 
-                            (!immediate && block.getBackItem().isAir() && block.getFrontItem().isAir())) {
+                    if((immediate && doMaws && (baseItem.hasId("base/maw") || baseItem.hasId("base/pipe"))) ||
+                            (!immediate && doAreas && block.getBackItem().isAir() && block.getFrontItem().isAir())) {
                         eligiblePositions.add(new Vector2i(x, y));
                     }
                 }
@@ -142,7 +189,7 @@ public class EntityManager {
                 }
                 
                 if(spawn != null) {
-                    EntityConfig config = spawn.getEntity();
+                    EntityConfig config = spawn.getEntityConfig();
                     
                     if(config != null) {
                         spawnEntity(new Npc(zone, config), x, y);

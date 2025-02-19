@@ -31,6 +31,13 @@ public class MassTeleporterConfiguration {
         return dialog;
     }
 
+    public void reset() {
+        teleportInProtectedAreaAccess = CommandAccessLevel.OWNERS;
+        teleportToPlayerAccess = CommandAccessLevel.OWNERS;
+        teleportToPlaqueAccess = CommandAccessLevel.OWNERS;
+        summonOtherPlayerAccess = CommandAccessLevel.OWNERS;
+    }
+
     public void configureFromDialog(Player player, Object... ans) {
         if(ans.length < 4) return;
         try {
