@@ -13,7 +13,7 @@ public class DialogSelectInput extends DialogInput {
     public DialogSelectInput setOptions(String... options) {
         return setOptions(Arrays.asList(options));
     }
-    
+
     @JsonProperty("options")
     public DialogSelectInput setOptions(Collection<String> options) {
         this.options = options;

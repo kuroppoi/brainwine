@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
     @Type(name = "text", value = DialogTextInput.class),
     @Type(name = "item", value = DialogItemInput.class),
     @Type(name = "color", value = DialogColorInput.class),
+    @Type(names = "text index", value = DialogTextIndexInput.class),
     @Type(names = {"text select", "select"}, value = DialogSelectInput.class)
 })
 @JsonInclude(Include.NON_DEFAULT)
@@ -20,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 public abstract class DialogInput {
     
     protected String key;
+    public Object value;
     
     public DialogInput setKey(String key) {
         this.key = key;
@@ -28,5 +30,14 @@ public abstract class DialogInput {
     
     public String getKey() {
         return key;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public DialogInput setValue(Object value) {
+        this.value = value;
+        return this;
     }
 }

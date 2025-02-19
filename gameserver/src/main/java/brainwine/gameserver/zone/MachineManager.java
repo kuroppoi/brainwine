@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.util.MapHelper;
@@ -24,6 +25,8 @@ public class MachineManager {
     private final Map<EcologicalMachine, List<Item>> discoveredParts = new HashMap<>();
     private final Map<Integer, MetaBlock> machineBlocks = new HashMap<>();
     private final Zone zone;
+    private final Map<Integer, MetaBlock> massSpawners = new HashMap<>();
+    private final Map<Integer, MetaBlock> massTeleporters = new HashMap<>();
     
     public MachineManager(Zone zone) {
         this.zone = zone;
@@ -181,6 +184,14 @@ public class MachineManager {
                             .collect(Collectors.toCollection(ArrayList::new))));
         this.discoveredParts.putAll(discoveredParts);
     }
+
+    protected boolean hasMassTeleporter() {
+        return !massTeleporters.isEmpty();
+    }
+
+    protected boolean hasMassSpawner() {
+        return !massSpawners.isEmpty();
+    }
     
     protected void indexMetaBlock(int index, MetaBlock metaBlock) {
         EcologicalMachine machine = EcologicalMachine.fromBase(metaBlock.getItem());
@@ -188,6 +199,18 @@ public class MachineManager {
         if(machine != null) {
             machineBlocks.put(index, metaBlock);
             updateMachineStatus(machine);
+            return;
+        }
+
+        if(metaBlock.getItem().hasUse(ItemUseType.WORLD_MACHINE)) {
+            switch((String) metaBlock.getItem().getUse(ItemUseType.WORLD_MACHINE)) {
+                case "spawner":
+                    massSpawners.put(index, metaBlock);
+                    break;
+                case "teleport":
+                    massTeleporters.put(index, metaBlock);
+                    break;
+            }
         }
     }
     
@@ -196,6 +219,19 @@ public class MachineManager {
         
         if(metaBlock != null) {
             updateMachineStatus(EcologicalMachine.fromBase(metaBlock.getItem()));
+
+            if(metaBlock.getItem().hasUse(ItemUseType.WORLD_MACHINE)) {
+                switch((String) metaBlock.getItem().getUse(ItemUseType.WORLD_MACHINE)) {
+                    case "spawner":
+                        massSpawners.remove(index);
+                        if(!hasMassSpawner()) zone.getMassSpawnerConfiguration().reset(zone);
+                        break;
+                    case "teleport":
+                        massTeleporters.remove(index);
+                        if(!hasMassTeleporter()) zone.getMassTeleporterConfiguration().reset();
+                        break;
+                }
+            }
         }
     }
 }

@@ -10,6 +10,10 @@ public abstract class Command {
     public boolean canExecute(CommandExecutor executor) {
         return true;
     }
+
+    public boolean useSmartArguments() {
+        return false;
+    }
     
     protected final boolean checkArgumentCount(CommandExecutor executor, String[] args, int... counts) {
         int highestCount = 0;
@@ -35,4 +39,5 @@ public abstract class Command {
     protected final void sendUsageMessage(CommandExecutor executor) {
         executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
     }
+
 }
