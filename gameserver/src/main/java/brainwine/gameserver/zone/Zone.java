@@ -950,14 +950,19 @@ public class Zone {
                     {"brains/medium-dire", "brains/small"},
                     {"brains/medium-dire", "brains/small"},
                 };
-                
+
                 int max = Math.max(1, groups.length - 6);
-                String[] group = Stream.of(groups)
+                String[] groupArr = Stream.of(groups)
                         .skip(Math.min(effectiveGuardLevel, groups.length - max))
                         .limit(max)
                         .collect(Collectors.toList())
                         .get(random.nextInt(max));
-                guardians.addAll(Arrays.asList(group));
+                List<String> group = Arrays.asList(groupArr);
+                if(massSpawnerConfiguration.getDifficulty() < 3) {
+                    guardians.addAll(group.subList(1, group.size()));
+                } else {
+                    guardians.addAll(group);
+                }
             }
             
             metadata.put("!", guardians);
