@@ -209,8 +209,6 @@ public class SwitchInteraction implements ItemInteraction {
         }
         
         // Update sign text
-        message = interpolateMessage(entity, message);
-        
         String separator = "\n";
         String[] keys = {"t1", "t2", "t3", "t4"};
         String[] segments = WordUtils.wrap(message, 20, separator, true).split(separator, 4);
