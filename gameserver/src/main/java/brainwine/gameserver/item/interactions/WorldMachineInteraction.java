@@ -5,6 +5,7 @@ import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.player.Placement;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
@@ -29,6 +30,9 @@ public class WorldMachineInteraction implements ItemInteraction {
                         case "configure":
                             player.showDialog(zone.getMassSpawnerConfiguration().getConfigurationDialog(), conf -> configureSpawner(player, zone, conf));
                             break;
+                        case "move":
+                            move(player, zone, metaBlock);
+                            break;
                         case "dismantle":
                             dismantle(player, zone, x, y);
                             break;
@@ -45,6 +49,9 @@ public class WorldMachineInteraction implements ItemInteraction {
                             break;
                         case "deactivate_natural_teleporters":
                             deactivateNaturalTeleporters(player, zone);
+                            break;
+                        case "move":
+                            move(player, zone, metaBlock);
                             break;
                         case "dismantle":
                             dismantle(player, zone, x, y);
@@ -86,6 +93,11 @@ public class WorldMachineInteraction implements ItemInteraction {
         if(canInteract(player, zone)) {
             zone.getMassTeleporterConfiguration().configureFromDialog(player, ans);
         }
+    }
+
+    public void move(Player player, Zone zone, MetaBlock metaBlock) {
+        player.setTransmittableBlock(metaBlock);
+        player.notify("Place a beacon to move the machine. The machine's lower left corner will replace the beacon.");
     }
 
     public void dismantle(Player player, Zone zone, int x, int y) {
