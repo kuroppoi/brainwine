@@ -26,9 +26,10 @@ public class WorldMachineInteraction implements ItemInteraction {
                 player.showDialog(DialogHelper.getDialog("world_machines.spawner.menu"), ans -> {
                     if(ans.length == 0 || !(ans[0] instanceof String)) return;
 
+                    float availablePower = item.getPower();
                     switch ((String) ans[0]) {
                         case "configure":
-                            player.showDialog(zone.getMassSpawnerConfiguration().getConfigurationDialog(), conf -> configureSpawner(player, zone, conf));
+                            player.showDialog(zone.getMassSpawnerConfiguration().getConfigurationDialog(availablePower), conf -> configureSpawner(player, zone, conf));
                             break;
                         case "move":
                             move(player, zone, metaBlock);
