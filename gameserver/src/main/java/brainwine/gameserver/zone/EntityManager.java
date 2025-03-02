@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.util.MathUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -54,6 +54,12 @@ public class EntityManager {
     private final Zone zone;
     private int entityDiscriminator;
     private long lastSpawnAt = System.currentTimeMillis();
+    private long lastInvasionAt;
+    private long lastInvasionWaveAt = System.currentTimeMillis();
+    private long timeUntilNextInvasionWave;
+    private Player currentInvasionTarget;
+    int currentInvasionWave = 4;
+    List<Integer> invaders = new ArrayList<>();
     
     public EntityManager(Zone zone) {
         this.zone = zone;
@@ -145,6 +151,8 @@ public class EntityManager {
             spawnRandomEntity();
             lastSpawnAt = now;
         }
+
+        tickInvasion();
     }
     
     private void spawnRandomEntity() {
@@ -376,7 +384,92 @@ public class EntityManager {
             }
         }
     }
-    
+
+    public synchronized void startInvasion(Player target) {
+        for(int entityId : invaders) {
+            Entity e = getEntity(entityId);
+            if(e != null) {
+                zone.spawnEffect(e.getX(), e.getY(), "bomb-teleport", 4);
+                e.die(null);
+            }
+        }
+        invaders.clear();
+
+        currentInvasionTarget = target;
+        currentInvasionWave = 0;
+        lastInvasionAt = System.currentTimeMillis();
+        lastInvasionWaveAt = 0;
+        timeUntilNextInvasionWave = 0;
+    }
+
+    private void tickInvasion() {
+        if(currentInvasionWave >= 4) return;
+        currentInvasionWave = Math.max(0, currentInvasionWave);
+
+        if(currentInvasionTarget == null
+                || !currentInvasionTarget.isOnline()
+                || currentInvasionTarget.getZone() != zone
+        ) {
+            currentInvasionWave = 4;
+            return;
+        }
+
+        if(lastInvasionWaveAt + timeUntilNextInvasionWave < System.currentTimeMillis()) {
+            WeightedMap<String> invaders = zone.getBiome() == Biome.BRAIN
+                    ? new WeightedMap<>(MapHelper.map(
+                        String.class, Double.class,
+                    "brains/small",  15.0,
+                        "brains/medium", 2.0,
+                        "brains/medium-dire", 1.0
+                    ))
+                    : new WeightedMap<>(MapHelper.map(
+                        String.class, Double.class,
+                        "revenant", 15.0,
+                        "dire-revenant", 2.0,
+                        "revenant-lord", 1.0
+                    ));
+
+            int numInvaders = 1;
+            if(currentInvasionWave == 3 && Math.random() < 0.5) {
+                numInvaders = 2;
+            }
+
+            List<Vector2i> eligiblePositions = new ArrayList<>(8);
+            for(int x = -1; x <= 1; x++) {
+                for(int y = -1; y <= 1; y++) {
+                    if(x == 0 && y == 0) continue;
+                    int blockX = currentInvasionTarget.getBlockX() + x;
+                    int blockY = currentInvasionTarget.getBlockY() + y;
+                    if(zone.areCoordinatesInBounds(blockX, blockY) && !zone.isBlockOccupied(blockX, blockY, Layer.FRONT)) {
+                        eligiblePositions.add(new Vector2i(blockX, blockY));
+                    }
+                }
+            }
+
+            for(int i = 0; i < numInvaders; i++) {
+                Vector2i pos = eligiblePositions.get((int)(Math.random() * eligiblePositions.size()));
+                spawnEntity(invaders.next(), pos.getX(), pos.getY());
+            }
+
+            // Determine interval until next wave
+            double minInterval = new double[] {3000, 1000, 500, 0}[currentInvasionWave];
+            double maxInterval = new double[] {4000, 2000, 1500, 1000}[currentInvasionWave];
+            timeUntilNextInvasionWave = (long)MathUtils.lerp(minInterval, maxInterval, Math.random());
+
+            // Skip last wave randomly
+            if(currentInvasionWave == 2 && Math.random() < 0.5) {
+                currentInvasionWave = 4;
+            }
+
+            currentInvasionWave++;
+            lastInvasionWaveAt = System.currentTimeMillis();
+        }
+    }
+
+    public long getLastInvasionAt() {
+        return lastInvasionAt;
+    }
+
     public Entity getEntity(int entityId) {
         return entities.get(entityId);
     }
