@@ -87,4 +87,26 @@ public abstract class WorldMachineConfiguration {
         }
     }
 
+    protected String expectString(Object obj) throws IllegalArgumentException {
+        if(obj instanceof String) {
+            return (String)obj;
+        } else {
+            throw new IllegalArgumentException();
+        }
+    }
+
+    protected int expectInteger(Object obj) throws IllegalArgumentException {
+        if(obj instanceof Integer) {
+            return (int)obj;
+        }
+
+        if(obj instanceof String) {
+            try {
+                return Integer.parseInt((String) obj);
+            } catch(Exception ignored) {}
+        }
+
+        throw new IllegalArgumentException();
+    }
+
 }

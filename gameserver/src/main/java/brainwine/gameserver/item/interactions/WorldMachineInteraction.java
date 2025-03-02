@@ -5,7 +5,6 @@ import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.player.Placement;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
@@ -19,64 +18,35 @@ public class WorldMachineInteraction implements ItemInteraction {
 
         Player player = (Player) entity;
 
-        if(!canInteract(player, zone)) return;
+        if(!canInteract((Player) entity, zone)) return;
 
-        switch ((String) itemUse) {
-            case "spawner":
-                player.showDialog(DialogHelper.getDialog("world_machines.spawner.menu"), ans -> {
-                    if(ans.length == 0 || !(ans[0] instanceof String)) return;
-
-                    float availablePower = item.getPower();
-                    switch ((String) ans[0]) {
-                        case "configure":
-                            player.showDialog(zone.getMassSpawnerConfiguration().getConfigurationDialog(availablePower), conf -> configureSpawner(player, zone, conf));
+        player.showDialog(DialogHelper.getDialog("world_machines.spawner.menu"), ans -> {
+            if(ans.length == 0 || !(ans[0] instanceof String)) return;
+            switch ((String) ans[0]) {
+                case "deactivate_natural_teleporters":
+                    deactivateNaturalTeleporters(player, zone);
+                    break;
+                case "configure":
+                    switch((String) itemUse) {
+                        case "spawner":
+                            zone.getMassSpawnerConfiguration().configure(player, zone, item);
                             break;
-                        case "move":
-                            move(player, zone, metaBlock);
+                        case "teleport":
+                            zone.getMassTeleporterConfiguration().configure(player, zone, item);
                             break;
-                        case "dismantle":
-                            dismantle(player, zone, x, y);
-                            break;
-                    }
-                });
-                break;
-            case "teleport":
-                player.showDialog(DialogHelper.getDialog("world_machines.teleport.menu"), ans -> {
-                    if(ans.length == 0 || !(ans[0] instanceof String)) return;
-
-                    switch ((String) ans[0]) {
-                        case "configure":
-                            player.showDialog(zone.getMassTeleporterConfiguration().getConfigurationDialog(), conf -> configureTeleport(player, zone, conf));
-                            break;
-                        case "deactivate_natural_teleporters":
-                            deactivateNaturalTeleporters(player, zone);
-                            break;
-                        case "move":
-                            move(player, zone, metaBlock);
-                            break;
-                        case "dismantle":
-                            dismantle(player, zone, x, y);
-                            break;
-                    }
-                });
-                break;
-            case "weather":
-                player.showDialog(DialogHelper.getDialog("world_machines.weather.menu"), ans -> {
-                    if(ans.length == 0 || !(ans[0] instanceof String)) return;
-
-                    switch ((String) ans[0]) {
-                        case "configure":
+                        case "weather":
                             zone.getWeatherMachineConfiguration().configure(player, zone, item);
                             break;
-                        case "move":
-                            move(player, zone, metaBlock);
-                            break;
-                        case "dismantle":
-                            dismantle(player, zone, x, y);
-                            break;
                     }
-                });
-        }
+                    break;
+                case "move":
+                    move(player, zone, metaBlock);
+                    break;
+                case "dismantle":
+                    dismantle(player, zone, x, y);
+                    break;
+            }
+        });
     }
 
     public boolean canInteract(Player player, Zone zone) {
@@ -97,18 +67,6 @@ public class WorldMachineInteraction implements ItemInteraction {
             }
 
             player.notify("Natural teleporters destroyed!");
-        }
-    }
-
-    public void configureSpawner(Player player, Zone zone, Object[] ans) {
-        if(canInteract(player, zone)) {
-            zone.getMassSpawnerConfiguration().configureFromDialog(player, ans);
-        }
-    }
-
-    public void configureTeleport(Player player, Zone zone, Object[] ans) {
-        if(canInteract(player, zone)) {
-            zone.getMassTeleporterConfiguration().configureFromDialog(player, ans);
         }
     }
 

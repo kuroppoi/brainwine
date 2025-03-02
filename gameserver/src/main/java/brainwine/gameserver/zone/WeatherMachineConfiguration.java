@@ -44,28 +44,6 @@ public class WeatherMachineConfiguration extends WorldMachineConfiguration {
         return "dialogs.world_machines.weather.configure";
     }
 
-    private String expectString(Object obj) throws IllegalArgumentException {
-        if(obj instanceof String) {
-            return (String)obj;
-        } else {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    private int expectInteger(Object obj) throws IllegalArgumentException {
-        if(obj instanceof Integer) {
-            return (int)obj;
-        }
-
-        if(obj instanceof String) {
-            try {
-                return Integer.parseInt((String) obj);
-            } catch(Exception ignored) {}
-        }
-
-        throw new IllegalArgumentException();
-    }
-
     protected void reset() {
         dayAndNightCycleMode = DayAndNightCycleMode.NORMAL;
         timeZone = 0;
@@ -100,7 +78,6 @@ public class WeatherMachineConfiguration extends WorldMachineConfiguration {
         }
 
         timeZone = MathUtils.clamp(expectInteger(defaultIfNull(values.get("day_night_cycle_time_zone"), timeZone)), -12, 12);
-        degreeOfDanger = 2 * MathUtils.clamp(expectInteger(defaultIfNull(values.get("environment"), degreeOfDanger)), 0, 3) + 1;
     }
 
     @Override

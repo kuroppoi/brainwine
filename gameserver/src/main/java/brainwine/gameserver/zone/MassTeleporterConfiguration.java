@@ -1,34 +1,21 @@
 package brainwine.gameserver.zone;
 
 import brainwine.gameserver.command.CommandAccessLevel;
-import brainwine.gameserver.dialog.Dialog;
-import brainwine.gameserver.dialog.DialogHelper;
-import brainwine.gameserver.dialog.input.DialogTextIndexInput;
-import brainwine.gameserver.player.Player;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import brainwine.gameserver.util.MathUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.Map;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MassTeleporterConfiguration {
+public class MassTeleporterConfiguration extends WorldMachineConfiguration {
     private CommandAccessLevel teleportToPlayerAccess = CommandAccessLevel.OWNERS;
     private CommandAccessLevel teleportToPlaqueAccess = CommandAccessLevel.OWNERS;
     private CommandAccessLevel teleportInProtectedAreaAccess = CommandAccessLevel.OWNERS;
     private CommandAccessLevel summonOtherPlayerAccess = CommandAccessLevel.OWNERS;
 
-    @JsonIgnore
-    public Dialog getConfigurationDialog() {
-        Dialog dialog = DialogHelper.getDialog("world_machines.teleport.configure");
-
-        if(dialog.getSections().size() == 4) {
-            try {
-                dialog.getSections().get(0).getInput().setValue(teleportToPlayerAccess.ordinal());
-                dialog.getSections().get(1).getInput().setValue(teleportToPlaqueAccess.ordinal());
-                dialog.getSections().get(2).getInput().setValue(teleportInProtectedAreaAccess.ordinal());
-                dialog.getSections().get(3).getInput().setValue(summonOtherPlayerAccess.ordinal());
-            } catch(Exception e) {}
-        }
-
-        return dialog;
+    @Override
+    protected String getDialogName() {
+        return "dialogs.world_machines.teleport.configure";
     }
 
     public void reset() {
@@ -38,17 +25,31 @@ public class MassTeleporterConfiguration {
         summonOtherPlayerAccess = CommandAccessLevel.OWNERS;
     }
 
-    public void configureFromDialog(Player player, Object... ans) {
-        if(ans.length < 4) return;
-        try {
-            CommandAccessLevel[] values = CommandAccessLevel.values();
-            teleportToPlayerAccess = values[(int)ans[0]];
-            teleportToPlaqueAccess = values[(int)ans[1]];
-            teleportInProtectedAreaAccess = values[(int)ans[2]];
-            summonOtherPlayerAccess = values[(int)ans[3]];
-        } catch(Exception e) {
-            player.notify("An unexpected error occurred while configuring the world.");
+    @Override
+    public void configure(Zone zone, Map<String, Object> values) throws IllegalArgumentException {
+        reset();
+
+        CommandAccessLevel[] arrLevels = CommandAccessLevel.values();
+        teleportToPlayerAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("tp_player")), 0, 3)];
+        teleportToPlaqueAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("tp_plaque")), 0, 3)];
+        teleportInProtectedAreaAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("tp_protected")), 0, 3)];
+        summonOtherPlayerAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("summon")), 0, 3)];
+    }
+
+    @Override
+    protected Object getValue(String key) {
+        switch(key) {
+            case "tp_player":
+                return teleportToPlayerAccess.ordinal();
+            case "tp_plaque":
+                return teleportToPlaqueAccess.ordinal();
+            case "tp_protected":
+                return teleportInProtectedAreaAccess.ordinal();
+            case "summon":
+                return summonOtherPlayerAccess.ordinal();
         }
+
+        return null;
     }
 
     public CommandAccessLevel getTeleportToPlayerAccess() {
