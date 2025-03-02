@@ -89,6 +89,7 @@ public class Zone {
     private String owner;
     private MassSpawnerConfiguration massSpawnerConfiguration = new MassSpawnerConfiguration();
     private MassTeleporterConfiguration massTeleporterConfiguration = new MassTeleporterConfiguration();
+    private WeatherMachineConfiguration weatherMachineConfiguration = new WeatherMachineConfiguration();
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
     private final GrowthManager growthManager;
@@ -135,6 +136,7 @@ public class Zone {
         creationDate = config.getCreationDate();
         massSpawnerConfiguration = config.getMassSpawnerConfiguration();
         massTeleporterConfiguration = config.getMassTeleporterConfiguration();
+        weatherMachineConfiguration = config.getWeatherMachineConfiguration();
         entityManager.updateSpawnRates();
     }
     
@@ -1818,6 +1820,10 @@ public class Zone {
 
     public MassTeleporterConfiguration getMassTeleporterConfiguration() {
         return massTeleporterConfiguration;
+    }
+
+    public WeatherMachineConfiguration getWeatherMachineConfiguration() {
+        return weatherMachineConfiguration;
     }
 
     protected void setEntryCode(String entryCode) {

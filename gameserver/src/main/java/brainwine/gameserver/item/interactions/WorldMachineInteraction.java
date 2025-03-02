@@ -60,6 +60,22 @@ public class WorldMachineInteraction implements ItemInteraction {
                     }
                 });
                 break;
+            case "weather":
+                player.showDialog(DialogHelper.getDialog("world_machines.weather.menu"), ans -> {
+                    if(ans.length == 0 || !(ans[0] instanceof String)) return;
+
+                    switch ((String) ans[0]) {
+                        case "configure":
+                            zone.getWeatherMachineConfiguration().configure(player, zone, item);
+                            break;
+                        case "move":
+                            move(player, zone, metaBlock);
+                            break;
+                        case "dismantle":
+                            dismantle(player, zone, x, y);
+                            break;
+                    }
+                });
         }
     }
 

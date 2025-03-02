@@ -67,6 +67,9 @@ public class ZoneConfigFile {
 
     @JsonSetter(nulls = Nulls.SKIP)
     private MassTeleporterConfiguration massTeleporterConfiguration = new MassTeleporterConfiguration();
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    private WeatherMachineConfiguration weatherMachineConfiguration = new WeatherMachineConfiguration();
     
     @JsonCreator
     private ZoneConfigFile(@JsonProperty(value = "name", required = true) String name,
@@ -94,6 +97,7 @@ public class ZoneConfigFile {
         this.creationDate = zone.getCreationDate();
         this.massSpawnerConfiguration = zone.getMassSpawnerConfiguration();
         this.massTeleporterConfiguration = zone.getMassTeleporterConfiguration();
+        this.weatherMachineConfiguration = zone.getWeatherMachineConfiguration();
     }
     
     public String getName() {
@@ -162,5 +166,9 @@ public class ZoneConfigFile {
 
     public MassTeleporterConfiguration getMassTeleporterConfiguration() {
         return massTeleporterConfiguration;
+    }
+
+    public WeatherMachineConfiguration getWeatherMachineConfiguration() {
+        return weatherMachineConfiguration;
     }
 }
