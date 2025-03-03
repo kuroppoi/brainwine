@@ -175,11 +175,11 @@ public class QuestTask {
         return this;
     }
 
-    public DialogSection getDialogSection(Player player, int taskProgress) {
+    public DialogSection getDialogSection(Player player, int taskProgress, boolean v3) {
         DialogSection result = new DialogSection();
 
         String title = getDescription() + (taskProgress >= 0 ? String.format(" (Progress: %d/%d)", taskProgress, getQuantity()) : "");
-        if(player == null || player.isV3()) {
+        if(v3) {
             result.setTitle("<color=#00ffff>" + title + "</color>");
         } else {
             result.setTitle(title).setTextColor("#00ffff");
