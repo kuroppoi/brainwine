@@ -2,6 +2,7 @@ package brainwine.gameserver.zone;
 
 import java.io.File;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -174,8 +175,37 @@ public class Zone {
         steamManager.tick(deltaTime);
         simulate(deltaTime);
         
-        // One full cycle = 1200 seconds = 20 minutes
-        time += deltaTime * (1.0F / 1200.0F);
+
+        switch(getWeatherMachineConfiguration().getDayAndNightCycleMode()) {
+            case REALTIME:
+                OffsetDateTime current = OffsetDateTime.now();
+                int wantedOffset = getWeatherMachineConfiguration().getTimeZone();
+                int realOffset = current.getOffset().get(ChronoField.OFFSET_SECONDS) / 3600;
+                float currentHours = current.get(ChronoField.MILLI_OF_DAY) / 3_600_000.f;
+                float hours = currentHours + (wantedOffset - realOffset);
+                if(hours < 0) {
+                    hours += 24.0f;
+                }
+                time = hours / 24.0f;
+                break;
+            case FAST:
+                time += deltaTime * (1.0F / 800.0F);
+                break;
+            case SLOW:
+                time += deltaTime * (1.0F / 1600.0F);
+                break;
+            case DAY:
+                time = 0.5f;
+                break;
+            case NIGHT:
+                time = 0.0f;
+                break;
+            case NORMAL:
+            default:
+                // One full cycle = 1200 seconds = 20 minutes
+                time += deltaTime * (1.0F / 1200.0F);
+                break;
+        }
         
         if(time >= 1.0F) {
             time -= 1.0F;
