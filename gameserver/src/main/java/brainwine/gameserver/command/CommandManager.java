@@ -95,6 +95,14 @@ public class CommandManager {
 
                 int currentIndex = 0;
                 while(currentIndex < joinedArgs.length()) {
+                    while(currentIndex < joinedArgs.length() && Character.isWhitespace(joinedArgs.charAt(currentIndex))) {
+                        currentIndex++;
+                    }
+
+                    if(currentIndex >= joinedArgs.length()) {
+                        break;
+                    }
+
                     if(joinedArgs.charAt(currentIndex) == '"') {
                         int endIndex = joinedArgs.indexOf('"', currentIndex + 1);
                         if(endIndex == -1) {
@@ -114,14 +122,16 @@ public class CommandManager {
                         }
                     }
                 }
-                command.execute(executor, newArgs.toArray(new String[0]));
+
+                args = newArgs.toArray(new String[0]);
             } catch(Exception e) {
                 e.printStackTrace();
                 executor.notify("There has been an error parsing the smart command arguments.", SYSTEM);
+                return;
             }
-        } else {
-            command.execute(executor, args);
         }
+
+        command.execute(executor, args);
 
     }
     
