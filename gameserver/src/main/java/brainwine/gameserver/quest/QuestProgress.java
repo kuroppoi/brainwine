@@ -75,7 +75,7 @@ public class QuestProgress {
         completedAt = System.currentTimeMillis();
     }
 
-    public List<DialogSection> getDialogSection(Player player) {
+    public List<DialogSection> getDialogSection(Player player, boolean v3) {
         List<DialogSection> result = new ArrayList<>();
         DialogSection mainSection = new DialogSection();
         result.add(mainSection);
@@ -91,12 +91,12 @@ public class QuestProgress {
         mainSection.setTitle(quest.getTitle());
 
         for(int i = 0; i < quest.getTasks().size(); i++) {
-            result.add(quest.getTasks().get(i).getDialogSection(player, getTaskProgress(i)));
+            result.add(quest.getTasks().get(i).getDialogSection(player, getTaskProgress(i), v3));
         }
 
         DialogSection cancelSection = new DialogSection().setChoice(getActionChoice("cancel"));
 
-        if(player.isV3()) {
+        if(v3) {
             cancelSection.setText("<color=#ff0000>Cancel Quest</color>");
         } else {
             cancelSection.setText("Cancel Quest").setTextColor("#ff0000");

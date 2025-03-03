@@ -49,10 +49,10 @@ public class PlayerQuestDialog {
         return DialogHelper.messageDialog(player.isV3() ? quest.getStory().getBegin() : quest.getStory().getBeginMobile());
     }
 
-    public static Dialog playerQuestsDialogGet(Player player, boolean privileged) {
+    public static Dialog playerQuestsDialogGet(Player player, boolean privileged, boolean v3) {
         Dialog result = new Dialog().setTitle("Your Quests");
 
-        List<DialogSection> all = getPlayerQuestsSection(player, false, privileged);
+        List<DialogSection> all = getPlayerQuestsSection(player, false, privileged, v3);
 
         for(DialogSection section : all) {
             result.addSection(section);
@@ -75,12 +75,12 @@ public class PlayerQuestDialog {
         }
     }
 
-    public static List<DialogSection> getPlayerQuestsSection(Player player, boolean canFinishQuest, boolean privileged) {
+    public static List<DialogSection> getPlayerQuestsSection(Player player, boolean canFinishQuest, boolean privileged, boolean v3) {
         List<DialogSection> result = new ArrayList<>();
         List<DialogSection> resultCompleted = new ArrayList<>();
         for(QuestProgress questProgress : player.getQuestProgresses().values()) {
             if(!questProgress.isComplete()) {
-                result.addAll(questProgress.getDialogSection(player));
+                result.addAll(questProgress.getDialogSection(player, v3));
             } else if(privileged) {
                 DialogSection cancelSection = new DialogSection()
                         .setChoice(String.format("quest.%s.%s", questProgress.getQuestId(), "cancel"))
@@ -119,7 +119,7 @@ public class PlayerQuestDialog {
     }
 
     public static void showPlayerQuests(Player admin, Player player) {
-        admin.showDialog(playerQuestsDialogGet(player, admin.isGodMode()), ans -> playerQuestsDialogHandle(player, admin.isGodMode(), ans));
+        admin.showDialog(playerQuestsDialogGet(player, admin.isGodMode(), admin.isV3()), ans -> playerQuestsDialogHandle(player, admin.isGodMode(), ans));
     }
 
 }
