@@ -958,6 +958,12 @@ public class Player extends Entity implements CommandExecutor {
         if(item.getUses().isEmpty() || !zone.areCoordinatesInBounds(x, y)) {
             return;
         }
+
+        if(transmittableBlock != null && item.hasUse(ItemUseType.TRANSMITTED)) {
+            transmitBlock(item, transmittableBlock, x, y);
+            transmittableBlock = null;
+            return;
+        }
         
         boolean linked = false;
         
@@ -965,12 +971,7 @@ public class Player extends Entity implements CommandExecutor {
             if(item.hasUse(ItemUseType.SWITCHED) && !item.hasUse(ItemUseType.SWITCH)) {
                 linked = tryLinkSwitchedItem(x, y, item);
             } else if(item.hasUse(ItemUseType.TRANSMITTED)) {
-                if(transmittableBlock != null) {
-                    transmitBlock(item, transmittableBlock, x, y);
-                    transmittableBlock = null;
-                } else {
-                    linked = tryLinkTransmittedItem(x, y, item);
-                }
+                linked = tryLinkTransmittedItem(x, y, item);
             }
         }
         
