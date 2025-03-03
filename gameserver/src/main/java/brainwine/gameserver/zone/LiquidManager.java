@@ -33,6 +33,11 @@ public class LiquidManager {
     }
     
     private int updateLiquids() {
+        // Don't do anything if liquid gravity is disabled
+        if(!zone.getWeatherMachineConfiguration().isLiquidGravityEnabled()) {
+            return 0;
+        }
+
         // Sort in reverse order so that lower liquid blocks are updated first
         List<Integer> liquidIndicesToUpdate = new ArrayList<>(liquidIndices);
         Collections.sort(liquidIndicesToUpdate, Collections.reverseOrder());

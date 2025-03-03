@@ -27,6 +27,7 @@ public class MachineManager {
     private final Zone zone;
     private final Map<Integer, MetaBlock> massSpawners = new HashMap<>();
     private final Map<Integer, MetaBlock> massTeleporters = new HashMap<>();
+    private final Map<Integer, MetaBlock> weatherMachines = new HashMap<>();
     
     public MachineManager(Zone zone) {
         this.zone = zone;
@@ -192,6 +193,10 @@ public class MachineManager {
     protected boolean hasMassSpawner() {
         return !massSpawners.isEmpty();
     }
+
+    protected boolean hasWeatherMachine() {
+        return !weatherMachines.isEmpty();
+    }
     
     protected void indexMetaBlock(int index, MetaBlock metaBlock) {
         EcologicalMachine machine = EcologicalMachine.fromBase(metaBlock.getItem());
@@ -210,6 +215,8 @@ public class MachineManager {
                 case "teleport":
                     massTeleporters.put(index, metaBlock);
                     break;
+                case "weather":
+                    weatherMachines.put(index, metaBlock);
             }
         }
     }
@@ -229,6 +236,10 @@ public class MachineManager {
                     case "teleport":
                         massTeleporters.remove(index);
                         if(!hasMassTeleporter()) zone.getMassTeleporterConfiguration().reset();
+                        break;
+                    case "weather":
+                        weatherMachines.remove(index);
+                        if(!hasWeatherMachine()) zone.getWeatherMachineConfiguration().reset();
                         break;
                 }
             }
