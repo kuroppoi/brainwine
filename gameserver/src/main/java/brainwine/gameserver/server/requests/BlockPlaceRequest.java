@@ -130,10 +130,6 @@ public class BlockPlaceRequest extends PlayerRequest {
             mod = findRotationMod(zone, x, y, item.getBlockWidth(), item.getBlockHeight());
         }
 
-        player.getInventory().removeItem(item);
-        player.getStatistics().trackItemPlaced();
-        player.trackPlacement(x, y, item);
-
         boolean isBlockPlaced = false;
 
         // Process jar use if applicable
@@ -162,6 +158,10 @@ public class BlockPlaceRequest extends PlayerRequest {
         if(!isBlockPlaced) {
             zone.updateBlock(x, y, layer, item, mod, player);
         }
+
+        player.getInventory().removeItem(item);
+        player.getStatistics().trackItemPlaced();
+        player.trackPlacement(x, y, item);
 
         // Disintegrate earth-like blocks if they don't have a back layer
         Block block = zone.getBlock(x, y);
