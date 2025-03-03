@@ -13,8 +13,7 @@ import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 import static brainwine.gameserver.player.NotificationType.SYSTEM;
 
@@ -43,7 +42,7 @@ public class TeleportCommand extends Command {
                 if(subject != null) {
                     teleportToPlayerOrPlaque(player, subject, player.getZone(), args[1]);
                 } else {
-                    player.notify(String.format("Player '%s' not found."));
+                    player.notify(String.format("Player '%s' not found.", args[0]));
                 }
             }
         } else if(args.length == 3) {
@@ -56,9 +55,9 @@ public class TeleportCommand extends Command {
             if(!done) {
                 try {
                     subject = playerManager.getPlayer(args[0]);
-                    assert subject != null;
+                    Objects.requireNonNull(subject);
                     targetZone = player.getZone();
-                    assert targetZone != null;
+                    Objects.requireNonNull(targetZone);
                     x = parseXCoordinate(args[1], targetZone);
                     y = parseYCoordinate(args[2], targetZone);
                     done = true;
@@ -74,7 +73,7 @@ public class TeleportCommand extends Command {
             if(!done) {
                 try {
                     targetZone = zoneManager.getZoneByName(args[0]);
-                    assert targetZone != null;
+                    Objects.requireNonNull(targetZone);
                     x = parseXCoordinate(args[1], targetZone);
                     y = parseYCoordinate(args[2], targetZone);
                     subject = player;
@@ -91,9 +90,9 @@ public class TeleportCommand extends Command {
             if(!done) {
                 try {
                     subject = playerManager.getPlayer(args[0]);
-                    assert subject != null;
+                    Objects.requireNonNull(subject);
                     targetZone = zoneManager.getZoneByName(args[1]);
-                    assert targetZone != null;
+                    Objects.requireNonNull(targetZone);
                     done = true;
                 } catch(Exception e) {
                 }
@@ -108,9 +107,9 @@ public class TeleportCommand extends Command {
         } else {
             try {
                 Player subject = playerManager.getPlayer(args[0]);
+                Objects.requireNonNull(subject);
                 Zone targetZone = zoneManager.getZoneByName(args[1]);
-                assert subject != null;
-                assert targetZone != null;
+                Objects.requireNonNull(subject);
                 int x = parseXCoordinate(args[2], targetZone);
                 int y = parseYCoordinate(args[3], targetZone);
 
