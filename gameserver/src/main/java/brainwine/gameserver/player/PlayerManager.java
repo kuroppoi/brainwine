@@ -4,7 +4,6 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import brainwine.gameserver.GameConfiguration;
+import brainwine.gameserver.util.MapHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.mindrot.jbcrypt.BCrypt;
@@ -21,9 +22,13 @@ import brainwine.shared.JsonHelper;
 import brainwine.shared.TokenGenerator;
 
 public class PlayerManager {
-    
-    // TODO check platforms as well
-    public static final List<String> SUPPORTED_VERSIONS = Arrays.asList("1.13.3", "2.11.0.1", "2.11.1", "3.13.1");
+    public static Map<String, String> SUPPORTED_VERSIONS = MapHelper.map(
+            String.class, String.class,
+            "iPh|iPo|iPa", "2.11.0",
+            "Windows", "3.11.0",
+            "Unity", "3.11.0",
+            "default", "2.11.0"
+    );
     private static final Logger logger = LogManager.getLogger();
     private final Map<String, Player> playersById = new HashMap<>();
     private final Map<String, Player> playersByName = new HashMap<>();
@@ -31,7 +36,16 @@ public class PlayerManager {
     private final List<Player> onlinePlayers = new ArrayList<>();
     
     public PlayerManager() {
+        loadSupportedVersions();
         loadPlayers();
+    }
+
+    private void loadSupportedVersions() {
+        Map<String, String> cfg = MapHelper.getMap(GameConfiguration.getBaseConfig(), "client_version");
+        if(cfg != null) {
+            logger.info(SERVER_MARKER, "Replacing supported versions.");
+            SUPPORTED_VERSIONS = cfg;
+        }
     }
     
     private void loadPlayers() {
