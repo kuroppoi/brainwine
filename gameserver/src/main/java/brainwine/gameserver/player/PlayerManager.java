@@ -43,8 +43,9 @@ public class PlayerManager {
     private void loadSupportedVersions() {
         Map<String, String> cfg = MapHelper.getMap(GameConfiguration.getBaseConfig(), "client_version");
         if(cfg != null) {
-            logger.info(SERVER_MARKER, "Replacing supported versions.");
             SUPPORTED_VERSIONS = cfg;
+        } else {
+            logger.warn(SERVER_MARKER, "Supported client versions are not configured.");
         }
     }
     
