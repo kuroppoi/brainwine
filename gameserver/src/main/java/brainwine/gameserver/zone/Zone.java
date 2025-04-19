@@ -699,11 +699,11 @@ public class Zone {
         
         return !item.isAir() && !item.canPlaceOver();
     }
-    
+
     public boolean isBlockProtected(int x, int y) {
         return isBlockProtected(x, y, null);
     }
-    
+
     public boolean isBlockProtected(int x, int y, Player player) {
         return isBlockProtected(x, y, player, false);
     }
@@ -735,10 +735,12 @@ public class Zone {
             return true;
         }
 
-        return isBlockProtectedByField(x, y, player, fieldBlocks);
+        return isBlockProtectedByField(x, y, player, skipSelf, fieldBlocks);
     }
 
-    public boolean isBlockProtectedByField(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+    public boolean isBlockProtectedByField(int x, int y, Player player, boolean skipSelf, Collection<MetaBlock> fieldBlocks) {
+        MetaBlock metaBlock = getMetaBlock(x, y);
+
         // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
             // Skip block if it is the current block and we need to skip it
@@ -748,7 +750,7 @@ public class Zone {
             int fX = fieldBlock.getX();
             int fY = fieldBlock.getY();
             int field = fieldBlock.getItem().getField();
-            
+
             if(player == null || (!fieldBlock.isOwnedBy(player)
                     && !(fieldBlock.getIntProperty("t") == 1 && player.hasFollower(fieldBlock.getOwner())))) {
                 if(item.isDish()) {
@@ -762,7 +764,7 @@ public class Zone {
                 }
             }
         }
-        
+
         return false;
     }
     

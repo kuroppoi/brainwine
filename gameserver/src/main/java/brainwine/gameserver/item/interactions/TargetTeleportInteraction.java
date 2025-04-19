@@ -83,10 +83,10 @@ public class TargetTeleportInteraction implements ItemInteraction {
                                && m.getItem().getId().startsWith("mechanical/dish"));
         
         // Check area protection
-        if(!player.isGodMode() && targetZone.isBlockProtectedByField(targetX, targetY, player, protectors)) {
+        if(!player.isGodMode() && targetZone.isBlockProtectedByField(targetX, targetY, player, false, protectors)) {
             Player owner = metaBlock.getOwner();
             int setting = metaBlock.getIntProperty("pt");
-            boolean ownerCanEdit = !targetZone.isBlockProtectedByField(targetX, targetY, owner, protectors);
+            boolean ownerCanEdit = !targetZone.isBlockProtectedByField(targetX, targetY, owner, false, protectors);
             
             // Check protection entry setting
             if(owner == null || !ownerCanEdit || setting == 0 || (setting == 1 && !owner.isFollowing(player))) {
