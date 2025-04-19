@@ -18,13 +18,13 @@ public class WorldMachineInteraction implements ItemInteraction {
 
         Player player = (Player) entity;
 
-        if(!canInteract((Player) entity, zone)) return;
+        if(!canInteract((Player) entity, zone, x, y)) return;
 
         player.showDialog(DialogHelper.getDialog("world_machines.spawner.menu"), ans -> {
             if(ans.length == 0 || !(ans[0] instanceof String)) return;
             switch ((String) ans[0]) {
                 case "deactivate_natural_teleporters":
-                    deactivateNaturalTeleporters(player, zone);
+                    deactivateNaturalTeleporters(player, zone, x, y);
                     break;
                 case "configure":
                     switch((String) itemUse) {
@@ -49,17 +49,22 @@ public class WorldMachineInteraction implements ItemInteraction {
         });
     }
 
-    public boolean canInteract(Player player, Zone zone) {
-        if(player.isGodMode() || zone.isOwner(player)) {
-            return true;
-        } else {
+    public boolean canInteract(Player player, Zone zone, int x, int y) {
+        if(!player.isGodMode() && !zone.isOwner(player)) {
             player.notify("Sorry, you do not own this world.");
             return false;
         }
+
+        if(zone.getBlock(x, y).getFrontMod() == 0) {
+            player.notify("You need to supply the machine with steam first.");
+            return false;
+        }
+
+        return true;
     }
 
-    public void deactivateNaturalTeleporters(Player player, Zone zone) {
-        if(canInteract(player, zone)) {
+    public void deactivateNaturalTeleporters(Player player, Zone zone, int x, int y) {
+        if(canInteract(player, zone, x, y)) {
             for (MetaBlock metaBlock : zone.getMetaBlocksWithUse(ItemUseType.TELEPORT)) {
                 if(!metaBlock.hasOwner() && !metaBlock.getItem().hasUse(ItemUseType.ZONE_TELEPORT)) {
                     zone.updateBlock(metaBlock.getX(), metaBlock.getY(), Layer.FRONT, Item.AIR);
@@ -76,7 +81,7 @@ public class WorldMachineInteraction implements ItemInteraction {
     }
 
     public void dismantle(Player player, Zone zone, int x, int y) {
-        if(canInteract(player, zone)) {
+        if(canInteract(player, zone, x, y)) {
             player.notify("World machines can not yet be dismantled, but this feature is coming soon!");
         }
     }
