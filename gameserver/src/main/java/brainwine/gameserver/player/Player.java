@@ -148,6 +148,7 @@ public class Player extends Entity implements CommandExecutor {
     private String clientVersion;
     private TradeSession tradeSession;
     private Placement lastPlacement;
+    private MetaBlock transmittableBlock;
     private Item heldItem = Item.AIR;
     private double breath = 1.0;
     private double thirst;
@@ -623,6 +624,7 @@ public class Player extends Entity implements CommandExecutor {
     public void onDisconnect() {
         lastHeartbeat = 0;
         lastPlacement = null;
+        transmittableBlock = null;
         clientVersion = null;
         previousZone = zone;
 
@@ -885,7 +887,15 @@ public class Player extends Entity implements CommandExecutor {
     public void notify(Object message) {
         notify(message, NotificationType.POPUP);
     }
-    
+
+    public MetaBlock getTransmittableBlock() {
+        return transmittableBlock;
+    }
+
+    public void setTransmittableBlock(MetaBlock transmittableBlock) {
+        this.transmittableBlock = transmittableBlock;
+    }
+
     public void setHeldItem(Item item) {
         heldItem = item;
     }
@@ -946,6 +956,12 @@ public class Player extends Entity implements CommandExecutor {
     
     public void trackPlacement(int x, int y, Item item) {
         if(item.getUses().isEmpty() || !zone.areCoordinatesInBounds(x, y)) {
+            return;
+        }
+
+        if(transmittableBlock != null && item.hasUse(ItemUseType.TRANSMITTED)) {
+            transmitBlock(item, transmittableBlock, x, y);
+            transmittableBlock = null;
             return;
         }
         
@@ -1024,6 +1040,33 @@ public class Player extends Entity implements CommandExecutor {
         zone.updateBlock(pX, pY, Layer.FRONT, pItem, 1, null, metadata);
         lastPlacement = null;
         return true;
+    }
+
+    public void transmitBlock(Item transmissionTarget, MetaBlock transmittableBlock, int x, int y) {
+        if(!isGodMode() && !zone.isOwner(this)) {
+            notify("You can't transmit this block because you don't own this zone.");
+            inventory.addItem(transmissionTarget);
+            return;
+        }
+
+        if(!zone.getBlock(transmittableBlock.getX(), transmittableBlock.getY()).getFrontItem().hasUse(ItemUseType.WORLD_MACHINE)) {
+            notify("You can't transmit this item at the location you have set it. Maybe it got moved or destroyed since then.");
+            inventory.addItem(transmissionTarget);
+            return;
+        }
+
+        Item baseItem = zone.getBlock(x, y).getBaseItem();
+
+        Item item = transmittableBlock.getItem();
+        zone.updateBlock(transmittableBlock.getX(), transmittableBlock.getY(), Layer.FRONT, Item.AIR);
+
+        if(baseItem.hasId("base/pipe")) {
+            zone.updateBlock(x, y, Layer.FRONT, Item.AIR);
+            notify("The machine has been flushed!");
+        } else {
+            zone.updateBlock(x, y, Layer.FRONT, item);
+        }
+
     }
     
     public double getMiningRange() {

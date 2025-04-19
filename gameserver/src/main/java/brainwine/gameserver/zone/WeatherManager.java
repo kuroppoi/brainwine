@@ -22,12 +22,25 @@ public class WeatherManager {
     
     public void tick(float deltaTime) {
         long now = System.currentTimeMillis();
-        
+
         if(now > rainStart + rainDuration) {
+            WeatherMachineConfiguration.Precipitation setting = zone.getWeatherMachineConfiguration().getPrecipitation();
             boolean dry = rainPower > 0;
+            boolean updateGrowables = dry;
+
+            if(setting == WeatherMachineConfiguration.Precipitation.ALWAYS) {
+                dry = false;
+                updateGrowables = true;
+            }
+
+            if(setting == WeatherMachineConfiguration.Precipitation.NONE) {
+                dry = true;
+                updateGrowables = false;
+            }
+
             createRandomRain(dry);
-            
-            if(dry) {
+
+            if(updateGrowables) {
                 zone.updateGrowables(1);
             }
         }

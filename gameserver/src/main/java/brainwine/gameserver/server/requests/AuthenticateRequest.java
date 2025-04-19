@@ -13,6 +13,7 @@ import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.messages.NotificationMessage;
 import brainwine.gameserver.server.pipeline.Connection;
+import brainwine.gameserver.util.VersionUtils;
 import brainwine.gameserver.zone.Zone;
 
 @RequestInfo(id = 1)
@@ -29,8 +30,15 @@ public class AuthenticateRequest extends Request {
     public void process(Connection connection) {
         GameServer server = GameServer.getInstance();
         PlayerManager playerManager = server.getPlayerManager();
-        
-        if(!PlayerManager.SUPPORTED_VERSIONS.contains(version)) {
+
+        String platform = "default";
+        if(VersionUtils.isGreaterOrEqualTo(version, "3")) platform = "Unity";
+
+        String wantedVersion = PlayerManager.SUPPORTED_VERSIONS.get(platform);
+        if(wantedVersion == null) wantedVersion = PlayerManager.SUPPORTED_VERSIONS.get("default");
+        if(wantedVersion == null) wantedVersion = "99";
+
+        if(!VersionUtils.isGreaterOrEqualTo(version, wantedVersion)) {
             connection.kick("Sorry, this version of Deepworld is not supported.");
             return;
         }

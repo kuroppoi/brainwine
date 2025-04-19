@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
+import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.server.messages.EventMessage;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -45,7 +45,8 @@ public class EntityManager {
     public static final long SPAWN_INTERVAL = 200;
     private static final Logger logger = LogManager.getLogger();
     private static final ThreadLocalRandom random = ThreadLocalRandom.current();
-    private static final Map<Biome, List<EntitySpawn>> spawns = new HashMap<>();
+    private static final Map<Biome, List<EntitySpawn>> globalSpawns = new HashMap<>();
+    private final List<EntitySpawn> spawns = new ArrayList<>();
     private final Map<Integer, Entity> entities = new ConcurrentHashMap<>(); // TODO is there a better solution?
     private final Map<Integer, Npc> npcs = new HashMap<>();
     private final Map<Integer, Npc> mountedNpcs = new HashMap<>();
@@ -54,28 +55,76 @@ public class EntityManager {
     private final Zone zone;
     private int entityDiscriminator;
     private long lastSpawnAt = System.currentTimeMillis();
-    
+    private long lastInvasionAt;
+    private long lastInvasionWaveAt = System.currentTimeMillis();
+    private long timeUntilNextInvasionWave;
+    private Player currentInvasionTarget;
+    int currentInvasionWave = 4;
+    List<Integer> invaders = new ArrayList<>();
+
     public EntityManager(Zone zone) {
         this.zone = zone;
     }
     
     public static void loadEntitySpawns() {
-        spawns.clear();
+        globalSpawns.clear();
         logger.info(SERVER_MARKER, "Loading entity spawns ...");
         
         try {
             URL url = ResourceFinder.getResourceUrl("spawning.json", true);
-            spawns.putAll(JsonHelper.readValue(url, new TypeReference<Map<Biome, List<EntitySpawn>>>(){}));
+            Map<Biome, List<EntitySpawn>> loaded = JsonHelper.readValue(url, new TypeReference<Map<Biome, List<EntitySpawn>>>(){});
+
+            // Validate all entity spawns.
+            for(Map.Entry<Biome, List<EntitySpawn>> entry : loaded.entrySet()) {
+                List<EntitySpawn> validSpawns = new ArrayList<>(entry.getValue().size());
+                for(EntitySpawn spawn : entry.getValue()) {
+                    if(spawn.getEntityConfig() != null) {
+                        validSpawns.add(spawn);
+                    } else {
+                        logger.warn("Entity " + spawn.getEntity() + " not found for " + entry.getKey() + " spawns.");
+                    }
+                }
+                globalSpawns.put(entry.getKey(), validSpawns);
+            }
+
         } catch (IOException e) {
             logger.error(SERVER_MARKER, "Failed to load entity spawns", e);
         }
     }
-    
-    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, double acidity, Item baseItem, ZoneRules rules) {
-        return spawns.entrySet().stream()
-                .filter(entry -> entry.getKey() == biome)
-                .map(Entry::getValue)
-                .flatMap(Collection::stream)
+
+    public void updateSpawnRates() {
+        if(spawns.isEmpty()) {
+            try {
+                spawns.addAll(
+                        JsonHelper.readValue(
+                                JsonHelper.writeValueAsString(globalSpawns.get(zone.getBiome())),
+                                new TypeReference<List<EntitySpawn>>() {}
+                        )
+                );
+            } catch(Exception e) {
+                throw new RuntimeException("Cannot initialize individual zone entity spawns.", e);
+            }
+        }
+
+        int difficulty = zone.getMassSpawnerConfiguration() != null
+                ? zone.getMassSpawnerConfiguration().getDifficulty()
+                : 3;
+
+        for(EntitySpawn spawn : spawns) {
+            spawn.resetFrequency();
+
+            boolean isFriendly = spawn.getEntityConfig().isFriendly();
+            boolean isHostile = !isFriendly;
+
+            if(difficulty == 1 && isHostile) spawn.setFrequency(0.0);
+            if(difficulty == 2 && isFriendly) spawn.setFrequency(2.0 * spawn.getFrequency());
+            if(difficulty == 4 && isHostile) spawn.setFrequency(2.0 * spawn.getFrequency());
+            if(difficulty == 5 && isHostile) spawn.setFrequency(3.0 * spawn.getFrequency());
+        }
+    }
+
+    private List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, double acidity, Item baseItem, ZoneRules rules) {
+        return spawns.stream()
                 .filter(spawn -> locale.equalsIgnoreCase(spawn.getLocale())
                         && depth >= spawn.getMinDepth() && depth <= spawn.getMaxDepth()
                         && (
@@ -86,7 +135,7 @@ public class EntityManager {
                 .collect(Collectors.toList());
     }
     
-    private static EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, double acidity, Item baseItem, ZoneRules rules) {
+    private EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, double acidity, Item baseItem, ZoneRules rules) {
         return new WeightedMap<>(getEligibleEntitySpawns(biome, locale, depth, acidity, baseItem, rules), EntitySpawn::getFrequency).next();
     }
     
@@ -106,6 +155,8 @@ public class EntityManager {
             spawnRandomEntity();
             lastSpawnAt = now;
         }
+
+        tickInvasion();
     }
     
     private void spawnRandomEntity() {
@@ -113,18 +164,22 @@ public class EntityManager {
         List<Chunk> visibleChunks = zone.getVisibleChunks();
         List<Chunk> chunks = immediate ? visibleChunks : zone.getLoadedChunks().stream()
                 .filter(chunk -> !visibleChunks.contains(chunk)).collect(Collectors.toList());
-        
+
+        boolean isNotConfigured = zone.getMassSpawnerConfiguration() == null;
+        boolean doMaws = isNotConfigured || zone.getMassSpawnerConfiguration().isMawSpawningEnabled();
+        boolean doAreas = isNotConfigured || zone.getMassSpawnerConfiguration().isAreaSpawningEnabled();
+
         if(!chunks.isEmpty()) {
             List<Vector2i> eligiblePositions = new ArrayList<>();
             Chunk chunk = chunks.get(random.nextInt(chunks.size()));
-            
-            for(int x = chunk.getX(); x < chunk.getX() +  chunk.getWidth(); x++) {
+
+            for(int x = chunk.getX(); x < chunk.getX() + chunk.getWidth(); x++) {
                 for(int y = chunk.getY(); y < chunk.getY() + chunk.getHeight(); y++) {
                     Block block = chunk.getBlock(x, y);
                     Item baseItem = block.getBaseItem();
                     
-                    if((immediate && baseItem.hasId("base/maw") || baseItem.hasId("base/pipe")) || 
-                            (!immediate && block.getBackItem().isAir() && block.getFrontItem().isAir())) {
+                    if((immediate && doMaws && (baseItem.hasId("base/maw") || baseItem.hasId("base/pipe"))) ||
+                            (!immediate && doAreas && block.getBackItem().isAir() && block.getFrontItem().isAir())) {
                         eligiblePositions.add(new Vector2i(x, y));
                     }
                 }
@@ -146,7 +201,7 @@ public class EntityManager {
                 }
                 
                 if(spawn != null) {
-                    EntityConfig config = spawn.getEntity();
+                    EntityConfig config = spawn.getEntityConfig();
                     
                     if(config != null) {
                         spawnEntity(new Npc(zone, config), x, y);
@@ -335,7 +390,92 @@ public class EntityManager {
             }
         }
     }
-    
+
+    public synchronized void startInvasion(Player target) {
+        for(int entityId : invaders) {
+            Entity e = getEntity(entityId);
+            if(e != null) {
+                zone.spawnEffect(e.getX(), e.getY(), "bomb-teleport", 4);
+                e.die(null);
+            }
+        }
+        invaders.clear();
+
+        currentInvasionTarget = target;
+        currentInvasionWave = 0;
+        lastInvasionAt = System.currentTimeMillis();
+        lastInvasionWaveAt = 0;
+        timeUntilNextInvasionWave = 0;
+    }
+
+    private void tickInvasion() {
+        if(currentInvasionWave >= 4) return;
+        currentInvasionWave = Math.max(0, currentInvasionWave);
+
+        if(currentInvasionTarget == null
+                || !currentInvasionTarget.isOnline()
+                || currentInvasionTarget.getZone() != zone
+        ) {
+            currentInvasionWave = 4;
+            return;
+        }
+
+        if(lastInvasionWaveAt + timeUntilNextInvasionWave < System.currentTimeMillis()) {
+            WeightedMap<String> invaders = zone.getBiome() == Biome.BRAIN
+                    ? new WeightedMap<>(MapHelper.map(
+                        String.class, Double.class,
+                    "brains/small",  15.0,
+                        "brains/medium", 2.0,
+                        "brains/medium-dire", 1.0
+                    ))
+                    : new WeightedMap<>(MapHelper.map(
+                        String.class, Double.class,
+                        "revenant", 15.0,
+                        "dire-revenant", 2.0,
+                        "revenant-lord", 1.0
+                    ));
+
+            int numInvaders = 1;
+            if(currentInvasionWave == 3 && Math.random() < 0.5) {
+                numInvaders = 2;
+            }
+
+            List<Vector2i> eligiblePositions = new ArrayList<>(8);
+            for(int x = -1; x <= 1; x++) {
+                for(int y = -1; y <= 1; y++) {
+                    if(x == 0 && y == 0) continue;
+                    int blockX = currentInvasionTarget.getBlockX() + x;
+                    int blockY = currentInvasionTarget.getBlockY() + y;
+                    if(zone.areCoordinatesInBounds(blockX, blockY) && !zone.isBlockOccupied(blockX, blockY, Layer.FRONT)) {
+                        eligiblePositions.add(new Vector2i(blockX, blockY));
+                    }
+                }
+            }
+
+            for(int i = 0; i < numInvaders; i++) {
+                Vector2i pos = eligiblePositions.get((int)(Math.random() * eligiblePositions.size()));
+                spawnEntity(invaders.next(), pos.getX(), pos.getY());
+            }
+
+            // Determine interval until next wave
+            double minInterval = new double[] {3000, 1000, 500, 0}[currentInvasionWave];
+            double maxInterval = new double[] {4000, 2000, 1500, 1000}[currentInvasionWave];
+            timeUntilNextInvasionWave = (long)MathUtils.lerp(minInterval, maxInterval, Math.random());
+
+            // Skip last wave randomly
+            if(currentInvasionWave == 2 && Math.random() < 0.5) {
+                currentInvasionWave = 4;
+            }
+
+            currentInvasionWave++;
+            lastInvasionWaveAt = System.currentTimeMillis();
+        }
+    }
+
+    public long getLastInvasionAt() {
+        return lastInvasionAt;
+    }
+
     public Entity getEntity(int entityId) {
         return entities.get(entityId);
     }

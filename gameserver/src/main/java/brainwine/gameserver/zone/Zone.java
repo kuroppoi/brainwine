@@ -2,6 +2,7 @@ package brainwine.gameserver.zone;
 
 import java.io.File;
 import java.time.OffsetDateTime;
+import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -89,6 +90,9 @@ public class Zone {
     private boolean pvp;
     private String entryCode;
     private String owner;
+    private MassSpawnerConfiguration massSpawnerConfiguration = new MassSpawnerConfiguration();
+    private MassTeleporterConfiguration massTeleporterConfiguration = new MassTeleporterConfiguration();
+    private WeatherMachineConfiguration weatherMachineConfiguration = new WeatherMachineConfiguration();
     private ZoneRules rules = new ZoneRules();
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
@@ -138,6 +142,10 @@ public class Zone {
         isProtected = config.isProtected();
         pvp = config.isPvp();
         creationDate = config.getCreationDate();
+        massSpawnerConfiguration = config.getMassSpawnerConfiguration();
+        massTeleporterConfiguration = config.getMassTeleporterConfiguration();
+        weatherMachineConfiguration = config.getWeatherMachineConfiguration();
+        entityManager.updateSpawnRates();
         setRules(config.getRules());
     }
     
@@ -157,6 +165,7 @@ public class Zone {
         chunkManager = new ChunkManager(this);
         steamManager = new SteamManager(this);
         growthManager = new GrowthManager(this);
+        entityManager.updateSpawnRates();
         Arrays.fill(surface, height);
         Arrays.fill(sunlight, height);
     }
@@ -173,9 +182,37 @@ public class Zone {
         liquidManager.tick(deltaTime);
         steamManager.tick(deltaTime);
         simulate(deltaTime);
-        
-        // One full cycle = 1200 seconds = 20 minutes
-        time += deltaTime * (1.0F / 1200.0F);
+
+        switch(getWeatherMachineConfiguration().getDayAndNightCycleMode()) {
+            case REALTIME:
+                OffsetDateTime current = OffsetDateTime.now();
+                int wantedOffset = getWeatherMachineConfiguration().getTimeZone();
+                int realOffset = current.getOffset().get(ChronoField.OFFSET_SECONDS) / 3600;
+                float currentHours = current.get(ChronoField.MILLI_OF_DAY) / 3_600_000.f;
+                float hours = currentHours + (wantedOffset - realOffset);
+                if(hours < 0) {
+                    hours += 24.0f;
+                }
+                time = hours / 24.0f;
+                break;
+            case FAST:
+                time += deltaTime * (1.0F / 800.0F);
+                break;
+            case SLOW:
+                time += deltaTime * (1.0F / 1600.0F);
+                break;
+            case DAY:
+                time = 0.5f;
+                break;
+            case NIGHT:
+                time = 0.0f;
+                break;
+            case NORMAL:
+            default:
+                // One full cycle = 1200 seconds = 20 minutes
+                time += deltaTime * (1.0F / 1200.0F);
+                break;
+        }
         
         if(time >= 1.0F) {
             time -= 1.0F;
@@ -668,10 +705,18 @@ public class Zone {
     }
     
     public boolean isBlockProtected(int x, int y, Player player) {
-        return isBlockProtected(x, y, player, fieldBlocks.values());
+        return isBlockProtected(x, y, player, false);
     }
-    
+
+    public boolean isBlockProtected(int x, int y, Player player, boolean skipSelf) {
+        return isBlockProtected(x, y, player, skipSelf, fieldBlocks.values());
+    }
+
     public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+        return isBlockProtected(x, y, player, false, fieldBlocks);
+    }
+
+    public boolean isBlockProtected(int x, int y, Player player, boolean skipSelf, Collection<MetaBlock> fieldBlocks) {
         // Check bounds
         if(!areCoordinatesInBounds(x, y)) {
             return true;
@@ -686,7 +731,7 @@ public class Zone {
         MetaBlock metaBlock = getMetaBlock(x, y);
 
         // Check block owner if it has a field
-        if(frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
+        if(!skipSelf && frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
             return true;
         }
 
@@ -696,6 +741,9 @@ public class Zone {
     public boolean isBlockProtectedByField(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
         // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
+            // Skip block if it is the current block and we need to skip it
+            if(skipSelf && fieldBlock == metaBlock) continue;
+
             Item item = fieldBlock.getItem();
             int fX = fieldBlock.getX();
             int fY = fieldBlock.getY();
@@ -993,14 +1041,19 @@ public class Zone {
                     {"brains/medium-dire", "brains/small"},
                     {"brains/medium-dire", "brains/small"},
                 };
-                
+
                 int max = Math.max(1, groups.length - 6);
-                String[] group = Stream.of(groups)
+                String[] groupArr = Stream.of(groups)
                         .skip(Math.min(effectiveGuardLevel, groups.length - max))
                         .limit(max)
                         .collect(Collectors.toList())
                         .get(random.nextInt(max));
-                guardians.addAll(Arrays.asList(group));
+                List<String> group = Arrays.asList(groupArr);
+                if(massSpawnerConfiguration.getDifficulty() < 3) {
+                    guardians.addAll(group.subList(1, group.size()));
+                } else {
+                    guardians.addAll(group);
+                }
             }
             
             metadata.put("!", guardians);
@@ -1460,7 +1513,19 @@ public class Zone {
     public Map<EcologicalMachine, List<Item>> getDiscoveredParts() {
         return machineManager.getDiscoveredParts();
     }
-    
+
+    public boolean hasMassTeleporter() {
+        return machineManager.hasMassTeleporter();
+    }
+
+    public boolean hasMassSpawner() {
+        return machineManager.hasMassSpawner();
+    }
+
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
     public MachineManager getMachineManager() {
         return machineManager;
     }
@@ -1476,14 +1541,18 @@ public class Zone {
     public Map<String, OffsetDateTime> getActionHistory() {
         return Collections.unmodifiableMap(actionHistory);
     }
-    
+
+    public int getGroundHeight() {
+        return biome == Biome.DEEP ? -1000 : 200;
+    }
+
     /**
      * @return The specified coordinates in a player-readable format
      * For example, {@code x: 200 y: 300} in a plain biome becomes {@code 800 west, 100 below}
      */
     public String getReadableCoordinates(int x, int y) {
         int center = width / 2;
-        int surface = biome == Biome.DEEP ? -1000 : 200;
+        int surface = this.getGroundHeight();
         String directionX = x < center ? "west" : x > center ? "east" : "central";
         String directionY = y > surface ? "below" : "above";
         String coordX = String.format("%s %s", Math.abs(x - center), directionX);
@@ -1845,6 +1914,18 @@ public class Zone {
     
     public boolean isPvp() {
         return pvp;
+    }
+
+    public MassSpawnerConfiguration getMassSpawnerConfiguration() {
+        return massSpawnerConfiguration;
+    }
+
+    public MassTeleporterConfiguration getMassTeleporterConfiguration() {
+        return massTeleporterConfiguration;
+    }
+
+    public WeatherMachineConfiguration getWeatherMachineConfiguration() {
+        return weatherMachineConfiguration;
     }
 
     public ZoneRules getRules() {

@@ -66,6 +66,15 @@ public class ZoneConfigFile {
     private OffsetDateTime lastActiveDate = OffsetDateTime.now();
 
     @JsonSetter(nulls = Nulls.SKIP)
+    private MassSpawnerConfiguration massSpawnerConfiguration = new MassSpawnerConfiguration();
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    private MassTeleporterConfiguration massTeleporterConfiguration = new MassTeleporterConfiguration();
+
+    @JsonSetter(nulls = Nulls.SKIP)
+    private WeatherMachineConfiguration weatherMachineConfiguration = new WeatherMachineConfiguration();
+
+    @JsonSetter(nulls = Nulls.SKIP)
     private ZoneRules rules = null;
 
     @JsonCreator
@@ -93,6 +102,9 @@ public class ZoneConfigFile {
         this.discoveredParts = zone.getDiscoveredParts();
         this.actionHistory = zone.getActionHistory();
         this.creationDate = zone.getCreationDate();
+        this.massSpawnerConfiguration = zone.getMassSpawnerConfiguration();
+        this.massTeleporterConfiguration = zone.getMassTeleporterConfiguration();
+        this.weatherMachineConfiguration = zone.getWeatherMachineConfiguration();
         this.rules = zone.getRules();
     }
 
@@ -158,6 +170,18 @@ public class ZoneConfigFile {
     
     public OffsetDateTime getLastActiveDate() {
         return lastActiveDate;
+    }
+
+    public MassSpawnerConfiguration getMassSpawnerConfiguration() {
+        return massSpawnerConfiguration;
+    }
+
+    public MassTeleporterConfiguration getMassTeleporterConfiguration() {
+        return massTeleporterConfiguration;
+    }
+
+    public WeatherMachineConfiguration getWeatherMachineConfiguration() {
+        return weatherMachineConfiguration;
     }
 
     public ZoneRules getRules() {
