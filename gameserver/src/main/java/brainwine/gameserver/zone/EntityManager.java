@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 
 import brainwine.gameserver.item.ItemGroup;
 import brainwine.gameserver.player.NotificationType;
+import brainwine.gameserver.server.messages.NotificationMessage;
 import brainwine.gameserver.util.MathUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -411,33 +412,43 @@ public class EntityManager {
     }
 
     public void processInhibitors() {
-        List<MetaBlock> inhibitors = zone.getMetaBlocks().stream()
-                .filter(m -> m.getItem().getGroup() == ItemGroup.INHIBITOR)
-                .collect(Collectors.toList());
+        Map<Player, Integer> evokersInhibited = new HashMap<>();
+        List<Player> players = new ArrayList<>(zone.getPlayers());
+        boolean inhibited = false;
+        for(MetaBlock evoker : zone.getMetaBlocksWithItem("mechanical/spawner-brain")) {
+            if(zone.getBlock(evoker.getX(), evoker.getY()).getFrontMod() != 0) {
+                inhibited = true;
+                zone.spawnEffect(evoker.getX(), evoker.getY(), "bomb-electric", 5);
+                zone.updateBlock(evoker.getX(), evoker.getY(), Layer.FRONT, Item.AIR);
 
-        for(MetaBlock inhibitor : inhibitors) {
-            // Inhibitor needs to be supplied with steam
-            if(zone.getBlock(inhibitor.getX(), inhibitor.getY()).getFrontMod() == 0) continue;
-
-            int count = 0;
-            for(MetaBlock evoker : zone.getMetaBlocksWithItem("mechanical/spawner-brain")) {
-                if(MathUtils.inRange(evoker.getX(), evoker.getY(), inhibitor.getX(), inhibitor.getY(), 10.0)) {
-                    count++;
-                    zone.spawnEffect(evoker.getX(), evoker.getY(), "bomb-electric", 5);
-                    zone.updateBlock(evoker.getX(), evoker.getY(), Layer.FRONT, Item.AIR);
+                int minIndex = -1;
+                double minDistance = Double.POSITIVE_INFINITY;
+                for(int i = 0; i < players.size(); i++) {
+                    double playerDistance = MathUtils.distance(players.get(i).getX(), players.get(i).getY(), evoker.getX(), evoker.getY());
+                    if(minDistance > playerDistance) {
+                        minIndex = i;
+                        minDistance = playerDistance;
+                    }
+                }
+                if(minIndex != -1) {
+                    Player player = players.get(minIndex);
+                    evokersInhibited.merge(player, 1, Integer::sum);
                 }
             }
-            zone.spawnEffect(inhibitor.getX(), inhibitor.getY(), "bomb-electric", 5);
-            zone.updateBlock(inhibitor.getX(), inhibitor.getY(), Layer.FRONT, Item.AIR);
+        }
 
-            if(count > 0 && inhibitor.hasOwner()) {
-                Player player = inhibitor.getOwner();
-                player.getStatistics().trackEvokersInhibited(count);
-                String suffix = count == 1 ? " inhibited an evoker!" : " inhibited " + count + " evokers!";
-                player.notify("You" + suffix, NotificationType.SYSTEM);
-                player.notifyPeers(player.getName() + suffix, NotificationType.SYSTEM);
-                player.addExperience(500 * count);
-            }
+        for(Map.Entry<Player, Integer> score : evokersInhibited.entrySet()) {
+            Player player = score.getKey();
+            int count = score.getValue();
+            player.getStatistics().trackEvokersInhibited(count);
+            String suffix = count == 1 ? " inhibited an evoker!" : " inhibited " + count + " evokers!";
+            player.notify("You" + suffix, NotificationType.SYSTEM);
+            player.notifyPeers(player.getName() + suffix, NotificationType.SYSTEM);
+            player.addExperience(500 * count);
+        }
+
+        if(inhibited && !checkEvokers()) {
+            zone.sendMessage(new NotificationMessage("All evokers have been inhibited!", NotificationType.SYSTEM));
         }
     }
 
