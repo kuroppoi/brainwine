@@ -21,6 +21,7 @@ import brainwine.gameserver.achievement.DeliveranceAchievement;
 import brainwine.gameserver.achievement.DiscoveryAchievement;
 import brainwine.gameserver.achievement.ExploringAchievement;
 import brainwine.gameserver.achievement.HuntingAchievement;
+import brainwine.gameserver.achievement.InsurrectionAchievement;
 import brainwine.gameserver.achievement.LooterAchievement;
 import brainwine.gameserver.achievement.MiningAchievement;
 import brainwine.gameserver.achievement.RaiderAchievement;
@@ -55,6 +56,7 @@ public class PlayerStatistics {
     private int mawsPlugged;
     private int undertakings;
     private int deliverances;
+    private int evokersInhibited;
     private int deaths;
     private int landmarksUpvoted;
     private int landmarkVotesReceived;
@@ -431,6 +433,15 @@ public class PlayerStatistics {
     public void trackLandmarksUpvoted() {
         landmarksUpvoted++;
         player.updateAchievementProgress(VotingAchievement.class);
+    }
+
+    public int getEvokersInhibited() {
+        return evokersInhibited;
+    }
+
+    public void trackEvokersInhibited(int count) {
+        evokersInhibited += count;
+        player.updateAchievementProgress(InsurrectionAchievement.class);
     }
 
     public int getLandmarkVotesReceived() {
