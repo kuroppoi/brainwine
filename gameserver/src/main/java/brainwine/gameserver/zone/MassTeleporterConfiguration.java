@@ -30,10 +30,21 @@ public class MassTeleporterConfiguration extends WorldMachineConfiguration {
         reset();
 
         CommandAccessLevel[] arrLevels = CommandAccessLevel.values();
-        teleportToPlayerAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("tp_player")), 0, 3)];
-        teleportToPlaqueAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("tp_plaque")), 0, 3)];
-        teleportInProtectedAreaAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("tp_protected")), 0, 3)];
-        summonOtherPlayerAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("summon")), 0, 3)];
+        if(values.containsKey("tp_player")) {
+            teleportToPlayerAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("tp_player")), 0, 3)];
+        }
+
+        if(values.containsKey("tp_plaque")) {
+            teleportToPlaqueAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("tp_plaque")), 0, 3)];
+        }
+
+        if(values.containsKey("tp_protected")) {
+            teleportInProtectedAreaAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("tp_protected")), 0, 3)];
+        }
+
+        if(values.containsKey("summon")) {
+            summonOtherPlayerAccess = arrLevels[MathUtils.clamp(expectInteger(values.get("summon")), 0, 2)];
+        }
     }
 
     @Override
