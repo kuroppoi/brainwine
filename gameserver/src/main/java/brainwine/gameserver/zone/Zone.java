@@ -945,6 +945,11 @@ public class Zone {
                             guardBlocks++;
                         }
                     }
+
+                    if(dungeonId != null && frontItem.hasId("mechanical/spawner-brain")) {
+                        metadata.put("@", dungeonId);
+                        guardBlocks++;
+                    }
                     
                     // Determine lootability for containers
                     if(prefab.hasLoot() && frontItem.hasUse(ItemUseType.CONTAINER)) {

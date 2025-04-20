@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
@@ -168,14 +170,8 @@ public class EntityManager {
 
         // Process active evokers if there are players in the world
         if(System.currentTimeMillis() > lastInvasionAt + timeUntilNextInvasion) {
-            if(currentInvasionWave >= 4 && !zone.getPlayers().isEmpty() && checkEvokers()) {
-                List<Player> candidates = zone.getPlayers().stream()
-                        .filter(p -> !p.isGodMode())
-                        .collect(Collectors.toList());
-
-                if(!candidates.isEmpty()) {
-                    startInvasion(candidates.get((int) (Math.random() * candidates.size())));
-                }
+            if(currentInvasionWave >= 4 && !zone.getPlayers().isEmpty()) {
+                tryEvoking();
             }
             timeUntilNextInvasion = Math.max(10000 / Math.max(zone.getPlayers().size(), 1), 20000);
             lastInvasionAt = System.currentTimeMillis();
@@ -414,6 +410,22 @@ public class EntityManager {
                 ((Npc)owner).removeChild(npc);
             }
         }
+    }
+
+    public void tryEvoking() {
+        Set<Player> candidateSet = new HashSet<>();
+
+        for(MetaBlock evoker : zone.getMetaBlocksWithItem("mechanical/spawner-brain")) {
+            candidateSet.addAll(zone.getPlayersInRange(evoker.getX(), evoker.getY(), 30));
+        }
+
+        if(candidateSet.isEmpty()) return;
+
+        List<Player> candidates = candidateSet.stream()
+                .filter(p -> !p.isGodMode())
+                .collect(Collectors.toList());
+
+        startInvasion(candidates.get((int) (Math.random() * candidates.size())));
     }
 
     public void processInhibitors() {
