@@ -419,13 +419,13 @@ public class EntityManager {
             candidateSet.addAll(zone.getPlayersInRange(evoker.getX(), evoker.getY(), 30));
         }
 
-        if(candidateSet.isEmpty()) return;
-
         List<Player> candidates = candidateSet.stream()
                 .filter(p -> !p.isGodMode())
                 .collect(Collectors.toList());
 
-        startInvasion(candidates.get((int) (Math.random() * candidates.size())));
+        if(!candidates.isEmpty()) {
+            startInvasion(candidates.get((int) (Math.random() * candidates.size())));
+        }
     }
 
     public void processInhibitors() {
