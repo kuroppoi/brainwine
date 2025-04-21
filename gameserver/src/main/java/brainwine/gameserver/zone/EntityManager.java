@@ -447,6 +447,14 @@ public class EntityManager {
                         minDistance = playerDistance;
                     }
                 }
+
+                // Dungeon inhibitions count separately.
+                String dungeonId = evoker.getStringProperty("@");
+                if(dungeonId != null) {
+                    zone.destroyGuardBlock(dungeonId, minIndex == -1 ? null : players.get(minIndex));
+                    continue;
+                }
+
                 if(minIndex != -1) {
                     Player player = players.get(minIndex);
                     evokersInhibited.merge(player, 1, Integer::sum);

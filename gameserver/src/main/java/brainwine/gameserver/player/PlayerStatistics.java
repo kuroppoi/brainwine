@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import brainwine.gameserver.entity.EntityGroup;
 import brainwine.gameserver.item.ItemGroup;
 import brainwine.gameserver.item.ItemRegistry;
+import brainwine.gameserver.zone.DungeonType;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -378,9 +379,9 @@ public class PlayerStatistics {
         return containersLooted;
     }
     
-    public void trackDungeonRaided() {
+    public void trackDungeonRaided(DungeonType dungeonType) {
         dungeonsRaided++;
-        player.addExperience(100);
+        player.addExperience(dungeonType.getXpReward());
         player.updateAchievementProgress(RaiderAchievement.class);
     }
     
