@@ -11,6 +11,8 @@ import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
+import java.util.List;
+
 public class TargetTeleportInteraction implements ItemInteraction {
     
     @Override
@@ -75,12 +77,16 @@ public class TargetTeleportInteraction implements ItemInteraction {
             player.notify("That area hasn't been explored yet.");
             return;
         }
+
+        List<MetaBlock> protectors = zone.getMetaBlocks(
+                m -> m.hasOwner()
+                               && m.getItem().getId().startsWith("mechanical/dish"));
         
         // Check area protection
-        if(!player.isGodMode() && targetZone.isBlockProtected(targetX, targetY, player)) {
+        if(!player.isGodMode() && targetZone.isBlockProtectedByField(targetX, targetY, player, false, protectors)) {
             Player owner = metaBlock.getOwner();
             int setting = metaBlock.getIntProperty("pt");
-            boolean ownerCanEdit = !targetZone.isBlockProtected(targetX, targetY, owner);
+            boolean ownerCanEdit = !targetZone.isBlockProtectedByField(targetX, targetY, owner, false, protectors);
             
             // Check protection entry setting
             if(owner == null || !ownerCanEdit || setting == 0 || (setting == 1 && !owner.isFollowing(player))) {
