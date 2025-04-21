@@ -449,11 +449,9 @@ public class EntityManager {
                     }
                 }
 
-                // Dungeon inhibitions count separately.
                 String dungeonId = evoker.getStringProperty("@");
                 if(dungeonId != null) {
                     zone.destroyGuardBlock(dungeonId, minIndex == -1 ? null : players.get(minIndex));
-                    continue;
                 }
 
                 if(minIndex != -1) {

@@ -950,7 +950,7 @@ public class Zone {
 
                     if(dungeonId != null && frontItem.hasId("mechanical/spawner-brain")) {
                         metadata.put("@", dungeonId);
-                        dungeonType = DungeonType.morePrior(dungeonType, DungeonType.EVOKER);
+                        // dungeonType = DungeonType.morePrior(dungeonType, DungeonType.EVOKER);
                         guardBlocks++;
                     }
                     
@@ -1005,7 +1005,7 @@ public class Zone {
     
     private void indexDungeons() {
         List<MetaBlock> guardBlocks = getMetaBlocksWithUse(ItemUseType.GUARD);
-        
+
         for(MetaBlock metaBlock : guardBlocks) {
             Map<String, Object> metadata = metaBlock.getMetadata();
             String dungeonId = MapHelper.getString(metadata, "@");
@@ -1015,9 +1015,9 @@ public class Zone {
                 int numGuardBlocks = dungeons.getOrDefault(dungeonId, 0);
                 numGuardBlocks++;
                 dungeons.put(dungeonId, numGuardBlocks);
+                // dungeonTypes.merge(dungeonId, DungeonType.fromMetaBlock(metaBlock), DungeonType::morePrior);
+                dungeonTypes.put(dungeonId, DungeonType.PUZZLE);
             }
-
-            dungeonTypes.merge(dungeonId, DungeonType.fromMetaBlock(metaBlock), DungeonType::morePrior);
         }
     }
     
