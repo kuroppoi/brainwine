@@ -30,8 +30,9 @@ public class TellCommand extends Command {
             return;
         }
 
-        if(executorPlayer != null && target.getZone() != executorPlayer.getZone()) {
+        if(executorPlayer != null && !executorPlayer.isGodMode() && target.getZone() != executorPlayer.getZone()) {
             executor.notify("Player is not in the same world.", SYSTEM);
+            return;
         }
 
         String message = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
