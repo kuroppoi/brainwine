@@ -78,7 +78,7 @@ public class TargetTeleportInteraction implements ItemInteraction {
             return;
         }
 
-        List<MetaBlock> protectors = zone.getMetaBlocks(
+        List<MetaBlock> protectors = targetZone.getMetaBlocks(
                 m -> m.hasOwner()
                                && m.getItem().getId().startsWith("mechanical/dish"));
         
