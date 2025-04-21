@@ -33,24 +33,33 @@ public class EvokeCommand extends Command {
         }
 
         Zone zone = target.getZone();
+        int difficulty = zone.getMassSpawnerConfiguration().getDifficulty();
+        if(args.length >= 2) {
+            try {
+                difficulty = Integer.parseInt(args[1]);
+            } catch(Exception e) {
+                executor.notify("Invalid difficulty.", SYSTEM);
+                return;
+            }
+        }
 
         if(!isPrivileged(executor, zone, zone.getMassSpawnerConfiguration().getEvokeAccess())) {
             executor.notify("You are not allowed to evoke players in this world.", NotificationType.POPUP);
             return;
         }
 
-        if(System.currentTimeMillis() < zone.getEntityManager().getLastInvasionAt() + 300000) {
-            executor.notify("You must wait 5 minutes between invasions.", NotificationType.POPUP);
+        if(System.currentTimeMillis() < zone.getEntityManager().getLastInvasionAt() + 3000) {
+            executor.notify("You must wait 3 seconds between invasions.", NotificationType.POPUP);
             return;
         }
 
-        zone.getEntityManager().startInvasion(target);
+        zone.getEntityManager().startInvasion(target, difficulty);
         executor.notify("Commencing evocation!", NotificationType.POPUP);
     }
 
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/evoke <player>";
+        return "/evoke <player> <difficulty>";
     }
 
     private boolean isPrivileged(CommandExecutor executor, Zone zone, CommandAccessLevel needed) {

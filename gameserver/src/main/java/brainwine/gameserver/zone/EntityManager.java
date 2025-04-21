@@ -65,6 +65,7 @@ public class EntityManager {
     private long timeUntilNextInvasion = 10000;
     private Player currentInvasionTarget;
     private int currentInvasionWave = 4;
+    private int currentInvasionDifficulty = 0;
     private final List<Integer> invaders = new ArrayList<>();
     private long lastInhibitionTime = System.currentTimeMillis();
     
@@ -424,7 +425,7 @@ public class EntityManager {
                 .collect(Collectors.toList());
 
         if(!candidates.isEmpty()) {
-            startInvasion(candidates.get((int) (Math.random() * candidates.size())));
+            startInvasion(candidates.get((int) (Math.random() * candidates.size())), zone.getMassSpawnerConfiguration().getDifficulty());
         }
     }
 
@@ -481,7 +482,7 @@ public class EntityManager {
         return !zone.getMetaBlocksWithItem("mechanical/spawner-brain").isEmpty();
     }
 
-    public synchronized void startInvasion(Player target) {
+    public synchronized void startInvasion(Player target, int difficulty) {
         for(int entityId : invaders) {
             Entity e = getEntity(entityId);
             if(e != null) {
@@ -493,6 +494,7 @@ public class EntityManager {
 
         currentInvasionTarget = target;
         currentInvasionWave = 0;
+        currentInvasionDifficulty = difficulty;
         lastInvasionAt = System.currentTimeMillis();
         lastInvasionWaveAt = 0;
         timeUntilNextInvasionWave = 0;
@@ -511,19 +513,21 @@ public class EntityManager {
         }
 
         if(lastInvasionWaveAt + timeUntilNextInvasionWave < System.currentTimeMillis()) {
-            WeightedMap<String> invaders = zone.getBiome() == Biome.BRAIN
-                    ? new WeightedMap<>(MapHelper.map(
+            WeightedMap<String> invaders;
+
+            if(currentInvasionDifficulty > 3) {
+                invaders = new WeightedMap<>(MapHelper.map(
                         String.class, Double.class,
-                    "brains/small",  15.0,
+                        "brains/small", 15.0,
                         "brains/medium", 2.0,
                         "brains/medium-dire", 1.0
-                    ))
-                    : new WeightedMap<>(MapHelper.map(
+                ));
+            } else {
+                invaders = new WeightedMap<>(MapHelper.map(
                         String.class, Double.class,
-                        "revenant", 15.0,
-                        "dire-revenant", 2.0,
-                        "revenant-lord", 1.0
-                    ));
+                        "brains/small", 15.0
+                ));
+            }
 
             int numInvaders = 1;
             if(currentInvasionWave == 3 && Math.random() < 0.5) {
