@@ -1010,7 +1010,10 @@ public class Zone {
     }
     
     private void indexDungeons() {
-        List<MetaBlock> guardBlocks = getMetaBlocksWithUse(ItemUseType.GUARD);
+        List<MetaBlock> guardBlocks = getMetaBlocks(m ->
+                m.getItem().hasUse(ItemUseType.GUARD)
+                || m.getItem().hasId("mechanical/spawner-brain")
+        );
 
         for(MetaBlock metaBlock : guardBlocks) {
             Map<String, Object> metadata = metaBlock.getMetadata();
