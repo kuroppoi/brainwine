@@ -55,6 +55,7 @@ public class WeatherMachineConfiguration extends WorldMachineConfiguration {
 
     @Override
     protected void configure(Zone zone, Map<String, Object> values) throws IllegalArgumentException {
+        boolean previouslyLiquidGravityEnabled = liquidGravityEnabled;
         reset();
 
         if(values.get("day_night_cycle") != null) {
@@ -78,6 +79,25 @@ public class WeatherMachineConfiguration extends WorldMachineConfiguration {
         }
 
         timeZone = MathUtils.clamp(expectInteger(defaultIfNull(values.get("day_night_cycle_time_zone"), timeZone)), -12, 12);
+
+        // Reindex liquids in active chunks. The rest of the chunks will get indexed when they get loaded.
+        if(!previouslyLiquidGravityEnabled && liquidGravityEnabled) {
+            int chunkWidth = zone.getChunkWidth();
+            int chunkHeight = zone.getChunkHeight();
+            LiquidManager liquidManager = zone.getLiquidManager();
+            for(Chunk c : zone.getLoadedChunks()) {
+                int chunkX = c.getX();
+                int chunkY = c.getY();
+                for(int i = 0; i < chunkWidth; i++) {
+                    for(int j = 0; j < chunkHeight; j++) {
+                        Block block = zone.getBlock(chunkX + i, chunkY + j);
+                        if(!block.getLiquidItem().isAir() && block.getLiquidMod() > 0) {
+                            liquidManager.indexLiquidBlock(chunkX + i, chunkY + j);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override

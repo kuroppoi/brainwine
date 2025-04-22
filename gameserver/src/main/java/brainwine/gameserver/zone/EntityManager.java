@@ -8,14 +8,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
-import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.server.messages.EventMessage;
+import brainwine.gameserver.server.messages.NotificationMessage;
+import brainwine.gameserver.util.MathUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -58,10 +62,13 @@ public class EntityManager {
     private long lastInvasionAt;
     private long lastInvasionWaveAt = System.currentTimeMillis();
     private long timeUntilNextInvasionWave;
+    private long timeUntilNextInvasion = 10000;
     private Player currentInvasionTarget;
-    int currentInvasionWave = 4;
-    List<Integer> invaders = new ArrayList<>();
-
+    private int currentInvasionWave = 4;
+    private int currentInvasionDifficulty = 0;
+    private final List<Integer> invaders = new ArrayList<>();
+    private long lastInhibitionTime = System.currentTimeMillis();
+    
     public EntityManager(Zone zone) {
         this.zone = zone;
     }
@@ -154,6 +161,21 @@ public class EntityManager {
                 !players.isEmpty() && getTransientNpcCount() < Math.min(64, players.size() * 8)) {
             spawnRandomEntity();
             lastSpawnAt = now;
+        }
+
+        // Blow up powered inhibitors if there are players in the world
+        if(System.currentTimeMillis() > lastInhibitionTime + 1000) {
+            if(!players.isEmpty()) processInhibitors();
+            lastInhibitionTime = System.currentTimeMillis();
+        }
+
+        // Process active evokers if there are players in the world
+        if(System.currentTimeMillis() > lastInvasionAt + timeUntilNextInvasion) {
+            if(currentInvasionWave >= 4 && !zone.getPlayers().isEmpty()) {
+                tryEvoking();
+            }
+            timeUntilNextInvasion = Math.max(10000 / Math.max(zone.getPlayers().size(), 1), 20000);
+            lastInvasionAt = System.currentTimeMillis();
         }
 
         tickInvasion();
@@ -391,18 +413,86 @@ public class EntityManager {
         }
     }
 
-    public synchronized void startInvasion(Player target) {
+    public void tryEvoking() {
+        Set<Player> candidateSet = new HashSet<>();
+
+        for(MetaBlock evoker : zone.getMetaBlocksWithItem("mechanical/spawner-brain")) {
+            candidateSet.addAll(zone.getPlayersInRange(evoker.getX(), evoker.getY(), 30));
+        }
+
+        List<Player> candidates = candidateSet.stream()
+                .filter(p -> !p.isGodMode())
+                .collect(Collectors.toList());
+
+        if(!candidates.isEmpty()) {
+            startInvasion(candidates.get((int) (Math.random() * candidates.size())), zone.getMassSpawnerConfiguration().getDifficulty());
+        }
+    }
+
+    public void processInhibitors() {
+        Map<Player, Integer> evokersInhibited = new HashMap<>();
+        List<Player> players = new ArrayList<>(zone.getPlayers());
+        boolean inhibited = false;
+        for(MetaBlock evoker : zone.getMetaBlocksWithItem("mechanical/spawner-brain")) {
+            if(zone.getBlock(evoker.getX(), evoker.getY()).getFrontMod() != 0) {
+                inhibited = true;
+                zone.spawnEffect(evoker.getX(), evoker.getY(), "bomb-electric", 5);
+                zone.updateBlock(evoker.getX(), evoker.getY(), Layer.FRONT, Item.AIR);
+
+                int minIndex = -1;
+                double minDistance = Double.POSITIVE_INFINITY;
+                for(int i = 0; i < players.size(); i++) {
+                    double playerDistance = MathUtils.distance(players.get(i).getX(), players.get(i).getY(), evoker.getX(), evoker.getY());
+                    if(minDistance > playerDistance) {
+                        minIndex = i;
+                        minDistance = playerDistance;
+                    }
+                }
+
+                String dungeonId = evoker.getStringProperty("@");
+                if(dungeonId != null) {
+                    zone.destroyGuardBlock(dungeonId, minIndex == -1 ? null : players.get(minIndex));
+                }
+
+                if(minIndex != -1) {
+                    Player player = players.get(minIndex);
+                    evokersInhibited.merge(player, 1, Integer::sum);
+                }
+            }
+        }
+
+        for(Map.Entry<Player, Integer> score : evokersInhibited.entrySet()) {
+            Player player = score.getKey();
+            int count = score.getValue();
+            player.getStatistics().trackEvokersInhibited(count);
+            String suffix = count == 1 ? " inhibited an evoker!" : " inhibited " + count + " evokers!";
+            player.notify("You" + suffix, NotificationType.SYSTEM);
+            player.notifyPeers(player.getName() + suffix, NotificationType.SYSTEM);
+            player.addExperience(500 * count);
+        }
+
+        if(inhibited && !checkEvokers()) {
+            zone.sendMessage(new NotificationMessage("All evokers have been inhibited!", NotificationType.SYSTEM));
+        }
+    }
+
+    public boolean checkEvokers() {
+        return !zone.getMetaBlocksWithItem("mechanical/spawner-brain").isEmpty();
+    }
+
+    public synchronized void startInvasion(Player target, int difficulty) {
         for(int entityId : invaders) {
             Entity e = getEntity(entityId);
             if(e != null) {
                 zone.spawnEffect(e.getX(), e.getY(), "bomb-teleport", 4);
-                e.die(null);
+                e.setHealth(0.0f);
             }
         }
         invaders.clear();
 
         currentInvasionTarget = target;
         currentInvasionWave = 0;
+        currentInvasionDifficulty = difficulty;
         lastInvasionAt = System.currentTimeMillis();
         lastInvasionWaveAt = 0;
         timeUntilNextInvasionWave = 0;
@@ -421,19 +511,21 @@ public class EntityManager {
         }
 
         if(lastInvasionWaveAt + timeUntilNextInvasionWave < System.currentTimeMillis()) {
-            WeightedMap<String> invaders = zone.getBiome() == Biome.BRAIN
-                    ? new WeightedMap<>(MapHelper.map(
+            WeightedMap<String> invaders;
+
+            if(currentInvasionDifficulty > 3) {
+                invaders = new WeightedMap<>(MapHelper.map(
                         String.class, Double.class,
-                    "brains/small",  15.0,
+                        "brains/small", 15.0,
                         "brains/medium", 2.0,
                         "brains/medium-dire", 1.0
-                    ))
-                    : new WeightedMap<>(MapHelper.map(
+                ));
+            } else {
+                invaders = new WeightedMap<>(MapHelper.map(
                         String.class, Double.class,
-                        "revenant", 15.0,
-                        "dire-revenant", 2.0,
-                        "revenant-lord", 1.0
-                    ));
+                        "brains/small", 15.0
+                ));
+            }
 
             int numInvaders = 1;
             if(currentInvasionWave == 3 && Math.random() < 0.5) {
@@ -452,9 +544,14 @@ public class EntityManager {
                 }
             }
 
+            if(eligiblePositions.isEmpty()) {
+                eligiblePositions.add(new Vector2i(currentInvasionTarget.getBlockX(), currentInvasionTarget.getBlockY()));
+            }
+
             for(int i = 0; i < numInvaders; i++) {
                 Vector2i pos = eligiblePositions.get((int)(Math.random() * eligiblePositions.size()));
-                spawnEntity(invaders.next(), pos.getX(), pos.getY());
+                Npc npc = spawnEntity(invaders.next(), pos.getX(), pos.getY());
+                this.invaders.add(npc.getId());
             }
 
             // Determine interval until next wave

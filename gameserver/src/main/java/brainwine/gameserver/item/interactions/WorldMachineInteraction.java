@@ -20,7 +20,7 @@ public class WorldMachineInteraction implements ItemInteraction {
 
         if(!canInteract((Player) entity, zone, x, y)) return;
 
-        player.showDialog(DialogHelper.getDialog("world_machines.spawner.menu"), ans -> {
+        player.showDialog(DialogHelper.getDialog("world_machines." + itemUse + ".menu"), ans -> {
             if(ans.length == 0 || !(ans[0] instanceof String)) return;
             switch ((String) ans[0]) {
                 case "deactivate_natural_teleporters":

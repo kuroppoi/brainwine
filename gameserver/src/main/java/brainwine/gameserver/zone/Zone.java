@@ -105,6 +105,7 @@ public class Zone {
     private final List<String> members = new ArrayList<>();
     private final List<Timer<Integer>> blockTimers = new ArrayList<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
+    private final Map<String, DungeonType> dungeonTypes = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
@@ -834,6 +835,7 @@ public class Zone {
         int height = prefab.getHeight();
         Block[] blocks = prefab.getBlocks();
         int guardBlocks = 0;
+        DungeonType dungeonType = DungeonType.PUZZLE;
         String dungeonId = prefab.isDungeon() ? UUID.randomUUID().toString() : null;
         boolean decay = prefab.hasDecay();
         Map<Item, Item> replacedItems = new HashMap<>();
@@ -951,6 +953,12 @@ public class Zone {
                             guardBlocks++;
                         }
                     }
+
+                    if(dungeonId != null && frontItem.hasId("mechanical/spawner-brain")) {
+                        metadata.put("@", dungeonId);
+                        // dungeonType = DungeonType.morePrior(dungeonType, DungeonType.EVOKER);
+                        guardBlocks++;
+                    }
                     
                     // Determine lootability for containers
                     if(prefab.hasLoot() && frontItem.hasUse(ItemUseType.CONTAINER)) {
@@ -997,12 +1005,16 @@ public class Zone {
         // Index dungeon if there are any guard blocks present
         if(guardBlocks > 0) {
             dungeons.put(dungeonId, guardBlocks);
+            dungeonTypes.put(dungeonId, dungeonType);
         }
     }
     
     private void indexDungeons() {
-        List<MetaBlock> guardBlocks = getMetaBlocksWithUse(ItemUseType.GUARD);
-        
+        List<MetaBlock> guardBlocks = getMetaBlocks(m ->
+                m.getItem().hasUse(ItemUseType.GUARD)
+                || m.getItem().hasId("mechanical/spawner-brain")
+        );
+
         for(MetaBlock metaBlock : guardBlocks) {
             Map<String, Object> metadata = metaBlock.getMetadata();
             String dungeonId = MapHelper.getString(metadata, "@");
@@ -1012,6 +1024,8 @@ public class Zone {
                 int numGuardBlocks = dungeons.getOrDefault(dungeonId, 0);
                 numGuardBlocks++;
                 dungeons.put(dungeonId, numGuardBlocks);
+                // dungeonTypes.merge(dungeonId, DungeonType.fromMetaBlock(metaBlock), DungeonType::morePrior);
+                dungeonTypes.put(dungeonId, DungeonType.PUZZLE);
             }
         }
     }
@@ -1066,13 +1080,16 @@ public class Zone {
         if(dungeons.containsKey(dungeonId)) {
             int guardBlocks = dungeons.get(dungeonId);
             guardBlocks--;
-            
+
             if(guardBlocks <= 0) {
+                DungeonType dungeonType = getDungeonType(dungeonId);
                 dungeons.remove(dungeonId);
-                destroyer.getStatistics().trackDungeonRaided();
-                QuestEvents.handleRaid(destroyer);
-                destroyer.notify("You raided a dungeon!", NotificationType.ACCOMPLISHMENT);
-                destroyer.notifyPeers(String.format("%s raided a dungeon.", destroyer.getName()), NotificationType.SYSTEM);
+                if(destroyer != null) {
+                    destroyer.getStatistics().trackDungeonRaided(dungeonType);
+                    QuestEvents.handleRaid(destroyer);
+                    destroyer.notify(dungeonType.getSelfRaidMessage(), NotificationType.ACCOMPLISHMENT);
+                    destroyer.notifyPeers(String.format(dungeonType.getPeerRaidMessage(), destroyer.getName()), NotificationType.SYSTEM);
+                }
             } else {
                 dungeons.put(dungeonId, guardBlocks);
             }
@@ -1081,6 +1098,10 @@ public class Zone {
     
     public boolean isDungeonIntact(String id) {
         return dungeons.containsKey(id);
+    }
+
+    public DungeonType getDungeonType(String id) {
+        return id == null ? DungeonType.PUZZLE : dungeonTypes.getOrDefault(id, DungeonType.PUZZLE);
     }
     
     public boolean digBlock(int x, int y) {
@@ -1530,6 +1551,10 @@ public class Zone {
 
     public MachineManager getMachineManager() {
         return machineManager;
+    }
+
+    public LiquidManager getLiquidManager() {
+        return liquidManager;
     }
     
     public void recordActionTime(String name) {

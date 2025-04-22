@@ -39,7 +39,7 @@ public class ContainerInteraction implements ItemInteraction {
         
         // Check if container is protected
         if(item.hasUse(ItemUseType.FIELDABLE) && (zone.isBlockProtected(x, y, player) || (dungeonId != null && zone.isDungeonIntact(dungeonId)))) {
-            player.notify("This container is secured by protectors in the area.");
+            player.notify(zone.getDungeonType(dungeonId).getContainerProtectedMessage());
             return;
         }
         

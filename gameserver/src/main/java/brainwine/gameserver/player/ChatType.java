@@ -7,7 +7,8 @@ public enum ChatType {
     CHAT("c"),
     EMOTE("e"),
     SPEECH("s"),
-    THOUGHT("t");
+    THOUGHT("t"),
+    PRIVATE("p");
     
     private final String id;
     
