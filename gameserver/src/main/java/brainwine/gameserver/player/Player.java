@@ -1566,6 +1566,14 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void awardLoot(Loot loot, DialogType dialogType) {
+        awardLoot(loot, dialogType, "You received:");
+    }
+    
+    public void awardLoot(Loot loot, String title) {
+        awardLoot(loot, DialogType.LOOT, title);
+    }
+    
+    public void awardLoot(Loot loot, DialogType dialogType, String title) {
         Dialog dialog = new Dialog();
         DialogSection section = new DialogSection();
         dialog.addSection(section);
@@ -1592,10 +1600,10 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         if(v3) {
-            dialog.setTitle("You found:");
+            dialog.setTitle(title);
             showDialog(dialog.setType(dialogType));
         } else {
-            section.setTitle("You found:");
+            section.setTitle(title);
             notify(dialog, NotificationType.REWARD);
         }
     }

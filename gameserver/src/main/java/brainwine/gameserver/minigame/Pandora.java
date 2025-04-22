@@ -25,6 +25,7 @@ import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.loot.Loot;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.resource.ResourceFinder;
@@ -285,7 +286,8 @@ public class Pandora extends Minigame {
             if(participant.isParticipating()) {
                 int luck = (int)(Math.max(1, baseLuck - position * 4) * luckMultiplier);
                 Player player = participant.getPlayer();
-                player.awardLoot(GameServer.getInstance().getLootManager().getRandomLoot(luck, zone.getBiome(), player.getInventory().getWardrobe(), REWARD_LOOT_CATEGORIES));
+                Loot loot = GameServer.getInstance().getLootManager().getRandomLoot(luck, zone.getBiome(), player.getInventory().getWardrobe(), REWARD_LOOT_CATEGORIES);
+                player.awardLoot(loot, String.format("You won %s place!", ordinalizeNumber(position + 1)));
             }
             
             position++;

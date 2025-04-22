@@ -76,7 +76,7 @@ public class ContainerInteraction implements ItemInteraction {
                         metaBlock.removeProperty("xp"); 
                     }
                     
-                    player.awardLoot(loot, item.getLootGraphic());
+                    player.awardLoot(loot, item.getLootGraphic(), "You found:");
                     player.addExperience(experience);
                     player.getStatistics().trackContainerLooted(item);
                 } else {
