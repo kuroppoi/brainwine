@@ -1469,6 +1469,10 @@ public class Zone {
     public MachineManager getMachineManager() {
         return machineManager;
     }
+
+    public LiquidManager getLiquidManager() {
+        return liquidManager;
+    }
     
     public void recordActionTime(String name) {
         actionHistory.put(name.toLowerCase(), OffsetDateTime.now());
