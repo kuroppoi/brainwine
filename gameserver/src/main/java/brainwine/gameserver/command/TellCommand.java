@@ -1,7 +1,9 @@
 package brainwine.gameserver.command;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.player.ChatType;
 import brainwine.gameserver.player.Player;
+import brainwine.gameserver.server.messages.ChatMessage;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -37,10 +39,17 @@ public class TellCommand extends Command {
 
         String message = Arrays.stream(args).skip(1).collect(Collectors.joining(" "));
 
-        String executorName = executor instanceof Player ? ((Player) executor).getName() : "Server";
+        String executorName = executorPlayer != null ? executorPlayer.getName() : "Server";
+        int executorId = executorPlayer != null ? executorPlayer.getId() : 0;
+
+        if(target.isV3()) {
+            String targetMessage = String.format("<color=#012398>%s whispers: %s</color>", executorName, message);
+            target.sendMessage(new ChatMessage(0, targetMessage, ChatType.PRIVATE));
+        } else {
+            target.sendMessage(new ChatMessage(executorId, message, ChatType.PRIVATE));
+        }
 
         executor.notify(String.format("You whispered to %s: %s", target.getName(), message), SYSTEM);
-        target.notify(String.format("%s whispers: %s", executorName, message), SYSTEM);
     }
     
     @Override
