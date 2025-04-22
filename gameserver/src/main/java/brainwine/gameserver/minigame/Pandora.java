@@ -287,7 +287,12 @@ public class Pandora extends Minigame {
                 int luck = (int)(Math.max(1, baseLuck - position * 4) * luckMultiplier);
                 Player player = participant.getPlayer();
                 Loot loot = GameServer.getInstance().getLootManager().getRandomLoot(luck, zone.getBiome(), player.getInventory().getWardrobe(), REWARD_LOOT_CATEGORIES);
-                player.awardLoot(loot, String.format("You won %s place!", ordinalizeNumber(position + 1)));
+                
+                if(loot != null) {
+                    player.awardLoot(loot, String.format("You won %s place!", ordinalizeNumber(position + 1)));
+                } else {
+                    player.notify("Sorry, we couldn't find a suitable reward for you.");
+                }
             }
             
             position++;
