@@ -35,6 +35,7 @@ public class LiquidManager {
     private int updateLiquids() {
         // Don't do anything if liquid gravity is disabled
         if(!zone.getWeatherMachineConfiguration().isLiquidGravityEnabled()) {
+            liquidIndices.clear();
             return 0;
         }
 
@@ -164,7 +165,9 @@ public class LiquidManager {
     }
     
     public void indexLiquidBlock(int x, int y) {
-        indexLiquidBlock(zone.getBlockIndex(x, y));
+        if(zone.getWeatherMachineConfiguration().isLiquidGravityEnabled()) {
+            indexLiquidBlock(zone.getBlockIndex(x, y));
+        }
     }
     
     public void indexLiquidBlock(int index) {
