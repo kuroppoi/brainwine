@@ -20,6 +20,7 @@ import brainwine.gameserver.entity.npc.behavior.SequenceBehavior;
 import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.minigame.Minigame;
 import brainwine.gameserver.player.Appearance;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MapHelper;
@@ -207,6 +208,18 @@ public class Npc extends Entity {
                     player.getInventory().addItem(item, loot.getQuantity(), true);
                 }
             }
+        }
+        
+        // Minigame tracking
+        if(hasActiveMinigame()) {
+            minigame.entityKilled(this, cause);
+        }
+    }
+    
+    @Override
+    public void attacked(EntityAttack attack, float damage) {
+        if(hasActiveMinigame()) {
+            minigame.entityAttacked(this, attack, damage);
         }
     }
     

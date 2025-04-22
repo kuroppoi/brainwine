@@ -77,6 +77,7 @@ import brainwine.gameserver.server.models.PlayerStat;
 import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.VersionUtils;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Block;
@@ -683,13 +684,25 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void showDialog(Dialog dialog, Consumer<Object[]> handler) {
+        sendMessage(new DialogMessage(storeDialogHandler(handler), dialog));
+    }
+    
+    public void showDialog(Map<String, Object> dialog) {
+        showDialog(dialog, null);
+    }
+    
+    public void showDialog(Map<String, Object> dialog, Consumer<Object[]> handler) {
+        sendMessage(new DialogMessage(storeDialogHandler(handler), dialog));
+    }
+    
+    private int storeDialogHandler(Consumer<Object[]> handler) {
         int id = handler == null ? 0 : ++dialogDiscriminator;
         
         if(id != 0) {
             dialogs.put(id, handler);
         }
         
-        sendMessage(new DialogMessage(id, dialog));
+        return id;
     }
     
     public void handleDialogInput(int id, Object[] input) {
@@ -767,6 +780,21 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void respawn() {
+        // Check minigame spawnpoint
+        if(hasActiveMinigame()) {
+            Vector2i spawnPoint = minigame.getSpawnPoint(this);
+            
+            if(spawnPoint != null) {
+                respawn(spawnPoint.getX(), spawnPoint.getY());
+                return;
+            }
+        }
+        
+        // Respawn at default spawn point
+        respawn(spawnX, spawnY);
+    }
+    
+    public void respawn(int x, int y) {
         if(isDead()) {
             setHealth(getMaxHealth());
             breath = 1.0;
@@ -774,9 +802,9 @@ public class Player extends Entity implements CommandExecutor {
             cold = 0.0;
         }
         
-        sendMessage(new PlayerPositionMessage(spawnX, spawnY));
+        sendMessage(new PlayerPositionMessage(x, y));
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.REVIVED));
-        zone.spawnEffect(spawnX + 0.5F, spawnY - 0.75F, "spawn", 20);
+        zone.spawnEffect(x + 0.5F, y - 0.75F, "spawn", 20);
     }
     
     /**
@@ -851,6 +879,14 @@ public class Player extends Entity implements CommandExecutor {
     
     public void notify(Object message) {
         notify(message, NotificationType.POPUP);
+    }
+    
+    public void notifyProfile(String title, String description) {
+        if(isV3()) {
+            notify(String.format("<color=#ffd95f>%s</color>\n%s", title, description));
+        } else {
+            notify(MapHelper.map(String.class, String.class, "title", title, "desc", description), NotificationType.PROFILE);
+        }
     }
     
     public void setHeldItem(Item item) {

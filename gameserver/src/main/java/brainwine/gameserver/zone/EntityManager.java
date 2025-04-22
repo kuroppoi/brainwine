@@ -172,22 +172,22 @@ public class EntityManager {
     
     private void clearEntities() {
         npcs.values().stream()
-            .filter(npc -> npc.isDead() || (!npc.isPersistent() && (!zone.isChunkLoaded(npc.getBlockX(), npc.getBlockY()) ||
+            .filter(npc -> npc.isDead() || (!npc.isPersistent() && !npc.hasActiveMinigame() && (!zone.isChunkLoaded(npc.getBlockX(), npc.getBlockY()) ||
                     (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME))))
             .collect(Collectors.toList())
             .forEach(this::removeEntity);
     }
     
-    public List<Entity> getEntitiesInRange(float x, float y, float range) {
+    public List<Entity> getEntitiesInRange(float x, float y, double range) {
         return getEntities().stream().filter(entity -> entity.inRange(x, y, range)).collect(Collectors.toList());
     }
     
-    public Player getRandomPlayerInRange(float x, float y, float range) {
+    public Player getRandomPlayerInRange(float x, float y, double range) {
         List<Player> players = getPlayersInRange(x, y, range);
         return players.isEmpty() ? null : players.get(random.nextInt(players.size()));
     }
     
-    public List<Player> getPlayersInRange(float x, float y, float range) {
+    public List<Player> getPlayersInRange(float x, float y, double range) {
         return getPlayers().stream().filter(player -> player.inRange(x, y, range)).collect(Collectors.toList());
     }
     

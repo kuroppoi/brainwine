@@ -13,6 +13,7 @@ import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandManager;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.loot.LootManager;
+import brainwine.gameserver.minigame.Pandora;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.PlayerManager;
 import brainwine.gameserver.prefab.PrefabManager;
@@ -50,6 +51,7 @@ public class GameServer implements CommandExecutor {
         EntityRegistry.init();
         EntityManager.loadEntitySpawns();
         GrowthManager.loadGrowthData();
+        Pandora.loadConfig();
         lootManager = new LootManager();
         prefabManager = new PrefabManager();
         ZoneGenerator.init();
