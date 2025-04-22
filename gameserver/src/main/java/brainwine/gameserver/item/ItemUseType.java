@@ -43,6 +43,7 @@ public enum ItemUseType {
     CHANGE(new ChangeInteraction()),
     FIELDABLE,
     FLY,
+    HAZMAT,
     LANDMARK(new LandmarkInteraction()),
     MEMORY,
     MOVE,

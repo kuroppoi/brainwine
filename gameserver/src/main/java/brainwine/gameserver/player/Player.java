@@ -378,7 +378,7 @@ public class Player extends Entity implements CommandExecutor {
         long now = System.currentTimeMillis();
 
         // Update thirst stat
-        if(isGodMode()) {
+        if(isGodMode() || !inventory.findAccessoryWithUse(ItemUseType.HAZMAT).isAir()) {
             thirst = 0.0;
         } else {
             double thirstPeriod = MathUtils.lerp(5.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
@@ -416,7 +416,7 @@ public class Player extends Entity implements CommandExecutor {
         long now = System.currentTimeMillis();
 
         // Update freeze stat
-        if(isGodMode()) {
+        if(isGodMode() || !inventory.findAccessoryWithUse(ItemUseType.HAZMAT).isAir()) {
             cold = 0.0;
         } else {
             double freezePeriod = MathUtils.lerp(3.0, 10.0, (getTotalSkillLevel(Skill.SURVIVAL) - 1) / 6.0) * 60;
