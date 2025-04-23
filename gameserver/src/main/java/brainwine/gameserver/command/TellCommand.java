@@ -43,13 +43,22 @@ public class TellCommand extends Command {
         int executorId = executorPlayer != null ? executorPlayer.getId() : 0;
 
         if(target.isV3()) {
-            String targetMessage = String.format("<color=#012398>%s whispers: %s</color>", executorName, message);
+            String targetMessage = String.format("<color=#012398>%s: %s</color>", executorName, message);
             target.sendMessage(new ChatMessage(0, targetMessage, ChatType.PRIVATE));
         } else {
             target.sendMessage(new ChatMessage(executorId, message, ChatType.PRIVATE));
         }
 
-        executor.notify(String.format("You whispered to %s: %s", target.getName(), message), SYSTEM);
+        if(executorPlayer == null) {
+            executor.notify(String.format("%s: %s", target.getName(), message), SYSTEM);
+        } else if(executorPlayer != target) {
+            if (executorPlayer.isV3()) {
+                String executorMessage = String.format("<color=#012398>%s: %s</color>", executorName, message);
+                executorPlayer.sendMessage(new ChatMessage(0, executorMessage, ChatType.PRIVATE));
+            } else {
+                executorPlayer.sendMessage(new ChatMessage(executorId, message, ChatType.PRIVATE));
+            }
+        }
     }
     
     @Override
