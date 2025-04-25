@@ -51,6 +51,7 @@ public class Pandora extends Minigame {
     private final List<Npc> spawns = new ArrayList<>();
     private final Random random = new Random();
     private int currentRound;
+    private int potencyLevel;
     private long roundStartedAt;
     private long nextActionAt;
     
@@ -140,8 +141,8 @@ public class Pandora extends Minigame {
         addParticipant(player);
         
         // Increase potency if the minigame hasn't started yet
-        if(currentRound == 0 && potencyBumps.add(player.getDocumentId())) {
-            zone.notifyPlayers(String.format("%s increased Pandora's chaos level to %s!", player.getName(), potencyBumps.size()), NotificationType.PEER_ACCOMPLISHMENT);
+        if(currentRound == 0 && (potencyBumps.add(player.getDocumentId()) || player.isGodMode())) {
+            zone.notifyPlayers(String.format("%s increased Pandora's chaos level to %s!", player.getName(), ++potencyLevel), NotificationType.PEER_ACCOMPLISHMENT);
         }
     }
     
@@ -157,6 +158,7 @@ public class Pandora extends Minigame {
         zone.spawnEffect(x, y, "match start", 1);
         zone.updateBlock(x, y, Layer.FRONT, PANDORA_OPEN_ID, 1);
         potencyBumps.add(initiator.getDocumentId());
+        potencyLevel++;
         
         // Notify all players in the zone
         for(Player player : zone.getPlayers()) {
@@ -263,7 +265,7 @@ public class Pandora extends Minigame {
         roundSpawns.putAll(configs.get(random.nextInt(configs.size()))); // Select a random wave of enemies
         
         // Randomly increase the number of spawns this round depending on the chaos level
-        int spawnBumps = potencyBumps.size() / (currentRound < 10 ? 2 : 3);
+        int spawnBumps = potencyLevel / (currentRound < 10 ? 2 : 3);
         
         for(int i = 0; i < spawnBumps; i++) {
             Entry<String, Integer> spawn = roundSpawns.entrySet().stream().skip(random.nextInt(roundSpawns.size())).findFirst().get();
@@ -277,7 +279,7 @@ public class Pandora extends Minigame {
     
     private void complete() {
         finish();
-        double luckMultiplier = Math.min(10.0, potencyBumps.size());
+        double luckMultiplier = Math.min(10.0, potencyLevel);
         int baseLuck = Math.min(12, participants.size() * 4);
         int position = 0;
         
@@ -318,6 +320,6 @@ public class Pandora extends Minigame {
     }
     
     public int getTotalRounds() {
-        return Math.min(MAX_ROUNDS, MIN_ROUNDS + potencyBumps.size());
+        return Math.min(MAX_ROUNDS, MIN_ROUNDS + potencyLevel);
     }
 }
