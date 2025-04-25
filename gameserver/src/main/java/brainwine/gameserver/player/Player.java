@@ -83,6 +83,7 @@ import brainwine.gameserver.server.pipeline.Connection;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.ValueWithExpiry;
+import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.VersionUtils;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Block;
@@ -718,13 +719,25 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void showDialog(Dialog dialog, Consumer<Object[]> handler) {
+        sendMessage(new DialogMessage(storeDialogHandler(handler), dialog));
+    }
+
+    public void showDialog(Map<String, Object> dialog) {
+        showDialog(dialog, null);
+    }
+
+    public void showDialog(Map<String, Object> dialog, Consumer<Object[]> handler) {
+        sendMessage(new DialogMessage(storeDialogHandler(handler), dialog));
+    }
+
+    private int storeDialogHandler(Consumer<Object[]> handler) {
         int id = handler == null ? 0 : ++dialogDiscriminator;
         
         if(id != 0) {
             dialogs.put(id, handler);
         }
         
-        sendMessage(new DialogMessage(id, dialog));
+        return id;
     }
     
     public void handleDialogInput(int id, Object[] input) {
@@ -802,6 +815,21 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void respawn() {
+        // Check minigame spawnpoint
+        if(hasActiveMinigame()) {
+            Vector2i spawnPoint = minigame.getSpawnPoint(this);
+
+            if(spawnPoint != null) {
+                respawn(spawnPoint.getX(), spawnPoint.getY());
+                return;
+            }
+        }
+
+        // Respawn at default spawn point
+        respawn(spawnX, spawnY);
+    }
+
+    public void respawn(int x, int y) {
         if(isDead()) {
             setHealth(getMaxHealth());
             breath = 1.0;
@@ -809,9 +837,9 @@ public class Player extends Entity implements CommandExecutor {
             cold = 0.0;
         }
         
-        sendMessage(new PlayerPositionMessage(spawnX, spawnY));
+        sendMessage(new PlayerPositionMessage(x, y));
         sendMessageToPeers(new EntityStatusMessage(this, EntityStatus.REVIVED));
-        zone.spawnEffect(spawnX + 0.5F, spawnY - 0.75F, "spawn", 20);
+        zone.spawnEffect(x + 0.5F, y - 0.75F, "spawn", 20);
     }
     
     /**
@@ -888,6 +916,14 @@ public class Player extends Entity implements CommandExecutor {
         notify(message, NotificationType.POPUP);
     }
 
+    public void notifyProfile(String title, String description) {
+        if(isV3()) {
+            notify(String.format("<color=#ffd95f>%s</color>\n%s", title, description));
+        } else {
+            notify(MapHelper.map(String.class, String.class, "title", title, "desc", description), NotificationType.PROFILE);
+        }
+    }
+
     public MetaBlock getTransmittableBlock() {
         return transmittableBlock;
     }
@@ -914,7 +950,6 @@ public class Player extends Entity implements CommandExecutor {
             showDialog(DialogHelper.messageDialog("Trade at the Market!", "Trading is only allowed in Market worlds and private worlds. Ask the player to join you in a Market world."));
             return;
         }
-
 
         // Check if item is tradeable
         if(!isGodMode() && item.getTradeability() == Tradeability.FALSE) {
@@ -964,7 +999,7 @@ public class Player extends Entity implements CommandExecutor {
             transmittableBlock = null;
             return;
         }
-        
+
         boolean linked = false;
         
         if(lastPlacement != null) {
@@ -1068,7 +1103,7 @@ public class Player extends Entity implements CommandExecutor {
         }
 
     }
-    
+
     public double getMiningRange() {
         return 5 + getTotalSkillLevel(Skill.MINING) / 3.0;
     }
@@ -1673,6 +1708,14 @@ public class Player extends Entity implements CommandExecutor {
     }
     
     public void awardLoot(Loot loot, DialogType dialogType) {
+        awardLoot(loot, dialogType, "You received:");
+    }
+
+    public void awardLoot(Loot loot, String title) {
+        awardLoot(loot, DialogType.LOOT, title);
+    }
+
+    public void awardLoot(Loot loot, DialogType dialogType, String title) {
         Dialog dialog = new Dialog();
         DialogSection section = new DialogSection();
         dialog.addSection(section);
@@ -1700,10 +1743,10 @@ public class Player extends Entity implements CommandExecutor {
         }
         
         if(v3) {
-            dialog.setTitle("You found:");
+            dialog.setTitle(title);
             showDialog(dialog.setType(dialogType));
         } else {
-            section.setTitle("You found:");
+            section.setTitle(title);
             notify(dialog, NotificationType.REWARD);
         }
     }

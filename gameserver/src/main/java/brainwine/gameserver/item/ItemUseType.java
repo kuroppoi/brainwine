@@ -12,6 +12,7 @@ import brainwine.gameserver.item.interactions.ExpiatorInteraction;
 import brainwine.gameserver.item.interactions.GeckInteraction;
 import brainwine.gameserver.item.interactions.ItemInteraction;
 import brainwine.gameserver.item.interactions.LandmarkInteraction;
+import brainwine.gameserver.item.interactions.MinigameInteraction;
 import brainwine.gameserver.item.interactions.NoteInteraction;
 import brainwine.gameserver.item.interactions.RecyclerInteraction;
 import brainwine.gameserver.item.interactions.SpawnInteraction;
@@ -46,6 +47,7 @@ public enum ItemUseType {
     HAZMAT,
     LANDMARK(new LandmarkInteraction()),
     MEMORY,
+    MINIGAME(new MinigameInteraction()),
     MOVE,
     MULTI,
     NOTE(new NoteInteraction()),

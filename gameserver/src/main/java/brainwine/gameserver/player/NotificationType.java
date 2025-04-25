@@ -14,6 +14,7 @@ public enum NotificationType {
     PEER_ACCOMPLISHMENT(11),
     REWARD(12), // v2 only
     NOTE(13), // v2 only
+    PROFILE(16), // v2 only
     CHAT(20),
     LEVEL_UP(21), // v3 only
     ACHIEVEMENT(22), // v3 only

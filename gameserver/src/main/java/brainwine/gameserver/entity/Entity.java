@@ -10,6 +10,7 @@ import brainwine.gameserver.item.DamageType;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.minigame.Minigame;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.quest.QuestEvents;
 import brainwine.gameserver.server.Message;
@@ -52,6 +53,7 @@ public abstract class Entity {
     protected FacingDirection direction = FacingDirection.WEST;
     protected int animation;
     protected boolean invulnerable;
+    protected Minigame minigame;
     protected EntityAttack lastAttack; // Used for tracking in entity deaths -- do not use this for anything else!
     protected long lastDamagedAt;
     
@@ -70,6 +72,10 @@ public abstract class Entity {
     }
     
     public void die(EntityAttack cause) {
+        // Override
+    }
+    
+    public void attacked(EntityAttack attack, float damage) {
         // Override
     }
     
@@ -284,8 +290,12 @@ public abstract class Entity {
     }
     
     public void setHealth(float health) {
-        float maxHealth = getMaxHealth();
-        this.health = health < 0 ? 0 : health > maxHealth ? maxHealth : health;
+        float damage = this.health - Math.max(0.0F, health);
+        this.health = Math.max(0.0F, Math.min(getMaxHealth(), health));
+        
+        if(lastAttack != null) {
+            attacked(lastAttack, damage);
+        }
         
         if(this.health <= 0.0F) {
             die(lastAttack);
@@ -380,6 +390,18 @@ public abstract class Entity {
     
     public boolean isInvulnerable() {
         return invulnerable;
+    }
+    
+    public void setMinigame(Minigame minigame) {
+        this.minigame = minigame;
+    }
+    
+    public boolean hasActiveMinigame() {
+        return minigame != null && minigame.isActive();
+    }
+    
+    public Minigame getMinigame() {
+        return minigame;
     }
     
     public void setZone(Zone zone) {

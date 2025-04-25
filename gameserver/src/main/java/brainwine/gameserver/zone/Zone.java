@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -37,6 +38,7 @@ import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MetaType;
 import brainwine.gameserver.item.ModType;
+import brainwine.gameserver.minigame.Minigame;
 import brainwine.gameserver.player.ChatType;
 import brainwine.gameserver.player.NotificationType;
 import brainwine.gameserver.player.Player;
@@ -49,6 +51,7 @@ import brainwine.gameserver.server.messages.ChatMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
 import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.LightMessage;
+import brainwine.gameserver.server.messages.NotificationMessage;
 import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.server.models.BlockChangeData;
@@ -63,6 +66,7 @@ import brainwine.gameserver.zone.gen.models.RubbleType;
  */
 public class Zone {
     
+    public static final int MAX_CONCURRENT_MINIGAMES = 20;
     public static final int DEFAULT_CHUNK_WIDTH = 20;
     public static final int DEFAULT_CHUNK_HEIGHT = 20;
     private static final ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -111,6 +115,7 @@ public class Zone {
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> damageFieldBlocks = new HashMap<>();
     private final Map<Integer, BlockChangeData> blockChanges = new HashMap<>();
+    private final Map<Integer, Minigame> minigames = new HashMap<>();
     private final Map<String, OffsetDateTime> actionHistory = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
     private int ticksElapsed;
@@ -227,6 +232,23 @@ public class Zone {
                 }
                 
                 lastStatusUpdate = now;
+            }
+        }
+        
+        // Update minigames
+        if(!minigames.isEmpty()) {
+            Iterator<Minigame> iterator = minigames.values().iterator();
+            
+            while(iterator.hasNext()) {
+                Minigame minigame = iterator.next();
+                
+                // Remove inactive minigames
+                if(!minigame.isActive()) {
+                    iterator.remove();
+                    continue;
+                }
+                
+                minigame.tick(deltaTime);
             }
         }
         
@@ -363,6 +385,14 @@ public class Zone {
         sendMessage(new ChatMessage(sender.getId(), text, type));
         QuestEvents.handleChat(sender);
         GameServer.getInstance().notify(String.format("%s: %s", sender.getName(), text), NotificationType.CHAT);
+    }
+    
+    public void notifyPlayers(String message) {
+        notifyPlayers(message, NotificationType.POPUP);
+    }
+    
+    public void notifyPlayers(String message, NotificationType type) {
+        sendMessage(new NotificationMessage(message, type));
     }
     
     public void spawnEffect(float x, float y, String type, Object data) {
@@ -1144,6 +1174,32 @@ public class Zone {
         }
     }
     
+    public void startMinigame(Minigame minigame) {
+        int index = getBlockIndex(minigame.getX(), minigame.getY());
+        Minigame currentMinigame = minigames.get(index);
+        
+        // Don't start minigame if a minigame is already active at this location
+        if(currentMinigame != null && currentMinigame.isActive()) {
+            minigame.notifyCreator("Another minigame is already in progress at that location.");
+            return;
+        }
+        
+        minigames.put(index, minigame);
+        minigame.start();
+    }
+    
+    public Minigame getMinigame(int x, int y) {
+        return getMinigame(getBlockIndex(x, y));
+    }
+    
+    public Minigame getMinigame(int index) {
+        return minigames.get(index);
+    }
+    
+    public int getMinigameCount() {
+        return minigames.size();
+    }
+    
     public void updateBlock(int x, int y, Layer layer, int item) {
         updateBlock(x, y, layer, item, 0);
     }
@@ -1421,15 +1477,15 @@ public class Zone {
         return Collections.unmodifiableCollection(globalMetaBlocks.values());
     }
     
-    public List<Entity> getEntitiesInRange(float x, float y, float range) {
+    public List<Entity> getEntitiesInRange(float x, float y, double range) {
         return entityManager.getEntitiesInRange(x, y, range);
     }
     
-    public Player getRandomPlayerInRange(float x, float y, float range) {
+    public Player getRandomPlayerInRange(float x, float y, double range) {
         return entityManager.getRandomPlayerInRange(x, y, range);
     }
     
-    public List<Player> getPlayersInRange(float x, float y, float range) {
+    public List<Player> getPlayersInRange(float x, float y, double range) {
         return entityManager.getPlayersInRange(x, y, range);
     }
     
@@ -1591,7 +1647,6 @@ public class Zone {
         return x >= 0 && y >= 0 && x < width && y < height;
     }
     
-    // TODO move this function to ChunkManager
     protected void onChunkLoaded(Chunk chunk) {
         int chunkX = chunk.getX();
         int chunkY = chunk.getY();
@@ -1627,13 +1682,19 @@ public class Zone {
         // Simulate plant growth based on time passed since chunk was last loaded
         int cycles = (int)((System.currentTimeMillis() - chunk.getSaveTime()) / 1200000); // One cycle per 20 minutes
         growthManager.updateGrowables(cycles, growthSourceIndices);
-        
     }
     
-    // TODO move this function to ChunkManager
-    protected void onChunkUnloaded(Chunk chunk) { 
-        // TODO is this function ever gonna be necessary?
-        // It seems that most (if not all) thingies are unindexed automatically.
+    protected void onChunkUnloaded(Chunk chunk) {
+        for(int x = 0; x < chunk.getWidth(); x++) {
+            for(int y = 0; y < chunk.getHeight(); y++) {
+                int index = getBlockIndex(chunk.getX() + x, chunk.getY() + y);
+                Minigame minigame = getMinigame(index);
+                
+                if(minigame != null) {
+                    minigame.finish(); // Unload active minigame
+                }
+            }
+        }
     }
     
     public void saveChunks() {
