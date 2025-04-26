@@ -73,6 +73,15 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
 
+        if(layer == Layer.BASE && !item.isScrubbable()) {
+            if(item.hasId("base/maw") || item.hasId("base/pipe")) {
+                fail(player, "You need to plug this first before scrubbing.");
+            } else {
+                fail(player, "You can't scrub this item away.");
+            }
+            return;
+        }
+
         if(layer == Layer.BASE && player.getHeldItem().getAction() != Action.SCRUB) {
             fail(player, "You need a scrubber to mine this item.");
             return;

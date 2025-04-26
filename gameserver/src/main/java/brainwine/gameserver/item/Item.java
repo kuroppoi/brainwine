@@ -98,6 +98,9 @@ public class Item {
     
     @JsonProperty("diggable")
     private boolean diggable;
+
+    @JsonProperty("scrubbable")
+    private boolean scrubbable;
     
     @JsonProperty("wardrobe")
     private boolean clothing;
@@ -410,7 +413,11 @@ public class Item {
     public boolean isDiggable() {
         return diggable;
     }
-    
+
+    public boolean isScrubbable() {
+        return scrubbable;
+    }
+
     public boolean isClothing() {
         return clothing;
     }
