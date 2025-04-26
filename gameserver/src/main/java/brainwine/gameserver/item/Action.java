@@ -23,6 +23,7 @@ public enum Action {
     
     CONVERT(new ConvertConsumable()),
     DIG,
+    SCRUB,
     HEAL(new HealConsumable()),
     NAME_CHANGE(new NameChangeConsumable()),
     REFILL(new RefillConsumable()),
