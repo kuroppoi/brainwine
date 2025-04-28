@@ -97,6 +97,7 @@ public class Zone {
     private MassSpawnerConfiguration massSpawnerConfiguration = new MassSpawnerConfiguration();
     private MassTeleporterConfiguration massTeleporterConfiguration = new MassTeleporterConfiguration();
     private WeatherMachineConfiguration weatherMachineConfiguration = new WeatherMachineConfiguration();
+    private HolographConfiguration holographConfiguration = new HolographConfiguration();
     private ZoneRules rules = new ZoneRules();
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
@@ -151,6 +152,7 @@ public class Zone {
         massSpawnerConfiguration = config.getMassSpawnerConfiguration();
         massTeleporterConfiguration = config.getMassTeleporterConfiguration();
         weatherMachineConfiguration = config.getWeatherMachineConfiguration();
+        holographConfiguration = config.getHolographConfiguration();
         entityManager.updateSpawnRates();
         setRules(config.getRules());
     }
@@ -251,6 +253,9 @@ public class Zone {
                 minigame.tick(deltaTime);
             }
         }
+
+        // Update world machines
+        holographConfiguration.tick(this, deltaTime);
         
         // Process block timers
         if(!blockTimers.isEmpty()) {
@@ -2014,6 +2019,10 @@ public class Zone {
 
     public WeatherMachineConfiguration getWeatherMachineConfiguration() {
         return weatherMachineConfiguration;
+    }
+
+    public HolographConfiguration getHolographConfiguration() {
+        return holographConfiguration;
     }
 
     public ZoneRules getRules() {

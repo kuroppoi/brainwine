@@ -75,6 +75,9 @@ public class ZoneConfigFile {
     private WeatherMachineConfiguration weatherMachineConfiguration = new WeatherMachineConfiguration();
 
     @JsonSetter(nulls = Nulls.SKIP)
+    private HolographConfiguration holographConfiguration = new HolographConfiguration();
+
+    @JsonSetter(nulls = Nulls.SKIP)
     private ZoneRules rules = null;
 
     @JsonCreator
@@ -105,6 +108,7 @@ public class ZoneConfigFile {
         this.massSpawnerConfiguration = zone.getMassSpawnerConfiguration();
         this.massTeleporterConfiguration = zone.getMassTeleporterConfiguration();
         this.weatherMachineConfiguration = zone.getWeatherMachineConfiguration();
+        this.holographConfiguration = zone.getHolographConfiguration();
         this.rules = zone.getRules();
     }
 
@@ -182,6 +186,10 @@ public class ZoneConfigFile {
 
     public WeatherMachineConfiguration getWeatherMachineConfiguration() {
         return weatherMachineConfiguration;
+    }
+
+    public HolographConfiguration getHolographConfiguration() {
+        return holographConfiguration;
     }
 
     public ZoneRules getRules() {

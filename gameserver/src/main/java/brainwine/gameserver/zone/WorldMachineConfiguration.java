@@ -2,6 +2,7 @@ package brainwine.gameserver.zone;
 
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.dialog.Dialog;
+import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.input.DialogTextIndexInput;
 import brainwine.gameserver.item.Item;
@@ -10,6 +11,7 @@ import brainwine.gameserver.util.MapHelper;
 import brainwine.shared.JsonHelper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +20,23 @@ import java.util.stream.Collectors;
 public abstract class WorldMachineConfiguration {
     protected abstract String getDialogName();
     protected abstract void configure(Zone zone, Map<String, Object> values) throws IllegalArgumentException;
+
     protected abstract Object getValue(String key);
+
+    protected String getPublicDialogName() {
+        return "override.me";
+    }
+
+    public void handleCommand(Player player, Zone zone, Item item, String command) {}
 
     public void configure(Player player, Zone zone, Item item) {
         Dialog dialog = getConfigurationDialog(item.getPower());
+
         if(dialog == null) {
             player.notify("Configuration dialog not found!");
             return;
         }
+
         player.showDialog(dialog, ans -> handleConfigurationDialog(player, zone, dialog, ans));
     }
 
@@ -63,6 +74,8 @@ public abstract class WorldMachineConfiguration {
     }
 
     private void handleConfigurationDialog(Player player, Zone zone, Dialog dialog, Object[] ans) {
+        if(ans.length >= 1 && ans[0].equals("cancel")) return;
+
         if(player.getZone() == null || (!player.isGodMode() && !player.getZone().isOwner(player))) {
             player.notify("Sorry, you do not own this world.");
             return;
@@ -85,6 +98,48 @@ public abstract class WorldMachineConfiguration {
         } catch(IllegalArgumentException e) {
             player.notify("Invalid input!");
         }
+    }
+
+    private void handlePublicDialog(Player player, Zone zone, Item item, Dialog dialog, Object[] ans) {
+        if(ans.length < 1) return;
+        if(ans.length > 1) {
+            player.notify("I don't know what to do.");
+            return;
+        }
+        if("cancel".equals(ans[0])) return;
+        if(ans[0] instanceof String) {
+            handleCommand(player, zone, item, (String)ans[0]);
+        }
+    }
+
+    public void interactPublicly(Player player, Zone zone, Item item) {
+        Dialog dialog = null;
+
+        // Filter out that require too much power.
+        try {
+            float availablePower = item.getPower();
+            Map<String, Object> dialogConfig = new HashMap<>(MapHelper.getMap(GameConfiguration.getBaseConfig(), getPublicDialogName()));
+            if(dialogConfig.containsKey("sections")) {
+                List<Object> retainedSections = new ArrayList<>();
+                for(Object section : MapHelper.getList(dialogConfig, "sections")) {
+                    if(section instanceof Map) {
+                        Object power = ((Map<String, Object>) section).get("power");
+                        if(power == null || (int) power <= availablePower) {
+                            retainedSections.add(section);
+                        }
+                    }
+                }
+                dialogConfig.put("sections", retainedSections);
+                dialog = JsonHelper.readValue(dialogConfig, Dialog.class);
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            player.showDialog(DialogHelper.messageDialog("Public Dialog Parsing Error", e.getMessage()));
+            return;
+        }
+
+        final Dialog finalDialog = dialog;
+        player.showDialog(dialog, ans -> handlePublicDialog(player, zone, item, finalDialog, ans));
     }
 
     protected String expectString(Object obj) throws IllegalArgumentException {
