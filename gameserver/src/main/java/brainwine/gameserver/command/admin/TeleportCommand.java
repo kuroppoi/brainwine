@@ -5,14 +5,18 @@ import brainwine.gameserver.command.Command;
 import brainwine.gameserver.command.CommandAccessLevel;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandInfo;
+import brainwine.gameserver.dialog.Dialog;
+import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.player.PlayerManager;
+import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.ZoneManager;
 
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import static brainwine.gameserver.player.NotificationType.SYSTEM;
@@ -242,10 +246,45 @@ public class TeleportCommand extends Command {
             return;
         }
 
-        if(targetZone == subject.getZone()) {
-            subject.teleport(x, y);
+        final Runnable task = () -> {
+            if(targetZone == subject.getZone()) {
+                subject.teleport(x, y);
+            } else {
+                subject.changeZone(targetZone, x, y);
+            }
+        };
+
+        if(player.isGodMode() || player.equals(subject)) {
+            task.run();
         } else {
-            subject.changeZone(targetZone, x, y);
+            if(subject.getZone().isActionOnCooldown("failed teleport request", 10, ChronoUnit.SECONDS)) {
+                player.notify("Sorry, further teleport requests have been blocked for 10 seconds.", SYSTEM);
+                return;
+            }
+
+            double distance = MathUtils.distance(x, y, player.getX(), player.getY());
+            subject.showDialog(
+                    new Dialog()
+                            .setTitle("Teleport Request")
+                            .addSection(new DialogSection().setText(
+                                    player.getName() +
+                                    " wants to teleport you to " +
+                                    targetZone.getReadableCoordinates(x, y) +
+                                    (distance <= 5.0 ? " (near themselves)" : "") +
+                                    (targetZone == player.getZone()
+                                            ? "."
+                                            : " in " + targetZone.getName() + ".") +
+                                    " Click OK to accept."
+                            )),
+                    ans -> {
+                        if(ans.length >= 1 && "cancel".equals(ans[0])) {
+                            player.notify(subject.getName() + " has dismissed your teleport request.", SYSTEM);
+                            subject.getZone().recordActionTime("failed teleport request");
+                        } else {
+                            task.run();
+                        }
+                    });
+            player.notify("Your teleport request has been sent to " + subject.getName(), SYSTEM);
         }
     }
 
