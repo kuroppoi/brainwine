@@ -1,5 +1,6 @@
 package brainwine.gameserver.item.interactions;
 
+import brainwine.gameserver.command.CommandAccessLevel;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.item.Item;
@@ -7,6 +8,7 @@ import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.zone.MetaBlock;
+import brainwine.gameserver.zone.WorldMachineConfiguration;
 import brainwine.gameserver.zone.Zone;
 
 public class WorldMachineInteraction implements ItemInteraction {
@@ -18,32 +20,51 @@ public class WorldMachineInteraction implements ItemInteraction {
 
         Player player = (Player) entity;
 
+        if(!zone.isOwner(player) && item.hasUse(ItemUseType.PUBLIC)) {
+            if(canInteractPublicly(player, zone, item, x, y)) {
+                switch((String)itemUse) {
+                    case "holograph":
+                        zone.getHolographConfiguration().interactPublicly(player, zone, item);
+                        break;
+                }
+            }
+            return;
+        }
+
         if(!canInteract((Player) entity, zone, x, y)) return;
 
         player.showDialog(DialogHelper.getDialog("world_machines." + itemUse + ".menu"), ans -> {
             if(ans.length == 0 || !(ans[0] instanceof String)) return;
-            switch ((String) ans[0]) {
-                case "deactivate_natural_teleporters":
-                    deactivateNaturalTeleporters(player, zone, x, y);
+
+            WorldMachineConfiguration machine = null;
+            switch((String) itemUse) {
+                case "spawner":
+                    machine = zone.getMassSpawnerConfiguration();
                     break;
+                case "teleport":
+                    machine = zone.getMassTeleporterConfiguration();
+                    break;
+                case "weather":
+                    machine = zone.getWeatherMachineConfiguration();
+                    break;
+                case "holograph":
+                    machine = zone.getHolographConfiguration();
+                    break;
+            }
+            if(machine == null) return;
+
+            switch ((String) ans[0]) {
                 case "configure":
-                    switch((String) itemUse) {
-                        case "spawner":
-                            zone.getMassSpawnerConfiguration().configure(player, zone, item);
-                            break;
-                        case "teleport":
-                            zone.getMassTeleporterConfiguration().configure(player, zone, item);
-                            break;
-                        case "weather":
-                            zone.getWeatherMachineConfiguration().configure(player, zone, item);
-                            break;
-                    }
+                    machine.configure(player, zone, item);
                     break;
                 case "move":
                     move(player, zone, metaBlock);
                     break;
                 case "dismantle":
                     dismantle(player, zone, x, y);
+                    break;
+                default:
+                    machine.handleCommand(player, zone, item, (String)ans[0]);
                     break;
             }
         });
@@ -63,16 +84,21 @@ public class WorldMachineInteraction implements ItemInteraction {
         return true;
     }
 
-    public void deactivateNaturalTeleporters(Player player, Zone zone, int x, int y) {
-        if(canInteract(player, zone, x, y)) {
-            for (MetaBlock metaBlock : zone.getMetaBlocksWithUse(ItemUseType.TELEPORT)) {
-                if(!metaBlock.hasOwner() && !metaBlock.getItem().hasUse(ItemUseType.ZONE_TELEPORT)) {
-                    zone.updateBlock(metaBlock.getX(), metaBlock.getY(), Layer.FRONT, Item.AIR);
-                }
-            }
+    public boolean canInteractPublicly(Player player, Zone zone, Item item, int x, int y) {
+        Object itemUse = item.getUse(ItemUseType.WORLD_MACHINE);
+        if(!(itemUse instanceof String)) return false;
 
-            player.notify("Natural teleporters destroyed!");
+        // Only world machines with public use can be used publicly
+        if(!item.hasUse(ItemUseType.PUBLIC)) return false;
+
+        if(player.getZone() != zone) return false;
+
+        if(zone.getBlock(x, y).getFrontMod() == 0) {
+            player.notify("You need to supply the machine with steam first.");
+            return false;
         }
+
+        return true;
     }
 
     public void move(Player player, Zone zone, MetaBlock metaBlock) {

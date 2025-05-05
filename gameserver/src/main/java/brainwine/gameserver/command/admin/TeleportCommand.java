@@ -2,7 +2,6 @@ package brainwine.gameserver.command.admin;
 
 import brainwine.gameserver.GameServer;
 import brainwine.gameserver.command.Command;
-import brainwine.gameserver.command.CommandAccessLevel;
 import brainwine.gameserver.command.CommandExecutor;
 import brainwine.gameserver.command.CommandInfo;
 import brainwine.gameserver.dialog.Dialog;
@@ -124,19 +123,6 @@ public class TeleportCommand extends Command {
         }
     }
 
-    private boolean isPrivileged(CommandExecutor executor, Zone zone, CommandAccessLevel needed) {
-        if(executor == null || zone == null || needed == null) return false;
-        if(executor instanceof GameServer) return true;
-        if(executor.isAdmin()) return true;
-
-        Player player = (Player)executor;
-        if(needed == CommandAccessLevel.OWNERS) return zone.isOwner(player);
-        if(needed == CommandAccessLevel.MEMBERS) return zone.isOwner(player) || zone.isMember(player);
-
-        return true;
-
-    }
-
     private boolean checkSubjectAndZone(Player player, Player subject, Zone targetZone) {
         if(targetZone == null) {
             player.notify("Sorry, the target world is null.");
@@ -168,7 +154,7 @@ public class TeleportCommand extends Command {
 
         Player target = GameServer.getInstance().getPlayerManager().getPlayer(name);
         if(target != null) {
-            if(!this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getTeleportToPlayerAccess())) {
+            if(!targetZone.getMassTeleporterConfiguration().getTeleportToPlayerAccess().isPrivileged(player, targetZone)) {
                 player.notify("You are not allowed to teleport to players in the target world.");
                 return;
             }
@@ -178,7 +164,7 @@ public class TeleportCommand extends Command {
                 return;
             }
 
-            if(subject.getZone() != target.getZone() && !this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getSummonOtherPlayerAccess())) {
+            if(subject.getZone() != target.getZone() && !targetZone.getMassTeleporterConfiguration().getSummonOtherPlayerAccess().isPrivileged(player, targetZone)) {
                 player.notify("You are not allowed to summon other players in this world.");
                 return;
             }
@@ -194,7 +180,7 @@ public class TeleportCommand extends Command {
 
         Vector2i targetPosition = this.getLandmarkPosition(targetZone, name);
         if(targetPosition != null) {
-            if(!this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getTeleportToPlaqueAccess())) {
+            if(!targetZone.getMassTeleporterConfiguration().getTeleportToPlaqueAccess().isPrivileged(player, targetZone)) {
                 player.notify("You are not allowed to teleport to plaques in this world.");
                 return;
             }
@@ -234,7 +220,7 @@ public class TeleportCommand extends Command {
             }
 
             // We don't consider single blocks to be protected against teleportation.
-            if(!this.isPrivileged(player, targetZone, targetZone.getMassTeleporterConfiguration().getTeleportInProtectedAreaAccess()) && targetZone.isBlockProtected(x, y, player, true)) {
+            if(!targetZone.getMassTeleporterConfiguration().getTeleportInProtectedAreaAccess().isPrivileged(player, targetZone) && targetZone.isBlockProtected(x, y, player, true)) {
                 player.notify("Sorry, you can't teleport to areas protected against you in this world.");
                 return;
             }

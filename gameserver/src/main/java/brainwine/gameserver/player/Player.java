@@ -472,7 +472,7 @@ public class Player extends Entity implements CommandExecutor {
     public Map<String, Object> getStatusConfig() {
         Map<String, Object> config = super.getStatusConfig();
         config.put("id", documentId);
-        config.putAll(appearance);
+        config.putAll(getVisibleAppearance());
         config.put("u", inventory.findJetpack().getCode());
         config.put("ni", getIcon());
         return config;
@@ -554,6 +554,8 @@ public class Player extends Entity implements CommandExecutor {
         zone.sendMachineStatus(this);
         sendMessage(new PlayerPositionMessage((int)x, (int)y));
         sendMessage(new HealthMessage(health));
+        // Configuration message doesn't cause the Unity client to update the appearance when changing zones
+        sendMessage(new EntityChangeMessage(getId(), getVisibleAppearance()));
         
         // Send skill data
         for(Skill skill : skills.keySet()) {
@@ -1598,17 +1600,21 @@ public class Player extends Entity implements CommandExecutor {
 
     public void randomizeAppearance() {
         appearance.putAll(Appearance.getRandomAppearance(this));
-        zone.sendMessage(new EntityChangeMessage(id, appearance));
+        zone.sendMessage(new EntityChangeMessage(id, getVisibleAppearance()));
     }
     
     public void updateAppearance(Map<String, Object> appearance) {
         this.appearance.putAll(appearance);
-        zone.sendMessage(new EntityChangeMessage(id, appearance));
+        zone.sendMessage(new EntityChangeMessage(id, getVisibleAppearance()));
         QuestEvents.handleAppearance(this, appearance);
     }
     
     public Map<String, Object> getAppearance() {
         return Collections.unmodifiableMap(appearance);
+    }
+
+    public Map<String, Object> getVisibleAppearance() {
+        return zone.getHolographConfiguration().overrideAppearance(appearance);
     }
 
     public Map<String, QuestProgress> getQuestProgresses() {
@@ -1886,7 +1892,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("items_crafted", statistics.getTotalItemsCrafted());
         config.put("play_time", (int)(statistics.getPlayTime()));
         config.put("deaths", statistics.getDeaths());
-        config.put("appearance", appearance);
+        config.put("appearance", getVisibleAppearance());
         config.put("settings", settings);
         config.put("ni", getIcon());
         config.put("api_token", apiToken);

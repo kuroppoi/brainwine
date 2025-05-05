@@ -1,6 +1,10 @@
 package brainwine.gameserver.zone;
 
 import brainwine.gameserver.command.CommandAccessLevel;
+import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemUseType;
+import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MathUtils;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -63,6 +67,15 @@ public class MassTeleporterConfiguration extends WorldMachineConfiguration {
         return null;
     }
 
+    @Override
+    public void handleCommand(Player player, Zone zone, Item item, String command) {
+        switch(command) {
+            case "deactivate_natural_teleporters":
+                deactivateNaturalTeleporters(player, zone);
+                break;
+        }
+    }
+
     public CommandAccessLevel getTeleportToPlayerAccess() {
         return teleportToPlayerAccess;
     }
@@ -77,5 +90,17 @@ public class MassTeleporterConfiguration extends WorldMachineConfiguration {
 
     public CommandAccessLevel getSummonOtherPlayerAccess() {
         return summonOtherPlayerAccess;
+    }
+
+    public void deactivateNaturalTeleporters(Player player, Zone zone) {
+        if(zone.isOwner(player)) {
+            for(MetaBlock metaBlock : zone.getMetaBlocksWithUse(ItemUseType.TELEPORT)) {
+                if(!metaBlock.hasOwner() && !metaBlock.getItem().hasUse(ItemUseType.ZONE_TELEPORT)) {
+                    zone.updateBlock(metaBlock.getX(), metaBlock.getY(), Layer.FRONT, Item.AIR);
+                }
+            }
+
+            player.notify("Natural teleporters destroyed!");
+        }
     }
 }

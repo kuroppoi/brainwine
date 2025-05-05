@@ -82,6 +82,6 @@ public class ChangeAppearanceRequest extends PlayerRequest {
     }
     
     private void fail(Player player) {
-        player.sendMessage(new EntityChangeMessage(player.getId(), player.getAppearance()));
+        player.sendMessage(new EntityChangeMessage(player.getId(), player.getVisibleAppearance()));
     }
 }
