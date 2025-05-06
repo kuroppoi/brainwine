@@ -17,6 +17,7 @@ import brainwine.gameserver.item.interactions.NoteInteraction;
 import brainwine.gameserver.item.interactions.RecyclerInteraction;
 import brainwine.gameserver.item.interactions.SpawnInteraction;
 import brainwine.gameserver.item.interactions.SpawnTeleportInteraction;
+import brainwine.gameserver.item.interactions.SummoningCircleInteraction;
 import brainwine.gameserver.item.interactions.SwitchInteraction;
 import brainwine.gameserver.item.interactions.TargetTeleportInteraction;
 import brainwine.gameserver.item.interactions.TeleportInteraction;
@@ -56,6 +57,7 @@ public enum ItemUseType {
     PROTECTED,
     PUBLIC,
     RECYCLER(new RecyclerInteraction()),
+    SUMMONING_CIRCLE(new SummoningCircleInteraction()),
     SPAWN(new SpawnInteraction()),
     SPAWN_TELEPORT(new SpawnTeleportInteraction()),
     SWITCH(new SwitchInteraction()),
