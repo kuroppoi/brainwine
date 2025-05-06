@@ -10,20 +10,22 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiConfig {
     
-    public static final ApiConfig DEFAULT_CONFIG = new ApiConfig("127.0.0.1", 5002, 5001, 5003, Arrays.asList(NewsEntry.DEFAULT_NEWS));
+    public static final ApiConfig DEFAULT_CONFIG = new ApiConfig("127.0.0.1", 5002, 5001, 5003, Arrays.asList(NewsEntry.DEFAULT_NEWS), new BetaEntry());
     private final String gameServerIp;
     private final int gameServerPort;
     private final int gatewayPort;
     private final int portalPort;
     private final List<NewsEntry> news;
+    private final BetaEntry beta;
     
-    @ConstructorProperties({"game_server_ip", "game_server_port", "gateway_port", "portal_port", "news"})
-    public ApiConfig(String gameServerIp, int gameServerPort, int gatewayPort, int portalPort, List<NewsEntry> news) {
+    @ConstructorProperties({"game_server_ip", "game_server_port", "gateway_port", "portal_port", "news", "beta"})
+    public ApiConfig(String gameServerIp, int gameServerPort, int gatewayPort, int portalPort, List<NewsEntry> news, BetaEntry beta) {
         this.gameServerIp = gameServerIp;
         this.gameServerPort = gameServerPort;
         this.gatewayPort = gatewayPort;
         this.portalPort = portalPort;
         this.news = news;
+        this.beta = beta;
         Collections.reverse(this.news);
     }
     
@@ -45,5 +47,9 @@ public class ApiConfig {
     
     public List<NewsEntry> getNews() {
         return news;
+    }
+
+    public BetaEntry getBeta() {
+        return beta;
     }
 }

@@ -55,6 +55,7 @@ public class GatewayService {
     private void handleNewsRequest(Context ctx) {
         Map<String, Object> news = new HashMap<>();
         news.put("posts", api.getNews());
+        news.put("beta", api.getBeta());
         ctx.json(news);
     }
     
