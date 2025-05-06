@@ -3,6 +3,7 @@ package brainwine.gameserver.item.interactions;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.dialog.input.DialogSelectInput;
+import brainwine.gameserver.dialog.input.DialogTextIndexInput;
 import brainwine.gameserver.dialog.input.DialogTextInput;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.item.Item;
@@ -17,10 +18,12 @@ import brainwine.gameserver.zone.dynamics.SummonedInvasion;
 
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class SummoningCircleInteraction implements ItemInteraction {
     static final List<String> words = Arrays.asList("lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip ex ea commodo consequat duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est laborum".split(" "));
@@ -60,26 +63,72 @@ public class SummoningCircleInteraction implements ItemInteraction {
 
         dialog.addSection(new DialogSection().setInput(new DialogSelectInput().setOptions("Revenants", "Revenant Lord").setKey("difficulty")));
 
+        dialog.addSection(new DialogSection().setText("Which players should be cursed?"));
+        for(Player other : zone.getPlayers()) {
+            dialog.addSection(new DialogSection()
+                    .setText(other.getName())
+                    .setInput(new DialogTextIndexInput()
+                            .setOptions("No", "Yes")
+                            .setKey("player." + other.getName())
+                            .setValue(player == other ? 0 : 1)
+                    )
+            );
+        }
+
         player.showDialog(dialog, ans -> {
             boolean accepted = false;
             String option = "Revenants";
+            String inputtedSpell = "";
+            List<Player> players = new ArrayList<>();
 
             if(ans.length == 0 || "cancel".equals(ans[0])) {
                 return;
             }
 
-            if(useSpell) {
-                if(ans.length >= 2 && ans[1] instanceof String) {
-                    if(spell.equalsIgnoreCase((String) ans[0])) {
-                        accepted = true;
+            int counter = 0;
+            for(DialogSection section : dialog.getSections()) {
+                if(counter >= ans.length) {
+                    player.notify("Invalid input!");
+                    return;
+                }
+
+                if(section.getInput() != null) {
+                    if("difficulty".equals(section.getInput().getKey())) {
+                        if(ans[counter] instanceof String) option = (String)ans[counter];
+                        counter++;
+                        continue;
                     }
 
-                    if(ans[1] instanceof String) option = (String)ans[1];
+                    if("spell".equals(section.getInput().getKey())) {
+                        if(ans[counter] instanceof String) inputtedSpell = (String)ans[counter];
+                        counter++;
+                        continue;
+                    }
+
+                    if(section.getInput().getKey() != null && section.getInput().getKey().startsWith("player.")) {
+                        if(Objects.equals(1, ans[counter])) {
+                            String username = section.getInput().getKey().substring("player.".length());
+                            Player other = zone.getPlayer(username);
+                            if(other != null) {
+                                players.add(other);
+                            }
+                        }
+                        counter++;
+                    }
+                }
+            }
+
+            if(players.isEmpty()) {
+                player.notify("OK, not cursing anyone.");
+                return;
+            }
+
+            if(useSpell) {
+                if(spell.equalsIgnoreCase(inputtedSpell)) {
+                    accepted = true;
                 }
             } else {
                 accepted = true;
-
-                if(ans[0] instanceof String) option = (String)ans[0];
             }
 
             int numWaves = 2 + (int) (4 * Math.random());
@@ -91,7 +140,7 @@ public class SummoningCircleInteraction implements ItemInteraction {
 
             if(accepted) {
                 player.notify("Summoning " + option);
-                zone.getDynamicsManager().beginDynamic(new SummonedInvasion(zone, x, y, difficulty, numWaves));
+                zone.getDynamicsManager().beginDynamic(new SummonedInvasion(zone, new ArrayList<>(players), difficulty, numWaves));
                 if(cooldown > 0) {
                     MetaBlock m = zone.getMetaBlock(x, y);
                     Map<String, Object> metadata = m != null ? m.getMetadata() : new HashMap<>();

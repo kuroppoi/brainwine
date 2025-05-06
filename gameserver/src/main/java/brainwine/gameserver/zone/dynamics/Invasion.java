@@ -25,8 +25,6 @@ public class Invasion extends ZoneDynamic {
         super(zone);
         this.invaderTable = invaderTable;
         this.totalWaves = totalWaves;
-
-        System.out.println("INVASION WITH " + totalWaves + " WAVES");
     }
 
     public List<Entity> getTargets() {
@@ -55,13 +53,15 @@ public class Invasion extends ZoneDynamic {
 
             List<Vector2i> eligiblePositions = new ArrayList<>(8);
             for(Entity currentInvasionTarget : targets) {
+                if(currentInvasionTarget.isDead()) continue;
+
                 boolean found = false;
-                for (int x = -1; x <= 1; x++) {
-                    for (int y = -1; y <= 1; y++) {
-                        if (x == 0 && y == 0) continue;
+                for(int x = -1; x <= 1; x++) {
+                    for(int y = -1; y <= 1; y++) {
+                        if(x == 0 && y == 0) continue;
                         int blockX = currentInvasionTarget.getBlockX() + x;
                         int blockY = currentInvasionTarget.getBlockY() + y;
-                        if (zone.areCoordinatesInBounds(blockX, blockY) && !zone.isBlockOccupied(blockX, blockY, Layer.FRONT)) {
+                        if(zone.areCoordinatesInBounds(blockX, blockY) && !zone.isBlockOccupied(blockX, blockY, Layer.FRONT)) {
                             eligiblePositions.add(new Vector2i(blockX, blockY));
                             found = true;
                         }
@@ -72,7 +72,7 @@ public class Invasion extends ZoneDynamic {
                 }
             }
 
-            for(int i = 0; i < numInvaders; i++) {
+            if(!eligiblePositions.isEmpty()) for(int i = 0; i < numInvaders; i++) {
                 Vector2i pos = eligiblePositions.get((int)(Math.random() * eligiblePositions.size()));
                 Npc npc = zone.spawnEntity(invaderTable.next(), pos.getX(), pos.getY());
                 this.invaders.add(npc.getId());
