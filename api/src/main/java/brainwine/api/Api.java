@@ -5,6 +5,7 @@ import static brainwine.shared.LogMarkers.SERVER_MARKER;
 import java.io.File;
 import java.util.List;
 
+import brainwine.api.config.BetaEntry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -65,6 +66,10 @@ public class Api {
     
     public List<NewsEntry> getNews() {
         return config.getNews();
+    }
+
+    public BetaEntry getBeta() {
+        return config.getBeta();
     }
     
     public String getGameServerHost() {
