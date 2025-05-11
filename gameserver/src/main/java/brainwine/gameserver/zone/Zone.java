@@ -106,6 +106,7 @@ public class Zone {
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
     private final MachineManager machineManager = new MachineManager(this);
+    private final DynamicsManager dynamicsManager = new DynamicsManager(this);
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final List<String> members = new ArrayList<>();
     private final List<Timer<Integer>> blockTimers = new ArrayList<>();
@@ -189,6 +190,7 @@ public class Zone {
         entityManager.tick(deltaTime);
         liquidManager.tick(deltaTime);
         steamManager.tick(deltaTime);
+        dynamicsManager.tick(deltaTime);
         simulate(deltaTime);
 
         switch(getWeatherMachineConfiguration().getDayAndNightCycleMode()) {
@@ -1616,6 +1618,10 @@ public class Zone {
 
     public LiquidManager getLiquidManager() {
         return liquidManager;
+    }
+
+    public DynamicsManager getDynamicsManager() {
+        return dynamicsManager;
     }
     
     public void recordActionTime(String name) {
