@@ -1,13 +1,11 @@
 package brainwine.gameserver.zone.dynamics;
 
 import brainwine.gameserver.entity.Entity;
-import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.Zone;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class SummonedInvasion extends Invasion {
     List<Entity> targets;
@@ -33,7 +31,7 @@ public class SummonedInvasion extends Invasion {
 
     @Override
     public List<Entity> getTargets() {
-        return targets.stream().filter(x -> !x.isDead() && (!x.isPlayer() || !((Player)x).isGodMode())).collect(Collectors.toList());
+        return targets;
     }
 
     @Override
