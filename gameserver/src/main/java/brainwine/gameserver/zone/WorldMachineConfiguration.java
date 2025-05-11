@@ -9,6 +9,7 @@ import brainwine.gameserver.item.Item;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.shared.JsonHelper;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import java.util.ArrayList;
@@ -18,10 +19,38 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public abstract class WorldMachineConfiguration {
+    @JsonIgnore
+    protected Zone zone;
+    private int machineX;
+    private int machineY;
+
     protected abstract String getDialogName();
     protected abstract void configure(Zone zone, Map<String, Object> values) throws IllegalArgumentException;
 
     protected abstract Object getValue(String key);
+
+    protected boolean isEnabled(String itemName) {
+        Block block = zone.getBlock(machineX, machineY);
+        if(block == null || !block.getFrontItem().getId().startsWith(itemName)) return false;
+        return block.getFrontMod() > 0;
+    }
+
+    protected boolean isEnabled() {
+        return false;
+    }
+
+    public <T extends WorldMachineConfiguration> T setZone(Zone zone) {
+        this.zone = zone;
+        return (T)this;
+    }
+
+    public int getMachineX() {
+        return machineX;
+    }
+
+    public int getMachineY() {
+        return machineY;
+    }
 
     protected String getPublicDialogName() {
         return "override.me";
@@ -29,7 +58,7 @@ public abstract class WorldMachineConfiguration {
 
     public void handleCommand(Player player, Zone zone, Item item, String command) {}
 
-    public void configure(Player player, Zone zone, Item item) {
+    public void configure(Player player, Zone zone, Item item, int x, int y) {
         Dialog dialog = getConfigurationDialog(item.getPower());
 
         if(dialog == null) {
@@ -37,7 +66,7 @@ public abstract class WorldMachineConfiguration {
             return;
         }
 
-        player.showDialog(dialog, ans -> handleConfigurationDialog(player, zone, dialog, ans));
+        player.showDialog(dialog, ans -> handleConfigurationDialog(player, zone, dialog, ans, x, y));
     }
 
     private Dialog getConfigurationDialog(float availablePower) {
@@ -73,7 +102,7 @@ public abstract class WorldMachineConfiguration {
         }
     }
 
-    private void handleConfigurationDialog(Player player, Zone zone, Dialog dialog, Object[] ans) {
+    private void handleConfigurationDialog(Player player, Zone zone, Dialog dialog, Object[] ans, int x, int y) {
         if(ans.length >= 1 && ans[0].equals("cancel")) return;
 
         if(player.getZone() == null || (!player.isGodMode() && !player.getZone().isOwner(player))) {
@@ -95,6 +124,8 @@ public abstract class WorldMachineConfiguration {
 
         try {
             configure(zone, values);
+            machineX = x;
+            machineY = y;
         } catch(IllegalArgumentException e) {
             player.notify("Invalid input!");
         }

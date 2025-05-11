@@ -43,6 +43,11 @@ public class EvokeCommand extends Command {
             }
         }
 
+        if(!executor.isAdmin() && !zone.getMassSpawnerConfiguration().isEnabled()) {
+            executor.notify("No mass spawner is enabled in this world.", NotificationType.POPUP);
+            return;
+        }
+
         if(!isPrivileged(executor, zone, zone.getMassSpawnerConfiguration().getEvokeAccess())) {
             executor.notify("You are not allowed to evoke players in this world.", NotificationType.POPUP);
             return;

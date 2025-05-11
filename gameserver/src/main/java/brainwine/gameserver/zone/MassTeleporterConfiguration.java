@@ -6,6 +6,7 @@ import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MathUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Map;
@@ -74,6 +75,12 @@ public class MassTeleporterConfiguration extends WorldMachineConfiguration {
                 deactivateNaturalTeleporters(player, zone);
                 break;
         }
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return isEnabled("machines/mass-teleporter");
     }
 
     public CommandAccessLevel getTeleportToPlayerAccess() {

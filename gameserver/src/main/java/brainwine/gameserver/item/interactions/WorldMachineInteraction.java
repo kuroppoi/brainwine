@@ -55,7 +55,7 @@ public class WorldMachineInteraction implements ItemInteraction {
 
             switch ((String) ans[0]) {
                 case "configure":
-                    machine.configure(player, zone, item);
+                    machine.configure(player, zone, item, x, y);
                     break;
                 case "move":
                     move(player, zone, metaBlock);

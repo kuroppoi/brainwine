@@ -24,7 +24,9 @@ public class WeatherManager {
         long now = System.currentTimeMillis();
 
         if(now > rainStart + rainDuration) {
-            WeatherMachineConfiguration.Precipitation setting = zone.getWeatherMachineConfiguration().getPrecipitation();
+            WeatherMachineConfiguration.Precipitation setting = zone.getWeatherMachineConfiguration().isEnabled()
+                    ? zone.getWeatherMachineConfiguration().getPrecipitation()
+                    : WeatherMachineConfiguration.Precipitation.NORMAL;
             boolean dry = rainPower > 0;
             boolean updateGrowables = dry;
 

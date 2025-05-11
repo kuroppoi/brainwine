@@ -209,6 +209,11 @@ public class TeleportCommand extends Command {
         }
 
         if(!player.isAdmin()) {
+            if(!targetZone.getMassTeleporterConfiguration().isEnabled()) {
+                player.notify(String.format("There is no mass teleporter enabled in %s.", targetZone.getName()));
+                return;
+            }
+
             if(!targetZone.isAreaExplored(x, y)) {
                 player.notify("That area hasn't been explored yet.");
                 return;

@@ -8,6 +8,7 @@ import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.HashMap;
@@ -26,6 +27,13 @@ public class HolographConfiguration extends WorldMachineConfiguration {
     private final Map<String, Object> outfitOverrides = new HashMap<>();
     @JsonProperty
     private boolean turnedOn = false;
+    private int tickCounter = 0;
+
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return isEnabled("machines/holograph");
+    }
 
     @Override
     protected String getDialogName() {
@@ -125,10 +133,17 @@ public class HolographConfiguration extends WorldMachineConfiguration {
         return outfitOverrides;
     }
 
-    public void tick(Zone zone, float deltaTime) {
+    public void tick(float deltaTime) {
+        if(turnedOn && tickCounter == 0 && !isEnabled()) {
+            turnOffMachine(zone);
+        }
+
         if(timeout != 0 && System.currentTimeMillis() > timeout + outfitChangeTime && turnedOn) {
             turnOffMachine(zone);
         }
+
+        tickCounter++;
+        if(tickCounter >= 16) tickCounter = 0;
     }
 
     public void turnOnMachine(Zone zone) {
@@ -167,12 +182,11 @@ public class HolographConfiguration extends WorldMachineConfiguration {
     }
 
     public Map<String, Object> overrideAppearance(Map<String, Object> appearance) {
-        if(turnedOn && !outfitOverrides.isEmpty()) {
+        if(turnedOn && !outfitOverrides.isEmpty() && isEnabled()) {
             appearance = new HashMap<>(appearance);
             appearance.putAll(outfitOverrides);
-            return appearance;
-        } else {
-            return appearance;
         }
+
+        return appearance;
     }
 }

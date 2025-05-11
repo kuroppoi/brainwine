@@ -2,6 +2,7 @@ package brainwine.gameserver.zone;
 
 import brainwine.gameserver.command.CommandAccessLevel;
 import brainwine.gameserver.util.MathUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.Map;
@@ -12,6 +13,12 @@ public class MassSpawnerConfiguration extends WorldMachineConfiguration {
     boolean mawSpawningEnabled = true;
     boolean areaSpawningEnabled = true;
     CommandAccessLevel evokeAccess = CommandAccessLevel.OWNERS;
+
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return isEnabled("machines/mass-spawner");
+    }
 
     @Override
     protected String getDialogName() {

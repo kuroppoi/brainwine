@@ -1,6 +1,7 @@
 package brainwine.gameserver.zone;
 
 import brainwine.gameserver.util.MathUtils;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.text.WordUtils;
 
 import java.util.Map;
@@ -37,6 +38,12 @@ public class WeatherMachineConfiguration extends WorldMachineConfiguration {
 
     public WeatherMachineConfiguration() {
         reset();
+    }
+
+    @JsonIgnore
+    @Override
+    public boolean isEnabled() {
+        return isEnabled("machines/weather-machine");
     }
 
     @Override

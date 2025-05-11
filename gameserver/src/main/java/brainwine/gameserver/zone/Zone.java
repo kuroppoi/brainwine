@@ -94,10 +94,10 @@ public class Zone {
     private boolean pvp;
     private String entryCode;
     private String owner;
-    private MassSpawnerConfiguration massSpawnerConfiguration = new MassSpawnerConfiguration();
-    private MassTeleporterConfiguration massTeleporterConfiguration = new MassTeleporterConfiguration();
-    private WeatherMachineConfiguration weatherMachineConfiguration = new WeatherMachineConfiguration();
-    private HolographConfiguration holographConfiguration = new HolographConfiguration();
+    private MassSpawnerConfiguration massSpawnerConfiguration = new MassSpawnerConfiguration().setZone(this);
+    private MassTeleporterConfiguration massTeleporterConfiguration = new MassTeleporterConfiguration().setZone(this);
+    private WeatherMachineConfiguration weatherMachineConfiguration = new WeatherMachineConfiguration().setZone(this);
+    private HolographConfiguration holographConfiguration = new HolographConfiguration().setZone(this);
     private ZoneRules rules = new ZoneRules();
     private final ChunkManager chunkManager;
     private final SteamManager steamManager;
@@ -150,10 +150,10 @@ public class Zone {
         isProtected = config.isProtected();
         pvp = config.isPvp();
         creationDate = config.getCreationDate();
-        massSpawnerConfiguration = config.getMassSpawnerConfiguration();
-        massTeleporterConfiguration = config.getMassTeleporterConfiguration();
-        weatherMachineConfiguration = config.getWeatherMachineConfiguration();
-        holographConfiguration = config.getHolographConfiguration();
+        massSpawnerConfiguration = config.getMassSpawnerConfiguration().setZone(this);
+        massTeleporterConfiguration = config.getMassTeleporterConfiguration().setZone(this);
+        weatherMachineConfiguration = config.getWeatherMachineConfiguration().setZone(this);
+        holographConfiguration = config.getHolographConfiguration().setZone(this);
         entityManager.updateSpawnRates();
         setRules(config.getRules());
     }
@@ -193,7 +193,7 @@ public class Zone {
         dynamicsManager.tick(deltaTime);
         simulate(deltaTime);
 
-        switch(getWeatherMachineConfiguration().getDayAndNightCycleMode()) {
+        switch(getWeatherMachineConfiguration().isEnabled() ? getWeatherMachineConfiguration().getDayAndNightCycleMode() : WeatherMachineConfiguration.DayAndNightCycleMode.NORMAL) {
             case REALTIME:
                 OffsetDateTime current = OffsetDateTime.now();
                 int wantedOffset = getWeatherMachineConfiguration().getTimeZone();
@@ -257,7 +257,7 @@ public class Zone {
         }
 
         // Update world machines
-        holographConfiguration.tick(this, deltaTime);
+        holographConfiguration.tick(deltaTime);
         
         // Process block timers
         if(!blockTimers.isEmpty()) {

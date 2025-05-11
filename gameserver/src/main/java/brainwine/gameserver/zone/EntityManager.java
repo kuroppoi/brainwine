@@ -180,7 +180,7 @@ public class EntityManager {
         List<Chunk> chunks = immediate ? visibleChunks : zone.getLoadedChunks().stream()
                 .filter(chunk -> !visibleChunks.contains(chunk)).collect(Collectors.toList());
 
-        boolean isNotConfigured = zone.getMassSpawnerConfiguration() == null;
+        boolean isNotConfigured = zone.getMassSpawnerConfiguration() == null || !zone.getMassSpawnerConfiguration().isEnabled();
         boolean doMaws = isNotConfigured || zone.getMassSpawnerConfiguration().isMawSpawningEnabled();
         boolean doAreas = isNotConfigured || zone.getMassSpawnerConfiguration().isAreaSpawningEnabled();
 

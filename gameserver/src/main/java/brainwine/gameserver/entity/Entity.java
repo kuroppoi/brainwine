@@ -422,6 +422,7 @@ public abstract class Entity {
     public Map<String, Object> getStatusConfig() {
         Map<String, Object> config = new HashMap<>();
         config.putAll(properties);
+        config.put("ni", "orders/crow-3");
         return config;
     }
 }
