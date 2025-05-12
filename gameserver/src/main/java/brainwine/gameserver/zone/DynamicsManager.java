@@ -57,4 +57,8 @@ public class DynamicsManager {
             ongoingDynamics.remove(key);
         }
     }
+
+    public <T extends ZoneDynamic> Deque<ZoneDynamic> getOngoingDynamics(Class<T> clazz) {
+        return ongoingDynamics.getOrDefault(clazz, new LinkedList<>());
+    }
 }

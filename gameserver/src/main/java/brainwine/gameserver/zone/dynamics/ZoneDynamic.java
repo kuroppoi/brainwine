@@ -14,6 +14,11 @@ public class ZoneDynamic {
     /**Called every frame.*/
     public void tick(float deltaTime) {}
 
+    /**Start time estimated by calling System.currentTimeMillis()*/
+    public long getStartTime() {
+        return startTime;
+    }
+
     /**Return true if the invasion has finished so the zone can stop tracking it.*/
     public boolean isFinished() {
         return true;

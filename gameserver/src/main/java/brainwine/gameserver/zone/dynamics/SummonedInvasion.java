@@ -36,7 +36,7 @@ public class SummonedInvasion extends Invasion {
 
     @Override
     public int maxInstances() {
-        return 5;
+        return 0;
     }
 
     @Override

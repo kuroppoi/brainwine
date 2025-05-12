@@ -7,6 +7,7 @@ import brainwine.gameserver.dialog.input.DialogTextIndexInput;
 import brainwine.gameserver.dialog.input.DialogTextInput;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.util.MapHelper;
@@ -15,12 +16,11 @@ import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 import brainwine.gameserver.zone.dynamics.EvokerInvasion;
 import brainwine.gameserver.zone.dynamics.SummonedInvasion;
+import brainwine.gameserver.zone.dynamics.ZoneDynamic;
 
-import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Deque;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -43,10 +43,15 @@ public class SummoningCircleInteraction implements ItemInteraction {
         long cooldown = configCooldown;
         boolean useSpell = !player.isGodMode() && configUseSpell;
 
-        if (cooldown > 0 && !player.isGodMode()) {
-            String t = metaBlock != null ? metaBlock.getStringProperty("t") : null;
-            if (t != null && OffsetDateTime.parse(t).plus(cooldown, ChronoUnit.MILLIS).isAfter(OffsetDateTime.now())) {
-                player.notify("This item is on cooldown.");
+        if(cooldown > 0 && !player.isGodMode()) {
+            Deque<ZoneDynamic> dynamics = zone.getDynamicsManager().getOngoingDynamics(SummonedInvasion.class);
+
+            int count = dynamics.size();
+            int circles = zone.getMetaBlocksWithUse(ItemUseType.SUMMONING_CIRCLE).size();
+            long lastUsed = dynamics.isEmpty() ? 0L : dynamics.peekFirst().getStartTime();
+
+            if(count >= circles && lastUsed + cooldown >= System.currentTimeMillis()) {
+                player.notify("This item is on cooldown. Either place more summoning circles or wait.");
                 return;
             }
         }
@@ -141,12 +146,6 @@ public class SummoningCircleInteraction implements ItemInteraction {
             if(accepted) {
                 player.notify("Summoning " + option);
                 zone.getDynamicsManager().beginDynamic(new SummonedInvasion(zone, new ArrayList<>(players), difficulty, numWaves));
-                if(cooldown > 0) {
-                    MetaBlock m = zone.getMetaBlock(x, y);
-                    Map<String, Object> metadata = m != null ? m.getMetadata() : new HashMap<>();
-                    metadata.put("t", OffsetDateTime.now().toString());
-                    zone.setMetaBlock(x, y, item, null, metadata);
-                }
             } else {
                 player.notify("Too bad, you casted the wrong spell!");
                 zone.getDynamicsManager().beginDynamic(
