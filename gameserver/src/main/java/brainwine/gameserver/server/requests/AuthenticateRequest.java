@@ -39,7 +39,9 @@ public class AuthenticateRequest extends Request {
         if(wantedVersion == null) wantedVersion = "99";
 
         if(!VersionUtils.isGreaterOrEqualTo(version, wantedVersion)) {
-            connection.kick("Sorry, this version of Deepworld is not supported.");
+            String defaultMessage = "Sorry, this version of Deepworld is not supported.";
+            String message = PlayerManager.SUPPORTED_VERSIONS.get("message");
+            connection.kick(message != null ? message : defaultMessage);
             return;
         }
         
