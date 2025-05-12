@@ -41,6 +41,6 @@ public class SummonedInvasion extends Invasion {
 
     @Override
     public boolean isFinished() {
-        return startTime + 300_000 < System.currentTimeMillis() || super.isFinished();
+        return startTime + 600_000 < System.currentTimeMillis();
     }
 }
