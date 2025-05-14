@@ -24,7 +24,7 @@ import static brainwine.gameserver.player.NotificationType.SYSTEM;
 public class TeleportCommand extends Command {
     @Override
     public void execute(CommandExecutor executor, String[] args) {
-        if(args.length == 0 || args.length > 3) {
+        if(args.length == 0 || args.length > 4) {
             executor.notify(String.format("Usage: %s", getUsage(executor)), SYSTEM);
             return;
         }
@@ -112,7 +112,7 @@ public class TeleportCommand extends Command {
                 Player subject = playerManager.getPlayer(args[0]);
                 Objects.requireNonNull(subject);
                 Zone targetZone = zoneManager.getZoneByName(args[1]);
-                Objects.requireNonNull(subject);
+                Objects.requireNonNull(targetZone);
                 int x = parseXCoordinate(args[2], targetZone);
                 int y = parseYCoordinate(args[3], targetZone);
 
@@ -241,6 +241,7 @@ public class TeleportCommand extends Command {
             if(targetZone == subject.getZone()) {
                 subject.teleport(x, y);
             } else {
+                targetZone.giveTemporaryAccess(subject);
                 subject.changeZone(targetZone, x, y);
             }
         };

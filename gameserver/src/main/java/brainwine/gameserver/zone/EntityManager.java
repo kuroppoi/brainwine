@@ -372,6 +372,7 @@ public class EntityManager {
             player.onZoneEntered();
             players.put(entityId, player);
             playersByName.put(player.getName().toLowerCase(), player);
+            zone.removeTemporaryAccess(player);
             player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.ENTERING));
             player.sendMessageToPeers(new EntityPositionMessage(player));
             player.sendMessage(new EventMessage("playerIconDidChange", player.getIconEmoji()));

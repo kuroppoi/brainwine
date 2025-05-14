@@ -109,6 +109,7 @@ public class Zone {
     private final DynamicsManager dynamicsManager = new DynamicsManager(this);
     private final Set<Integer> pendingSunlight = new HashSet<>();
     private final List<String> members = new ArrayList<>();
+    private final Set<String> temporarilyAllowedPlayers = new HashSet<>();
     private final List<Timer<Integer>> blockTimers = new ArrayList<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<String, DungeonType> dungeonTypes = new HashMap<>();
@@ -1982,7 +1983,7 @@ public class Zone {
     }
     
     public boolean canJoin(Player player) {
-        return isTicking() && (player.isGodMode() || isPublic() || isOwner(player) || isMember(player));
+        return isTicking() && (player.isGodMode() || isPublic() || isOwner(player) || isMember(player) || temporarilyAllowedPlayers.contains(player.getDocumentId()));
     }
     
     public boolean isPublic() {
@@ -2101,6 +2102,14 @@ public class Zone {
                 player.changeZone(null);
             }
         }
+    }
+
+    public void giveTemporaryAccess(Player player) {
+        temporarilyAllowedPlayers.add(player.getDocumentId());
+    }
+
+    public void removeTemporaryAccess(Player player) {
+        temporarilyAllowedPlayers.remove(player.getDocumentId());
     }
     
     public boolean isMember(Player player) {
