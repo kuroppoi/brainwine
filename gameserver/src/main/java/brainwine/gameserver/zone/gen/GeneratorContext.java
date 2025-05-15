@@ -115,6 +115,9 @@ public class GeneratorContext {
         // Compromise around the middle!
         int y = highestPoint - height + (lowestPoint - highestPoint) / 2;
         y = Math.max(1, Math.min(y, getHeight() - prefab.getHeight() - 3));
+
+        // Sink the prefab into the ground.
+        y += prefab.getSinking();
         
         // Place the prefab and generate scaffolding if successful
         if(placePrefab(prefab, x, y)) {

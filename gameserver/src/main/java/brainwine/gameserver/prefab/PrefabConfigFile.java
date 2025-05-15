@@ -36,6 +36,9 @@ public class PrefabConfigFile {
     
     @JsonProperty("metadata")
     private Map<Integer, Map<String, Object>> metadata = new HashMap<>();
+
+    @JsonProperty("sinking")
+    private int sinking;
     
     @JsonCreator
     private PrefabConfigFile() {}
@@ -49,6 +52,7 @@ public class PrefabConfigFile {
         replacements = prefab.getReplacements();
         correspondingReplacements = prefab.getCorrespondingReplacements();
         metadata = prefab.getMetadata();
+        sinking = prefab.getSinking();
     }
     
     public boolean isDungeon() {
@@ -69,6 +73,10 @@ public class PrefabConfigFile {
     
     public boolean isMirrorable() {
         return mirrorable;
+    }
+
+    public int getSinking() {
+        return sinking;
     }
     
     public Map<Integer, Map<String, Object>> getMetadata() {
