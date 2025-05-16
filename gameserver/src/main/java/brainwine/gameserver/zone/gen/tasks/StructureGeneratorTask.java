@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.prefab.Prefab;
+import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.Biome;
@@ -24,6 +25,8 @@ import brainwine.gameserver.zone.gen.caves.CaveType;
 import brainwine.gameserver.zone.gen.caves.StructureCaveDecorator;
 import brainwine.gameserver.zone.gen.models.SpecialStructure;
 import brainwine.gameserver.zone.gen.models.TerrainType;
+import brainwine.gameserver.zone.gen.sky.SkyDecorator;
+import brainwine.gameserver.zone.gen.sky.StructureSkyDecorator;
 import brainwine.gameserver.zone.gen.surface.StructureSurfaceDecorator;
 import brainwine.gameserver.zone.gen.surface.SurfaceDecorator;
 import brainwine.gameserver.zone.gen.surface.SurfaceRegion;
@@ -38,6 +41,8 @@ public class StructureGeneratorTask implements GeneratorTask {
     private final SpecialStructure[] specialStructures;
     private final List<SurfaceDecorator> globalSurfaceDecorators;
     private final List<CaveDecorator> globalCaveDecorators;
+    private final List<SkyDecorator> globalSkyDecorators;
+    private double skyDecorationDistance;
     
     public StructureGeneratorTask(GeneratorConfig config) {
         filled = config.getTerrainType() == TerrainType.FILLED;
@@ -48,6 +53,8 @@ public class StructureGeneratorTask implements GeneratorTask {
         specialStructures = config.getSpecialStructures();
         globalSurfaceDecorators = config.getGlobalSurfaceDecorators();
         globalCaveDecorators = config.getGlobalCaveDecorators();
+        globalSkyDecorators = config.getGlobalSkyDecorators();
+        skyDecorationDistance = config.getSkyDecorationDistance();
     }
     
     @Override
@@ -134,6 +141,42 @@ public class StructureGeneratorTask implements GeneratorTask {
                     if(decorator instanceof StructureCaveDecorator && ctx.nextDouble() <= decorator.getChance()) {
                         decorator.decorate(ctx, cave);
                     }
+                }
+            }
+        }
+
+        // Decorate the sky
+        int skyChunkWidth = 200;
+        if(!globalSkyDecorators.isEmpty()) {
+            double yIncrement = skyDecorationDistance * Math.sqrt(3);
+            for(int startX = 0; startX < ctx.getWidth(); startX += skyChunkWidth) {
+                List<SkyDecorator> candidateDecorators = new ArrayList<>();
+                for(SkyDecorator decorator : globalSkyDecorators) {
+                    if(decorator instanceof StructureSkyDecorator && ctx.nextDouble() < decorator.getChance()) {
+                        candidateDecorators.add(decorator);
+                    }
+                }
+
+                double xOffset = 0;
+                for(double y = skyDecorationDistance * ctx.nextDouble(); y < ctx.getHeight(); y += yIncrement) {
+                    final int surface = ctx.getSurface(MathUtils.clamp(startX + skyChunkWidth / 2, 0, ctx.getWidth()));
+                    if(y > surface + skyDecorationDistance) break;
+                    final double finalY = y;
+                    WeightedMap<SkyDecorator> selection = new WeightedMap<>();
+                    candidateDecorators.stream().filter(skyDecorator -> {
+                        double minY = ctx.getHeight() * skyDecorator.getMinDepth();
+                        if(skyDecorator.getMaxSurfaceClearance() != Integer.MAX_VALUE) {
+                            minY = Math.max(minY, surface - skyDecorator.getMaxSurfaceClearance());
+                        }
+                        double maxY = Math.min(surface - skyDecorator.getMinSurfaceClearance(), ctx.getHeight() * skyDecorator.getMaxDepth());
+                        return finalY >= minY && finalY <= maxY;
+                    }).forEach(selection::addEntry);
+                    if(!selection.isEmpty()) for(double x = 0; x < skyChunkWidth + skyDecorationDistance; x += 2 * skyDecorationDistance) {
+                        selection.next(ctx.getRandom()).decorate(ctx, (int)(x + startX + xOffset), (int)y);
+                    }
+
+                    // This will create an isometric grid pattern
+                    xOffset = xOffset == 0 ? skyDecorationDistance : 0;
                 }
             }
         }
