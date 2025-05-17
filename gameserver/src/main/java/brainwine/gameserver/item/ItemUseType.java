@@ -60,6 +60,7 @@ public enum ItemUseType {
     SUMMONING_CIRCLE(new SummoningCircleInteraction()),
     SPAWN(new SpawnInteraction()),
     SPAWN_TELEPORT(new SpawnTeleportInteraction()),
+    STEAM_SOURCE,
     SWITCH(new SwitchInteraction()),
     SWITCHED,
     TARGET_TELEPORT(new TargetTeleportInteraction()),

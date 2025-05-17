@@ -8,6 +8,7 @@ import java.util.Queue;
 import java.util.Set;
 
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 
 /**
@@ -22,6 +23,7 @@ public class SteamManager {
     public static final byte STATE_PIPE = 0x1; // Pipe
     public static final byte STATE_COLLECTOR = 0x2; // Active collector
     private final Set<Integer> collectorIndices = new HashSet<>();
+    private final Set<Integer> steamSourceIndices = new HashSet<>();
     private final Set<Integer> steamableIndices = new HashSet<>();
     private final Set<Integer> processedIndices = new HashSet<>();
     private final List<Integer> expiredSteamableIndices = new ArrayList<>();
@@ -100,6 +102,19 @@ public class SteamManager {
             processQueue.add(new SteamIteration(x + 1, y + 1, 2, 0)); // Bottom
             processQueue.add(new SteamIteration(x - 1, y - 1, 3, 0)); // Left
         }
+
+        // Enqueue blocks at the bottom left side of all steam sources
+        for(int index : steamSourceIndices) {
+            int x = index % zone.getWidth();
+            int y = index / zone.getWidth();
+
+            // Skip if no player is close to this collector
+            if(zone.getPlayersInRange(x, y, MAX_COLLECTOR_DISTANCE).isEmpty()) {
+                continue;
+            }
+
+            processQueue.add(new SteamIteration(x - 1, y, 3, 0)); // Left
+        }
         
         // Travel down the pipeline and power on any machines that are reached by it
         while(!processQueue.isEmpty()) {
@@ -150,31 +165,39 @@ public class SteamManager {
     
     public void indexBlock(int x, int y, Item item) {
         int index = zone.getBlockIndex(x, y);
-        
-        // Does it use steam?
-        if(!item.usesSteam()) {
-            steamableIndices.remove(index);
-            
-            // Is it a pipe?
-            if(!item.hasId("mechanical/pipe") && !item.hasId("mechanical/pipeiron") && !item.hasId("mechanical/pipecopper")) {
 
-                // Is it a collector and is it on top of a steam vent?
-                if(!item.hasId("mechanical/collector") || !isCollectorActive(x, y)) {
-                    collectorIndices.remove(index);
-                    setState(index, STATE_EMPTY);
-                    return;
-                }
-                
-                collectorIndices.add(index);
-                setState(index, STATE_COLLECTOR);
-                return;
-            }
-            
+        // Does it use steam?
+        if(item.usesSteam()) {
+            steamableIndices.add(index);
+            setState(index, STATE_EMPTY);
+            return;
+        }
+
+        // Is it a pipe?
+        if(item.hasId("mechanical/pipe") || item.hasId("mechanical/pipeiron") || item.hasId("mechanical/pipecopper")) {
             setState(index, STATE_PIPE);
             return;
         }
-        
-        steamableIndices.add(index);
+
+        // Is it a collector and is it on top of a steam vent?
+        if(item.hasId("mechanical/collector") && isCollectorActive(x, y)) {
+            collectorIndices.add(index);
+            setState(index, STATE_COLLECTOR);
+            return;
+        } else {
+            collectorIndices.remove(index);
+        }
+
+        // Is it a steam source
+        if(item.hasUse(ItemUseType.STEAM_SOURCE) && zone.getBlock(x, y).getFrontMod() > 0) {
+            System.out.println("This is an active steam source!");
+            steamSourceIndices.add(index);
+            setState(index, STATE_COLLECTOR);
+            return;
+        } else {
+            steamSourceIndices.remove(index);
+        }
+
         setState(index, STATE_EMPTY);
     }
     
