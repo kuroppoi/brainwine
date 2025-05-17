@@ -85,7 +85,8 @@ public class GeneratorContext {
             }
             
             // Shitty foundation check, doesn't take potential replacements into account. Oh well!
-            if(prefab.getBlocks()[(height - 1) * width + x1].getFrontItem().isWhole()) {
+            int groundLevel = height - prefab.getSinking() - 1;
+            if(prefab.getBlocks()[groundLevel * width + x1].getFrontItem().isWhole()) {
                 if(startX == -1) {
                     startX = x + x1;
                     highestPoint = lowestPoint = surface[startX];
@@ -121,11 +122,29 @@ public class GeneratorContext {
         
         // Place the prefab and generate scaffolding if successful
         if(placePrefab(prefab, x, y)) {
+            if(prefab.getSinking() > 0) {
+                placeScaffoldingAroundBasement(prefab, startX, y, endX - startX + 1, prefab.isRuin());
+            }
             placeScaffolding(startX, y + height, endX - startX + 1, prefab.isRuin());
             return true;
         }
         
         return false;
+    }
+
+    private void placeScaffoldingAroundBasement(Prefab prefab, int startX, int y, int width, boolean ruin) {
+        int groundLevel = y + prefab.getHeight() - prefab.getSinking();
+        for(int i = startX; i < startX + width; i++) {
+            int j = Math.min(y + prefab.getHeight() - 1, getSurface(i) - 1);
+            // Place scaffolding all the way up until it hits the prefab
+            while(j >= groundLevel && isAir(i, j, Layer.BASE) && isAir(i, j, Layer.BACK) && !isWhole(i, j, Layer.FRONT)) {
+                if(!ruin || SimplexNoise.noise2(seed, i / 8.0, j / 8.0, 2) <= 0.4) {
+                    updateBlock(i, j, Layer.BACK, "back/scaffold-decayed");
+                }
+
+                j--;
+            }
+        }
     }
     
     private void placeScaffolding(int x, int y, int width, boolean ruin) {
