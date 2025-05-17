@@ -45,7 +45,8 @@ public class GeneratorConfig {
     private List<SurfaceDecorator> globalSurfaceDecorators = new ArrayList<>();
     private List<CaveDecorator> globalCaveDecorators = new ArrayList<>();
     private List<SkyDecorator> globalSkyDecorators = new ArrayList<>();
-    public double skyDecorationDistance = 35.0;
+    private double skyDecorationDistance = 35.0;
+    private int skyChunkWidth = 200;
     private WeightedMap<SurfaceRegionType> surfaceRegionTypes = new WeightedMap<>();
     private List<CaveType> caveTypes = new ArrayList<>();
     
@@ -143,6 +144,11 @@ public class GeneratorConfig {
     @JsonSetter(value = "sky_decoration_distance", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public double getSkyDecorationDistance() {
         return skyDecorationDistance;
+    }
+
+    @JsonSetter(value = "sky_chunk_width", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public int getSkyChunkWidth() {
+        return skyChunkWidth;
     }
     
     @JsonSetter(value = "surface_region_types", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)

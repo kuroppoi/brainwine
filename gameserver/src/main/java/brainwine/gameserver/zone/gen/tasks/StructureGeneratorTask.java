@@ -42,7 +42,8 @@ public class StructureGeneratorTask implements GeneratorTask {
     private final List<SurfaceDecorator> globalSurfaceDecorators;
     private final List<CaveDecorator> globalCaveDecorators;
     private final List<SkyDecorator> globalSkyDecorators;
-    private double skyDecorationDistance;
+    private final double skyDecorationDistance;
+    private final int skyChunkWidth;
     
     public StructureGeneratorTask(GeneratorConfig config) {
         filled = config.getTerrainType() == TerrainType.FILLED;
@@ -55,6 +56,7 @@ public class StructureGeneratorTask implements GeneratorTask {
         globalCaveDecorators = config.getGlobalCaveDecorators();
         globalSkyDecorators = config.getGlobalSkyDecorators();
         skyDecorationDistance = config.getSkyDecorationDistance();
+        skyChunkWidth = config.getSkyChunkWidth();
     }
     
     @Override
@@ -146,7 +148,6 @@ public class StructureGeneratorTask implements GeneratorTask {
         }
 
         // Decorate the sky
-        int skyChunkWidth = 200;
         if(!globalSkyDecorators.isEmpty()) {
             double yIncrement = skyDecorationDistance * Math.sqrt(3);
             for(int startX = 0; startX < ctx.getWidth(); startX += skyChunkWidth) {
