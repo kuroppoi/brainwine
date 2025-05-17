@@ -3,6 +3,7 @@ package brainwine.gameserver.item;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
+import brainwine.gameserver.item.interactions.BatteryInteraction;
 import brainwine.gameserver.item.interactions.BurstInteraction;
 import brainwine.gameserver.item.interactions.ChangeInteraction;
 import brainwine.gameserver.item.interactions.ComposterInteraction;
@@ -31,6 +32,7 @@ import brainwine.gameserver.item.interactions.WorldMachineInteraction;
 public enum ItemUseType {
     
     AFTERBURNER,
+    BATTERY(new BatteryInteraction()),
     BREATH,
     BURST(new BurstInteraction()),
     COMPOSTER(new ComposterInteraction()),

@@ -2,14 +2,22 @@ package brainwine.gameserver.zone;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
+import brainwine.gameserver.util.MapHelper;
+import brainwine.gameserver.util.Pair;
+import brainwine.gameserver.util.Vector2i;
+import brainwine.shared.JsonHelper;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * Distributes steam through collectors to nearby machines via pipes.
@@ -28,6 +36,7 @@ public class SteamManager {
     private final Set<Integer> processedIndices = new HashSet<>();
     private final List<Integer> expiredSteamableIndices = new ArrayList<>();
     private final Queue<SteamIteration> processQueue = new ArrayDeque<>();
+    private final Map<Integer, List<Pair<Vector2i, Integer>>> steamSourceOutlets = new HashMap<>();
     private final Zone zone;
     private byte[] data;
     private long lastUpdateAt;
@@ -43,6 +52,7 @@ public class SteamManager {
         // Check if it's time to update steam yet
         if(now > lastUpdateAt + STEAM_UPDATE_INTERVAL) {
             updateSteam();
+            tickSteamSources();
             lastUpdateAt = now;
         }
     }
@@ -113,7 +123,11 @@ public class SteamManager {
                 continue;
             }
 
-            processQueue.add(new SteamIteration(x - 1, y, 3, 0)); // Left
+            List<Pair<Vector2i, Integer>> indices = steamSourceOutlets.computeIfAbsent(index, key -> new ArrayList<>(Arrays.asList(new Pair<>(new Vector2i(-1, 0), 3))));
+
+            for(Pair<Vector2i, Integer> pair : indices) {
+                processQueue.add(new SteamIteration(x + pair.getFirst().getX(), y + pair.getFirst().getY(), pair.getLast(), 0));
+            }
         }
         
         // Travel down the pipeline and power on any machines that are reached by it
@@ -162,6 +176,19 @@ public class SteamManager {
             if(direction != 1) processQueue.add(new SteamIteration(x - 1, y, 3, nextDepth)); // Left
         }
     }
+
+    private void tickSteamSources() {
+        long currentTime = System.currentTimeMillis();
+        for(MetaBlock metaBlock : zone.getMetaBlocksWithUse(ItemUseType.STEAM_SOURCE)) {
+            if(zone.getBlock(metaBlock.getX(), metaBlock.getY()).getFrontMod() > 0) {
+                long f = MapHelper.getLong(metaBlock.getMetadata(), "f", 0);
+                if(f > 0 && f < currentTime) {
+                    System.out.println("Shutting off machine!");
+                    zone.updateBlock(metaBlock.getX(), metaBlock.getY(), Layer.FRONT, metaBlock.getItem(), 0);
+                }
+            }
+        }
+    }
     
     public void indexBlock(int x, int y, Item item) {
         int index = zone.getBlockIndex(x, y);
@@ -190,12 +217,17 @@ public class SteamManager {
 
         // Is it a steam source
         if(item.hasUse(ItemUseType.STEAM_SOURCE) && zone.getBlock(x, y).getFrontMod() > 0) {
-            System.out.println("This is an active steam source!");
+            List<Pair<Vector2i, Integer>> parsed;
+            try {
+                parsed = JsonHelper.readValue(item.getUse(ItemUseType.STEAM_SOURCE), new TypeReference<List<Pair<Vector2i, Integer>>>() {});
+                steamSourceOutlets.put(index, parsed);
+            } catch(Exception e) {}
             steamSourceIndices.add(index);
             setState(index, STATE_COLLECTOR);
             return;
         } else {
             steamSourceIndices.remove(index);
+            steamSourceOutlets.remove(index);
         }
 
         setState(index, STATE_EMPTY);
