@@ -31,17 +31,22 @@ public class BatteryInteraction implements ItemInteraction {
         Map<String, Object> metaData = metaBlock != null ? new HashMap<>(metaBlock.getMetadata()) : new HashMap<>();
 
         long addition = (long)(1000L * battery.getPower());
-        long currentTime = System.currentTimeMillis();
-        long currentFinalTime = MapHelper.getLong(metaData, "f", 0L);
+        long capacity = 5L * addition;
+        if(config instanceof Map) {
+            capacity = (long)(1000L * MapHelper.getFloat((Map<String, Object>)config, "capacity", 5.0f * battery.getPower()));
+        }
 
-        // Check if not enough time has elapsed since last installation
-        if(addition - (currentFinalTime - currentTime) < Math.min(0.5 * addition, 600_000)) {
-            player.notify("Wait a bit more before installing another battery.");
+        long currentTime = System.currentTimeMillis();
+        long finalTime = MapHelper.getLong(metaData, "f", currentTime);
+
+        long leftover = Math.max(0, finalTime - currentTime);
+        if(leftover + addition > capacity) {
+            player.notify("The tank is near capacity. Try installing the battery again after it depletes a bit.");
             return;
         }
 
         inventory.removeItem(battery, true);
-        metaData.put("f", System.currentTimeMillis() + addition);
+        metaData.put("f",  currentTime + leftover + addition);
         zone.updateBlock(x, y, layer, item, 1, owner);
         zone.setMetaBlock(x, y, item, owner, metaData);
         zone.spawnEffect(x + 2.0F, y, "area steam", 10);
