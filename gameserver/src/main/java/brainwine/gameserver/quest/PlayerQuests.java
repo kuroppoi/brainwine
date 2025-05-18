@@ -171,16 +171,13 @@ public class PlayerQuests {
 
         if(progresses == null) return;
 
-        List<Quest> dailyQuests = player.getDailyQuest() == null ? null : player.getDailyQuest().getValue();
-        if(player.getDailyQuest() != null && !player.getDailyQuest().isExpired() && dailyQuests != null) {
-            for(Quest dailyQuest : dailyQuests) {
-                QuestProgress progress = player.getQuestProgresses().get(dailyQuest.getId());
-                if(progress != null) sendPlayerQuestMessage(player, progress);
-            }
-        }
-
         for(QuestProgress progress : progresses.values()) {
             sendPlayerQuestMessage(player, progress);
+        }
+
+        List<Quest> dailyQuests = player.getDailyQuest() == null ? null : player.getDailyQuest().getValue();
+        if(player.getDailyQuest() != null && !player.getDailyQuest().isExpired() && dailyQuests != null) {
+            DailyQuests.sendDailyQuestTime(player, player.getDailyQuest().getTimeUntilExpiry(System.currentTimeMillis()));
         }
     }
 
@@ -192,12 +189,19 @@ public class PlayerQuests {
         if(quest == null) return;
 
         // TODO: detect mobile player properly
-        if(player.isV3()) {
-            player.sendMessage(new QuestMessage(quest.getPcDetails(), progress.getClientStatus(player)));
-        } else {
-            player.sendMessage(new QuestMessage(quest.getMobileDetails(), progress.getClientStatus(player)));
+        Map<String, Object> details = new HashMap<>(player.isV3() ? quest.getPcDetails() : quest.getMobileDetails());
+
+        List<String> taskDescriptions = (List<String>)details.get("tasks");
+        for(int i = 0; i < taskDescriptions.size(); i++) {
+            QuestTask task = i < quest.getTasks().size() ? quest.getTasks().get(i) : null;
+            int wantedProgress = task.getQuantity();
+            int currentProgress = progress.getTaskProgress(i);
+            if(wantedProgress > 1) {
+                taskDescriptions.set(0, String.format("%s, (Progress: %d/%d)", taskDescriptions.get(i), currentProgress, wantedProgress));
+            }
         }
-        
+
+        player.sendMessage(new QuestMessage(details, progress.getClientStatus(player)));
     }
 
     public static void sendPlayerCancelQuestMessage(Player player, Quest current) {

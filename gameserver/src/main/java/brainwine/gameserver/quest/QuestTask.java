@@ -1,5 +1,6 @@
 package brainwine.gameserver.quest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -175,7 +176,8 @@ public class QuestTask {
         return this;
     }
 
-    public DialogSection getDialogSection(Player player, int taskProgress, boolean v3) {
+    public List<DialogSection> getDialogSection(Player player, int taskProgress, boolean v3) {
+        List<DialogSection> allResult = new ArrayList<>();
         DialogSection result = new DialogSection();
 
         String title = getDescription() + (taskProgress >= 0 ? String.format(" (Progress: %d/%d)", taskProgress, getQuantity()) : "");
@@ -185,27 +187,25 @@ public class QuestTask {
             result.setTitle(title).setTextColor("#00ffff");
         }
 
-        if(getQualify() != null && !getQualify().isEmpty()) {
-            result.addItem(new DialogListItem().setText("Qualifications:"));
-            for(List<Object> qualification : getQualify()) {
-                result.addItem(new DialogListItem().setText(qualification.stream().<String>map(Objects::toString).collect(Collectors.joining(" "))));
-            }
-        }
+        allResult.add(result);
 
-        if(getEvents() != null && !getEvents().isEmpty()) {
-            result.addItem(new DialogListItem().setText("Do any of these to make progress:"));
-            for(List<Object> event : getEvents()) {
-                result.addItem(new DialogListItem().setText(event.stream().<String>map(Objects::toString).collect(Collectors.joining(" "))));
+        if(getQualify() != null && !getQualify().isEmpty()) {
+            DialogSection qualificationSection = new DialogSection();
+            qualificationSection.setText("Qualifications:");
+            for(List<Object> qualification : getQualify()) {
+                qualificationSection.addItem(new DialogListItem().setText(qualification.stream().<String>map(Objects::toString).collect(Collectors.joining(" "))));
             }
+            allResult.add(qualificationSection);
         }
 
         if(getCollectInventory() != null && !getCollectInventory().getRequirements().isEmpty()) {
-            result.addItem(new DialogListItem().setText("Things To Collect:"));
+            DialogSection section = getCollectInventory().getDialogSection();
+            System.out.println("Collect Item num Items " + section.getItems().size());
 
-            getCollectInventory().addDialogListItems(result);
+            allResult.add(section);
         }
 
-        return result;
+        return allResult;
 
     }
 

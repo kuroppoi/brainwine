@@ -7,6 +7,7 @@ import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
+import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.job.DialoguerJob;
 import brainwine.gameserver.item.CraftingRequirement;
@@ -31,7 +32,7 @@ public class Crafter extends DialoguerJob {
                 DialogHelper.messageDialog(
                     me.getName(),
                     MapHelper.getString(GameConfiguration.getBaseConfig(), "dialogs.android.craft_response")
-                )
+                ).setType(DialogType.ANDROID)
             );
         }
 
@@ -41,16 +42,16 @@ public class Crafter extends DialoguerJob {
     public boolean craftDialog(Player player, Item item) {
         // I can't craft this
         if(item.getCraft() == null || "android".equals(item.getCraft().getCrafter())) {
-            player.showDialog(DialogHelper.messageDialog(MapHelper.getString(GameConfiguration.getBaseConfig(), "dialogs.android.cannot_craft")));
+            player.showDialog(DialogHelper.messageDialog(MapHelper.getString(GameConfiguration.getBaseConfig(), "dialogs.android.cannot_craft")).setType(DialogType.ANDROID));
         }
 
         // Item is not craftable by an android
         if (item.getCraft() == null) {
-            player.showDialog(DialogHelper.messageDialog("Sorry, that item doesn't have any crafting options."));
+            player.showDialog(DialogHelper.messageDialog("Sorry, that item doesn't have any crafting options.").setType(DialogType.ANDROID));
             return false;
         }
 
-        Dialog dialog = new Dialog();
+        Dialog dialog = new Dialog().setType(DialogType.ANDROID);
         dialog.addSection(new DialogSection().setText(String.format("I can use your %s to craft something if you have the supplies.", item.getTitle())));
 
         for(String itemId : item.getCraft().getOptions().keySet()) {
@@ -85,7 +86,7 @@ public class Crafter extends DialoguerJob {
         
         for(CraftingRequirement requirement : requirements) {
             if(!player.getInventory().hasItem(requirement.getItem(), requirement.getQuantity())) {
-                player.showDialog(DialogHelper.messageDialog(String.format("Oops, you need more %s for me to craft that!", requirement.getItem().getTitle())));
+                player.showDialog(DialogHelper.messageDialog(String.format("Oops, you need more %s for me to craft that!", requirement.getItem().getTitle())).setType(DialogType.ANDROID));
                 return;
             }
         }

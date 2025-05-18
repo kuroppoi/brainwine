@@ -8,13 +8,14 @@ import java.util.function.Consumer;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
+import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.player.Player;
 
 public class PlayerQuestDialog {
     private PlayerQuestDialog() {}
 
     public static Dialog questOffersDialogGet(List<Quest> quests) {
-        Dialog result = new Dialog().setTitle("My Quest Offers");
+        Dialog result = new Dialog().setTitle("My Quest Offers").setType(DialogType.ANDROID);
 
         result.addSection(new DialogSection().setText("Here are my quest offers for you:"));
         for(Quest quest : quests) {
@@ -36,7 +37,7 @@ public class PlayerQuestDialog {
     }
 
     public static Dialog confirmBeginQuestDialogGet(Quest quest) {
-        Dialog result = new Dialog().setTitle(quest.getTitle());
+        Dialog result = new Dialog().setTitle(quest.getTitle()).setType(DialogType.ANDROID);
 
         result.addSection(new DialogSection().setText(quest.getStory().getIntro()));
 
@@ -46,7 +47,7 @@ public class PlayerQuestDialog {
     }
 
     public static Dialog beginQuestDialogGet(Player player, Quest quest) {
-        return DialogHelper.messageDialog(player.isV3() ? quest.getStory().getBegin() : quest.getStory().getBeginMobile());
+        return DialogHelper.messageDialog(player.isV3() ? quest.getStory().getBegin() : quest.getStory().getBeginMobile()).setType(DialogType.ANDROID);
     }
 
     public static Dialog playerQuestsDialogGet(Player player, boolean privileged, boolean v3) {
