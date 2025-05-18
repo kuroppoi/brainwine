@@ -56,14 +56,16 @@ public class QuestTaskCollectInventory {
         }
     }
 
-    public void addDialogListItems(DialogSection section) {
+    public DialogSection getDialogSection() {
+        DialogSection section = new DialogSection();
+        section.setTitle("Things To Collect:");
         for(Pair<String, Integer> req : getRequirements()) {
             Item item = ItemRegistry.getItem(req.getFirst());
-            if(!item.isAir()) section.addItem(
-                new DialogListItem()
-                    .setItem(item.getCode()))
-                    .setText(item.getTitle());
+            if(!item.isAir()) section.addItem(new DialogListItem()
+                    .setItem(item.getCode())
+                    .setText(String.format("%s x %s", item.getTitle(), req.getLast())));
         }
+        return section;
     }
 
 }

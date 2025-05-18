@@ -10,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-import brainwine.gameserver.dialog.DialogListItem;
 import brainwine.gameserver.dialog.DialogSection;
 import brainwine.gameserver.player.Player;
 
@@ -89,9 +88,10 @@ public class QuestProgress {
         }
 
         mainSection.setTitle(quest.getTitle());
+        mainSection.setText(quest.getDescription());
 
         for(int i = 0; i < quest.getTasks().size(); i++) {
-            result.add(quest.getTasks().get(i).getDialogSection(player, getTaskProgress(i), v3));
+            result.addAll(quest.getTasks().get(i).getDialogSection(player, getTaskProgress(i), v3));
         }
 
         DialogSection cancelSection = new DialogSection().setChoice(getActionChoice("cancel"));
