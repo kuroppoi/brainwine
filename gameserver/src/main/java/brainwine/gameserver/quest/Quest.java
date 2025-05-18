@@ -42,12 +42,6 @@ public class Quest {
     @JsonProperty("tasks")
     private List<QuestTask> tasks;
 
-    @JsonIgnore
-    private Map<String, Object> pcDetails = null;
-    
-    @JsonIgnore
-    private Map<String, Object> mobileDetails = null;
-
     public static Quest get(String questId) {
         Quest quest = MapHelper.get(GameConfiguration.getBaseConfig(), questId, Quest.class);
 
@@ -57,48 +51,36 @@ public class Quest {
         return quest;
     }
 
-    private void computeClientDetailsIfAbsent() {
-        if(pcDetails == null || mobileDetails == null) {
-            pcDetails = new HashMap<>();
-            mobileDetails = pcDetails;
-
-            pcDetails.put("id", getId());
-            pcDetails.put("group", getGroup());
-            pcDetails.put("title", getTitle());
-            pcDetails.put("xp", getReward().getXp());
-            pcDetails.put("crowns", getReward().getCrowns());
-            pcDetails.put("desc", getDescription());
-
-            List<String> tasks = new ArrayList<>();
-
-            if(getTasks() != null) for(QuestTask task : getTasks()) {
-                tasks.add(task.getDescription());
-            }
-
-            pcDetails.put("tasks", tasks);
-
-            if(getDescriptionMobile() != null) {
-                mobileDetails = new HashMap<>(pcDetails);
-
-                mobileDetails.put("desc", getDescriptionMobile());
-            }
-        }
-    }
-
-    public void clearDetailsCache() {
-        pcDetails = null;
-        mobileDetails = null;
-    }
-
     @JsonIgnore
     public Map<String, Object> getPcDetails() {
-        computeClientDetailsIfAbsent();
+        Map<String, Object> pcDetails = new HashMap<>();
+
+        pcDetails.put("id", getId());
+        pcDetails.put("group", getGroup());
+        pcDetails.put("title", getTitle());
+        pcDetails.put("xp", getReward().getXp());
+        pcDetails.put("crowns", getReward().getCrowns());
+        pcDetails.put("desc", getDescription());
+
+        List<String> tasks = new ArrayList<>();
+
+        if(getTasks() != null) for(QuestTask task : getTasks()) {
+            tasks.add(task.getDescription());
+        }
+
+        pcDetails.put("tasks", tasks);
+
         return pcDetails;
     }
 
     @JsonIgnore
     public Map<String, Object> getMobileDetails() {
-        computeClientDetailsIfAbsent();
+        Map<String, Object> mobileDetails = getPcDetails();
+
+        if(getDescriptionMobile() != null) {
+            mobileDetails.put("desc", getDescriptionMobile());
+        }
+
         return mobileDetails;
     }
 

@@ -16,7 +16,7 @@ public class DailyQuests {
                 Quest newQuest = newQuests.get(i - 1);
                 if(newQuest == null) return;
                 newQuest.setId("daily_player_quest_" + i);
-                newQuest.setTitle("Daily Quest #" + i);
+                newQuest.setTitle("Daily Quest #" + (newQuests.size() - i + 1));
                 newQuest.setGroup("Daily Quests");
             }
 
@@ -60,7 +60,6 @@ public class DailyQuests {
                 QuestProgress progress = player.getQuestProgresses().get(quest.getId());
                 if(progress == null) continue;
 
-                quest.clearDetailsCache();
                 String oldDescription = quest.getDescription();
                 quest.setDescription("(expires in " + timeString + ") " + oldDescription);
 
