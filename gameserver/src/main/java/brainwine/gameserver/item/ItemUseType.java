@@ -3,6 +3,7 @@ package brainwine.gameserver.item;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
+import brainwine.gameserver.item.interactions.BatteryInteraction;
 import brainwine.gameserver.item.interactions.BurstInteraction;
 import brainwine.gameserver.item.interactions.ChangeInteraction;
 import brainwine.gameserver.item.interactions.ComposterInteraction;
@@ -31,6 +32,7 @@ import brainwine.gameserver.item.interactions.WorldMachineInteraction;
 public enum ItemUseType {
     
     AFTERBURNER,
+    BATTERY(new BatteryInteraction()),
     BREATH,
     BURST(new BurstInteraction()),
     COMPOSTER(new ComposterInteraction()),
@@ -60,6 +62,7 @@ public enum ItemUseType {
     SUMMONING_CIRCLE(new SummoningCircleInteraction()),
     SPAWN(new SpawnInteraction()),
     SPAWN_TELEPORT(new SpawnTeleportInteraction()),
+    STEAM_SOURCE,
     SWITCH(new SwitchInteraction()),
     SWITCHED,
     TARGET_TELEPORT(new TargetTeleportInteraction()),
