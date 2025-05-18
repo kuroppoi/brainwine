@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import brainwine.gameserver.zone.gen.sky.SkyDecorator;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSetter;
@@ -43,6 +44,9 @@ public class GeneratorConfig {
     private OreDeposit[] oreDeposits = {};
     private List<SurfaceDecorator> globalSurfaceDecorators = new ArrayList<>();
     private List<CaveDecorator> globalCaveDecorators = new ArrayList<>();
+    private List<SkyDecorator> globalSkyDecorators = new ArrayList<>();
+    private double skyDecorationDistance = 35.0;
+    private int skyChunkWidth = 200;
     private WeightedMap<SurfaceRegionType> surfaceRegionTypes = new WeightedMap<>();
     private List<CaveType> caveTypes = new ArrayList<>();
     
@@ -130,6 +134,21 @@ public class GeneratorConfig {
     @JsonSetter(value = "global_cave_decorators", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
     public List<CaveDecorator> getGlobalCaveDecorators() {
         return globalCaveDecorators;
+    }
+
+    @JsonSetter(value = "global_sky_decorators", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public List<SkyDecorator> getGlobalSkyDecorators() {
+        return globalSkyDecorators;
+    }
+
+    @JsonSetter(value = "sky_decoration_distance", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public double getSkyDecorationDistance() {
+        return skyDecorationDistance;
+    }
+
+    @JsonSetter(value = "sky_chunk_width", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)
+    public int getSkyChunkWidth() {
+        return skyChunkWidth;
     }
     
     @JsonSetter(value = "surface_region_types", nulls = Nulls.SKIP, contentNulls = Nulls.SKIP)

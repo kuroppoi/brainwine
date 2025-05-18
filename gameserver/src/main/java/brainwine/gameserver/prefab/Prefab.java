@@ -18,6 +18,7 @@ public class Prefab {
     private boolean loot;
     private boolean decay;
     private boolean mirrorable;
+    private int sinking;
     private int width;
     private int height;
     private Block[] blocks;
@@ -32,6 +33,7 @@ public class Prefab {
         loot = config.hasLoot();
         decay = config.hasDecay();
         mirrorable = config.isMirrorable();
+        sinking = config.getSinking();
         replacements = config.getReplacements();
         correspondingReplacements = config.getCorrespondingReplacements();
     }
@@ -71,6 +73,10 @@ public class Prefab {
     
     public boolean isMirrorable() {
         return mirrorable;
+    }
+
+    public int getSinking() {
+        return sinking;
     }
         
     public int getWidth() {
