@@ -45,7 +45,7 @@ public class QuestsCommand extends Command {
 
     @Override
     public boolean canExecute(CommandExecutor executor) {
-        return executor instanceof Player;
+        return executor.isAdmin() && executor instanceof Player;
     }
     
 }
