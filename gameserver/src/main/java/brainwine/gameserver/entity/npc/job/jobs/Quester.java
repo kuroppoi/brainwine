@@ -8,6 +8,7 @@ import java.util.Map;
 import brainwine.gameserver.GameConfiguration;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
+import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.entity.npc.job.DialoguerJob;
 import brainwine.gameserver.player.Player;
@@ -83,7 +84,7 @@ public class Quester extends DialoguerJob {
                     long ongoingQuestCount = player.getQuestProgresses().values().stream().filter(p -> !p.isComplete()).count();
 
                     if(ongoingQuestCount >= 20) {
-                        player.showDialog(DialogHelper.messageDialog("Too Many Quests", "Sorry, but you already have 20 or more ongoing quests. Either finish or cancel some before I can offer you more. You may use the /quests command to cancel incomplete quests."));
+                        player.showDialog(DialogHelper.messageDialog("Too Many Quests", "Sorry, but you already have 20 or more ongoing quests. Either finish or cancel some before I can offer you more. You may use the /quests command to cancel incomplete quests.").setType(DialogType.ANDROID));
                     }
                     // Offer a set of quests that the player hasn't had before
                     final int count = 5;
@@ -121,7 +122,7 @@ public class Quester extends DialoguerJob {
             }
         }
 
-        player.showDialog(DialogHelper.messageDialog("No Quest Offers", MapHelper.getString(config, "dialogs.android.no_quest")));
+        player.showDialog(DialogHelper.messageDialog("No Quest Offers", MapHelper.getString(config, "dialogs.android.no_quest")).setType(DialogType.ANDROID));
         return true;
     }
 
@@ -153,7 +154,7 @@ public class Quester extends DialoguerJob {
                     ? "You have successfully completed your quest!"
                     : quest.getStory().getComplete()
                         .replace("$family_name", player.getFamilyName() == null ? "unknown" : player.getFamilyName())
-            ));
+            ).setType(DialogType.ANDROID));
 
             PlayerQuests.finishQuest(player, quest);
 
@@ -165,7 +166,7 @@ public class Quester extends DialoguerJob {
                 quest.getTitle()
             );
 
-            player.showDialog(DialogHelper.messageDialog("Cannot Finish Quest Yet", message));
+            player.showDialog(DialogHelper.messageDialog("Cannot Finish Quest Yet", message).setType(DialogType.ANDROID));
 
             return true;
         }

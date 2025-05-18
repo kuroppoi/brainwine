@@ -4,6 +4,7 @@ import brainwine.gameserver.Fake;
 import brainwine.gameserver.dialog.Dialog;
 import brainwine.gameserver.dialog.DialogHelper;
 import brainwine.gameserver.dialog.DialogSection;
+import brainwine.gameserver.dialog.DialogType;
 import brainwine.gameserver.entity.npc.Npc;
 import brainwine.gameserver.player.Player;
 import brainwine.gameserver.quest.QuestEvents;
@@ -53,7 +54,7 @@ public abstract class DialoguerJob extends Job {
         DialogSection salutation = new DialogSection().setText(Fake.get(Fake.Type.SALUTATION));
         DialogSection mainDialog = getMainDialogSection(me, player);
 
-        Dialog dialog = new Dialog()
+        Dialog dialog = new Dialog().setType(DialogType.ANDROID)
             .addSection(title)
             .addSection(salutation);
 

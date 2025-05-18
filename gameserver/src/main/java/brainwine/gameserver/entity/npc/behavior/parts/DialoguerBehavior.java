@@ -3,6 +3,7 @@ package brainwine.gameserver.entity.npc.behavior.parts;
 import java.util.List;
 import java.util.Map;
 
+import brainwine.gameserver.dialog.DialogType;
 import com.fasterxml.jackson.annotation.JacksonInject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.core.JsonProcessingException;
