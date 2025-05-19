@@ -59,7 +59,11 @@ public abstract class WorldMachineConfiguration {
     public void handleCommand(Player player, Zone zone, Item item, String command) {}
 
     public void configure(Player player, Zone zone, Item item, int x, int y) {
-        Dialog dialog = getConfigurationDialog(item.getPower());
+        configure(player, zone, item.getPower(), x, y);
+    }
+
+    public void configure(Player player, Zone zone, float availablePower, int x, int y) {
+        Dialog dialog = getConfigurationDialog(availablePower);
 
         if(dialog == null) {
             player.notify("Configuration dialog not found!");
@@ -124,8 +128,10 @@ public abstract class WorldMachineConfiguration {
 
         try {
             configure(zone, values);
-            machineX = x;
-            machineY = y;
+            if(x != -1 && y != -1) {
+                machineX = x;
+                machineY = y;
+            }
         } catch(IllegalArgumentException e) {
             player.notify("Invalid input!");
         }

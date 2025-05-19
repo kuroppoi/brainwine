@@ -51,6 +51,6 @@ public class WorldRuleCommand extends WorldCommand {
 
     @Override
     public String getUsage(CommandExecutor executor) {
-        return "/wrule [key value]";
+        return "/wrule [key] [value]";
     }
 }
