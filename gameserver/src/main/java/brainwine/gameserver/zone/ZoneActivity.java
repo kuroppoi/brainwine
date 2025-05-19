@@ -6,5 +6,5 @@ public enum ZoneActivity {
     @JsonEnumDefaultValue
     NONE,
     MARKET,
-    PVP
+    TUTORIAL,
 }

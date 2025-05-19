@@ -72,7 +72,7 @@ public class AuthenticateRequest extends Request {
                     connection.sendDelayedMessage(new NotificationMessage(banMessage, NotificationType.MAINTENANCE), 5000); // Slightly hacky but shouldn't cause any issues
                 } else if(zone == null || !zone.canJoin(player)) {
                     // Try to put player in a random zone if current zone is null or cannot be joined
-                    zone = server.getZoneManager().findBeginnerZone();
+                    zone = player.getAchievements().isEmpty() ? server.getZoneManager().findTutorialZone() : server.getZoneManager().findBeginnerZone();
                     
                     // Kick player if zone is still null (aka it failed to find a suitable random zone)
                     if(zone == null) {

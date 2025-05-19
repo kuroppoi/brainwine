@@ -528,19 +528,6 @@ public class Player extends Entity implements CommandExecutor {
             }
         }
         
-        // Add some default items if the player has none
-        if(inventory.isEmpty()) {
-            Item pickaxe = ItemRegistry.getItem("tools/pickaxe");
-            Item pistol = ItemRegistry.getItem("tools/pistol");
-            Item jetpack = ItemRegistry.getItem("accessories/jetpack");
-            inventory.addItem(pickaxe);
-            inventory.addItem(pistol);
-            inventory.addItem(jetpack);
-            inventory.moveItemToContainer(pickaxe, ContainerType.HOTBAR, 0);
-            inventory.moveItemToContainer(pistol, ContainerType.HOTBAR, 1);
-            inventory.moveItemToContainer(jetpack, ContainerType.ACCESSORIES, 0);
-        }
-        
         ZoneManager zoneManager = GameServer.getInstance().getZoneManager();
         PlayerManager playerManager = GameServer.getInstance().getPlayerManager();
 

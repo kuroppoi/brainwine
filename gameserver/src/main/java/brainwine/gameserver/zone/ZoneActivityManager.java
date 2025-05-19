@@ -1,5 +1,6 @@
 package brainwine.gameserver.zone;
 
+import brainwine.gameserver.GameServer;
 import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.shared.JsonHelper;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -34,12 +35,30 @@ public class ZoneActivityManager {
         loadConfiguration();
     }
 
+    public Zone getPrimaryZone(ZoneActivity activity) {
+        ZoneActivityConfiguration config = configs.get(activity);
+
+        if(config == null) return null;
+
+        if(config.getPrimaryZone() == null) return null;
+
+        return GameServer.getInstance().getZoneManager().getZone(config.getPrimaryZone());
+    }
+
     public Map<String, Integer> getPlayerItemLimits(ZoneActivity activity) {
         ZoneActivityConfiguration config = configs.get(activity);
 
         if(config == null) return Collections.emptyMap();
 
         return config.getPlayerItemLimits();
+    }
+
+    public Map<String, Integer> getPlayerInventoryLimits(ZoneActivity activity) {
+        ZoneActivityConfiguration config = configs.get(activity);
+
+        if(config == null) return Collections.emptyMap();
+
+        return config.getPlayerInventoryLimits();
     }
 
 }

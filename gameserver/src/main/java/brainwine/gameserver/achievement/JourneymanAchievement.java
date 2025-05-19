@@ -14,6 +14,6 @@ public class JourneymanAchievement extends Achievement {
     
     @Override
     public boolean isCompleted(Player player) {
-        return true;
+        return player.getZone() != null && !player.getZone().isTutorial();
     }
 }

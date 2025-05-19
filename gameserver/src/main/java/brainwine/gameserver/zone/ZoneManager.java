@@ -324,6 +324,14 @@ public class ZoneManager {
     }
 
     /**
+     * @return The primary tutorial zone configured in activities.json.
+     */
+    public Zone findTutorialZone() {
+        Zone zone = GameServer.getInstance().getZoneActivityManager().getPrimaryZone(ZoneActivity.TUTORIAL);
+        return zone != null ? zone : findBeginnerZone();
+    }
+
+    /**
      * @return A public, non-owned, recently-generated temperate world (with players if possible) or {@code null} if no such world exists.
      */
     public Zone findBeginnerZone() {

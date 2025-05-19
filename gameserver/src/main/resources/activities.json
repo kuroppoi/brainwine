@@ -7,5 +7,31 @@
       "mechanical/dish-mega": 0,
       "mechanical/dish-giga": 0
     }
+  },
+  "tutorial": {
+    "primary_zone": "00000000-0000-0000-0000-000000000000",
+    "player_inventory_limits": {
+      "building/wood": 10,
+      "ground/earth": 50,
+      "ground/copper": 10,
+      "ground/zinc": 10,
+      "ground/iron": 10,
+      "ground/quartz": 10,
+      "ground/sulfur": 10,
+      "ground/lead": 10,
+      "ground/copper-ore": 10,
+      "ground/zinc-ore": 10,
+      "ground/iron-ore": 10,
+      "ground/quartz-ore": 10,
+      "ground/sulfur-ore": 10,
+      "ground/lead-ore": 10,
+      "ground/crystal-blue-1": 1,
+      "accessories/jetpack": 1,
+      "consumables/jerky": 5,
+      "tools/shovel": 1,
+      "tools/pickaxe": 1,
+      "tools/pistol": 1,
+      "building/iron": 2
+    }
   }
 }

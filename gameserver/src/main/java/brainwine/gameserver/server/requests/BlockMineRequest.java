@@ -239,6 +239,13 @@ public class BlockMineRequest extends PlayerRequest {
 
         zone.updateBlock(x, y, layer, 0, 0, player);
 
+        // Spawn blocks back if the zone is tutorial
+        if(zone.isTutorial() && zone.getRules().isAutoCleanEnabled()) {
+            zone.addBlockTimer(x, y, zone.getRules().getAutoCleanDuration(), () -> {
+                zone.updateBlock(x, y, Layer.FRONT, item);
+            });
+        }
+
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem, quantity, true);
             if(trackQuest && layer == Layer.FRONT) {

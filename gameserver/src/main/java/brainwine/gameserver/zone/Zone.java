@@ -1977,13 +1977,23 @@ public class Zone {
         return this.activity == ZoneActivity.MARKET;
     }
 
+    public boolean isTutorial() {
+        return this.activity == ZoneActivity.TUTORIAL;
+    }
+
     public void setPrivate(boolean value) {
         this.isPrivate = value;
         kickAllPlayers("Accessibility status changed.", true); // The login handler will kick non-members out of the zone if the world is made private
     }
     
     public boolean canJoin(Player player) {
-        return isTicking() && (player.isGodMode() || isPublic() || isOwner(player) || isMember(player) || temporarilyAllowedPlayers.contains(player.getDocumentId()));
+        return isTicking()
+                && (   player.isGodMode()
+                    || (isPublic() && (!isTutorial() || player.getAchievements().isEmpty()))
+                    || isOwner(player)
+                    || isMember(player)
+                    || temporarilyAllowedPlayers.contains(player.getDocumentId())
+                );
     }
     
     public boolean isPublic() {

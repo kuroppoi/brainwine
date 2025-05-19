@@ -11,6 +11,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import brainwine.gameserver.GameServer;
+import brainwine.gameserver.zone.ZoneActivity;
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
@@ -96,7 +98,16 @@ public class Inventory {
     }
     
     public void addItem(Item item, int quantity, boolean sendMessage) {
-        setItem(item, getQuantity(item) + quantity, sendMessage);
+        int allowed = GameServer.getInstance()
+                .getZoneActivityManager()
+                .getPlayerInventoryLimits(player.getZone() != null ? player.getZone().getActivity() : ZoneActivity.NONE)
+                .getOrDefault(item.getId(), -1);
+        int currentQuantity = getQuantity(item);
+        int finalQuantity = currentQuantity + quantity;
+        if(allowed != -1 && !player.isGodMode()) {
+            finalQuantity = Math.max(currentQuantity, Math.min(finalQuantity, allowed));
+        }
+        setItem(item, finalQuantity, sendMessage);
     }
     
     public void removeItem(Item item) {

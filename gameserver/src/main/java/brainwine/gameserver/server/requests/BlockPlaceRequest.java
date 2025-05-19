@@ -123,6 +123,11 @@ public class BlockPlaceRequest extends PlayerRequest {
             fail(player, "Dish will overlap another protector.");
             return;
         }
+
+        if(!player.isGodMode() && zone.isTutorial()) {
+            fail(player, "You can't place blocks in the tutorial world");
+            return;
+        }
         
         if(layer == Layer.LIQUID) {
             mod = 5;
