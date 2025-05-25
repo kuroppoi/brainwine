@@ -658,6 +658,10 @@ public class Zone {
         return isBlockProtectedByField(x, y, player, fieldBlocks);
     }
 
+    public boolean isBlockProtectedByField(int x, int y, Player player) {
+        return isBlockProtectedByField(x, y, player, fieldBlocks.values());
+    }
+
     public boolean isBlockProtectedByField(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
         // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
