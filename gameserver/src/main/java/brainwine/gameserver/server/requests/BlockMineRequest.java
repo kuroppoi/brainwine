@@ -1,13 +1,8 @@
 package brainwine.gameserver.server.requests;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 
-import brainwine.gameserver.annotations.RequestInfo;
-import brainwine.gameserver.entity.player.NotificationType;
-import brainwine.gameserver.entity.player.Player;
-import brainwine.gameserver.entity.player.Skill;
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.item.Action;
 import brainwine.gameserver.item.Fieldability;
 import brainwine.gameserver.item.Item;
@@ -15,7 +10,11 @@ import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MiningBonus;
 import brainwine.gameserver.item.ModType;
+import brainwine.gameserver.player.NotificationType;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.util.MapHelper;
@@ -61,8 +60,10 @@ public class BlockMineRequest extends PlayerRequest {
             return;
         }
         
-        // TODO block ownership & 'placed' fieldability
-        if(!player.isGodMode() && !digging && item.getFieldability() == Fieldability.TRUE && zone.isBlockProtected(x, y, player)) {
+        Fieldability fieldability = item.getFieldability();
+        boolean fieldable = fieldability == Fieldability.TRUE || (fieldability == Fieldability.PLACED && !block.isNatural());
+        
+        if(!player.isGodMode() && !digging && fieldable && zone.isBlockProtected(x, y, player)) {
             fail(player, "This block is protected.");
             return;
         }
@@ -86,8 +87,41 @@ public class BlockMineRequest extends PlayerRequest {
             }
         }
         
+        // Check custom mine
+        if(item.hasCustomMine()) {
+            switch(item.getId()) {
+                case "mechanical/zone-teleporter":
+                    if(!player.isGodMode() && zone.getMetaBlocksWithItem("mechanical/zone-teleporter").size() < 2) {
+                        fail(player, "You must keep at least one world teleporter active.");
+                        return;
+                    }
+                    
+                    break;
+                default: break;
+            }
+        }
+        
         if(digging) {
             zone.digBlock(x, y);
+            return;
+        }
+        
+        // Apply decay if block is being mined with a hatchet
+        if(item.getMod() == ModType.DECAY && player.getHeldItem().getAction() == Action.SMASH) {
+            int nextMod = Math.min(4, block.getMod(layer) + 1);
+            zone.updateBlock(x, y, layer, item, nextMod);
+            
+            // Send inventory message for v3 players
+            if(player.isV3()) {
+                player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(item)));
+
+                Item decayItem = item.getDecayInventoryItem();
+                
+                if(!decayItem.isAir()) {
+                    player.sendDelayedMessage(new InventoryMessage(player.getInventory().getClientConfig(decayItem)));
+                }
+            }
+            
             return;
         }
         
@@ -96,19 +130,11 @@ public class BlockMineRequest extends PlayerRequest {
             
             // Check if block is a natural switch with an active door
             if(!player.isGodMode() && !metaBlock.hasOwner() && item.hasUse(ItemUseType.SWITCH)) {
-                List<List<Integer>> positions = MapHelper.getList(metadata, ">", Collections.emptyList());
-                
-                for(List<Integer> position : positions) {
-                    Block target = zone.getBlock(position.get(0), position.get(1));
-                    
-                    if(target != null) {
-                        Item switchedItem = target.getFrontItem();
-                        
-                        if(switchedItem.hasUse(ItemUseType.SWITCHED)) {
-                            fail(player, String.format("This switch cannot be mined before its %s.", switchedItem.getTitle().toLowerCase()));
-                            return;
-                        }
-                    }
+                Item switchedItem = zone.getSwitchedItem(metaBlock);
+
+                if(!switchedItem.isAir()) {
+                    fail(player, String.format("This switch cannot be mined before its %s.", switchedItem.getTitle().toLowerCase()));
+                    return;
                 }
             }
             
@@ -125,19 +151,63 @@ public class BlockMineRequest extends PlayerRequest {
             }
         }
         
-        zone.updateBlock(x, y, layer, 0, 0, player);
-        player.getStatistics().trackItemMined(item);
-        Item inventoryItem = item.getMod() == ModType.DECAY && block.getMod(layer) > 0 ? item.getDecayInventoryItem() : item.getInventoryItem();
+        if(item.shouldProcessTimerOnBreak()) {
+            zone.processBlockTimer(x, y);
+        }
+        
+        // Pretty much only used for spawners
+        if(item.hasUse(ItemUseType.DESTROY)) {
+            Object config = item.getUse(ItemUseType.DESTROY);
+            
+            if(config instanceof String) {
+                String type = (String)config;
+                
+                switch(type.toLowerCase()) {
+                case "spawner": destroySpawner(zone, metaBlock); break;
+                default: break;
+                }
+            }
+        }
+        
+        // Check for entity spawns
+        if(item.hasEntitySpawns() && block.getMod(layer) == 0 && !item.hasTimer() && !item.hasUse(ItemUseType.SPAWN)) {
+            zone.spawnEntity(item.getEntitySpawns().next(), x, y);
+        }
+        
+        // Determine inventory item
+        Item inventoryItem;
+        
+        if(item.getMod() == ModType.DECAY && block.getMod(layer) > 0) {
+            inventoryItem = item.getDecayInventoryItem();
+        } else if(item.hasModInventoryItem()) {
+            inventoryItem = item.getModInventoryItem(block.getMod(layer));
+        } else {
+            inventoryItem = item.getInventoryItem();
+        }
+        
         int quantity = 1;
+        player.getStatistics().trackItemMined(item);
+        
+        if(block.isNatural()) {
+            player.getStatistics().trackItemScavenged(item);
+        }
+        
+        // Check stack mod
+        if(item.getMod() == ModType.STACK) {
+            quantity = Math.max(1, block.getMod(layer));
+        }
+        
+        zone.updateBlock(x, y, layer, 0, 0, player);
         
         // Apply mining bonus if there is one
         if(item.hasMiningBonus()) {
             MiningBonus bonus = item.getMiningBonus();
+            
             if(Math.random() < player.getMiningBonusChance(bonus)) {
                 if(!bonus.getItem().isAir()) {
                     inventoryItem = bonus.getItem();
                 }
-                                
+                
                 if(bonus.isDoubleLoot()) {
                     quantity *= 2;
                 }
@@ -148,6 +218,21 @@ public class BlockMineRequest extends PlayerRequest {
         
         if(!inventoryItem.isAir()) {
             player.getInventory().addItem(inventoryItem, quantity, true);
+        }
+    }
+    
+    private void destroySpawner(Zone zone, MetaBlock metaBlock) {
+        // Do nothing if spawner doesn't have an entity
+        if(!metaBlock.hasProperty("eid")) {
+            return;
+        }
+        
+        Entity entity = zone.getEntity(metaBlock.getIntProperty("eid"));
+        
+        // Kill entity if it exists
+        if(entity != null && !entity.isDead()) {
+            entity.spawnEffect("bomb-teleport", 4);
+            entity.setHealth(0);
         }
     }
     

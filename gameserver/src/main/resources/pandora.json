@@ -1,0 +1,146 @@
+{
+  "1": [
+    {
+      "creatures/crow-auto": 10
+    },
+    {
+      "creatures/roach-large": 10
+    },
+    {
+      "automata/tiny": 4,
+      "automata/small": 2
+    },
+    {
+      "revenant": 3
+    },
+    {
+      "terrapus/adult": 5,
+      "terrapus/fire": 1
+    },
+    {
+      "terrapus/fire": 4
+    },
+    {
+      "terrapus/frost": 4
+    }
+  ],
+  "4": [
+    {
+      "automata/tiny": 8,
+      "automata/small": 4
+    },
+    {
+      "brains/tiny-crawler": 3,
+      "brains/tiny-flyer": 3
+    },
+    {
+      "revenant": 4,
+      "dire-revenant": 1
+    },
+    {
+      "terrapus/adult": 8,
+      "terrapus/fire": 3
+    },
+    {
+      "terrapus/fire": 4,
+      "terrapus/frost": 4
+    },
+    {
+      "terrapus/fire": 3,
+      "brains/small": 1
+    },
+    {
+      "terrapus/skeleton": 4,
+      "terrapus/frost": 2
+    }
+  ],
+  "7": [
+    {
+      "automata/medium": 6,
+      "automata/large": 2
+    },
+    {
+      "brains/tiny-crawler": 7,
+      "brains/tiny-flyer": 6
+    },
+    {
+      "revenant": 5,
+      "dire-revenant": 3
+    },
+    {
+      "brains/small": 4,
+      "terrapus/frost": 3
+    },
+    {
+      "brains/medium": 1,
+      "brains/small": 2
+    },
+    {
+      "terrapus/skeleton": 8,
+      "terrapus/acid": 4
+    }
+  ],
+  "10": [
+    {
+      "automata/medium": 3,
+      "automata/large": 3
+    },
+    {
+      "revenant": 8,
+      "dire-revenant": 4
+    },
+    {
+      "brains/medium-dire": 1,
+      "brains/small": 3,
+      "brains/tiny-crawler": 4
+    },
+    {
+      "brains/medium": 3,
+      "brains/small": 4,
+      "brains/tiny-crawler": 3
+    }
+  ],
+  "13": [
+    {
+      "automata/medium": 4,
+      "automata/large": 5
+    },
+    {
+      "revenant": 10,
+      "dire-revenant": 5
+    },
+    {
+      "brains/medium-dire": 2,
+      "brains/small": 7
+    },
+    {
+      "brains/medium": 3,
+      "brains/small": 6
+    },
+    {
+      "terrapus/skeleton": 12,
+      "terrapus/acid": 8
+    }
+  ],
+  "17": [
+    {
+      "automata/large": 6
+    },
+    {
+      "brains/medium-dire": 4,
+      "brains/small": 2
+    },
+    {
+      "brains/medium-dire": 2,
+      "brains/medium": 5
+    },
+    {
+      "brains/large": 1,
+      "brains/medium": 2
+    },
+    {
+      "brains/large": 1,
+      "brains/small": 3
+    }
+  ]
+}

@@ -24,17 +24,37 @@ public class DefaultDataFetcher implements DataFetcher {
     }
     
     @Override
+    public String fetchPlayerName(String name) {
+        throw exception;
+    }
+    
+    @Override
+    public String fetchPlayerId(String apiToken) {
+        throw exception;
+    }
+    
+    @Override
     public boolean verifyAuthToken(String name, String token) {
         throw exception;
     }
-
+    
     @Override
-    public boolean verifyApiToken(String apiToken) {
+    public ZoneInfo getZoneInfo(String nameOrId) {
         throw exception;
     }
     
     @Override
     public Collection<ZoneInfo> fetchZoneInfo() {
+        throw exception;
+    }
+    
+    @Override
+    public Collection<ZoneInfo> fetchRecentZoneInfo(String apiToken) {
+        throw exception;
+    }
+    
+    @Override
+    public Collection<ZoneInfo> fetchBookmarkedZoneInfo(String apiToken) {
         throw exception;
     }
 }

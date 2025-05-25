@@ -2,8 +2,8 @@ package brainwine.gameserver.server.messages;
 
 import java.util.Collection;
 
-import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 import brainwine.gameserver.zone.Chunk;
 
 @MessageInfo(id = 3, compressed = true, prepacked = true)

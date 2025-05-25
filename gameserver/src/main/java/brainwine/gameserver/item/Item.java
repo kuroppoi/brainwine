@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,10 +13,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.dialog.DialogType;
-import brainwine.gameserver.entity.player.Skill;
+import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
+import brainwine.gameserver.util.WeightedMap;
 
+// TODO I don't like some parts of this, maybe they can be reworked.
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Item {
     
@@ -27,6 +30,9 @@ public class Item {
     @JsonProperty("code")
     private int code;
     
+    @JsonProperty("category")
+    private String category;
+    
     @JsonProperty("title")
     private String title;
     
@@ -35,6 +41,9 @@ public class Item {
     
     @JsonProperty("fieldable")
     private Fieldability fieldability = Fieldability.TRUE;
+    
+    @JsonProperty("tradeable")
+    private Tradeability tradeability = Tradeability.TRUE;
     
     @JsonProperty("loot_graphic")
     private DialogType lootGraphic = DialogType.STANDARD;
@@ -72,8 +81,17 @@ public class Item {
     @JsonProperty("guard")
     private int guardLevel;
     
+    @JsonProperty("spacing")
+    private int spacing;
+    
+    @JsonProperty("spawn_spacing")
+    private int spawnSpacing;
+    
     @JsonProperty("power")
     private float power;
+    
+    @JsonProperty("toughness")
+    private float toughness;
     
     @JsonProperty("earthy")
     private boolean earthy;
@@ -90,8 +108,14 @@ public class Item {
     @JsonProperty("placeover")
     private boolean placeover;
     
+    @JsonProperty("custom_mine")
+    private boolean customMine;
+    
     @JsonProperty("custom_place")
     private boolean customPlace;
+    
+    @JsonProperty("field_place")
+    private boolean fieldPlace;
     
     @JsonProperty("base")
     private boolean base;
@@ -111,17 +135,32 @@ public class Item {
     @JsonProperty("entity")
     private boolean entity;
     
+    @JsonProperty("steam")
+    private boolean steam;
+    
+    @JsonProperty("ownership")
+    private boolean ownership;
+    
+    @JsonProperty("membership")
+    private boolean membership;
+    
     @JsonProperty("inventory")
     private LazyItemGetter inventoryItem;
     
     @JsonProperty("decay inventory")
     private LazyItemGetter decayInventoryItem;
     
+    @JsonProperty("mod_inventory")
+    private Pair<Integer, LazyItemGetter> modInventoryItem;
+    
     @JsonProperty("crafting quantity")
     private int craftingQuantity = 1;
     
     @JsonProperty("loot")
     private String[] lootCategories = {};
+    
+    @JsonProperty("regen_bonus")
+    private double regenBonus = 1.0;
     
     @JsonProperty("tool_bonus")
     private double toolBonus;
@@ -131,6 +170,9 @@ public class Item {
     
     @JsonProperty("skill_bonuses")
     private Map<Skill, Integer> skillBonuses = new HashMap<>();
+    
+    @JsonProperty("power_bonus")
+    private Pair<Skill, Float> powerBonus;
     
     @JsonProperty("mining skill")
     private Pair<Skill, Integer> miningSkill;
@@ -144,6 +186,21 @@ public class Item {
     @JsonProperty("damage")
     private Pair<DamageType, Float> damageInfo;
     
+    @JsonProperty("timer")
+    private Pair<String, Integer> timer;
+    
+    @JsonProperty("timer_delay")
+    private int timerDelay;
+    
+    @JsonProperty("timer_mine")
+    private boolean processTimerOnBreak;
+    
+    @JsonProperty("field_damage")
+    private FieldDamage fieldDamage;
+    
+    @JsonProperty("spacing_items")
+    private List<LazyItemGetter> spacingItems = new ArrayList<>();
+    
     @JsonProperty("ingredients")
     private List<CraftingRequirement> craftingIngredients = new ArrayList<>();
     
@@ -152,6 +209,12 @@ public class Item {
     
     @JsonProperty("use")
     private Map<ItemUseType, Object> useConfigs = new HashMap<>();
+    
+    @JsonProperty("convert")
+    private Map<LazyItemGetter, LazyItemGetter> conversions = new HashMap<>();
+    
+    @JsonProperty("spawn_entity")
+    private WeightedMap<String> entitySpawns = new WeightedMap<>();
     
     @JsonCreator
     private Item(@JsonProperty(value = "id", required = true) String id,
@@ -207,6 +270,15 @@ public class Item {
         return code;
     }
     
+    public String getCategory() {
+        if(category != null) {
+            return category;
+        }
+        
+        int index = id.indexOf('/');
+        return index > 1 ? id.substring(0, index) : null;
+    }
+    
     public String getTitle() {
         return title;
     }
@@ -221,6 +293,10 @@ public class Item {
     
     public Fieldability getFieldability() {
         return fieldability;
+    }
+    
+    public Tradeability getTradeability() {
+        return tradeability;
     }
     
     public DialogType getLootGraphic() {
@@ -303,8 +379,28 @@ public class Item {
         return guardLevel;
     }
     
+    public boolean hasSpacing() {
+        return spacing > 0;
+    }
+    
+    public int getSpacing() {
+        return spacing;
+    }
+    
+    public boolean hasSpawnSpacing() {
+        return spawnSpacing > 0;
+    }
+    
+    public int getSpawnSpacing() {
+        return spawnSpacing;
+    }
+    
     public float getPower() {
         return power;
+    }
+    
+    public float getToughness() {
+        return toughness;
     }
     
     public boolean isEarthy() {
@@ -331,8 +427,16 @@ public class Item {
         return placeover;
     }
     
+    public boolean hasCustomMine() {
+        return customMine;
+    }
+    
     public boolean hasCustomPlace() {
         return customPlace;
+    }
+    
+    public boolean canPlaceInField() {
+        return fieldPlace;
     }
     
     public boolean isWhole() {
@@ -355,8 +459,32 @@ public class Item {
         return entity;
     }
     
+    public boolean usesSteam() {
+        return steam;
+    }
+    
+    public boolean requiresOwnership() {
+        return ownership;
+    }
+    
+    public boolean requiresMembership() {
+        return membership;
+    }
+    
+    public int getSkillBonus(Skill skill) {
+        return skillBonuses.getOrDefault(skill, 0);
+    }
+    
     public Map<Skill, Integer> getSkillBonuses() {
         return skillBonuses;
+    }
+    
+    public boolean hasPowerBonus() {
+        return powerBonus != null;
+    }
+    
+    public Pair<Skill, Float> getPowerBonus() {
+        return powerBonus;
     }
     
     public boolean requiresMiningSkill() {
@@ -395,8 +523,20 @@ public class Item {
         return decayInventoryItem == null ? this : decayInventoryItem.get();
     }
     
+    public boolean hasModInventoryItem() {
+        return modInventoryItem != null;
+    }
+    
+    public Item getModInventoryItem(int mod) {
+        return modInventoryItem == null ? this : mod >= modInventoryItem.getFirst() ? modInventoryItem.getLast().get() : Item.AIR;
+    }
+    
     public String[] getLootCategories() {
         return lootCategories;
+    }
+    
+    public double getRegenBonus() {
+        return regenBonus;
     }
     
     public double getToolBonus() {
@@ -421,6 +561,42 @@ public class Item {
     
     public float getDamage() {
         return isWeapon() ? damageInfo.getLast() : 0;
+    }
+    
+    public boolean hasTimer() {
+        return timer != null;
+    }
+    
+    public String getTimerType() {
+        return hasTimer() ? timer.getFirst() : null;
+    }
+    
+    public int getTimerValue() {
+        return hasTimer() ? timer.getLast() : 0;
+    }
+    
+    public int getTimerDelay() {
+        return timerDelay;
+    }
+    
+    public boolean shouldProcessTimerOnBreak() {
+        return processTimerOnBreak;
+    }
+    
+    public boolean hasFieldDamage() {
+        return fieldDamage != null;
+    }
+    
+    public FieldDamage getFieldDamage() {
+        return fieldDamage;
+    }
+    
+    public boolean hasSpacingItems() {
+        return !spacingItems.isEmpty();
+    }
+    
+    public List<Item> getSpacingItems() {
+        return spacingItems.stream().map(LazyItemGetter::get).collect(Collectors.toList());
     }
     
     public boolean isCraftable() {
@@ -455,5 +631,17 @@ public class Item {
     
     public Map<ItemUseType, Object> getUses() {
         return useConfigs;
+    }
+    
+    public Map<Item, Item> getConversions() {
+        return conversions.entrySet().stream().collect(Collectors.toMap(entry -> entry.getKey().get(), entry -> entry.getValue().get()));
+    }
+    
+    public boolean hasEntitySpawns() {
+        return !entitySpawns.isEmpty();
+    }
+    
+    public WeightedMap<String> getEntitySpawns() {
+        return entitySpawns;
     }
 }

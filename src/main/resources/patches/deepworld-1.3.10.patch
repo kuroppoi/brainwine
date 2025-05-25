@@ -1,0 +1,10 @@
+# Binary info
+binary_name Deepworld
+binary_size 0x3B3FA0
+
+# Addresses
+location gateway_host 0x0014FC3D
+location gateway_host_strlen 0x00228760
+
+# Make gateway reachable
+byte_patch 0x0002968F 0x74 0xEB

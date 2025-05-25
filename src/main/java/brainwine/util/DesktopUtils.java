@@ -8,16 +8,19 @@ import java.net.URISyntaxException;
 
 public class DesktopUtils {
     
-    public static void browseUrl(String url) {
+    public static boolean browseUrl(String url) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
         
         if(desktop != null && desktop.isSupported(Action.BROWSE)) {
             try {
                 URI uri = new URI(url);
                 desktop.browse(uri);
+                return true;
             } catch(URISyntaxException | IOException e) {
                 // TODO log this somewhere
             }
         }
+        
+        return false;
     }
 }

@@ -19,7 +19,6 @@ import com.formdev.flatlaf.FlatLaf;
 import com.formdev.flatlaf.extras.FlatAnimatedLafChange;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes;
 import com.formdev.flatlaf.intellijthemes.FlatAllIJThemes.FlatIJLookAndFeelInfo;
-import com.formdev.flatlaf.intellijthemes.materialthemeuilite.FlatMaterialDarkerIJTheme;
 
 import brainwine.gui.GuiPreferences;
 
@@ -43,7 +42,7 @@ public class ThemeManager {
         }
         
         // Set saved or default theme
-        setTheme(GuiPreferences.getString(GuiPreferences.THEME_KEY, FlatMaterialDarkerIJTheme.class.getName()), false);
+        setTheme(GuiPreferences.getTheme(), false);
     }
     
     public static void registerTheme(Theme theme) {

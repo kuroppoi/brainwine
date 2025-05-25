@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.GameServer;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.Request;
 import brainwine.gameserver.server.messages.KickMessage;
@@ -80,7 +80,9 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
     
     public void sendDelayedMessage(Message message, int delay) {
         channel.eventLoop().schedule(() -> {
-            sendMessage(message);
+            if(channel.isOpen()) {
+                sendMessage(message);
+            }
         }, delay, TimeUnit.MILLISECONDS);
     }
     
@@ -97,6 +99,10 @@ public class Connection extends SimpleChannelInboundHandler<Request> {
     
     public void setPlayer(Player player) {
         this.player = player;
+    }
+    
+    public Player getPlayer() {
+        return player;
     }
     
     public boolean isV3() {

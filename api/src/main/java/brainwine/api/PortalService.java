@@ -4,14 +4,23 @@ import static brainwine.api.util.ContextUtils.error;
 import static brainwine.api.util.ContextUtils.handleQueryParam;
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.api.models.ZoneInfo;
+import brainwine.api.util.ImageUtils;
 import brainwine.shared.JsonHelper;
 import io.javalin.Javalin;
+import io.javalin.http.ContentType;
 import io.javalin.http.Context;
 import io.javalin.plugin.json.JavalinJackson;
 
@@ -22,6 +31,7 @@ public class PortalService {
     
     private static final int zoneSearchPageSize = 6;
     private static final Logger logger = LogManager.getLogger();
+    private final Map<String, BufferedImage> surfaceMapCache = new HashMap<>();
     private final DataFetcher dataFetcher;
     private final Javalin portal;
     
@@ -30,6 +40,7 @@ public class PortalService {
         logger.info(SERVER_MARKER, "Starting PortalService @ port {} ...", port);
         portal = Javalin.create(config -> config.jsonMapper(new JavalinJackson(JsonHelper.MAPPER)))
             .exception(Exception.class, this::handleException)
+            .get("/v1/map/{zone}", this::handleMapRequest)
             .get("/v1/worlds", this::handleZoneSearch)
             .start(port);
     }
@@ -43,17 +54,67 @@ public class PortalService {
     }
     
     /**
+     * Handler function for map render requests.
+     * TODO add throttle & ownership privacy
+     */
+    private void handleMapRequest(Context ctx) throws IOException {
+        ZoneInfo zone = dataFetcher.getZoneInfo(ctx.pathParam("zone"));
+        
+        if(zone == null) {
+            error(ctx, "Zone not found.");
+            return;
+        }
+        
+        // TODO proper cache management
+        if(surfaceMapCache.size() > 50) {
+            surfaceMapCache.clear();
+        }
+        
+        BufferedImage image = surfaceMapCache.computeIfAbsent(zone.getName(), x -> MapRenderer.drawSurfaceMap(zone));
+        String position = ctx.queryParam("pos");
+        
+        if(position != null) {
+            String[] segments = position.split(",", 2);
+            
+            if(segments.length != 2) {
+                error(ctx, "Position must be formatted as x,y");
+                return;
+            }
+            
+            try {
+                int x = Integer.parseInt(segments[0]);
+                int y = Integer.parseInt(segments[1]);
+                image = ImageUtils.copyImage(image); // Copying is important: we do not want to draw to cached images!
+                MapRenderer.drawCrossMark(zone, x, y, image);
+            } catch(NumberFormatException e) {
+                error(ctx, "Coordinates must be valid numbers.");
+                return;
+            }
+        }
+        
+        ctx.contentType(ContentType.IMAGE_PNG);
+        ImageIO.write(image, "png", ctx.res.getOutputStream());
+    }
+    
+    /**
      * Handler function for zone search requests.
      * TODO could use some work.
      */
     private void handleZoneSearch(Context ctx) {
-        final List<ZoneInfo> zones = (List<ZoneInfo>)dataFetcher.fetchZoneInfo();
         String apiToken = ctx.queryParam("api_token");
+        String playerId = apiToken != null ? dataFetcher.fetchPlayerId(apiToken) : null;
         
-        if(apiToken == null || !dataFetcher.verifyApiToken(apiToken)) {
-            error(ctx, "A valid api token is required for this request.");
+        if(playerId == null && (ctx.queryParam("account") != null || ctx.queryParam("residency") != null)) {
+            error(ctx, "Request contains one or more parameters that require a valid API token.");
             return;
         }
+        
+        // TODO filtering is a bit convoluted, see if we can make it more efficient in the future.
+        String account = ctx.queryParam("account");
+        final List<ZoneInfo> zones = account == null ? (List<ZoneInfo>)dataFetcher.fetchZoneInfo() 
+                : account.equals("recent") ? (List<ZoneInfo>)dataFetcher.fetchRecentZoneInfo(apiToken)
+                : account.equals("bookmarked") ? (List<ZoneInfo>)dataFetcher.fetchBookmarkedZoneInfo(apiToken) : new ArrayList<>();
+        zones.removeIf(zone -> zone.isPrivate() && (playerId == null || (!playerId.equals(zone.getOwner()) && !zone.getMembers().contains(playerId))));
         
         handleQueryParam(ctx, "name", String.class, name -> {
             zones.removeIf(zone -> !zone.getName().toLowerCase().contains(name.toLowerCase()));
@@ -71,25 +132,32 @@ public class PortalService {
             zones.removeIf(zone -> zone.isPvp() != pvp);
         });
         
-        handleQueryParam(ctx, "protected", boolean.class, locked -> {
-            zones.removeIf(zone -> zone.isLocked() != locked);
+        handleQueryParam(ctx, "protected", boolean.class, value -> {
+            zones.removeIf(zone -> zone.isProtected() != value);
         });
         
         handleQueryParam(ctx, "residency", String.class, residency -> {
-            zones.clear(); // not supported yet
-        });
-        
-        handleQueryParam(ctx, "account", String.class, account -> {
-            zones.clear(); // not supported yet
+            switch(residency) {
+            case "owned":
+                zones.removeIf(zone -> !playerId.equals(zone.getOwner()));
+                break;
+            case "member":
+                zones.removeIf(zone -> !zone.getMembers().contains(playerId));
+                break;
+            default:
+                zones.clear();
+                break;
+            }
         });
         
         handleQueryParam(ctx, "sort", String.class, sort -> {
             switch(sort) {
-            case "popularity":
-                zones.removeIf(zone -> zone.getPlayerCount() == 0);
+            case "popularity": // Sort by most players first
+                //zones.removeIf(zone -> zone.getPlayerCount() == 0);
                 zones.sort((a, b) -> Integer.compare(b.getPlayerCount(), a.getPlayerCount()));
                 break;
-            case "created":
+            case "created": // Sort by newest first
+                zones.sort((a, b) -> b.getCreationDate().compareTo(a.getCreationDate()));
                 break;
             }
         });

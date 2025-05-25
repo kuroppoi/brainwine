@@ -2,7 +2,6 @@ package brainwine.gameserver.zone.gen;
 
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
-import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -13,10 +12,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.StringGenerator;
 import brainwine.gameserver.item.Layer;
-import brainwine.gameserver.util.ResourceUtils;
+import brainwine.gameserver.resource.Resource;
+import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.Zone;
+import brainwine.gameserver.zone.gen.models.TerrainType;
 import brainwine.gameserver.zone.gen.tasks.CaveGeneratorTask;
 import brainwine.gameserver.zone.gen.tasks.DecorGeneratorTask;
 import brainwine.gameserver.zone.gen.tasks.GeneratorTask;
@@ -26,38 +28,11 @@ import brainwine.shared.JsonHelper;
 
 public class ZoneGenerator {
     
-    // TODO Collect more names and create a name generator that's actually proper lmao
-    private static final String[] FIRST_NAMES = {
-        "Malvern", "Tralee", "Horncastle", "Old", "Westwood",
-        "Citta", "Tadley", "Mossley", "West", "East",
-        "North", "South", "Wadpen", "Githam", "Soatnust",
-        "Highworth", "Creakynip", "Upper", "Lower", "Cannock",
-        "Dovercourt", "Limerick", "Pickering", "Glumshed", "Crusthack",
-        "Osyltyr", "Aberstaple", "New", "Stroud", "Crumclum",
-        "Crumsidle", "Bankswund", "Fiddletrast", "Bournpan", "St.",
-        "Funderbost", "Bexwoddly", "Pilkingheld", "Wittlepen", "Rabbitbleaker",
-        "Griffingumby", "Guilthead", "Bigglelund", "Bunnymold", "Rosesidle",
-        "Crushthorn", "Tanlyward", "Ahncrace", "Pilkingking", "Dingstrath",
-        "Axebury", "Ginglingtap", "Ballybibby", "Shadehoven"
-    };
-    
-    private static final String[] LAST_NAMES = {
-        "Falls", "Alloa", "Glen", "Way", "Dolente",
-        "Peak", "Heights", "Creek", "Banffshire", "Chagford",
-        "Gorge", "Valley", "Catacombs", "Depths", "Mines",
-        "Crickbridge", "Guildbost", "Pits", "Vaults", "Ruins",
-        "Dell", "Keep", "Chatterdin", "Scrimmance", "Gitwick",
-        "Ridge", "Alresford", "Place", "Bridge", "Glade",
-        "Mill", "Court", "Dooftory", "Hills", "Specklewint",
-        "Grove", "Aylesbury", "Wagwouth", "Russetcumby", "Point",
-        "Canyon", "Cranwarry", "Bluff", "Passage", "Crantippy",
-        "Kerbodome", "Dale", "Cemetery"
-    };
-    
     private static final Logger logger = LogManager.getLogger();
     private static final Map<String, ZoneGenerator> generators = new HashMap<>();
     private static final ZoneGenerator defaultGenerator = new ZoneGenerator();
     private static AsyncZoneGenerator asyncGenerator;
+    private final GeneratorConfig config;
     private final GeneratorTask terrainGenerator;
     private final GeneratorTask caveGenerator;
     private final GeneratorTask decorGenerator;
@@ -68,6 +43,7 @@ public class ZoneGenerator {
     }
     
     public ZoneGenerator(GeneratorConfig config) {
+        this.config = config;
         terrainGenerator = new TerrainGeneratorTask(config);
         caveGenerator = new CaveGeneratorTask(config);
         decorGenerator = new DecorGeneratorTask(config);
@@ -77,24 +53,20 @@ public class ZoneGenerator {
     public static void init() {
         generators.clear();
         logger.info(SERVER_MARKER, "Loading zone generator configurations ...");
-        ResourceUtils.copyDefaults("generators/");
-        File dataDir = new File("generators");
         
-        if(dataDir.isDirectory()) {
-            for(File file : dataDir.listFiles()) {
-                try {
-                    String name = ResourceUtils.removeFileSuffix(file.getName()).toLowerCase();
-                    
-                    if(generators.containsKey(name)) {
-                        logger.warn(SERVER_MARKER, "Duplicate generator config name '{}'", name);
-                        continue;
-                    }
-                    
-                    GeneratorConfig config = JsonHelper.readValue(file, GeneratorConfig.class);
-                    generators.put(name, new ZoneGenerator(config));
-                } catch(Exception e) {
-                    logger.error(SERVER_MARKER, "Failed to load generator config '{}'", file.getName(), e);
-                }
+        for(Resource resource : ResourceFinder.getResources("generators", false)) {
+            String name = ResourceFinder.removeFileSuffix(resource.getSimpleName()).toLowerCase();
+            
+            if(generators.containsKey(name)) {
+                logger.warn(SERVER_MARKER, "Duplicate generator config name '{}'", name);
+                continue;
+            }
+            
+            try {
+                GeneratorConfig config = JsonHelper.readValue(resource.getUrl(), GeneratorConfig.class);
+                generators.put(name, new ZoneGenerator(config));
+            } catch(Exception e) {
+                logger.error(SERVER_MARKER, "Failed to load generator config '{}'", name, e);
             }
         }
         
@@ -149,7 +121,7 @@ public class ZoneGenerator {
     }
     
     public Zone generateZone(Biome biome) {
-        return generateZone(biome, 2000, 600);
+        return generateZone(biome, biome == Biome.DEEP ? 1200 : 2000, biome == Biome.DEEP ? 1000 : 600);
     }
     
     public Zone generateZone(Biome biome, int width, int height) {
@@ -158,18 +130,11 @@ public class ZoneGenerator {
     
     public Zone generateZone(Biome biome, int width, int height, int seed) {
         String id = generateDocumentId(seed);
-        String name = getRandomName();
-        int retryCount = 0;
-        
-        while(GameServer.getInstance().getZoneManager().getZoneByName(name) != null) {
-            if(retryCount >= 10) {
-                name = id;
-                logger.warn(SERVER_MARKER, "Could not generate a unique name for zone {}", id);
-                break;
-            }
-            
-            name = getRandomName();
-            retryCount++;
+        String name = StringGenerator.getRandomZoneName(x -> GameServer.getInstance().getZoneManager().getZoneByName(x) != null, 20);
+
+        if(name == null) {
+            name = id;
+            logger.warn(SERVER_MARKER, "Could not generate a unique name for zone {}", id);
         }
         
         Zone zone = new Zone(id, name, biome, width, height);
@@ -182,6 +147,10 @@ public class ZoneGenerator {
         // Bedrock
         for(int x = 0; x < width; x++) {
             ctx.updateBlock(x, height - 1, Layer.FRONT, "ground/bedrock");
+            
+            if(config.getTerrainType() == TerrainType.FILLED) {
+                ctx.updateBlock(x, 0, Layer.FRONT, "ground/bedrock");
+            }
         }
         
         return zone;
@@ -192,7 +161,7 @@ public class ZoneGenerator {
     }
     
     public void generateZoneAsync(Biome biome, Consumer<Zone> callback) {
-        generateZoneAsync(biome, 2000, 600, callback);
+        generateZoneAsync(biome, biome == Biome.DEEP ? 1200 : 2000, biome == Biome.DEEP ? 1000 : 600, callback);
     }
     
     public void generateZoneAsync(Biome biome, int width, int height, Consumer<Zone> callback) {
@@ -208,12 +177,6 @@ public class ZoneGenerator {
         long mostSigBits = (((long)seed) << 32) | (random.nextInt() & 0xFFFFFFFFL);
         long leastSigBits = random.nextLong();
         return new UUID(mostSigBits, leastSigBits).toString();
-    }
-    
-    private static String getRandomName() {
-        String firstName = FIRST_NAMES[(int)(Math.random() * FIRST_NAMES.length)];
-        String lastName = LAST_NAMES[(int)(Math.random() * LAST_NAMES.length)];
-        return firstName + " " + lastName;
     }
     
     private static int getRandomSeed() {

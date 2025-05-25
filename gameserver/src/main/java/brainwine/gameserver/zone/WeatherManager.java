@@ -9,12 +9,14 @@ import io.netty.util.internal.ThreadLocalRandom;
 public class WeatherManager {
     
     private static final ThreadLocalRandom random = ThreadLocalRandom.current();
+    private final Zone zone;
     private long rainStart;
     private long rainDuration;
     private float rainPower;
     private float precipitation;
     
-    public WeatherManager() {
+    public WeatherManager(Zone zone) {
+        this.zone = zone;
         createRandomRain(random.nextBoolean());
     }
     
@@ -22,7 +24,12 @@ public class WeatherManager {
         long now = System.currentTimeMillis();
         
         if(now > rainStart + rainDuration) {
-            createRandomRain(rainPower > 0 ? true : false);
+            boolean dry = rainPower > 0;
+            createRandomRain(dry);
+            
+            if(dry) {
+                zone.updateGrowables(1);
+            }
         }
         
         float lerp = (float)(deltaTime * MathUtils.lerp(0.02F, 0.1F, (now - rainStart) / (float)rainDuration));

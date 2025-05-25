@@ -3,27 +3,80 @@ package brainwine.gameserver.item;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonEnumDefaultValue;
 
+import brainwine.gameserver.item.interactions.BurstInteraction;
+import brainwine.gameserver.item.interactions.ChangeInteraction;
+import brainwine.gameserver.item.interactions.ComposterInteraction;
+import brainwine.gameserver.item.interactions.ContainerInteraction;
+import brainwine.gameserver.item.interactions.DialogInteraction;
+import brainwine.gameserver.item.interactions.ExpiatorInteraction;
+import brainwine.gameserver.item.interactions.GeckInteraction;
+import brainwine.gameserver.item.interactions.ItemInteraction;
+import brainwine.gameserver.item.interactions.LandmarkInteraction;
+import brainwine.gameserver.item.interactions.MinigameInteraction;
+import brainwine.gameserver.item.interactions.NoteInteraction;
+import brainwine.gameserver.item.interactions.RecyclerInteraction;
+import brainwine.gameserver.item.interactions.SpawnInteraction;
+import brainwine.gameserver.item.interactions.SpawnTeleportInteraction;
+import brainwine.gameserver.item.interactions.SwitchInteraction;
+import brainwine.gameserver.item.interactions.TargetTeleportInteraction;
+import brainwine.gameserver.item.interactions.TeleportInteraction;
+import brainwine.gameserver.item.interactions.TransmitInteraction;
+import brainwine.gameserver.item.interactions.WarmthInteraction;
+
+/**
+ * Much like with {@link Action}, block interactions depend on their use type.
+ */
 public enum ItemUseType {
     
     AFTERBURNER,
-    CONTAINER,
-    CREATE_DIALOG,
-    DIALOG,
+    BREATH,
+    BURST(new BurstInteraction()),
+    COMPOSTER(new ComposterInteraction()),
+    CONTAINER(new ContainerInteraction()),
+    CREATE_DIALOG(new DialogInteraction(true)),
+    DESTROY,
+    DIALOG(new DialogInteraction(false)),
+    EXPIATOR(new ExpiatorInteraction()),
+    GECK(new GeckInteraction()),
     GUARD,
-    CHANGE,
+    CHANGE(new ChangeInteraction()),
     FIELDABLE,
     FLY,
+    LANDMARK(new LandmarkInteraction()),
+    MINIGAME(new MinigameInteraction()),
+    MOVE,
     MULTI,
+    NOTE(new NoteInteraction()),
+    PET,
+    PLENTY,
     PROTECTED,
     PUBLIC,
-    SWITCH,
+    RECYCLER(new RecyclerInteraction()),
+    SPAWN(new SpawnInteraction()),
+    SPAWN_TELEPORT(new SpawnTeleportInteraction()),
+    SWITCH(new SwitchInteraction()),
     SWITCHED,
-    TELEPORT,
+    TARGET_TELEPORT(new TargetTeleportInteraction()),
+    TELEPORT(new TeleportInteraction()),
+    TRIGGER,
+    TRANSMIT(new TransmitInteraction()),
+    TRANSMITTED,
+    WARMTH(new WarmthInteraction()),
     ZONE_TELEPORT,
     
     @JsonEnumDefaultValue
     UNKNOWN;
-        
+    
+    private final ItemInteraction interaction;
+    
+    private ItemUseType(ItemInteraction interaction) {
+        this.interaction = interaction;
+    }
+    
+    private ItemUseType() {
+        this(null);
+    }
+    
     @JsonCreator
     public static ItemUseType fromId(String id) {
         String formatted = id.toUpperCase().replace(" ", "_");
@@ -35,5 +88,9 @@ public enum ItemUseType {
         }
         
         return UNKNOWN;
+    }
+    
+    public ItemInteraction getInteraction() {
+        return interaction;
     }
 }

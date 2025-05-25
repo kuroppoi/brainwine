@@ -1,0 +1,13 @@
+services:
+  brainwine:
+    # build: .
+    image: brainwine:latest
+    ports: 
+      - "5001:5001" # gateway
+      - "5002:5002" # server
+      - "5003:5003" # portal
+    volumes:
+      - bw-data:/data
+
+volumes:
+  bw-data: {}

@@ -1,12 +1,19 @@
 package brainwine.gameserver.zone.gen.tasks;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
+import brainwine.gameserver.zone.Biome;
+import brainwine.gameserver.zone.EcologicalMachine;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.gen.GeneratorConfig;
 import brainwine.gameserver.zone.gen.GeneratorContext;
@@ -14,8 +21,8 @@ import brainwine.gameserver.zone.gen.caves.Cave;
 import brainwine.gameserver.zone.gen.caves.CaveDecorator;
 import brainwine.gameserver.zone.gen.caves.CaveType;
 import brainwine.gameserver.zone.gen.caves.StructureCaveDecorator;
-import brainwine.gameserver.zone.gen.models.TerrainType;
 import brainwine.gameserver.zone.gen.models.SpecialStructure;
+import brainwine.gameserver.zone.gen.models.TerrainType;
 import brainwine.gameserver.zone.gen.surface.StructureSurfaceDecorator;
 import brainwine.gameserver.zone.gen.surface.SurfaceDecorator;
 import brainwine.gameserver.zone.gen.surface.SurfaceRegion;
@@ -130,29 +137,131 @@ public class StructureGeneratorTask implements GeneratorTask {
             }
         }
         
-        // Populate world with broken teleporters (TODO: world machines and component chests)
-        // Eligible containers are containers that are below surface and are either a mech chest or a non-dungeon red chest
-        List<MetaBlock> replaceableContainers = ctx.getZone().getMetaBlocks(metaBlock
+        // Fetch list of replaceable containers
+        List<MetaBlock> containers = ctx.getZone().getMetaBlocks(metaBlock
                 -> ctx.isUnderground(metaBlock.getX(), metaBlock.getY())
                 && (metaBlock.getItem().hasId("containers/chest-mechanical-large") 
                 || (metaBlock.getItem().hasId("containers/chest") && !metaBlock.getMetadata().containsKey("@"))));
-        Collections.shuffle(replaceableContainers, ctx.getRandom());
-        int brokenTeleporterCount = Math.min(replaceableContainers.size(), Math.max(1, width * height / (ctx.nextInt(80000) + 120000)));
+        Collections.shuffle(containers, ctx.getRandom());
         
-        for(int i = 0; i < brokenTeleporterCount; i++) {
-            MetaBlock container = replaceableContainers.remove(0);
+        // TODO
+        placeComponentChests(ctx, containers);
+        placeBrokenTeleporters(ctx, containers);
+        
+        if(ctx.getZone().getBiome() == Biome.HELL) {
+            placeInfernalProtectors(ctx, containers);
+        }
+        
+    }
+    
+    private void placeComponentChests(GeneratorContext ctx, List<MetaBlock> containers) {
+        // TODO remove test code
+        Biome biome = ctx.getZone().getBiome();
+        List<EcologicalMachine> machines = new ArrayList<>();
+        
+        switch(biome) {
+            case PLAIN:
+                machines.add(EcologicalMachine.PURIFIER);
+                machines.add(ctx.nextDouble() < 0.5 ? EcologicalMachine.RECYCLER : EcologicalMachine.COMPOSTER);
+                break;
+            case ARCTIC:
+                machines.add(EcologicalMachine.RECYCLER);
+                break;
+            case HELL:
+                machines.add(EcologicalMachine.EXPIATOR);
+                break;
+            case DESERT:
+                machines.add(EcologicalMachine.PURIFIER);
+                machines.add(EcologicalMachine.RECYCLER);
+                break;
+            case DEEP:
+                machines.add(EcologicalMachine.PURIFIER);
+                break;
+            default:
+                break;
+        }
+        
+        // Get list of machine parts to distribute
+        List<Item> parts = machines.stream().map(EcologicalMachine::getParts).flatMap(Collection::stream).collect(Collectors.toList());
+        Iterator<Item> iterator = parts.iterator();
+        
+        // Distribute parts
+        while(iterator.hasNext() && !containers.isEmpty()) {
+            MetaBlock container = containers.remove(0);
+            String dungeonId = container.getStringProperty("@");
             int x = container.getX();
             int y = container.getY();
-            ctx.updateBlock(x, y, Layer.FRONT, "mechanical/teleporter");
-            ctx.getZone().removeMetaBlock(x, y); // Broken teleporters should have no metadata
+            int offset = getContainerOffset(ctx, x, y);
+            ctx.updateBlock(x, y, Layer.FRONT, 0);
+            ctx.updateBlock(x + offset, y, Layer.FRONT, "containers/chest-industrial", 1);
+            MetaBlock componentChest = ctx.getZone().getMetaBlock(x + offset, y);
+            componentChest.setProperty("@", dungeonId);
+            componentChest.setProperty("$", iterator.next().getId());
+            iterator.remove();
         }
+        
+        // If there are still parts left but no containers, just add 'em.
+        for(Item part : parts) {
+            ctx.getZone().addMachinePart(part);
+        }
+    }
+    
+    private void placeBrokenTeleporters(GeneratorContext ctx, List<MetaBlock> containers) {
+        // One teleporter per 150,000 blocks (8 teleporters in a normal sized world)
+        int amount = Math.min(containers.size(), Math.max(1, ctx.getWidth() * ctx.getHeight() / 150000));
+        
+        // Place teleporters
+        for(int i = 0; i < amount; i++) {
+            MetaBlock container = containers.remove(0);
+            int x = container.getX();
+            int y = container.getY();
+            int offset = getContainerOffset(ctx, x, y);
+            ctx.updateBlock(x, y, Layer.FRONT, 0);
+            ctx.updateBlock(x + offset, y, Layer.FRONT, "mechanical/teleporter");
+            ctx.getZone().removeMetaBlock(x + offset, y); // Broken teleporters should have no metadata
+        }
+    }
+    
+    private void placeInfernalProtectors(GeneratorContext ctx, List<MetaBlock> containers) {
+        // One dish per 100,000 blocks (12 dishes in a normal sized world)
+        int amount = Math.min(containers.size(), Math.max(1, ctx.getWidth() * ctx.getHeight() / 100000));
+        
+        for(int i = 0; i < amount; i++) {
+            MetaBlock container = containers.remove(0);
+            int x = container.getX();
+            int y = container.getY();
+            int offset = getContainerOffset(ctx, x, y);
+            
+            // Replace with large chest if container is a small chest
+            if(container.getItem().hasId("containers/chest")) {
+                ctx.updateBlock(x, y, Layer.FRONT, 0);
+                ctx.updateBlock(x + offset, y, Layer.FRONT, "containers/chest-large", 1, container.getMetadata());
+            }
+            
+            // Place dish on top of the container
+            ctx.updateBlock(x + offset, y - 1, Layer.FRONT, "hell/dish");
+        }
+    }
+    
+    /**
+     * Crappy fix for badly placed teleporters, component chests etc. in mirrored structures.
+     * 
+     * @return X offset for large containers.
+     */
+    private int getContainerOffset(GeneratorContext ctx, int x, int y) {
+        if(ctx.isOccupied(x - 1, y, Layer.FRONT) || ctx.getBlock(x, y).getFrontItem().getBlockWidth() > 1) {
+            return 0; // TODO will cause issues if original container is larger than 2 blocks
+        }
+        
+        return ctx.isStructureMirrored(x, y) ? -1 : 0;
     }
     
     private void placeRandomSpawnBuilding(GeneratorContext ctx, int x) {
         Prefab spawnBuilding = spawnBuildings.next(ctx.getRandom());
         
         if(filled) {
-            int y = ctx.getHeight() / 8 + ctx.nextInt(Math.max(1, ctx.nextInt(ctx.getHeight() / 8)));
+            int min = ctx.getHeight() / 32;
+            int y = min + ctx.nextInt(Math.max(1, ctx.nextInt(min)));
             ctx.placePrefab(spawnBuilding, x, y);
         } else {
             ctx.placePrefabSurface(spawnBuilding, x);

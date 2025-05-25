@@ -21,6 +21,12 @@ public class EntitySpawn {
     
     @JsonProperty("max_depth")
     private double maxDepth = 1;
+
+    @JsonProperty("min_acidity")
+    private double minAcidity = 0.0;
+
+    @JsonProperty("max_acidity")
+    private double maxAcidity = 1.0;
     
     @JsonProperty("orifice")
     private Item orifice;
@@ -43,6 +49,14 @@ public class EntitySpawn {
     public double getMaxDepth() {
         return maxDepth;
     }
+
+    public double getMinAcidity() {
+        return minAcidity;
+    }
+
+    public double getMaxAcidity() {
+        return maxAcidity;
+    }
     
     public Item getOrifice() {
         return orifice;
@@ -51,4 +65,5 @@ public class EntitySpawn {
     public double getFrequency() {
         return frequency;
     }
+
 }

@@ -1,11 +1,11 @@
 package brainwine.gameserver.server.requests;
 
-import brainwine.gameserver.annotations.OptionalField;
-import brainwine.gameserver.annotations.RequestInfo;
-import brainwine.gameserver.entity.player.ContainerType;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.ContainerType;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 
 /**
  * TODO This request may be sent *before* a {@link CraftRequest} is sent.

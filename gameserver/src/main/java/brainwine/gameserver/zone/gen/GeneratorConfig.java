@@ -15,6 +15,7 @@ import brainwine.gameserver.util.WeightedMap;
 import brainwine.gameserver.zone.gen.caves.CaveDecorator;
 import brainwine.gameserver.zone.gen.caves.CaveType;
 import brainwine.gameserver.zone.gen.models.Deposit;
+import brainwine.gameserver.zone.gen.models.LayerSeparator;
 import brainwine.gameserver.zone.gen.models.OreDeposit;
 import brainwine.gameserver.zone.gen.models.SpecialStructure;
 import brainwine.gameserver.zone.gen.models.StoneType;
@@ -33,6 +34,7 @@ public class GeneratorConfig {
     private double dungeonChance = 0.25;
     private double backgroundAccentChance = 0.033;
     private double backgroundDrawingChance = 0.001;
+    private LayerSeparator layerSeparator;
     private WeightedMap<StoneType> stoneTypes = new WeightedMap<>();
     private WeightedMap<Prefab> spawnBuildings = new WeightedMap<>();
     private WeightedMap<Prefab> dungeons = new WeightedMap<>();
@@ -84,6 +86,10 @@ public class GeneratorConfig {
     
     public double getBackgroundDrawingChance() {
         return backgroundDrawingChance;
+    }
+    
+    public LayerSeparator getLayerSeparator() {
+        return layerSeparator;
     }
     
     @JsonSetter(value = "stone_types", nulls = Nulls.SKIP)

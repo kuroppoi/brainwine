@@ -2,8 +2,8 @@ package brainwine.gameserver.server.messages;
 
 import java.util.Map;
 
-import brainwine.gameserver.annotations.MessageInfo;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 
 @MessageInfo(id = 8, collection = true)
 public class EntityChangeMessage extends Message {

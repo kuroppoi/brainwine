@@ -1,0 +1,196 @@
+{
+  "growables": {
+    "vegetation/grass": {
+      "max_mod": 1,
+      "chance": 0.1
+    },
+    "vegetation/arctic-growth": {
+      "max_mod": 1,
+      "chance": 0.1
+    },
+    "vegetation/shrub-a": {
+      "max_mod": 11,
+      "chance": 0.1
+    },
+    "vegetation/shrub-b": {
+      "max_mod": 11,
+      "chance": 0.1
+    },
+    "vegetation/shrub-c": {
+      "max_mod": 14,
+      "chance": 0.1
+    },
+    "vegetation/shrub-d": {
+      "max_mod": 14,
+      "chance": 0.1
+    },
+    "vegetation/shrub-e": {
+      "max_mod": 14,
+      "chance": 0.1
+    },
+    "vegetation/shrub-f": {
+      "max_mod": 14,
+      "chance": 0.1
+    },
+    "vegetation/shrub-g": {
+      "max_mod": 14,
+      "chance": 0.1
+    },
+    "vegetation/flower-amaryllis": {
+      "max_mod": 4,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-asphodelus": {
+      "max_mod": 4,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-birds-foot-trefoil": {
+      "max_mod": 4,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-carnations": {
+      "max_mod": 4,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-coxcomb": {
+      "max_mod": 4,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-delphinium": {
+      "max_mod": 4,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-lobelia": {
+      "max_mod": 4,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-tuberose": {
+      "max_mod": 4,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-bird-of-paradise": {
+      "max_mod": 8,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-cactus": {
+      "max_mod": 8,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-echinacea": {
+      "max_mod": 8,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-sunflower": {
+      "max_mod": 8,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/flower-trumpets": {
+      "max_mod": 8,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/tree-bonsai": {
+      "max_mod": 8,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/tree-hellish": {
+      "max_mod": 8,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/pumpkin": {
+      "max_mod": 4,
+      "chance": 0.1,
+      "replace_source": "ground/earth-compost"
+    },
+    "vegetation/pine-tree": {
+      "max_mod": 10,
+      "chance": 0.05
+    }
+  },
+  "sources": {
+    "arctic": {
+      "ground/earth-compost": {
+        "vegetation/arctic-growth": 10,
+        "vegetation/pine-tree": 1
+      }
+    },
+    "hell": {
+      "vegetation/tree-hellish-bulb": {
+        "vegetation/tree-hellish": 1
+      }
+    },
+    "desert": {
+      "vegetation/flower-cactus-bulb": {
+        "vegetation/flower-cactus": 1
+      }
+    },
+    "plain": {
+      "ground/earth-compost": {
+        "vegetation/grass": 120,
+        "vegetation/shrub-a": 33,
+        "vegetation/shrub-b": 34,
+        "vegetation/shrub-c": 33,
+        "vegetation/shrub-d": 25,
+        "vegetation/shrub-e": 20,
+        "vegetation/shrub-f": 15,
+        "vegetation/shrub-g": 15
+      },
+      "vegetation/flower-amaryllis-bulb": {
+        "vegetation/flower-amaryllis": 1
+      },
+      "vegetation/flower-asphodelus-bulb": {
+        "vegetation/flower-asphodelus": 1
+      },
+      "vegetation/flower-birds-foot-trefoil-bulb": {
+        "vegetation/flower-birds-foot-trefoil": 1
+      },
+      "vegetation/flower-carnations-bulb": {
+        "vegetation/flower-carnations": 1
+      },
+      "vegetation/flower-coxcomb-bulb": {
+        "vegetation/flower-coxcomb": 1
+      },
+      "vegetation/flower-delphinium-bulb": {
+        "vegetation/flower-delphinium": 1
+      },
+      "vegetation/flower-lobelia-bulb": {
+        "vegetation/flower-lobelia": 1
+      },
+      "vegetation/flower-tuberose-bulb": {
+        "vegetation/flower-tuberose": 1
+      },
+      "vegetation/flower-bird-of-paradise-bulb": {
+        "vegetation/flower-bird-of-paradise": 1
+      },
+      "vegetation/flower-echinacea-bulb": {
+        "vegetation/flower-echinacea": 1
+      },
+      "vegetation/flower-sunflower-bulb": {
+        "vegetation/flower-sunflower": 1
+      },
+      "vegetation/flower-trumpets-bulb": {
+        "vegetation/flower-trumpets": 1
+      },
+      "vegetation/tree-bonsai-bulb": {
+        "vegetation/tree-bonsai": 1
+      },
+      "vegetation/pumpkin-seeds": {
+        "vegetation/pumpkin": 1
+      }
+    }
+  }
+}

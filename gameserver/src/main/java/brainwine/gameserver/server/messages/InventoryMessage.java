@@ -2,9 +2,9 @@ package brainwine.gameserver.server.messages;
 
 import java.util.Map;
 
-import brainwine.gameserver.annotations.MessageInfo;
-import brainwine.gameserver.entity.player.Inventory;
+import brainwine.gameserver.player.Inventory;
 import brainwine.gameserver.server.Message;
+import brainwine.gameserver.server.MessageInfo;
 
 @MessageInfo(id = 4)
 public class InventoryMessage extends Message {

@@ -2,6 +2,8 @@ package brainwine.shared;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.List;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -17,11 +19,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 
 public class JsonHelper {
     
     public static final ObjectMapper MAPPER = JsonMapper.builder()
             .findAndAddModules()
+            .addModule(new SimpleModule()
+                    .addSerializer(OffsetDateTimeSerializer.INSTANCE))
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
             .enable(DeserializationFeature.READ_UNKNOWN_ENUM_VALUES_USING_DEFAULT_VALUE, DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
@@ -34,8 +39,16 @@ public class JsonHelper {
         return MAPPER.readValue(string, type);
     }
     
-    public static <T> T readValue(File file, Class<T> type) throws JsonParseException, JsonMappingException, IOException {
+    public static <T> T readValue(File file, Class<T> type) throws IOException {
         return MAPPER.readValue(file, type);
+    }
+    
+    public static <T> T readValue(URL url, Class<T> type) throws IOException {
+        return MAPPER.readValue(url, type);
+    }
+    
+    public static <T> T readValue(InputStream inputStream, Class<T> type) throws IOException {
+        return MAPPER.readValue(inputStream, type);
     }
     
     public static <T> T readValue(Object object, Class<T> type) throws JsonProcessingException {
@@ -48,6 +61,14 @@ public class JsonHelper {
     
     public static <T> T readValue(File file, TypeReference<T> type) throws IOException {
         return MAPPER.readValue(file, type);
+    }
+    
+    public static <T> T readValue(URL url, TypeReference<T> type) throws IOException {
+        return MAPPER.readValue(url, type);
+    }
+    
+    public static <T> T readValue(InputStream inputStream, TypeReference<T> type) throws IOException {
+        return MAPPER.readValue(inputStream, type);
     }
     
     public static <T> T readValue(Object object, TypeReference<T> type) throws JsonProcessingException {

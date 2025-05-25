@@ -3,12 +3,13 @@ package brainwine.gameserver.server.requests;
 import java.util.Arrays;
 import java.util.Collection;
 
-import brainwine.gameserver.annotations.OptionalField;
-import brainwine.gameserver.annotations.RequestInfo;
+import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.entity.player.Player;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.server.OptionalField;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.messages.EntityItemUseMessage;
 
 /**
@@ -29,14 +30,14 @@ public class InventoryUseRequest extends PlayerRequest {
     @Override
     public void process(Player player) {
         // Don't do anything if the player is dead or doesn't own this item
-        if(player.isDead() || !player.getInventory().hasItem(item)) {
+        if((player.isDead() && status == 1) || (!item.isAir() && !player.getInventory().hasItem(item))) {
             return;
         }
         
         // Try to consume item if it is a consumable
         if(item.isConsumable()) {
             if(status == 1) {
-                player.consume(item);
+                player.consume(item, details);
             }
         } else {
             // Set current held item if applicable
@@ -44,35 +45,35 @@ public class InventoryUseRequest extends PlayerRequest {
                 player.setHeldItem(item);
             }
             
-            // Send item use data to other players in the zone
-            player.sendMessageToPeers(new EntityItemUseMessage(player.getId(), type, item, status));
-            
             // Lovely type ambiguity. Always nice.
             if(item.isWeapon() && status == 1) {
                 Collection<?> entityIds = details instanceof Collection ? (Collection<?>)details
                         : details instanceof Integer ? Arrays.asList((int)details) : null;
                 
-                // Skip if null aka details was of an invalid type
-                if(entityIds == null) {
-                    return;
-                }
-                
-                int maxTargetableEntities = player.getMaxTargetableEntities();
-                
-                for(Object id : entityIds) {
-                    if(id instanceof Integer) {
-                        Npc npc = player.getZone().getNpc((int)id);
+                // Attack enemies if details are present
+                if(entityIds != null && !entityIds.isEmpty()) {
+                    int maxTargetableEntities = player.getMaxTargetableEntities();
+                    
+                    for(Object id : entityIds) {
+                        if(id instanceof Integer) {
+                            Npc npc = player.getZone().getNpc((int)id);
+                            
+                            if(npc != null && (player.isGodMode() || (player.canSee(npc) && !npc.wasAttackedRecently(player, Entity.ATTACK_INVINCIBLE_TIME)))) {
+                                npc.attack(player, item, item.getDamage(), item.getDamageType());
+                            }
+                        }
                         
-                        if(npc != null && (player.isGodMode() || player.canSee(npc))) {
-                            npc.attack(player, item);
+                        if(--maxTargetableEntities <= 0) {
+                            break;
                         }
                     }
                     
-                    if(--maxTargetableEntities <= 0) {
-                        break;
-                    }
+                    return;
                 }
             }
+            
+            // Send item use data to other players in the zone if no details are present
+            player.sendMessageToTrackers(new EntityItemUseMessage(player.getId(), type, item, status));
         }
     }
 }

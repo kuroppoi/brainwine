@@ -2,16 +2,17 @@ package brainwine.gameserver.zone;
 
 import java.io.File;
 import java.time.OffsetDateTime;
-import java.util.ArrayDeque;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Queue;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -24,24 +25,31 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.GameServer;
+import brainwine.gameserver.Timer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.entity.player.ChatType;
-import brainwine.gameserver.entity.player.NotificationType;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.entity.npc.NpcData;
+import brainwine.gameserver.item.DamageType;
+import brainwine.gameserver.item.Fieldability;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.MetaType;
 import brainwine.gameserver.item.ModType;
+import brainwine.gameserver.minigame.Minigame;
+import brainwine.gameserver.player.ChatType;
+import brainwine.gameserver.player.NotificationType;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.prefab.Prefab;
 import brainwine.gameserver.server.Message;
 import brainwine.gameserver.server.messages.BlockChangeMessage;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.ChatMessage;
 import brainwine.gameserver.server.messages.ConfigurationMessage;
+import brainwine.gameserver.server.messages.EffectMessage;
 import brainwine.gameserver.server.messages.LightMessage;
+import brainwine.gameserver.server.messages.NotificationMessage;
 import brainwine.gameserver.server.messages.ZoneExploredMessage;
 import brainwine.gameserver.server.messages.ZoneStatusMessage;
 import brainwine.gameserver.server.models.BlockChangeData;
@@ -49,9 +57,14 @@ import brainwine.gameserver.util.MapHelper;
 import brainwine.gameserver.util.MathUtils;
 import brainwine.gameserver.util.SimplexNoise;
 import brainwine.gameserver.util.Vector2i;
+import brainwine.gameserver.zone.gen.models.RubbleType;
 
+/**
+ * TODO Zone class is getting kinda big. I want to split it into more smaller classes to make it more manageable.
+ */
 public class Zone {
     
+    public static final int MAX_CONCURRENT_MINIGAMES = 20;
     public static final int DEFAULT_CHUNK_WIDTH = 20;
     public static final int DEFAULT_CHUNK_HEIGHT = 20;
     private static final ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -68,22 +81,37 @@ public class Zone {
     private int[] sunlight;
     private int[] depths;
     private boolean[] chunksExplored;
+    private int chunksExploredCount;
     private OffsetDateTime creationDate = OffsetDateTime.now();
     private float time = (float)Math.random(); // TODO temporary
     private float temperature;
     private float acidity;
+    private boolean isPrivate;
+    private boolean isProtected;
+    private boolean pvp;
+    private String entryCode;
+    private String owner;
     private final ChunkManager chunkManager;
-    private final WeatherManager weatherManager = new WeatherManager();
+    private final SteamManager steamManager;
+    private final GrowthManager growthManager;
+    private final WeatherManager weatherManager = new WeatherManager(this);
     private final EntityManager entityManager = new EntityManager(this);
     private final LiquidManager liquidManager = new LiquidManager(this);
-    private final Queue<DugBlock> digQueue = new ArrayDeque<>();
-    private final List<BlockChangeData> blockChanges = new ArrayList<>();
+    private final MachineManager machineManager = new MachineManager(this);
     private final Set<Integer> pendingSunlight = new HashSet<>();
+    private final List<String> members = new ArrayList<>();
+    private final List<Timer<Integer>> blockTimers = new ArrayList<>();
     private final Map<String, Integer> dungeons = new HashMap<>();
     private final Map<Integer, MetaBlock> metaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> globalMetaBlocks = new HashMap<>();
     private final Map<Integer, MetaBlock> fieldBlocks = new HashMap<>();
+    private final Map<Integer, MetaBlock> damageFieldBlocks = new HashMap<>();
+    private final Map<Integer, BlockChangeData> blockChanges = new HashMap<>();
+    private final Map<Integer, Minigame> minigames = new HashMap<>();
+    private final Map<String, OffsetDateTime> actionHistory = new HashMap<>();
     private long lastStatusUpdate = System.currentTimeMillis();
+    private int ticksElapsed;
+    private boolean modified;
     
     protected Zone(String documentId, ZoneConfigFile config, ZoneDataFile data) {
         this(documentId, config.getName(), config.getBiome(), config.getWidth(), config.getHeight());
@@ -95,8 +123,18 @@ public class Zone {
         this.sunlight = sunlight != null && sunlight.length == width ? sunlight : this.sunlight;
         this.depths = depths != null && depths.length == 3 ? depths : this.depths;
         this.chunksExplored = chunksExplored != null && chunksExplored.length == getChunkCount() ? chunksExplored : this.chunksExplored;
+        recalculateChunksExploredCount();
+        steamManager.setData(data.getSteamData());
+        machineManager.loadData(config);
         pendingSunlight.addAll(data.getPendingSunlight());
+        entryCode = config.getEntryCode();
+        owner = config.getOwner();
+        members.addAll(config.getMembers());
+        actionHistory.putAll(config.getActionHistory());
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : config.getAcidity();
+        isPrivate = config.isPrivate();
+        isProtected = config.isProtected();
+        pvp = config.isPvp();
         creationDate = config.getCreationDate();
     }
     
@@ -112,8 +150,10 @@ public class Zone {
         surface = new int[width];
         sunlight = new int[width];
         chunksExplored = new boolean[numChunksWidth * numChunksHeight];
-        chunkManager = new ChunkManager(this);
         acidity = biome == Biome.ARCTIC || biome == Biome.SPACE ? 0 : 1;
+        chunkManager = new ChunkManager(this);
+        steamManager = new SteamManager(this);
+        growthManager = new GrowthManager(this);
         Arrays.fill(surface, height);
         Arrays.fill(sunlight, height);
     }
@@ -128,6 +168,8 @@ public class Zone {
         weatherManager.tick(deltaTime);
         entityManager.tick(deltaTime);
         liquidManager.tick(deltaTime);
+        steamManager.tick(deltaTime);
+        simulate(deltaTime);
         
         // One full cycle = 1200 seconds = 20 minutes
         time += deltaTime * (1.0F / 1200.0F);
@@ -136,32 +178,45 @@ public class Zone {
             time -= 1.0F;
         }
         
+        // Send zone status update
         if(!getPlayers().isEmpty()) {
             if(now >= lastStatusUpdate + 4000) {
-                sendMessage(new ZoneStatusMessage(getStatusConfig()));
+                for(Player player : getPlayers()) {
+                    sendMessage(new ZoneStatusMessage(getStatusConfig(player)));
+                }
+                
                 lastStatusUpdate = now;
             }
         }
         
-        if(!digQueue.isEmpty()) {
-            DugBlock dugBlock = digQueue.peek();
+        // Update minigames
+        if(!minigames.isEmpty()) {
+            Iterator<Minigame> iterator = minigames.values().iterator();
             
-            if(now >= dugBlock.getTime()) {
-                digQueue.poll();
-                int x = dugBlock.getX();
-                int y = dugBlock.getY();
-                Block block = getBlock(x, y);
+            while(iterator.hasNext()) {
+                Minigame minigame = iterator.next();
                 
-                if(block != null && block.getFrontItem().hasId("ground/earth-dug")) {
-                    updateBlock(x, y, Layer.FRONT, dugBlock.getItem(), dugBlock.getMod());
+                // Remove inactive minigames
+                if(!minigame.isActive()) {
+                    iterator.remove();
+                    continue;
                 }
+                
+                minigame.tick(deltaTime);
             }
+        }
+        
+        // Process block timers
+        if(!blockTimers.isEmpty()) {
+            List<Timer<Integer>> readyTimers = blockTimers.stream().filter(timer -> now >= timer.getTime()).collect(Collectors.toList());
+            blockTimers.removeAll(readyTimers);
+            readyTimers.forEach(Timer::process);
         }
         
         // Send block changes to players who they are relevant to
         if(!blockChanges.isEmpty()) {
             for(Player player : getPlayers()) {
-                List<BlockChangeData> blockChangesNearPlayer = blockChanges.stream()
+                List<BlockChangeData> blockChangesNearPlayer = blockChanges.values().stream()
                         .filter(blockChange -> player.isChunkActive(blockChange.getX(), blockChange.getY()))
                         .collect(Collectors.toList());
                 
@@ -172,6 +227,38 @@ public class Zone {
             
             blockChanges.clear();
         }
+        
+        
+        // Process field damage (every 1 second)
+        if(ticksElapsed % 8 == 0) {
+            for(Player player : getPlayers()) {
+                for(MetaBlock block : damageFieldBlocks.values()) {
+                    Item item = block.getItem();
+                    float distance = (float)MathUtils.distance(player.getX(), player.getY(), block.getX(), block.getY());
+                    float radius = item.getFieldDamage().getRadius();
+                    float maxDamage = item.getFieldDamage().getMaxDamage();
+                    
+                    if(maxDamage == 0.0F) {
+                        maxDamage = 2.0F;
+                    }
+                    
+                    // Deal true damage to the target, scaling with distance from field block
+                    if(distance < radius) {
+                        float damage = maxDamage * (1.0F - distance / radius);
+                        player.attack(null, item, damage, item.getFieldDamage().getType(), true);
+                    }
+                }
+            }
+        }
+        
+        ticksElapsed++;
+    }
+    
+    /**
+     * Simulate happenings that take longer periods of time
+     */
+    protected void simulate(float deltaTime) {
+        machineManager.updatePurifier(deltaTime);
     }
     
     /**
@@ -191,12 +278,28 @@ public class Zone {
      * @param message The message to send.
      * @param chunk The chunk near which players must be.
      */
-    public void sendMessageToChunk(Message message, Chunk chunk) {
+    public void sendLocalMessage(Message message, Chunk chunk) {
         for(Player player : getPlayers()) {
             if(player.isChunkActive(chunk)) {
                 player.sendMessage(message);
             }
         }
+    }
+    
+    public void sendLocalMessage(Message message, float x, float y) {
+        sendLocalMessage(message, (int)x, (int)y);
+    }
+    
+    public void sendLocalMessage(Message message, int x, int y) {
+        if(!isChunkLoaded(x, y)) {
+            return;
+        }
+        
+        sendLocalMessage(message, getChunk(x, y));
+    }
+    
+    public void sendBlockMetaUpdate(MetaBlock metaBlock) {
+        sendLocalMessage(new BlockMetaMessage(metaBlock), metaBlock.getX(), metaBlock.getY());
     }
     
     public void sendChatMessage(Player sender, String text) {
@@ -213,6 +316,24 @@ public class Zone {
     public void sendChatMessage(Player sender, String text, ChatType type) {
         sendMessage(new ChatMessage(sender.getId(), text, type));
         GameServer.getInstance().notify(String.format("%s: %s", sender.getName(), text), NotificationType.CHAT);
+    }
+    
+    public void notifyPlayers(String message) {
+        notifyPlayers(message, NotificationType.POPUP);
+    }
+    
+    public void notifyPlayers(String message, NotificationType type) {
+        sendMessage(new NotificationMessage(message, type));
+    }
+    
+    public void spawnEffect(float x, float y, String type, Object data) {
+        sendLocalMessage(new EffectMessage(x, y, type, data), x, y);
+    }
+    
+    public void kickAllPlayers(String reason, boolean shouldReconnect) {
+        for(Player player : getPlayers()) {
+            player.kick(reason, shouldReconnect);
+        }
     }
     
     public boolean isPointVisibleFrom(int x1, int y1, int x2, int y2) {
@@ -299,6 +420,194 @@ public class Zone {
         return all ? coords : null;
     }
     
+    public void explode(int x, int y, float radius, Entity cause, String effect) {
+        explode(x, y, radius, cause, false, 0, null, effect);
+    }
+    
+    public void explode(int x, int y, float radius, Entity cause, boolean destructive, float baseDamage, DamageType damageType, String effect) {
+        // Do nothing if the chunk at the target location isn't loaded
+        if(!isChunkLoaded(x, y)) {
+            return;
+        }
+        
+        spawnEffect(x + 0.5F, y + 0.5F, effect, radius);
+        Player player = cause instanceof Player ? (Player)cause : null;
+        Item item = getBlock(x, y).getFrontItem();
+        
+        // Try to destroy the block at the source of the explosion
+        if(item.getFieldability() == Fieldability.FALSE) {
+            updateBlock(x, y, Layer.FRONT, 0);
+            
+            if(destructive && !isBlockProtected(x, y, player)) {
+                updateBlock(x, y, Layer.BACK, 0);
+            }
+        }
+        
+        // Destroy blocks within range if the explosion is destructive
+        if(destructive) {
+            int rayCount = (int)Math.ceil(radius * 8);
+            List<List<Vector2i>> rays = new ArrayList<>();
+            List<Vector2i> affectedBlocks = new ArrayList<>();
+            Set<Integer> processed = new HashSet<>();
+            
+            // Determine the outer points of the blast circle and cast rays to them
+            for(int i = 0; i < rayCount; i++) {
+                float rayDistance = (float)(radius * (Math.random() * 0.4F + 0.8F));
+                float angle = (float)Math.toRadians(i * (360.0F / rayCount));
+                int targetX = (int)(x + rayDistance * Math.sin(angle));
+                int targetY = (int)(y + rayDistance * Math.cos(angle));
+                rays.add(raycast(x, y, targetX, targetY, true, true, false));
+            }
+            
+            // Fetch list of field blocks that are within range of the explosion (drastically speeds up the protection check)
+            Collection<MetaBlock> fieldBlocksInRange = fieldBlocks.values().stream()
+                    .filter(metaBlock -> MathUtils.inRange(x, y, metaBlock.getX(), metaBlock.getY(), metaBlock.getItem().getField() + radius * 2))
+                    .collect(Collectors.toList());
+            
+            // Determine which blocks to destroy by figuring out where each ray should stop
+            for(List<Vector2i> ray : rays) {
+                for(Vector2i position : ray) {
+                    int positionX = position.getX();
+                    int positionY = position.getY();
+                    int index = positionY * width + positionX;
+                    
+                    // Skip if block has been processed
+                    if(processed.contains(index)) {
+                        continue;
+                    }
+                    
+                    // Skip if not in bounds
+                    if(!areCoordinatesInBounds(positionX, positionY)) {
+                        break;
+                    }
+                    
+                    Item frontItem = getBlock(positionX, positionY).getFrontItem();
+                    double distance = MathUtils.distance(x, y, positionX, positionY);
+                    double power = radius - distance;
+                    
+                    // Do not destroy block if it invulnerable or too tough
+                    if(!frontItem.isAir() && (frontItem.isInvulnerable() || frontItem.getToughness() >= power)) {
+                        break;
+                    }
+                    
+                    // Do not destroy block if it is protected
+                    if(isBlockProtected(positionX, positionY, player, fieldBlocksInRange) || frontItem.hasField()) {
+                        // Keep following this ray if the block isn't occupied
+                        if(!frontItem.isWhole()) {
+                            continue;
+                        }
+                        
+                        break;
+                    }
+                    
+                    // Only count as processed if the ray can no longer be stopped
+                    processed.add(index);
+                    
+                    // Metadata check
+                    MetaBlock metaBlock = getMetaBlock(positionX, positionY);
+                    
+                    if(metaBlock != null) {
+                        // Do not destroy block if it is a container with loot
+                        if(frontItem.hasUse(ItemUseType.CONTAINER) && metaBlock.hasProperty("$")) {
+                            continue;
+                        }
+                        
+                        // Do not destroy block if it is a natural dungeon switch with an active linked item
+                        if(!metaBlock.hasOwner() && !getSwitchedItem(metaBlock).isAir()) {
+                            continue;
+                        }
+                    }
+                    
+                    affectedBlocks.add(position);
+                }
+            }
+
+            // Sort affected blocks by their distance from the explosion center
+            affectedBlocks.sort((a, b) -> {
+                double distanceA = MathUtils.distance(x, y, a.getX(), a.getY());
+                double distanceB = MathUtils.distance(x, y, b.getX(), b.getY());
+                return distanceA > distanceB ? 1 : distanceB > distanceA ? -1 : 0;
+            });
+            
+            // Destroy affected blocks
+            for(Vector2i position : affectedBlocks) {
+                updateBlock(position.getX(), position.getY(), Layer.FRONT, 0);
+                updateBlock(position.getX(), position.getY(), Layer.BACK, 0);
+            }
+        }
+        
+        // Fetch list of nearby entities
+        List<Entity> nearbyEntities = getEntitiesInRange(x, y, radius);
+        
+        // Damage nearby entities based on their distance from the explosion
+        for(Entity entity : nearbyEntities) {
+            // Cast a ray from the explosion to the entity and damage it if it reaches it
+            if(entity.canSee(x, y)) {
+                double distance = MathUtils.distance(x, y, entity.getX(), entity.getY());
+                float damage = (float)(baseDamage - distance);
+                entity.attack(cause, item, damage, damageType);
+            }
+        }
+    }
+    
+    public void explodeLiquid(int x, int y, int range, int liquid) {
+        explodeLiquid(x, y, range, ItemRegistry.getItem(liquid));
+    }
+    
+    public void explodeLiquid(int x, int y, int range, String liquid) {
+        explodeLiquid(x, y, range, ItemRegistry.getItem(liquid));
+    }
+    
+    public void explodeLiquid(int x, int y, int range, Item liquid) {
+        // Do nothing if liquid isn't actually a liquid
+        if(liquid.getLayer() != Layer.LIQUID) {
+            return;
+        }
+        
+        // Place liquid blocks around the explosion
+        for(int i = x - range; i <= x + range; i++) {
+            for(int j = y - range; j <= y + range; j++) {
+                // Skip if not in range
+                if(!MathUtils.inRange(x, y, i, j, range)) {
+                    continue;
+                }
+                
+                // Place liquid if target block isn't solid
+                if(!isBlockSolid(i, j, true)) {
+                    updateBlock(i, j, Layer.LIQUID, liquid, 5);
+                }
+            }
+        }
+    }
+    
+    public Item getSwitchedItem(MetaBlock metaBlock) {
+        // Do nothing if meta block is not a switch
+        if(!metaBlock.getItem().hasUse(ItemUseType.SWITCH)) {
+            return Item.AIR;
+        }
+        
+        // TODO this implementation assumes that all switched items have metadata
+        List<List<Integer>> positions = MapHelper.getList(metaBlock.getMetadata(), ">", Collections.emptyList());
+        return positions.stream()
+            .map(position -> getMetaBlock(position.get(0), position.get(1))) // Map to meta block
+            .filter(Objects::nonNull) // Remove null meta blocks
+            .map(MetaBlock::getItem) // Map to item
+            .filter(item -> item.hasUse(ItemUseType.SWITCHED)) // Remove non-switched items
+            .findFirst().orElse(Item.AIR); // Return first entry or air if none exist
+    }
+    
+    public boolean isBlockWhole(int x, int y) {
+        return areCoordinatesInBounds(x, y) && getBlock(x, y).getFrontItem().isWhole();
+    }
+    
+    public boolean isBlockEarthy(int x, int y) {
+        return areCoordinatesInBounds(x, y) && getBlock(x, y).getFrontItem().isEarthy();
+    }
+    
+    public boolean isBlockNatural(int x, int y) {
+        return areCoordinatesInBounds(x, y) && getBlock(x, y).isNatural();
+    }
+    
     public boolean isBlockSolid(int x, int y) {
         return isBlockSolid(x, y, true);
     }
@@ -309,38 +618,35 @@ public class Zone {
         }
         
         Block block = getBlock(x, y);
-        Item item = block.getItem(Layer.FRONT);
-        
-        if(item.isDoor() && block.getFrontMod() % 2 == 0) {
-            return true;
-        } else if(!item.isDoor() && item.isSolid()) {
-            return true;
-        }
-        
-        if(checkAdjacents) {
-            for(int i = -3; i <= 0; i++) {
-                for(int j = 0; j <= 2; j++) {
-                    int x1 = x + i;
-                    int y1 = y + j;
-                    
-                    if(!areCoordinatesInBounds(x1, y1) || !isChunkLoaded(x1, y1)) {
-                        continue;
-                    }
-                    
-                    block = getBlock(x1, y1);
-                    item = block.getFrontItem();
-                    
-                    if(item.getBlockWidth() > Math.abs(i) && item.getBlockHeight() > Math.abs(j)
-                            && isBlockSolid(x1, y1, false)) {
-                        return true;
-                    }
+        return block.isSolid() || (checkAdjacents && findBlock(x, y, Block::isSolid) != null);
+    }
+
+    /**
+     * Find block with item occupying the block position that satisfies the predicate.
+     * Closer blocks are prioritized in row major order.
+     */
+    public Block findBlock(int x, int y, Predicate<Block> predicate) {
+        for(int i = 0; i >= -3; i--) {
+            for(int j = 0; j <= 2; j++) {
+                int x1 = x + i;
+                int y1 = y + j;
+
+                if(!areCoordinatesInBounds(x1, y1) || !isChunkLoaded(x1, y1)) {
+                    continue;
+                }
+
+                Block block = getBlock(x1, y1);
+                Item item = block.getFrontItem();
+
+                if(item.getBlockWidth() > Math.abs(i) && item.getBlockHeight() > Math.abs(j) && predicate.test(block)) {
+                    return block;
                 }
             }
         }
-        
-        return false;
+
+        return null;
     }
-    
+
     public boolean isBlockOccupied(int x, int y, Layer layer) {
         if(!areCoordinatesInBounds(x, y)) {
             return false;
@@ -356,14 +662,38 @@ public class Zone {
         return isBlockProtected(x, y, null);
     }
     
-    public boolean isBlockProtected(int x, int y, Player from) {
-        for(MetaBlock fieldBlock : fieldBlocks.values()) {
+    public boolean isBlockProtected(int x, int y, Player player) {
+        return isBlockProtected(x, y, player, fieldBlocks.values());
+    }
+    
+    public boolean isBlockProtected(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
+        // Check bounds
+        if(!areCoordinatesInBounds(x, y)) {
+            return true;
+        }
+        
+        // Check protection at zone level
+        if(player != null && isProtected(player)) {
+            return true;
+        }
+        
+        Item frontItem = getBlock(x, y).getFrontItem(); // TODO can load chunks!
+        MetaBlock metaBlock = getMetaBlock(x, y);
+        
+        // Check block owner if it has a field
+        if(frontItem.hasField() && (metaBlock == null || !metaBlock.isOwnedBy(player))) {
+            return true;
+        }
+        
+        // Check field blocks
+        for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
             int fX = fieldBlock.getX();
             int fY = fieldBlock.getY();
             int field = fieldBlock.getItem().getField();
             
-            if(from == null || !ownsMetaBlock(fieldBlock, from)) {
+            if(player == null || (!fieldBlock.isOwnedBy(player) 
+                    && !(fieldBlock.getIntProperty("t") == 1 && player.hasFollower(fieldBlock.getOwner())))) {
                 if(item.isDish()) {
                     if(MathUtils.inRange(x, y, fX, fY, field)) {
                         return true;
@@ -385,7 +715,7 @@ public class Zone {
             int fY = fieldBlock.getY();
             int fField = fieldBlock.getItem().getField();
             
-            if(MathUtils.inRange(x, y, fX, fY, field + fField) && !ownsMetaBlock(fieldBlock, player)) {
+            if(MathUtils.inRange(x, y, fX, fY, field + fField) && !fieldBlock.isOwnedBy(player)) {
                 return true;
             }
         }
@@ -405,7 +735,7 @@ public class Zone {
             for(int j = 0; j < height; j++) {
                 int index = j * width + i;
                 Block block = getBlock(x + i, y + j);
-                blocks[index] = new Block(block.getBaseItem(), block.getBackItem(), block.getBackMod(), block.getFrontItem(), block.getFrontMod(), block.getLiquidItem(), block.getLiquidMod());
+                blocks[index] = new Block(block.getBaseItem(), block.getBackItem(), block.getBackMod(), block.getFrontItem(), block.getFrontMod(), block.getLiquidItem(), block.getLiquidMod(), 0);
                 MetaBlock metaBlock = metaBlocks.get(getBlockIndex(x + i, j + y));
                 
                 if(metaBlock != null) {
@@ -437,13 +767,16 @@ public class Zone {
     }
     
     public void placePrefab(Prefab prefab, int x, int y, Random random, long seed) {
+        placePrefab(prefab, x, y, random, prefab.isMirrorable() && random.nextBoolean(), seed);
+    }
+    
+    public void placePrefab(Prefab prefab, int x, int y, Random random, boolean mirrored, long seed) {
         int width = prefab.getWidth();
         int height = prefab.getHeight();
         Block[] blocks = prefab.getBlocks();
         int guardBlocks = 0;
         String dungeonId = prefab.isDungeon() ? UUID.randomUUID().toString() : null;
         boolean decay = prefab.hasDecay();
-        boolean mirrored = prefab.isMirrorable() && random.nextBoolean();
         Map<Item, Item> replacedItems = new HashMap<>();
         
         // Replacements
@@ -477,8 +810,8 @@ public class Zone {
                 Item backItem = replacedItems.getOrDefault(block.getBackItem(), block.getBackItem());
                 Item frontItem = replacedItems.getOrDefault(block.getFrontItem(), block.getFrontItem());
                 Item liquidItem = replacedItems.getOrDefault(block.getLiquidItem(), block.getLiquidItem());
-                int backMod = block.getBackMod();
-                int frontMod = block.getFrontMod();
+                int backMod = backItem.getMod() == block.getBackItem().getMod() ? block.getBackMod() : 0;
+                int frontMod = frontItem.getMod() == block.getFrontItem().getMod() ? block.getFrontMod() : 0;
                 int liquidMod = block.getLiquidMod();
                 
                 // Update base item if it isn't empty
@@ -508,6 +841,15 @@ public class Zone {
                         }
                     } else if(decay && frontItem.getMod() == ModType.DECAY && random.nextBoolean()) {
                         frontMod = random.nextInt(4) + 1;
+                    }
+                    
+                    // Try to place rubble
+                    if(decay && frontItem.isWhole() && !isBlockOccupied(x + i, y + j - 1, Layer.FRONT) && random.nextDouble() <= 0.2) {
+                        RubbleType[] types = RubbleType.values();
+                        RubbleType type = types[random.nextInt(types.length)];
+                        String[] itemIds = type.getItemIds();
+                        Item item = ItemRegistry.getItem(itemIds[random.nextInt(itemIds.length)]);
+                        updateBlock(x + i, y + j - 1, Layer.FRONT, item);
                     }
                     
                     int offset = mirrored ? -(frontItem.getBlockWidth() - 1) : 0;
@@ -655,14 +997,70 @@ public class Zone {
         return dungeons.containsKey(id);
     }
     
-    public void digBlock(int x, int y) {
+    public boolean digBlock(int x, int y) {
         if(!areCoordinatesInBounds(x, y)) {
-            return;
+            return false;
         }
         
         Block block = getBlock(x, y);
-        digQueue.add(new DugBlock(x, y, block.getFrontItem(), block.getFrontMod(), System.currentTimeMillis() + 10000));
+        Item item = block.getFrontItem();
+        
+        if(!item.isDiggable()) {
+            return !item.isWhole();
+        }
+        
+        int mod = block.getFrontMod();
         updateBlock(x, y, Layer.FRONT, "ground/earth-dug");
+        addBlockTimer(x, y, 10000, () -> {
+            if(block.getFrontItem().hasId("ground/earth-dug")) {
+                updateBlock(x, y, Layer.FRONT, item, mod);
+            }
+        });
+        
+        return true;
+    }
+    
+    public void addBlockTimer(int x, int y, long delay, Runnable task) {
+        removeBlockTimer(x, y);
+        blockTimers.add(new Timer<>(getBlockIndex(x, y), delay, task));
+    }
+    
+    public void removeBlockTimer(int x, int y) {
+        blockTimers.removeIf(timer -> timer.getKey() == getBlockIndex(x, y));
+    }
+    
+    public void processBlockTimer(int x, int y) {
+        Timer<Integer> timer = blockTimers.stream().filter(t -> t.getKey() == getBlockIndex(x, y)).findFirst().orElse(null);
+        
+        if(timer != null) {
+            timer.process(true);
+        }
+    }
+    
+    public void startMinigame(Minigame minigame) {
+        int index = getBlockIndex(minigame.getX(), minigame.getY());
+        Minigame currentMinigame = minigames.get(index);
+        
+        // Don't start minigame if a minigame is already active at this location
+        if(currentMinigame != null && currentMinigame.isActive()) {
+            minigame.notifyCreator("Another minigame is already in progress at that location.");
+            return;
+        }
+        
+        minigames.put(index, minigame);
+        minigame.start();
+    }
+    
+    public Minigame getMinigame(int x, int y) {
+        return getMinigame(getBlockIndex(x, y));
+    }
+    
+    public Minigame getMinigame(int index) {
+        return minigames.get(index);
+    }
+    
+    public int getMinigameCount() {
+        return minigames.size();
     }
     
     public void updateBlock(int x, int y, Layer layer, int item) {
@@ -715,13 +1113,16 @@ public class Zone {
         }
         
         Chunk chunk = getChunk(x, y);        
-        chunk.getBlock(x, y).updateLayer(layer, item, mod);
+        chunk.getBlock(x, y).updateLayer(layer, item, mod, owner == null ? 0 : owner.getBlockHash()); // TODO owner hash should get updated on place only!!
         chunk.setModified(true);
+        modified = true; // TODO this alone is NOT sufficient!
         
         // Queue block update if there are players in this zone.
         // TODO maybe check if the block update was in an active chunk, too?
         if(!getPlayers().isEmpty()) {
-            blockChanges.add(new BlockChangeData(x, y, layer, item, mod));
+            int z = layer.ordinal();
+            int changeIndex = z * width * height + getBlockIndex(x, y);
+            blockChanges.put(changeIndex, new BlockChangeData(x, y, layer, 0, item, mod)); // TODO entity id
         }
         
         if(layer == Layer.FRONT) {
@@ -739,7 +1140,10 @@ public class Zone {
                 removeMetaBlock(x, y);
             }
             
+            removeBlockTimer(x, y);
             entityManager.trySpawnBlockEntity(x, y);
+            steamManager.indexBlock(x, y, item);
+            growthManager.indexBlock(x, y, item);
             
             if(item.isWhole() && y < sunlight[x]) {
                 sunlight[x] = y;
@@ -747,11 +1151,27 @@ public class Zone {
                 recalculateSunlight(x, sunlight[x]);
             }
             
-            sendMessageToChunk(new LightMessage(x, getSunlight(x, 1)), chunk);
+            sendLocalMessage(new LightMessage(x, getSunlight(x, 1)), chunk);
         } else if(layer == Layer.LIQUID) {
             if(!item.isAir() && mod > 0) {
                 liquidManager.indexLiquidBlock(x, y);
             }
+        }
+    }
+    
+    // TODO better block update methods
+    public void updateBlockMod(int x, int y, Layer layer, int mod) {
+        if(!areCoordinatesInBounds(x, y)) {
+            return;
+        }
+        
+        Block block = getBlock(x, y);
+        block.setMod(layer, mod);
+        
+        if(!getPlayers().isEmpty()) {
+            int z = layer.ordinal();
+            int changeIndex = z * width * height + getBlockIndex(x, y);
+            blockChanges.put(changeIndex, new BlockChangeData(x, y, layer, 0, block.getItem(layer), mod));
         }
     }
     
@@ -813,8 +1233,7 @@ public class Zone {
         
         switch(meta) {
             case LOCAL:
-                sendMessageToChunk(metaBlock == null ? new BlockMetaMessage(x, y) 
-                        : new BlockMetaMessage(metaBlock), getChunk(x, y));
+                sendLocalMessage(metaBlock == null ? new BlockMetaMessage(x, y) : new BlockMetaMessage(metaBlock), x, y);
                 break;
             case GLOBAL:
                 sendMessage(new BlockMetaMessage(x, y)); // Send empty one first or it won't work for some reason
@@ -829,6 +1248,7 @@ public class Zone {
     }
     
     private void indexMetaBlock(int index, MetaBlock block) {
+        unindexMetaBlock(index);
         Item item = block.getItem();
         metaBlocks.put(index, block);
         
@@ -839,12 +1259,20 @@ public class Zone {
         if(item.hasField()) {
             fieldBlocks.put(index, block);
         }
+        
+        if(item.hasFieldDamage()) {
+            damageFieldBlocks.put(index, block);
+        }
+        
+        machineManager.indexMetaBlock(index, block);
     }
     
     private void unindexMetaBlock(int index) {
         metaBlocks.remove(index);
         globalMetaBlocks.remove(index);
         fieldBlocks.remove(index);
+        damageFieldBlocks.remove(index);
+        machineManager.unindexMetaBlock(index);
     }
     
     protected void setMetaBlocks(List<MetaBlock> metaBlocks) {
@@ -860,14 +1288,6 @@ public class Zone {
         indexDungeons();
     }
     
-    private boolean ownsMetaBlock(MetaBlock metaBlock, Player player) {
-        if(!metaBlock.hasOwner()) {
-            return false;
-        }
-        
-        return player.getDocumentId().equals(metaBlock.getOwner());
-    }
-    
     public MetaBlock getMetaBlock(int x, int y) {
         return metaBlocks.get(getBlockIndex(x, y));
     }
@@ -880,6 +1300,11 @@ public class Zone {
         List<MetaBlock> spawnBlocks = getMetaBlocks(block 
                 -> block.getItem().hasId("mechanical/zone-teleporter") || block.getItem().hasId("signs/obelisk-spawn"));
         return spawnBlocks.isEmpty() ? null : spawnBlocks.get((int)(Math.random() * spawnBlocks.size()));
+    }
+    
+    public boolean isSpawnInRange(int x, int y, double range) {
+        return metaBlocks.values().stream().anyMatch(block -> (block.getItem().hasId("mechanical/zone-teleporter") 
+                || block.getItem().hasId("signs/obelisk-spawn")) && MathUtils.inRange(block.getX(), block.getY(), x, y, range));
     }
     
     public List<MetaBlock> getMetaBlocksWithUse(ItemUseType useType) {
@@ -915,16 +1340,28 @@ public class Zone {
         return Collections.unmodifiableCollection(globalMetaBlocks.values());
     }
     
-    public List<Entity> getEntitiesInRange(float x, float y, float range) {
+    public List<Entity> getEntitiesInRange(float x, float y, double range) {
         return entityManager.getEntitiesInRange(x, y, range);
     }
     
-    public Player getRandomPlayerInRange(float x, float y, float range) {
+    public Player getRandomPlayerInRange(float x, float y, double range) {
         return entityManager.getRandomPlayerInRange(x, y, range);
     }
     
-    public List<Player> getPlayersInRange(float x, float y, float range) {
+    public List<Player> getPlayersInRange(float x, float y, double range) {
         return entityManager.getPlayersInRange(x, y, range);
+    }
+    
+    public void spawnPersistentNpcs(Collection<NpcData> data) {
+        entityManager.spawnPersistentNpcs(data);
+    }
+    
+    public Npc spawnEntity(String type, int x, int y) {
+        return entityManager.spawnEntity(type, x, y);
+    }
+    
+    public Npc spawnEntity(String type, int x, int y, boolean effect) {
+        return entityManager.spawnEntity(type, x, y, effect);
     }
     
     public void spawnEntity(Entity entity, int x, int y) {
@@ -967,6 +1404,10 @@ public class Zone {
         return entityManager.getNpcs();
     }
     
+    public List<Npc> getPersistentNpcs() {
+        return entityManager.getPersistentNpcs();
+    }
+    
     public Player getPlayer(int entityId) {
         return entityManager.getPlayer(entityId);
     }
@@ -987,6 +1428,64 @@ public class Zone {
         return liquidManager.settleLiquids();
     }
     
+    public void updateGrowables(int rainCycles) {
+        growthManager.updateGrowables(rainCycles);
+    }
+    
+    public boolean isMachineActive(EcologicalMachine machine) {
+        return machineManager.isMachineActive(machine);
+    }
+    
+    public void sendMachineStatus(Player player) {
+        machineManager.sendMachineStatus(player);
+    }
+    
+    public boolean addMachinePart(Item part) {
+        return machineManager.addMachinePart(part);
+    }
+    
+    public boolean removeMachinePart(Item part) {
+        return machineManager.removeMachinePart(part);
+    }
+    
+    public Collection<Item> getDiscoveredParts(EcologicalMachine machine) {
+        return machineManager.getDiscoveredParts(machine);
+    }
+    
+    public Map<EcologicalMachine, List<Item>> getDiscoveredParts() {
+        return machineManager.getDiscoveredParts();
+    }
+    
+    public MachineManager getMachineManager() {
+        return machineManager;
+    }
+    
+    public void recordActionTime(String name) {
+        actionHistory.put(name.toLowerCase(), OffsetDateTime.now());
+    }
+    
+    public boolean isActionOnCooldown(String name, long cooldown, TemporalUnit unit) {
+        return actionHistory.containsKey(name.toLowerCase()) && !OffsetDateTime.now().isAfter(actionHistory.get(name.toLowerCase()).plus(cooldown, unit));
+    }
+    
+    public Map<String, OffsetDateTime> getActionHistory() {
+        return Collections.unmodifiableMap(actionHistory);
+    }
+    
+    /**
+     * @return The specified coordinates in a player-readable format
+     * For example, {@code x: 200 y: 300} in a plain biome becomes {@code 800 west, 100 below}
+     */
+    public String getReadableCoordinates(int x, int y) {
+        int center = width / 2;
+        int surface = biome == Biome.DEEP ? -1000 : 200;
+        String directionX = x < center ? "west" : x > center ? "east" : "central";
+        String directionY = y > surface ? "below" : "above";
+        String coordX = String.format("%s %s", Math.abs(x - center), directionX);
+        String coordY = String.format("%s %s", Math.abs(y - surface), directionY);
+        return String.format("%s, %s", coordX, coordY);
+    }
+    
     public boolean areCoordinatesInBounds(int x, int y) {
         return x >= 0 && y >= 0 && x < width && y < height;
     }
@@ -994,31 +1493,51 @@ public class Zone {
     protected void onChunkLoaded(Chunk chunk) {
         int chunkX = chunk.getX();
         int chunkY = chunk.getY();
+        List<Integer> growthSourceIndices = new ArrayList<>();
         
         for(int x = chunkX; x < chunkX + chunk.getWidth(); x++) {
             // Update pending sunlight
             if(pendingSunlight.contains(x)) {
                 recalculateSunlight(x, sunlight[x]);
-                sendMessageToChunk(new LightMessage(x, getSunlight(x, 1)), chunk);
+                sendLocalMessage(new LightMessage(x, getSunlight(x, 1)), chunk);
             }
             
             for(int y = chunkY; y < chunkY + chunk.getHeight(); y++) {
                 // Spawn block-related entities
                 entityManager.trySpawnBlockEntity(x, y);
-                
-                // Index liquids
                 Block block = chunk.getBlock(x, y);
                 
+                // Index front item
+                Item item = block.getFrontItem();
+                steamManager.indexBlock(x, y, item);
+                
+                if(growthManager.indexBlock(x, y, item)) {
+                    growthSourceIndices.add(getBlockIndex(x, y));
+                }
+                
+                // Index liquids
                 if(!block.getLiquidItem().isAir() && block.getLiquidMod() > 0) {
                     liquidManager.indexLiquidBlock(x, y);
                 }
             }
         }
+        
+        // Simulate plant growth based on time passed since chunk was last loaded
+        int cycles = (int)((System.currentTimeMillis() - chunk.getSaveTime()) / 1200000); // One cycle per 20 minutes
+        growthManager.updateGrowables(cycles, growthSourceIndices);
     }
     
-    protected void onChunkUnloaded(Chunk chunk) { 
-        // TODO is this function ever gonna be necessary?
-        // It seems that most (if not all) thingies are unindexed automatically.
+    protected void onChunkUnloaded(Chunk chunk) {
+        for(int x = 0; x < chunk.getWidth(); x++) {
+            for(int y = 0; y < chunk.getHeight(); y++) {
+                int index = getBlockIndex(chunk.getX() + x, chunk.getY() + y);
+                Minigame minigame = getMinigame(index);
+                
+                if(minigame != null) {
+                    minigame.finish(); // Unload active minigame
+                }
+            }
+        }
     }
     
     public void saveChunks() {
@@ -1070,6 +1589,10 @@ public class Zone {
     
     public WeatherManager getWeatherManager() {
         return weatherManager;
+    }
+    
+    public boolean isUnderground(int x, int y) {
+        return areCoordinatesInBounds(x, y) && y >= surface[x];
     }
     
     public void setSurface(int x, int surface) {
@@ -1161,8 +1684,17 @@ public class Zone {
             explorer.getStatistics().trackAreaExplored();
         }
         
+        chunksExploredCount++;
         sendMessage(new ZoneExploredMessage(chunkIndex));
         return chunksExplored[chunkIndex] = true;
+    }
+    
+    public boolean isAreaExplored(int x, int y) {
+        return areCoordinatesInBounds(x, y) && chunksExplored[getChunkIndex(x, y)];
+    }
+    
+    protected byte[] getSteamData() {
+        return steamManager.getData();
     }
     
     public File getDirectory() {
@@ -1181,15 +1713,17 @@ public class Zone {
     }
     
     public int getChunksExploredCount() {
-        int count = 0;
+        return chunksExploredCount;
+    }
+    
+    private void recalculateChunksExploredCount() {
+        chunksExploredCount = 0;
         
         for(boolean explored : chunksExplored) {
             if(explored) {
-                count++;
+                chunksExploredCount++;
             }
         }
-        
-        return count;
     }
     
     @JsonValue
@@ -1201,8 +1735,13 @@ public class Zone {
         return (int)(UUID.fromString(documentId).getMostSignificantBits() >> 32);
     }
     
+    /**
+     * @deprecated DO NOT CALL DIRECTLY.
+     * If you have to rename a zone, please use {@link ZoneManager#renameZone(Zone, String)}.
+     */
     public void setName(String name) {
         this.name = name;
+        kickAllPlayers("Zone name changed.", true);
     }
     
     public String getName() {
@@ -1257,8 +1796,131 @@ public class Zone {
         return acidity;
     }
     
+    public void setPrivate(boolean value) {
+        this.isPrivate = value;
+        kickAllPlayers("Accessibility status changed.", true); // The login handler will kick non-members out of the zone if the world is made private
+    }
+    
+    public boolean canJoin(Player player) {
+        return player.isGodMode() || isPublic() || isOwner(player) || isMember(player);
+    }
+    
+    public boolean isPublic() {
+        return !isPrivate();
+    }
+    
+    public boolean isPrivate() {
+        return isPrivate;
+    }
+    
+    public void setProtected(boolean value) {
+        this.isProtected = value;
+        kickAllPlayers("Protection status changed.", true);
+    }
+    
+    public boolean isProtected(Player player) {
+        return isProtected && !isOwner(player) && !isMember(player);
+    }
+    
+    public boolean isProtected() {
+        return isProtected;
+    }
+    
+    public void setPvp(boolean pvp) {
+        this.pvp = pvp;
+        kickAllPlayers("PvP status changed.", true); 
+    }
+    
+    public boolean isPvp() {
+        return pvp;
+    }
+    
+    protected void setEntryCode(String entryCode) {
+        this.entryCode = entryCode;
+    }
+    
+    public boolean hasEntryCode() {
+        return entryCode != null;
+    }
+    
+    public String getEntryCode() {
+        return entryCode;
+    }
+    
+    public boolean isOwner(Player player) {
+        return isOwned() && player.getDocumentId().equals(owner);
+    }
+    
+    public boolean isOwned() {
+        return owner != null;
+    }
+    
+    public void setOwner(Player player) {
+        this.owner = player.getDocumentId();
+        
+        // Update spawn teleporter ownership
+        for(MetaBlock block : getMetaBlocksWithItem("mechanical/zone-teleporter")) {
+            block.setOwner(owner);
+            sendBlockMetaUpdate(block);
+        }
+    }
+    
+    public String getOwner() {
+        return owner;
+    }
+    
+    public void addMember(Player player) {
+        members.add(player.getDocumentId());
+        
+        // Force player to reconnect if they're currently in this zone
+        if(player.getZone() == this) {
+            player.kick("Member status changed.", true);
+        }
+    }
+    
+    public void removeMember(Player player) {
+        members.remove(player.getDocumentId());
+        
+        // Kick the player from the world if they are currently in it or force them to reconnect if the world is public
+        if(player.getZone() == this) {
+            if(isPublic()) {
+                player.kick("Member status changed.", true);
+            } else {
+                player.changeZone(null);
+            }
+        }
+    }
+    
+    public boolean isMember(Player player) {
+        return members.contains(player.getDocumentId());
+    }
+    
+    public List<String> getMembers() {
+        return Collections.unmodifiableList(members);
+    }
+    
     public OffsetDateTime getCreationDate() {
         return creationDate;
+    }
+
+    public boolean isUnexplored() {
+        return this.getExplorationProgress() < 0.7;
+    }
+
+    public boolean isPopular() {
+        return this.getPlayers().size() > 0;
+    }
+    
+    public boolean isPurified() {
+        return acidity < 0.05F;
+    }
+    
+    public void setModified(boolean modified) {
+        this.modified = modified;
+    }
+    
+    public boolean isModified() {
+        return modified;
     }
     
     /**
@@ -1274,6 +1936,13 @@ public class Zone {
         config.put("surface", surface);
         config.put("chunks_explored", chunksExplored);
         config.put("chunks_explored_count", getChunksExploredCount());
+        config.put("private", isPrivate);
+        config.put("protected", isProtected(player));
+        config.put("protected_player", isProtected(player));
+        config.put("owner", isOwner(player));
+        config.put("member", isMember(player));
+        config.put("pvp", pvp);
+        config.put("bookmarked", player.isZoneBookmarked(this));
         Map<String, Object> depth = new HashMap<>();
         List<Object> earth = new ArrayList<>();
         
@@ -1297,16 +1966,16 @@ public class Zone {
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link ZoneStatusMessage}.
      */
-    public Map<String, Object> getStatusConfig() {
-        Map<String, Object> config = new HashMap<>();
-        config.put("w", new int[] {
-                (int)(time * 10000), 
-                (int)(temperature * 10000), 
-                (int)(weatherManager.getPrecipitation() * 10000), 
-                (int)(weatherManager.getPrecipitation() * 10000), 
-                (int)(weatherManager.getPrecipitation() * 10000), 
-                (int)(acidity * 10000)
-        });
-        return config;
+    public Object getStatusConfig(Player player) {
+        int[] status = {
+            (int)(time * 10000), 
+            (int)(temperature * 10000), 
+            (int)(weatherManager.getPrecipitation() * 10000), 
+            (int)(weatherManager.getPrecipitation() * 10000), 
+            (int)(weatherManager.getPrecipitation() * 10000), 
+            (int)(acidity * 10000)
+        };
+        
+        return player.hasClientVersion("2.1.0") ? MapHelper.map("w", status) : status;
     }
 }

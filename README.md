@@ -1,53 +1,71 @@
-# Brainwine
-[![build](https://github.com/kuroppoi/brainwine/actions/workflows/build.yml/badge.svg)](https://github.com/kuroppoi/brainwine/actions)
+<h1 align="center">Brainwine</h1>
+<p align="center">
+  <a href="https://github.com/kuroppoi/brainwine/actions"><img src="https://github.com/kuroppoi/brainwine/actions/workflows/build.yml/badge.svg" alt="build"/></a>
+  <a href="https://github.com/kuroppoi/brainwine/releases/latest"><img src="https://img.shields.io/github/v/release/kuroppoi/brainwine?labelColor=30373D&label=Release&logoColor=959DA5&logo=github" alt="release"/></a>
+</p>
 
-Brainwine is a Deepworld private server written in Java, made with user-friendliness and portability in mind.
-Due to the time it will take for this project to be complete (and my inconsistent working on it), brainwine has been prematurely open-sourced
-and is free for all to use.\
-Keep in mind, though, that this server is not finished yet. Expect to encounter bad code, bugs and missing features!\
-Brainwine is currently compatible with the following versions of Deepworld:
-- Steam: `v3.13.1`
+Brainwine is a Deepworld private server written in Java, designed to be portable and easy to use.\
+It's still a work in progress, so keep in mind that it's not yet feature-complete. (A to-do list can be found [here](https://github.com/kuroppoi/brainwine/projects/1).)\
+Brainwine currently supports the following versions of Deepworld:
+
+- Windows: `v3.13.1`
 - iOS: `v2.11.0.1`
 - MacOS: `v2.11.1`
 
-## Features
-A list of all planned, in-progress and finished features can be found [here.](https://github.com/kuroppoi/brainwine/projects/1)
+## Quick Local Setup
 
-## Setup
+- Install [Java 8](https://adoptium.net/temurin/releases/?package=jdk&version=8).
+- Download the [latest Brainwine release](https://github.com/kuroppoi/brainwine/releases/latest).
+- Start Brainwine by running the jar file.
+- In the window that appears, press "Start Server" to start the server.
+- Press "Start Deepworld" to launch the game.
+  - If you want to play on iOS, download a patching kit for it [here](https://github.com/kuroppoi/brainwine/releases/tag/patching-kits-1.0).
+- Register a new account and play the game.
 
-### Setting up the client
+## Building
 
-Before you can connect to a server, a few modifications need to be made to the Deepworld game client.\
-The exact process of this differs per platform.\
-You may download an installation package for your desired platform [here.](https://github.com/kuroppoi/brainwine/releases/tag/patching-kits-1.0)
+### Prerequisites
 
-### Setting up the server
+- Java 8 Development Kit
 
-#### Prerequisites
+Run the following to build the program:
 
-- Java 8 or newer
+```sh
+git clone --recurse-submodules https://github.com/kuroppoi/brainwine.git
+cd brainwine
+./gradlew dist
+```
 
-You can download the latest release [here.](https://github.com/kuroppoi/brainwine/releases/latest)\
-Alternatively, if you wish to build from source, clone this repository with the `--recurse-submodules` flag\
-and run `gradlew dist` in the root directory of the repository.\
-After the build has finished, the output jar will be located in `build/libs`.\
-You may then start the server through the gui, or start it directly by running the jar with the `disablegui` flag.
+The output executable jar `brainwine.jar` will be located in the `/build/dist` directory.\
+To start the server without a user interface, run the following:
 
-#### Configurations
+```sh
+# This behavior is the default on platforms that do not support Java's Desktop API.
+java -jar brainwine.jar disablegui
+```
 
-On first-time startup, configuration files will be generated which you may modify however you like:
-- `api.json` Configuration file for news & API connectivity information.
-- `loottables.json` Configuration file for which loot may be obtained from containers.
-- `spawning.json` Configuration file for entity spawns per biome.
-- `generators` Folder containing configuration files for zone generators.
+## Docker
 
-## Contributions
+Run the following to build the image:
 
-Disagree with how I did something? Found a potential error? See some room for improvement? Or just want to add a feature?
-Glad to hear it! Feel free to make a pull request anytime. Just make sure you follow the code style!
-And, apologies in advance for the lack of documentation. Haven't gotten around to do it yet. Sorry!
+```sh
+git clone https://github.com/kuroppoi/brainwine
+cd brainwine
+docker buildx build -t brainwine:latest .
+```
 
-## Issues
+To then run the image in a container, run the following:
 
-Found a bug? Before posting an issue, make sure your build is up-to-date and your issue has not already been posted before.
-Provide a detailed explanation of the issue, and how to reproduce it. I'll get to it ASAP!
+```sh
+# Replace ${PWD} with %cd% if you're using a Windows Command Prompt.
+docker run -p 5001-5003:5001-5003 --volume ${PWD}/run:/data brainwine:latest
+```
+
+Or alternatively, if you wish to use docker compose:
+
+```sh
+docker compose up
+```
+
+The server files will be stored in a docker volume and can be accessed from `/data` in the container.\
+Feel free to play around with the configuration by editing `docker-compose.yml`.

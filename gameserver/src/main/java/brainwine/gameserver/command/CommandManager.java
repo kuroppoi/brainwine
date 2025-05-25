@@ -1,52 +1,25 @@
 package brainwine.gameserver.command;
 
-import static brainwine.gameserver.entity.player.NotificationType.SYSTEM;
+import static brainwine.gameserver.player.NotificationType.SYSTEM;
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.reflections.Reflections;
 
-import brainwine.gameserver.command.commands.AcidityCommand;
-import brainwine.gameserver.command.commands.AdminCommand;
-import brainwine.gameserver.command.commands.BanCommand;
-import brainwine.gameserver.command.commands.BroadcastCommand;
-import brainwine.gameserver.command.commands.EntityCommand;
-import brainwine.gameserver.command.commands.ExperienceCommand;
-import brainwine.gameserver.command.commands.ExportCommand;
-import brainwine.gameserver.command.commands.GenerateZoneCommand;
-import brainwine.gameserver.command.commands.GiveCommand;
-import brainwine.gameserver.command.commands.HealthCommand;
-import brainwine.gameserver.command.commands.HelpCommand;
-import brainwine.gameserver.command.commands.ImportCommand;
-import brainwine.gameserver.command.commands.KickCommand;
-import brainwine.gameserver.command.commands.LevelCommand;
-import brainwine.gameserver.command.commands.MuteCommand;
-import brainwine.gameserver.command.commands.PlayerIdCommand;
-import brainwine.gameserver.command.commands.PositionCommand;
-import brainwine.gameserver.command.commands.PrefabListCommand;
-import brainwine.gameserver.command.commands.RegisterCommand;
-import brainwine.gameserver.command.commands.RickrollCommand;
-import brainwine.gameserver.command.commands.SayCommand;
-import brainwine.gameserver.command.commands.SeedCommand;
-import brainwine.gameserver.command.commands.SettleLiquidsCommand;
-import brainwine.gameserver.command.commands.SkillPointsCommand;
-import brainwine.gameserver.command.commands.StopCommand;
-import brainwine.gameserver.command.commands.TeleportCommand;
-import brainwine.gameserver.command.commands.ThinkCommand;
-import brainwine.gameserver.command.commands.TimeCommand;
-import brainwine.gameserver.command.commands.UnbanCommand;
-import brainwine.gameserver.command.commands.UnmuteCommand;
-import brainwine.gameserver.command.commands.WeatherCommand;
-import brainwine.gameserver.command.commands.ZoneIdCommand;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 
+@SuppressWarnings("unchecked")
 public class CommandManager {
     
     public static final String CUSTOM_COMMAND_PREFIX = "!"; // TODO configurable
@@ -67,38 +40,17 @@ public class CommandManager {
     
     private static void registerCommands() {
         logger.info(SERVER_MARKER, "Registering commands ...");
-        registerCommand(new StopCommand());
-        registerCommand(new RegisterCommand());
-        registerCommand(new TeleportCommand());
-        registerCommand(new KickCommand());
-        registerCommand(new MuteCommand());
-        registerCommand(new UnmuteCommand());
-        registerCommand(new BanCommand());
-        registerCommand(new UnbanCommand());
-        registerCommand(new SayCommand());
-        registerCommand(new ThinkCommand());
-        registerCommand(new BroadcastCommand());
-        registerCommand(new PlayerIdCommand());
-        registerCommand(new ZoneIdCommand());
-        registerCommand(new AdminCommand());
-        registerCommand(new HelpCommand());
-        registerCommand(new GiveCommand());
-        registerCommand(new GenerateZoneCommand());
-        registerCommand(new SeedCommand());
-        registerCommand(new PrefabListCommand());
-        registerCommand(new ExportCommand());
-        registerCommand(new ImportCommand());
-        registerCommand(new PositionCommand());
-        registerCommand(new RickrollCommand());
-        registerCommand(new EntityCommand());
-        registerCommand(new HealthCommand());
-        registerCommand(new ExperienceCommand());
-        registerCommand(new LevelCommand());
-        registerCommand(new SkillPointsCommand());
-        registerCommand(new SettleLiquidsCommand());
-        registerCommand(new WeatherCommand());
-        registerCommand(new AcidityCommand());
-        registerCommand(new TimeCommand());
+        Reflections reflections = new Reflections("brainwine.gameserver.command");
+        Set<Class<?>> classes = reflections.getTypesAnnotatedWith(CommandInfo.class);
+        
+        for(Class<?> clazz : classes) {
+            if(!Command.class.isAssignableFrom(clazz)) {
+                logger.warn(SERVER_MARKER, "Attempted to register non-command class {}", clazz.getSimpleName());
+                continue;
+            }
+            
+            registerCommand((Class<? extends Command>)clazz);
+        }
     }
     
     public static void executeCommand(CommandExecutor executor, String commandLine) {
@@ -138,27 +90,44 @@ public class CommandManager {
         command.execute(executor, args);
     }
     
-    public static void registerCommand(Command command) {
-        String name = command.getName();
+    public static void registerCommand(Class<? extends Command> type) {
+        CommandInfo info = type.getAnnotation(CommandInfo.class);
         
-       if(commands.containsKey(name)) {
-           logger.warn(SERVER_MARKER, "Attempted to register duplicate command {} with name {}", command.getClass(), name);
-           return;
-       }
-       
-       commands.put(name, command);
-       String[] aliases = command.getAliases();
-       
-       if(aliases != null) {
-           for(String alias : aliases) {
-               if(commands.containsKey(alias) || CommandManager.aliases.containsKey(alias)) {
-                   logger.warn(SERVER_MARKER, "Duplicate alias {} for command {}", alias, command.getClass());
-                   continue;
-               }
-               
-               CommandManager.aliases.put(alias, command);
-           }
-       }
+        if(info == null) {
+            logger.warn(SERVER_MARKER, "Cannot register command '{}' because it does not have the CommandInfo annotation", type.getSimpleName());
+            return;
+        }
+        
+        String name = info.name().toLowerCase();
+        
+        if(commands.containsKey(name)) {
+            logger.warn(SERVER_MARKER, "Attempted to register duplicate command '{}' with name '{}'", type.getSimpleName(), name);
+            return;
+        }
+        
+        Command command = null;
+        
+        try {
+            command = type.getConstructor().newInstance();
+        } catch(ReflectiveOperationException e) {
+            logger.error(SERVER_MARKER, "Failed to instantiate command '{}'", type.getSimpleName(), e);
+            return;
+        }
+        
+        commands.put(name, command);
+        
+        if(info.aliases() != null) {
+            List<String> aliases = Stream.of(info.aliases()).map(String::toLowerCase).collect(Collectors.toList());
+            
+            for(String alias : aliases) {
+                if(commands.containsKey(alias) || CommandManager.aliases.containsKey(alias)) {
+                    logger.warn(SERVER_MARKER, "Duplicate alias {} for command {}", alias, command.getClass());
+                    continue;
+                }
+                
+                CommandManager.aliases.put(alias, command);
+            }
+        }
     }
     
     public static Set<String> getCommandNames() {
@@ -173,7 +142,7 @@ public class CommandManager {
     }
     
     public static Command getCommand(String name, boolean allowAlias) {
-        return commands.getOrDefault(name, allowAlias ? aliases.get(name) : null);
+        return commands.getOrDefault(name.toLowerCase(), allowAlias ? aliases.get(name.toLowerCase()) : null);
     }
     
     public static Collection<Command> getCommands() {

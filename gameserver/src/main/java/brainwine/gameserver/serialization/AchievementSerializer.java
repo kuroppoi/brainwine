@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
-import brainwine.gameserver.achievements.Achievement;
+import brainwine.gameserver.achievement.Achievement;
 
 /**
  * Seriously, Jackson has the stupidest problems sometimes.

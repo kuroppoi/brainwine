@@ -2,8 +2,8 @@ package brainwine.gameserver.zone;
 
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,21 +20,20 @@ import org.apache.logging.log4j.Logger;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import brainwine.gameserver.GameServer;
 import brainwine.gameserver.entity.Entity;
 import brainwine.gameserver.entity.EntityConfig;
 import brainwine.gameserver.entity.EntityRegistry;
 import brainwine.gameserver.entity.EntityStatus;
 import brainwine.gameserver.entity.npc.Npc;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.entity.npc.NpcData;
 import brainwine.gameserver.item.Item;
 import brainwine.gameserver.item.Layer;
 import brainwine.gameserver.item.ModType;
-import brainwine.gameserver.server.messages.EffectMessage;
+import brainwine.gameserver.player.Player;
+import brainwine.gameserver.resource.ResourceFinder;
 import brainwine.gameserver.server.messages.EntityPositionMessage;
 import brainwine.gameserver.server.messages.EntityStatusMessage;
 import brainwine.gameserver.util.MapHelper;
-import brainwine.gameserver.util.ResourceUtils;
 import brainwine.gameserver.util.Vector2i;
 import brainwine.gameserver.util.WeightedMap;
 import brainwine.shared.JsonHelper;
@@ -62,31 +61,29 @@ public class EntityManager {
     public static void loadEntitySpawns() {
         spawns.clear();
         logger.info(SERVER_MARKER, "Loading entity spawns ...");
-        File file = new File("spawning.json");
-        ResourceUtils.copyDefaults("spawning.json");
         
-        if(file.isFile()) {
-            try {
-                spawns.putAll(JsonHelper.readValue(file, new TypeReference<Map<Biome, List<EntitySpawn>>>(){}));
-            } catch (IOException e) {
-                logger.error(SERVER_MARKER, "Failed to load entity spawns", e);
-            }
+        try {
+            URL url = ResourceFinder.getResourceUrl("spawning.json", true);
+            spawns.putAll(JsonHelper.readValue(url, new TypeReference<Map<Biome, List<EntitySpawn>>>(){}));
+        } catch (IOException e) {
+            logger.error(SERVER_MARKER, "Failed to load entity spawns", e);
         }
     }
     
-    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, Item baseItem) {
+    private static List<EntitySpawn> getEligibleEntitySpawns(Biome biome, String locale, double depth, double acidity, Item baseItem) {
         return spawns.entrySet().stream()
                 .filter(entry -> entry.getKey() == biome)
                 .map(Entry::getValue)
                 .flatMap(Collection::stream)
                 .filter(spawn -> locale.equalsIgnoreCase(spawn.getLocale())
                         && depth >= spawn.getMinDepth() && depth <= spawn.getMaxDepth()
+                        && acidity >= spawn.getMinAcidity() && acidity <= spawn.getMaxAcidity()
                         && ((!baseItem.hasId("base/maw") && !baseItem.hasId("base/pipe")) || spawn.getOrifice() == baseItem))
                 .collect(Collectors.toList());
     }
     
-    private static EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, Item baseItem) {
-        return new WeightedMap<>(getEligibleEntitySpawns(biome, locale, depth, baseItem), EntitySpawn::getFrequency).next();
+    private static EntitySpawn getRandomEligibleEntitySpawn(Biome biome, String locale, double depth, double acidity, Item baseItem) {
+        return new WeightedMap<>(getEligibleEntitySpawns(biome, locale, depth, acidity, baseItem), EntitySpawn::getFrequency).next();
     }
     
     public void tick(float deltaTime) {
@@ -136,7 +133,7 @@ public class EntityManager {
                 Block block = chunk.getBlock(x, y);
                 String locale = block.getBaseItem().isAir() ? "sky" : "cave";
                 EntitySpawn spawn = getRandomEligibleEntitySpawn(
-                        zone.getBiome(), locale, y / (double)zone.getHeight(), block.getBaseItem());
+                        zone.getBiome(), locale, y / (double)zone.getHeight(), zone.getAcidity(), block.getBaseItem());
                 
                 if(immediate) {
                     if(tryBustOrifice(x, y, Layer.BACK) || tryBustOrifice(x, y, Layer.FRONT)) {
@@ -175,22 +172,22 @@ public class EntityManager {
     
     private void clearEntities() {
         npcs.values().stream()
-            .filter(npc -> npc.isDead() || !zone.isChunkLoaded((int)npc.getX(), (int)npc.getY()) ||
-                    (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME))
+            .filter(npc -> npc.isDead() || (!npc.isPersistent() && !npc.hasActiveMinigame() && (!zone.isChunkLoaded(npc.getBlockX(), npc.getBlockY()) ||
+                    (npc.isTransient() && System.currentTimeMillis() > npc.getLastTrackedAt() + ENTITY_CLEAR_TIME))))
             .collect(Collectors.toList())
             .forEach(this::removeEntity);
     }
     
-    public List<Entity> getEntitiesInRange(float x, float y, float range) {
+    public List<Entity> getEntitiesInRange(float x, float y, double range) {
         return getEntities().stream().filter(entity -> entity.inRange(x, y, range)).collect(Collectors.toList());
     }
     
-    public Player getRandomPlayerInRange(float x, float y, float range) {
+    public Player getRandomPlayerInRange(float x, float y, double range) {
         List<Player> players = getPlayersInRange(x, y, range);
         return players.isEmpty() ? null : players.get(random.nextInt(players.size()));
     }
     
-    public List<Player> getPlayersInRange(float x, float y, float range) {
+    public List<Player> getPlayersInRange(float x, float y, double range) {
         return getPlayers().stream().filter(player -> player.inRange(x, y, range)).collect(Collectors.toList());
     }
     
@@ -210,12 +207,10 @@ public class EntityManager {
                 List<String> guardians = MapHelper.getList(metaBlock.getMetadata(), "!", Collections.emptyList());
                 
                 for(String guardian : guardians) {
-                    EntityConfig config = EntityRegistry.getEntityConfig(guardian);
+                    Npc entity = spawnEntity(guardian, x, y);
                     
-                    if(config != null) {
-                        Npc entity = new Npc(zone, config);
+                    if(entity != null) {
                         entity.setGuardBlock(x, y);
-                        spawnEntity(entity, x, y);
                     }
                 }
             }
@@ -231,22 +226,48 @@ public class EntityManager {
         
         // Check for mounted entity (turrets & geysers)
         if(item.isEntity()) {
-            EntityConfig config = EntityRegistry.getEntityConfig(item.getId());
+            Npc entity = spawnEntity(item.getId(), x, y);
             
-            if(config != null) {
-                Npc entity = new Npc(zone, config);
+            if(entity != null) {
                 MetaBlock metaBlock = zone.getMetaBlock(x, y);
                 
                 // Set owner entity if it has one
                 if(metaBlock != null && metaBlock.hasOwner()) {
-                    entity.setOwner(GameServer.getInstance().getPlayerManager().getPlayerById(metaBlock.getOwner()));
+                    entity.setOwner(metaBlock.getOwner());
                 }
                 
                 entity.setMountBlock(x, y);
-                spawnEntity(entity, x, y);
                 mountedNpcs.put(index, entity);
             }
         }
+    }
+    
+    public void spawnPersistentNpcs(Collection<NpcData> data) {
+        for(NpcData entry : data) {
+            if(entry.getType() == null) {
+                continue;
+            }
+            
+            Npc npc = new Npc(zone, entry.getType());
+            npc.setName(entry.getName());
+            spawnEntity(npc, entry.getX(), entry.getY());
+        }
+    }
+    
+    public Npc spawnEntity(String type, int x, int y) {
+        return spawnEntity(type, x, y, false);
+    }
+    
+    public Npc spawnEntity(String type, int x, int y, boolean effect) {
+        EntityConfig config = EntityRegistry.getEntityConfig(type);
+        
+        if(config == null) {
+            return null;
+        }
+        
+        Npc entity = new Npc(zone, config);
+        spawnEntity(entity, x, y, effect);
+        return entity;
     }
     
     public void spawnEntity(Entity entity, int x, int y) {
@@ -254,13 +275,11 @@ public class EntityManager {
     }
     
     public void spawnEntity(Entity entity, int x, int y, boolean effect) {
-        if(zone.isChunkLoaded(x, y)) {
-            addEntity(entity);
-            entity.setPosition(x, y);
-            
-            if(effect) {
-                zone.sendMessageToChunk(new EffectMessage(x + 0.5F, y + 0.5F, "bomb-teleport", 4), zone.getChunk(x, y));
-            }
+        addEntity(entity);
+        entity.setPosition(x, y);
+        
+        if(effect && zone.isChunkLoaded(x, y)) {
+            zone.spawnEffect(x + 0.5F, y + 0.5F, "bomb-teleport", 4);
         }
     }
     
@@ -275,9 +294,9 @@ public class EntityManager {
         
         if(entity instanceof Player) {
             Player player = (Player)entity;
-            player.onZoneChanged();
+            player.onZoneEntered();
             players.put(entityId, player);
-            playersByName.put(player.getName(), player);
+            playersByName.put(player.getName().toLowerCase(), player);
             player.sendMessageToPeers(new EntityStatusMessage(player, EntityStatus.ENTERING));
             player.sendMessageToPeers(new EntityPositionMessage(player));
         } else if(entity instanceof Npc) {
@@ -296,7 +315,7 @@ public class EntityManager {
         
         if(entity instanceof Player) {
             players.remove(entityId);
-            playersByName.remove(entity.getName());
+            playersByName.remove(entity.getName().toLowerCase());
             zone.sendMessage(new EntityStatusMessage(entity, EntityStatus.EXITING));
         } else {
             npcs.remove(entityId);
@@ -332,11 +351,15 @@ public class EntityManager {
     }
     
     public int getTransientNpcCount() {
-        return (int)npcs.values().stream().filter(npc -> npc.isTransient()).count();
+        return (int)npcs.values().stream().filter(Npc::isTransient).count();
     }
     
     public Collection<Npc> getNpcs() {
         return Collections.unmodifiableCollection(npcs.values());
+    }
+    
+    public List<Npc> getPersistentNpcs() {
+        return npcs.values().stream().filter(Npc::isPersistent).collect(Collectors.toList());
     }
     
     public Player getPlayer(int entityId) {
@@ -344,7 +367,7 @@ public class EntityManager {
     }
     
     public Player getPlayer(String name) {
-        return playersByName.get(name);
+        return playersByName.get(name.toLowerCase());
     }
     
     public int getPlayerCount() {

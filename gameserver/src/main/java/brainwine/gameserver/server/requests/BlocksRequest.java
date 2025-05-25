@@ -3,9 +3,9 @@ package brainwine.gameserver.server.requests;
 import java.util.ArrayList;
 import java.util.List;
 
-import brainwine.gameserver.annotations.RequestInfo;
-import brainwine.gameserver.entity.player.Player;
+import brainwine.gameserver.player.Player;
 import brainwine.gameserver.server.PlayerRequest;
+import brainwine.gameserver.server.RequestInfo;
 import brainwine.gameserver.server.messages.BlockMetaMessage;
 import brainwine.gameserver.server.messages.BlocksMessage;
 import brainwine.gameserver.server.messages.LightMessage;
@@ -47,6 +47,13 @@ public class BlocksRequest extends PlayerRequest {
             }
             
             Chunk chunk = zone.getChunk(index);
+            
+            // Kick player if chunk is null (load failure)
+            if(chunk == null) {
+                player.kick("Chunk load failure.");
+                return;
+            }
+            
             chunks.add(chunk);
             metaBlocks.addAll(zone.getLocalMetaBlocksInChunk(index));
             player.addActiveChunk(index);

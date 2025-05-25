@@ -1,9 +1,9 @@
 plugins {
-    id 'java'
+    id 'brainwine.distribution'
 }
 
 ext {
-    mainClass = 'brainwine.Bootstrap'
+    mainClass = 'brainwine.Main'
     workingDirectory = 'run'
 }
 
@@ -15,26 +15,14 @@ dependencies {
     implementation 'com.formdev:flatlaf-intellij-themes:3.0'
     implementation 'com.formdev:flatlaf-extras:3.0'
     implementation 'com.formdev:flatlaf:3.0'
-    implementation project(':api')
-    implementation project(':gameserver')
-    implementation project(':shared')
+    implementation project(':brainwine-api')
+    implementation project(':brainwine-gameserver')
+    implementation project(':brainwine-shared')
 }
 
-task dist(type: Jar) {
-    manifest {
-        attributes 'Multi-Release': 'true',
-                   'Main-Class': project.ext.mainClass
-    }
-    
-    from {
-        configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
-    
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    dependsOn configurations.runtimeClasspath
-    with jar
+dist {
+    mainClass = project.ext.mainClass
+    licenseFile = file("${project.rootDir}/LICENSE.md")
 }
 
 task run(type: JavaExec) {
