@@ -64,6 +64,12 @@ public class SkillConsumable implements Consumable {
                 return;
             }
             
+            // Fail if player no longer has consumable
+            if(!player.getInventory().hasItem(item)) {
+                fail(item, player);
+                return;
+            }
+            
             // Verify data
             if(data.length != 1) {
                 fail(item, player);

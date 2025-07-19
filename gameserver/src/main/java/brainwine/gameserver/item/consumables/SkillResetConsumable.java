@@ -31,6 +31,11 @@ public class SkillResetConsumable implements Consumable {
                 return;
             }
             
+            // Do nothing if player no longer has consumable
+            if(!player.getInventory().hasItem(item)) {
+                return;
+            }
+            
             // Check if there are any skills to reset
             if(!player.getSkills().values().stream().anyMatch(level -> level > 1)) {
                 player.showDialog(DialogHelper.messageDialog("You don't have any skills to reset."));

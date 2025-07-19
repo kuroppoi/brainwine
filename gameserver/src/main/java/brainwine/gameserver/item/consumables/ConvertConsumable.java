@@ -51,6 +51,12 @@ public class ConvertConsumable implements Consumable {
                 return;
             }
             
+            // Fail if player no longer has consumable
+            if(!inventory.hasItem(item)) {
+                fail(item, player);
+                return;
+            }
+            
             // Fail if there is no data
             if(data.length == 0) {
                 fail(item, player);

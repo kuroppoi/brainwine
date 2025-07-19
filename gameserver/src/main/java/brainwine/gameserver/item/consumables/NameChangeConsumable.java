@@ -31,6 +31,12 @@ public class NameChangeConsumable implements Consumable {
                 return;
             }
             
+            // Fail if player no longer has consumable
+            if(!player.getInventory().hasItem(item)) {
+                fail(item, player, String.format("Sorry, you don't have any %ss.", item.getTitle().toLowerCase()));
+                return;
+            }
+            
             String name = data.length == 1 ? "" + data[0] : null;
             
             // Check if the data is present
