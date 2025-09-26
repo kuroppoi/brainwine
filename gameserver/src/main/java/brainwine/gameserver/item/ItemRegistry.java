@@ -18,6 +18,7 @@ public class ItemRegistry {
     private static final Map<String, Item> items = new HashMap<>();
     private static final Map<Integer, Item> itemsByCode = new HashMap<>();
     private static final Map<String, List<Item>> itemsByCategory = new HashMap<>();
+    private static final List<String> hiddenItems = new ArrayList<>();
     
     // TODO maybe just move the registry stuff here
     public static void clear() {
@@ -48,6 +49,16 @@ public class ItemRegistry {
         }
         
         categorizedItems.add(item);
+        
+        if(item.isHidden()) {
+            // TODO v3 has a hard limit of 20 hidden items (see Inventory#maxLocationSlots in the game client)
+            if(hiddenItems.size() == 20) {
+                logger.warn(SERVER_MARKER, "Upper hidden item limit has been reached. Certain hidden accessories might not work properly!");
+            }
+            
+            hiddenItems.add(item.getId());
+        }
+        
         items.put(id, item);
         itemsByCode.put(code, item);
         return true;
@@ -67,5 +78,9 @@ public class ItemRegistry {
     
     public static List<Item> getItemsByCategory(String category) {
         return Collections.unmodifiableList(itemsByCategory.getOrDefault(category, Collections.emptyList()));
+    }
+    
+    public static int getHiddenItemIndex(Item item) {
+        return hiddenItems.indexOf(item.getId());
     }
 }

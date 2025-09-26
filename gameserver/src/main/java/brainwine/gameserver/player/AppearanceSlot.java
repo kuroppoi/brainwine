@@ -1,5 +1,7 @@
 package brainwine.gameserver.player;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 public enum AppearanceSlot {
 
     SKIN_COLOR("c*", "skin-color", true),
@@ -33,6 +35,7 @@ public enum AppearanceSlot {
         this.changeable = changeable;
     }
     
+    @JsonCreator
     public static AppearanceSlot fromId(String id) {
         for(AppearanceSlot value : values()) {
             if(value.getId().equals(id)) {

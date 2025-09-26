@@ -9,17 +9,19 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
+import brainwine.gameserver.item.InventoryType;
 import brainwine.gameserver.item.Item;
+import brainwine.gameserver.item.ItemRegistry;
 import brainwine.gameserver.item.ItemUseType;
 import brainwine.gameserver.server.messages.EntityChangeMessage;
 import brainwine.gameserver.server.messages.InventoryMessage;
 import brainwine.gameserver.server.messages.WardrobeMessage;
+import brainwine.gameserver.util.MapHelper;
 
 @JsonIncludeProperties({"items", "hotbar", "accessories"})
 public class Inventory {
@@ -116,6 +118,8 @@ public class Inventory {
     }
     
     private void setItem(Item item, int quantity, boolean sendMessage) {
+        AppearanceSlot slot = item.getAppearanceSlot();
+        
         if(quantity <= 0) {
             items.remove(item);
             hotbar.removeItem(item);
@@ -124,7 +128,18 @@ public class Inventory {
                 accessories.removeItem(item);
                 player.sendMessageToPeers(new EntityChangeMessage(player.getId(), player.getStatusConfig()));
             }
+            
+            // Unequip appearance item
+            // TODO: potential nullptr if appearance value is null
+            if(slot != null && player.getAppearance().getOrDefault(slot.getId(), 0).equals(item.getCode())) {
+                player.updateAppearance(MapHelper.map(slot.getId(), 0));
+            }
         } else {
+            // Equip appearance item (unless player already has it)
+            if(slot != null && !hasItem(item)) {
+                player.updateAppearance(MapHelper.map(slot.getId(), item.getCode()));
+            }
+            
             items.put(item, quantity);
         }
         
@@ -171,18 +186,32 @@ public class Inventory {
         return hotbar;
     }
     
-    public ItemContainer getAccessories() {
-        return accessories;
+    public List<Item> getAccessories() {
+        return getAccessories(true);
     }
     
-    // TODO hidden accessories
+    public List<Item> getAccessories(boolean includeHidden) {
+        List<Item> items = new ArrayList<>();
+        
+        for(Item item : accessories.getItems()) {
+            if(item.isAccessory()) {
+                items.add(item);
+            }
+        }
+        
+        if(includeHidden) {
+            this.items.keySet().stream().filter(item -> item.getInventoryType() == InventoryType.HIDDEN).forEach(items::add);
+        }
+        
+        return items;
+    }
+    
     public int getSkillBonus(Skill skill) {
-        return Stream.of(accessories.getItems()).map(item -> item.getSkillBonus(skill)).max(Integer::compareTo).orElse(0);
+        return getAccessories().stream().map(item -> item.getSkillBonus(skill)).max(Integer::compareTo).orElse(0);
     }
     
-    // TODO hidden accessories
     public double getRegenBonus() {
-        return Stream.of(accessories.getItems()).map(Item::getRegenBonus).min(Double::compareTo).orElse(1.0);
+        return getAccessories().stream().map(Item::getRegenBonus).min(Double::compareTo).orElse(1.0);
     }
     
     public Set<Item> getWardrobe() {
@@ -201,7 +230,10 @@ public class Inventory {
     private void addItemLocation(Item item, List<Object> itemData) {
         int slot = -1;
         
-        if((slot = hotbar.getSlot(item)) != -1) {
+        if(item.isHidden()) {
+            itemData.add("z");
+            itemData.add(ItemRegistry.getHiddenItemIndex(item));
+        } else if((slot = hotbar.getSlot(item)) != -1) {
             itemData.add(ContainerType.HOTBAR.getId());
             itemData.add(slot);
         } else if((slot = accessories.getSlot(item)) != -1) {

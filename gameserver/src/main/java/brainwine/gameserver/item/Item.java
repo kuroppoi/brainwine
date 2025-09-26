@@ -13,6 +13,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 import brainwine.gameserver.dialog.DialogType;
+import brainwine.gameserver.player.AppearanceSlot;
 import brainwine.gameserver.player.Skill;
 import brainwine.gameserver.util.Pair;
 import brainwine.gameserver.util.Vector2i;
@@ -62,6 +63,12 @@ public class Item {
     
     @JsonProperty("group")
     private ItemGroup group = ItemGroup.NONE;
+    
+    @JsonProperty("inventory type")
+    private InventoryType inventoryType = InventoryType.NONE;
+    
+    @JsonProperty("appearance")
+    private AppearanceSlot appearanceSlot;
     
     @JsonProperty("size")
     private Vector2i size = new Vector2i(1, 1);
@@ -337,6 +344,26 @@ public class Item {
     
     public ItemGroup getGroup() {
         return group;
+    }
+    
+    public boolean isAccessory() {
+        return inventoryType == InventoryType.ACCESSORY;
+    }
+    
+    public boolean isHidden() {
+        return inventoryType == InventoryType.HIDDEN;
+    }
+    
+    public InventoryType getInventoryType() {
+        return inventoryType;
+    }
+    
+    public boolean hasAppearanceSlot() {
+        return appearanceSlot != null;
+    }
+    
+    public AppearanceSlot getAppearanceSlot() {
+        return appearanceSlot;
     }
     
     public int getBlockWidth() {
