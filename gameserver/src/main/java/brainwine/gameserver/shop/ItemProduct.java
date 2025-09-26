@@ -1,6 +1,9 @@
 package brainwine.gameserver.shop;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -16,6 +19,7 @@ import brainwine.gameserver.player.Player;
 public class ItemProduct extends Product {
     
     private final Map<Item, Integer> items;
+    private Map<Item, Integer> inventoryLimits = new HashMap<>();
     
     @JsonCreator
     public ItemProduct(
@@ -52,7 +56,30 @@ public class ItemProduct extends Product {
         }
     }
     
+    @Override
+    public boolean validate(Player player) {
+        List<String> errors = new ArrayList<>();
+        
+        // Check if owned item limits have been reached already
+        inventoryLimits.forEach((item, quantity) -> {
+            if(player.getInventory().hasItem(item, quantity)) {
+                errors.add(String.format("You already own %sx %s and cannot purchase this item.", quantity, item.getTitle()));
+            }
+        });
+        
+        if(!errors.isEmpty()) {
+            player.notify(errors.get(0));
+            return false;
+        }
+        
+        return true;
+    }
+    
     public Map<Item, Integer> getItems() {
         return Collections.unmodifiableMap(items);
+    }
+    
+    public Map<Item, Integer> getInventoryLimits() {
+        return Collections.unmodifiableMap(inventoryLimits);
     }
 }

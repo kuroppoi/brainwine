@@ -28,6 +28,10 @@ public abstract class Product {
     
     public abstract void purchase(Player player);
     
+    protected boolean validate(Player player) {
+        return true; // Override
+    }
+    
     public String getName() {
         return name;
     }
