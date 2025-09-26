@@ -21,6 +21,21 @@
         "micro-protector-pack"
       ]
     },
+    "weapons": {
+      "name": "Armaments",
+      "icon": "icon-gun",
+      "products": [
+        "brass-exo-headset",
+        "brass-exo-torso",
+        "brass-exo-legs",
+        "diamond-exo-headset",
+        "diamond-exo-torso",
+        "diamond-exo-legs",
+        "onyx-exo-headset",
+        "onyx-exo-torso",
+        "onyx-exo-legs"
+      ]
+    },
     "worlds": {
       "name": "Private Worlds",
       "icon": "icon-world",
@@ -146,6 +161,123 @@
       "image": "inventory/mechanical/dish-micro",
       "items": {
         "mechanical/dish-micro": 4
+      }
+    },
+    "brass-exo-headset": {
+      "type": "item",
+      "name": "Brass Headset",
+      "cost": 125,
+      "description": "Give your perception and engineering skills a +1 bump and improve low-light visibility with this fancy brass headset!",
+      "image": "inventory/prosthetics/brass-headset",
+      "inventory_limits": {
+        "prosthetics/brass-headset": 1
+      },
+      "items": {
+        "prosthetics/brass-headset": 1
+      }
+    },
+    "brass-exo-torso": {
+      "type": "item",
+      "name": "Brass Exotorso",
+      "cost": 150,
+      "description": "Boost your staying power and look great with a shiny brass exotorso! Offers +1 to stamina and mining, plus faster health regeneration.",
+      "image": "inventory/prosthetics/brass-torso",
+      "inventory_limits": {
+        "prosthetics/brass-torso": 1
+      },
+      "items": {
+        "prosthetics/brass-torso": 1
+      }
+    },
+    "brass-exo-legs": {
+      "type": "item",
+      "name": "Brass Exolegs",
+      "cost": 150,
+      "description": "Kick your agility and survival skills up +1 with these shiny brass exolegs. You'll also love the powerful new stomp attack and foot damage reduction.",
+      "image": "inventory/prosthetics/brass-legs",
+      "inventory_limits": {
+        "prosthetics/brass-legs": 1
+      },
+      "items": {
+        "prosthetics/brass-legs": 1
+      }
+    },
+    "diamond-exo-headset": {
+      "type": "item",
+      "name": "Diamond Headset",
+      "cost": 225,
+      "description": "Blast your perception skill +2 into overdrive and engineering by +1. Your zoom view and low-light vision will give you the ultimate edge!",
+      "image": "inventory/prosthetics/diamond-headset",
+      "inventory_limits": {
+        "prosthetics/diamond-headset": 1
+      },
+      "items": {
+        "prosthetics/diamond-headset": 1
+      }
+    },
+    "diamond-exo-torso": {
+      "type": "item",
+      "name": "Diamond Exotorso",
+      "cost": 250,
+      "description": "Double down on your stamina power with this glowing mantle of protection! Offers +2 stamina, +1 mining, and fast health regeneration.",
+      "image": "inventory/prosthetics/diamond-torso",
+      "inventory_limits": {
+        "prosthetics/diamond-torso": 1
+      },
+      "items": {
+        "prosthetics/diamond-torso": 1
+      }
+    },
+    "diamond-exo-legs": {
+      "type": "item",
+      "name": "Diamond Exolegs",
+      "cost": 250,
+      "description": "Max your speed and damage reductions with these brilliant leg attachments. Get +2 agility, +1 survival, and enhanced stomp attacks and foot protection.",
+      "image": "inventory/prosthetics/diamond-legs",
+      "inventory_limits": {
+        "prosthetics/diamond-legs": 1
+      },
+      "items": {
+        "prosthetics/diamond-legs": 1
+      }
+    },
+    "onyx-exo-headset": {
+      "type": "item",
+      "name": "Onyx Headset",
+      "cost": 325,
+      "description": "Integrate your mind with the most powerful headgear around! Your +2 bonus to perception and engineering will leave even Google Glass feeling inadequate.",
+      "image": "inventory/prosthetics/onyx-headset",
+      "inventory_limits": {
+        "prosthetics/onyx-headset": 1
+      },
+      "items": {
+        "prosthetics/onyx-headset": 1
+      }
+    },
+    "onyx-exo-torso": {
+      "type": "item",
+      "name": "Onyx Exotorso",
+      "cost": 350,
+      "description": "Own the ultimate body suit and launch your stamina and mining skills with a +2 bonus. And with a triple-speed health regen rate, you'll be unstoppable on the battlefield!",
+      "image": "inventory/prosthetics/onyx-torso",
+      "inventory_limits": {
+        "prosthetics/onyx-torso": 1
+      },
+      "items": {
+        "prosthetics/onyx-torso": 1
+      }
+    },
+    "onyx-exo-legs": {
+      "type": "item",
+      "name": "Onyx Exolegs",
+      "cost": 350,
+      "description": "Kick danger in the face with the finest exoleg available! Boost your agility and survival skills by +2 and deal powerful blows with your deadly feet.",
+      "image": "inventory/prosthetics/onyx-legs",
+      "inventory_limits": {
+        "prosthetics/onyx-legs": 1
+      },
+      "items": {
+        "prosthetics/onyx-legs": 1
       }
     },
     "private-world-small": {
