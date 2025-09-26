@@ -442,8 +442,7 @@ public class Player extends Entity implements CommandExecutor {
     public Map<String, Object> getStatusConfig() {
         Map<String, Object> config = super.getStatusConfig();
         config.put("id", documentId);
-        config.putAll(appearance);
-        config.put("u", inventory.findJetpack().getCode());
+        config.putAll(getDetails());
         return config;
     }
     
@@ -1722,6 +1721,15 @@ public class Player extends Entity implements CommandExecutor {
         return connection != null && connection.isOpen();
     }
     
+    private Map<String, Object> getDetails() {
+        Map<String, Object> details = new HashMap<>();
+        details.putAll(appearance);
+        details.put("u", inventory.findJetpack().getCode());
+        details.put("to*", "ffff55"); // Top overlay color
+        details.put("fg*", "ffff55"); // Facial gear overlay color
+        return details;
+    }
+    
     /**
      * @return A {@link Map} containing all the data necessary for use in {@link ConfigurationMessage}.
      */
@@ -1743,7 +1751,7 @@ public class Player extends Entity implements CommandExecutor {
         config.put("items_crafted", statistics.getTotalItemsCrafted());
         config.put("play_time", (int)(statistics.getPlayTime()));
         config.put("deaths", statistics.getDeaths());
-        config.put("appearance", appearance);
+        config.put("appearance", getDetails());
         config.put("settings", settings);
         config.put("api_token", apiToken);
         return config;
