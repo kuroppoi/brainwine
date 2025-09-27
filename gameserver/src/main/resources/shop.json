@@ -33,7 +33,8 @@
         "diamond-exo-legs",
         "onyx-exo-headset",
         "onyx-exo-torso",
-        "onyx-exo-legs"
+        "onyx-exo-legs",
+        "exo-skin"
       ]
     },
     "worlds": {
@@ -278,6 +279,16 @@
       },
       "items": {
         "prosthetics/onyx-legs": 1
+      }
+    },
+    "exo-skin": {
+      "type": "item",
+      "name": "Exo Skin",
+      "cost": 750,
+      "description": "Avoid acid and lava damage with this powerful exo barrier. Toxic swims and hellish rains will never feel more delightful! Note: this item is not tradeable.",
+      "image": "inventory/accessories/exo-skin",
+      "items": {
+        "accessories/exo-skin": 1
       }
     },
     "private-world-small": {
