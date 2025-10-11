@@ -257,8 +257,11 @@ public class Player extends Entity implements CommandExecutor {
         // Update tracked entities
         if(now - lastTrackedEntityUpdate >= TRACKED_ENTITY_UPDATE_INTERVAL) {
             updateTrackedEntities();
-            sendMessage(new EntityPositionMessage(trackedEntities));
             lastTrackedEntityUpdate = now;
+            
+            if(!trackedEntities.isEmpty()) {
+                sendMessage(new EntityPositionMessage(trackedEntities));
+            }
         }
     }
     
