@@ -61,6 +61,11 @@ public class DialogRequest extends PlayerRequest {
         
         // Create player info dialog
         Player subject = GameServer.getInstance().getPlayerManager().getPlayer((String)input[0]);
+        if(subject == null) {
+            player.showDialog(DialogHelper.messageDialog("Player not found!"));
+            return;
+        }
+
         Dialog dialog = new Dialog().setTitle(subject.getName());
         
         // Online status section
