@@ -182,7 +182,7 @@ public class Zone {
         if(!getPlayers().isEmpty()) {
             if(now >= lastStatusUpdate + 4000) {
                 for(Player player : getPlayers()) {
-                    sendMessage(new ZoneStatusMessage(getStatusConfig(player)));
+                    player.sendMessage(new ZoneStatusMessage(getStatusConfig(player)));
                 }
                 
                 lastStatusUpdate = now;
