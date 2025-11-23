@@ -16,8 +16,10 @@ import javax.imageio.ImageIO;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import brainwine.api.config.SslConfig;
 import brainwine.api.models.ZoneInfo;
 import brainwine.api.util.ImageUtils;
+import brainwine.api.util.JettyUtils;
 import brainwine.shared.JsonHelper;
 import io.javalin.Javalin;
 import io.javalin.http.ContentType;
@@ -38,7 +40,14 @@ public class PortalService {
     public PortalService(Api api, int port) {
         this.dataFetcher = api.getDataFetcher();
         logger.info(SERVER_MARKER, "Starting PortalService @ port {} ...", port);
-        portal = Javalin.create(config -> config.jsonMapper(new JavalinJackson(JsonHelper.MAPPER)))
+        SslConfig ssl = api.getSslConfig();
+        portal = Javalin.create(config -> {
+            config.jsonMapper(new JavalinJackson(JsonHelper.MAPPER));
+            
+            if(ssl.isSslEnabled()) {
+                config.server(() -> JettyUtils.createJettyServerWithSsl(port, ssl.getKeyStorePath(), ssl.getKeyStorePassword()));
+            }
+        })
             .exception(Exception.class, this::handleException)
             .get("/v1/map/{zone}", this::handleMapRequest)
             .get("/v1/worlds", this::handleZoneSearch)

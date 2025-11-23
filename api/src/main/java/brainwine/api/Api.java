@@ -3,6 +3,8 @@ package brainwine.api;
 import static brainwine.shared.LogMarkers.SERVER_MARKER;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 
 import brainwine.api.config.ApiConfig;
 import brainwine.api.config.NewsEntry;
+import brainwine.api.config.SslConfig;
 import brainwine.shared.JsonHelper;
 import io.javalin.core.LoomUtil;
 
@@ -17,6 +20,7 @@ public class Api {
     
     private static final Logger logger = LogManager.getLogger();
     private final ApiConfig config;
+    private final List<NewsEntry> news;
     private final DataFetcher dataFetcher;
     private final GatewayService gatewayService;
     private final PortalService portalService;
@@ -32,6 +36,9 @@ public class Api {
         logger.info(SERVER_MARKER, "Using data fetcher {}", dataFetcher.getClass().getName());
         logger.info(SERVER_MARKER, "Loading configuration ...");
         config = loadConfig();
+        logger.info(SERVER_MARKER, "Is SSL enabled? {}", config.getSslConfig().isSslEnabled() ? "Yes" : "No");
+        news = new ArrayList<>(config.getNews()); // Explicit copy
+        Collections.reverse(news);
         LoomUtil.useLoomThreadPool = false;
         gatewayService = new GatewayService(this, config.getGatewayPort());
         portalService = new PortalService(this, config.getPortalPort());
@@ -54,7 +61,9 @@ public class Api {
                 return ApiConfig.DEFAULT_CONFIG;
             }
             
-            return JsonHelper.readValue(file, ApiConfig.class);
+            ApiConfig config = JsonHelper.readValue(file, ApiConfig.class);
+            JsonHelper.writeValue(file, config);
+            return config;
         } catch (Exception e) {
             logger.fatal(SERVER_MARKER, "Failed to load configuration", e);
             System.exit(-1);
@@ -64,11 +73,15 @@ public class Api {
     }
     
     public List<NewsEntry> getNews() {
-        return config.getNews();
+        return news;
     }
     
     public String getGameServerHost() {
         return config.getGameServerIp() + ":" + config.getGameServerPort();
+    }
+    
+    public SslConfig getSslConfig() {
+        return config.getSslConfig();
     }
     
     public DataFetcher getDataFetcher() {
