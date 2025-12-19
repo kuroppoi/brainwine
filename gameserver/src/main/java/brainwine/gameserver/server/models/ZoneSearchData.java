@@ -27,7 +27,7 @@ public class ZoneSearchData {
         this.id = zone.getDocumentId();
         this.name = zone.getName();
         this.playerCount = zone.getPlayerCount();
-        this.followeeCount = 0; // TODO
+        this.followeeCount = (int)zone.getPlayers().stream().filter(player::isFollowing).count();
         this.followees = new String[0]; // TODO
         this.activeDuration = 0; // TODO
         this.explorationProgress = (int)(zone.getExplorationProgress() * 100);
