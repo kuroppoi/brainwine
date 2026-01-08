@@ -1638,7 +1638,7 @@ public class Zone {
     public int[] getSunlight(int x, int length) {
         int[] sunlight = new int[length];
         
-        if(x >= 0 && x + length < width) {
+        if(x >= 0 && x + length <= width) {
             System.arraycopy(this.sunlight, x, sunlight, 0, length);
         }
         
