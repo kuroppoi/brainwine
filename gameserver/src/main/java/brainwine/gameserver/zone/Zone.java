@@ -685,6 +685,14 @@ public class Zone {
             return true;
         }
         
+        return isBlockProtectedByField(x, y, player, fieldBlocks);
+    }
+
+    public boolean isBlockProtectedByField(int x, int y, Player player) {
+        return isBlockProtectedByField(x, y, player, fieldBlocks.values());
+    }
+
+    public boolean isBlockProtectedByField(int x, int y, Player player, Collection<MetaBlock> fieldBlocks) {
         // Check field blocks
         for(MetaBlock fieldBlock : fieldBlocks) {
             Item item = fieldBlock.getItem();
@@ -705,7 +713,7 @@ public class Zone {
                 }
             }
         }
-        
+
         return false;
     }
     
