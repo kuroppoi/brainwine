@@ -11,8 +11,6 @@ import brainwine.gameserver.zone.Biome;
 import brainwine.gameserver.zone.MetaBlock;
 import brainwine.gameserver.zone.Zone;
 
-import java.util.List;
-
 public class TargetTeleportInteraction implements ItemInteraction {
     
     @Override
