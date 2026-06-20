@@ -167,7 +167,11 @@ public class Inventory {
     public boolean isEmpty() {
         return items.isEmpty();
     }
-
+    
+    public boolean hasAccessoryWithUse(ItemUseType use) {
+        return !findAccessoryWithUse(use).isAir();
+    }
+    
     public Item findAccessoryWithUse(ItemUseType use) {
         for(Item item : accessories.getItems()) {
             if(item.hasUse(use)) {

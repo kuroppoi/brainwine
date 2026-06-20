@@ -30,6 +30,7 @@ public enum ItemUseType {
     
     AFTERBURNER,
     BREATH,
+    BUILDING_EXTENSION,
     BURST(new BurstInteraction()),
     COMPOSTER(new ComposterInteraction()),
     CONTAINER(new ContainerInteraction()),
