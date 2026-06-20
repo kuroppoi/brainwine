@@ -72,6 +72,11 @@ public class InventoryUseRequest extends PlayerRequest {
                 }
             }
             
+            // v2 sends air when it stops using a tool, so we'll intercept that here
+            if(type == 0 && status == 2) {
+                item = player.getHeldItem();
+            }
+            
             // Send item use data to other players in the zone if no details are present
             player.sendMessageToTrackers(new EntityItemUseMessage(player.getId(), type, item, status));
         }
