@@ -57,6 +57,9 @@ public class Item {
     
     @JsonProperty("mod")
     private ModType mod = ModType.NONE;
+
+    @JsonProperty("place mod")
+    private int placeMod;
     
     @JsonProperty("meta")
     private MetaType meta = MetaType.NONE;
@@ -328,6 +331,10 @@ public class Item {
     
     public ModType getMod() {
         return mod;
+    }
+
+    public int getPlaceMod() {
+        return placeMod;
     }
     
     public boolean hasMeta() {
