@@ -109,11 +109,17 @@ public class BlockPlaceRequest extends PlayerRequest {
             fail(player, "Dish will overlap another protector.");
             return;
         }
-        
+
         if(layer == Layer.LIQUID) {
             mod = 5;
-        } else if(item.getMod() == ModType.ROTATION && !item.isMirrorable()) {
-            mod = findRotationMod(zone, x, y, item.getBlockWidth(), item.getBlockHeight());
+        } else if(item.getMod() == ModType.ROTATION) {
+            if(item.isMirrorable()) {
+                mod = mod == 4 ? 4 : 0;
+            } else {
+                mod = findRotationMod(zone, x, y, item.getBlockWidth(), item.getBlockHeight());
+            }
+        } else {
+            mod = item.getPlaceMod();
         }
         
         zone.updateBlock(x, y, layer, item, mod, player);
