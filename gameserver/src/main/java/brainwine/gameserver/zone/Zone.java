@@ -1344,6 +1344,10 @@ public class Zone {
                 && chunkIndex == getChunkIndex(block.getX(), block.getY()));
     }
     
+    public Collection<MetaBlock> getFieldBlocksForPlayer(Player player) {
+        return fieldBlocks.values().stream().filter(x -> x.isOwnedBy(player)).collect(Collectors.toList());
+    }
+    
     public Collection<MetaBlock> getGlobalMetaBlocks() {
         return Collections.unmodifiableCollection(globalMetaBlocks.values());
     }

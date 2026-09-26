@@ -534,7 +534,8 @@ public class Player extends Entity implements CommandExecutor {
         sendMessage(new InventoryMessage(inventory));
         sendMessage(new WardrobeMessage(inventory.getWardrobe()));
         sendMessage(new BlockMetaMessage(zone.getGlobalMetaBlocks()));
-        
+        sendMessage(new BlockMetaMessage(zone.getFieldBlocksForPlayer(this)));
+
         // Send peer data
         Collection<Player> peers = zone.getPlayers();
         sendMessage(new EntityStatusMessage(peers, EntityStatus.ENTERING));
